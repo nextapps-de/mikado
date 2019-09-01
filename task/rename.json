@@ -1,0 +1,26 @@
+{
+
+    "_dom": "_d",
+    "_idx": "_i",
+    "_path": "_p",
+    "_tpl": "_t",
+    "_class_cache": "_cs",
+    "_class_": "_c_",
+    "_class": "_c",
+    "_css": "_cs",
+    "_style_cache": "_sc",
+    "_style_": "_s_",
+    "_style": "_s",
+    "_attr_": "_a_",
+    "_attr": "_a",
+    "_html": "_h",
+    "_text": "_x",
+
+    "_setClass": "_l",
+    "_setCSS": "_c",
+    "_setStyle": "_s",
+    "_setAttribute": "_a",
+    "_setText": "_t",
+    "_setHTML": "_h",
+    "this.target": "this._t"
+}

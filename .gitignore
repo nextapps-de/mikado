@@ -1,0 +1,17 @@
+.idea
+node_modules/*
+public/*
+assets/
+log/*
+old/
+tmp/
+vorlagen/
+src/img/min/
+src/img/meal/
+src/img/old/
+/phpMyAdmin/
+src/data/plan/*
+src/data/user/*
+src/php/lib/tcpdf/*
+!src/php/lib/tcpdf/tcpdf.php
+js-framework-benchmark

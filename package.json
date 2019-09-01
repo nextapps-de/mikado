@@ -1,0 +1,54 @@
+{
+  "public": true,
+  "name": "mikado",
+  "description": "Web's smartest virtual DOM templating engine.",
+  "homepage": "https://github.com/nextapps-de/mikado/",
+  "author": "Nextapps GmbH",
+  "version": "0.0.4",
+  "license": "Apache-2.0",
+  "keywords": [
+    "Templating",
+    "Template",
+    "Virtual DOM",
+    "Template Engine",
+    "Mustache",
+    "Handlebars"
+  ],
+  "bugs": {
+    "url": "https://github.com/nextapps-de/mikado/issues",
+    "email": "info@nextapps.de"
+  },
+  "main": "src/mikado.js",
+  "browser": "src/browser.js",
+  "preferGlobal": false,
+  "bin": {
+    "mikado": "./compile.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nextapps-de/mikado.git"
+  },
+  "scripts": {
+    "compile": "node task/compile && echo Compile Complete. && exit 0",
+    "build": "node task/build RELEASE=min DEBUG=false ENABLE_CACHE=true BUILD_LIGHT=false && exit 0",
+    "build:light": "node task/build RELEASE=light DEBUG=false ENABLE_CACHE=true BUILD_LIGHT=true && exit 0",
+    "build:custom": "node task/build RELEASE=custom",
+    "update": "npm install google-closure-compiler@nightly && npm install html2json@latest",
+    "server": "node task/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "task/",
+    "README.md",
+    "LICENSE"
+  ],
+  "readme": "README.md",
+  "dependencies": {},
+  "devDependencies": {
+    "google-closure-compiler": "^20190904.0.0-nightly",
+    "html2json": "^1.0.2",
+    "web-servo": "^0.5.1"
+  }
+}
