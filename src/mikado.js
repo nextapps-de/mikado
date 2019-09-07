@@ -180,7 +180,6 @@ if(!BUILD_LIGHT){
                             if(target.hasAttribute(root)){
 
                                 id = cmp[0];
-                                event_target["_event_" + type] = id;
                                 break;
                             }
 
@@ -198,6 +197,13 @@ if(!BUILD_LIGHT){
 
                 return;
             }
+
+            event_target["_event_" + type] = id;
+            event_target["_root_" + type] = target;
+        }
+        else{
+
+            target = event_target["_root_" + type];
         }
 
         const fn = listener[id];
@@ -221,7 +227,7 @@ if(!BUILD_LIGHT){
         return this;
     };
 
-    let has_click;
+    let has_click, has_moved;
 
     function handler_down(event){ has_click = (event.which || event.button) < 2 ? event.target : null }
     //function handler_move(){ has_moved = true }
