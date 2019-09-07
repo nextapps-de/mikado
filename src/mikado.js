@@ -212,7 +212,6 @@ if(!BUILD_LIGHT){
 
             fn(target);
 
-            event.preventDefault();
             event.stopPropagation();
         }
         else if(DEBUG){
@@ -229,9 +228,26 @@ if(!BUILD_LIGHT){
 
     let has_click, has_moved;
 
-    function handler_down(event){ has_click = (event.which || event.button) < 2 ? event.target : null }
+    function handler_down(event){
+
+        has_click = (event.which || event.button) < 2 ? event.target : null;
+
+        if(has_click){
+
+            event.stopPropagation();
+        }
+    }
     //function handler_move(){ has_moved = true }
-    function handler_end(event){ if(has_click === event.target) handler.call(this, event, "click") }
+    function handler_end(event){
+
+        if(has_click === event.target){
+
+            handler.call(this, event, "click");
+            // apply inline listeners
+            event.target["click"] && event.target["click"]();
+        }
+    }
+
     const has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
 
     /**
@@ -286,26 +302,25 @@ if(!BUILD_LIGHT){
 
     function register_click(add_or_remove){
 
-        register_event(add_or_remove, has_touch ? "touchstart" : "mousedown", handler_down, 0, true);
-        //register_event(add_or_remove, has_touch ? "touchmove" : "mousemove", handler_move, 0, true);
-        register_event(add_or_remove, has_touch ? "touchend" : "mouseup", handler_end, 0, false);
+        register_event(add_or_remove, has_touch ? "touchstart" : "mousedown", handler_down, false);
+        //register_event(add_or_remove, has_touch ? "touchmove" : "mousemove", handler_move, 0);
+        register_event(add_or_remove, has_touch ? "touchend" : "mouseup", handler_end, false);
     }
 
     /**
      * @param add_or_remove
      * @param type
      * @param handler
-     * @param options
-     * @param {boolean=} passive
+     * @param {EventListenerOptions|boolean=} options
      */
 
-    function register_event(add_or_remove, type, handler, options, passive){
+    function register_event(add_or_remove, type, handler, options){
 
         window[(add_or_remove ? "add": "remove") + "EventListener"](
             type,
             handler,
             options || {
-                "passive": passive,
+                "passive": true,
                 "capture": true
             }
         );
