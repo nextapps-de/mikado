@@ -334,7 +334,7 @@ Within a template you have access to the following indentifiers:
     <tr></tr>
     <tr>
         <td><b>root</b></td>
-        <td>Points to the root element of a current rendered template (this is not the root of the view).</td>
+        <td>Points to the root element of a current rendered template (this is not the root where the view is mounted).</td>
         <td>auto</td>
     </tr>
     <tr></tr>

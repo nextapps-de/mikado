@@ -132,6 +132,10 @@ const event_types = {
     "mouseover": 1,
     "mouseup": 1,
     "mousewheel": 1,
+    "touchstart": 1,
+    "touchmove": 1,
+    "touchend": 1,
+    "touchcancel": 1,
     "reset": 1,
     "select": 1,
     "submit": 1,
@@ -148,10 +152,10 @@ if(!BUILD_LIGHT){
 
     const body = document.body;
 
-    function handler(event){
+    function handler(event, _type){
 
         const event_target = event.target;
-        const type = event.type;
+        const type = _type || event.type;
         let target = event_target;
         let id = event_target["_event_" + type];
 
@@ -217,27 +221,89 @@ if(!BUILD_LIGHT){
         return this;
     };
 
-    Mikado.prototype.listen = function(event){
+    let has_click;
+
+    function handler_down(event){ has_click = (event.which || event.button) < 2 ? event.target : null }
+    //function handler_move(){ has_moved = true }
+    function handler_end(event){ if(has_click === event.target) handler.call(this, event, "click") }
+    const has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
+
+    /**
+     * @param event
+     * @param {Object|boolean=} options
+     * @returns {Mikado}
+     */
+
+    Mikado.prototype.listen = function(event, options){
 
         if(!events[event]){
 
-            window.addEventListener(event, handler, true);
+            if(event === "click"){
+
+                register_click(1);
+            }
+            else{
+
+                register_event(1, event, handler, options || true);
+            }
+
             events[event] = 1;
         }
 
         return this;
     };
 
-    Mikado.prototype.unlisten = function(event){
+    /**
+     * @param event
+     * @param {Object|boolean=} options
+     * @returns {Mikado}
+     */
+
+    Mikado.prototype.unlisten = function(event, options){
 
         if(events[event]){
 
-            window.removeEventListener(event, handler, true);
+            if(event === "click"){
+
+                register_click(0);
+            }
+            else{
+
+                register_event(0, event, handler, options || true);
+            }
+
             events[event] = 0;
         }
 
         return this;
     };
+
+    function register_click(add_or_remove){
+
+        register_event(add_or_remove, has_touch ? "touchstart" : "mousedown", handler_down, 0, true);
+        //register_event(add_or_remove, has_touch ? "touchmove" : "mousemove", handler_move, 0, true);
+        register_event(add_or_remove, has_touch ? "touchend" : "mouseup", handler_end, 0, false);
+    }
+
+    /**
+     * @param add_or_remove
+     * @param type
+     * @param handler
+     * @param options
+     * @param {boolean=} passive
+     */
+
+    function register_event(add_or_remove, type, handler, options, passive){
+
+        window[(add_or_remove ? "add": "remove") + "EventListener"](
+            type,
+            handler,
+            options || {
+                "passive": passive,
+                "capture": true
+            }
+        );
+    }
 }
 
 Mikado.prototype.sync = function(){
