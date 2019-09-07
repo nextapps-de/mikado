@@ -117,6 +117,7 @@ Mikado.prototype.mount = function(target){
 
 const event_types = {
 
+    "tap": 1,
     "change": 1,
     "click": 1,
     "dblclick": 1,
@@ -152,16 +153,22 @@ if(!BUILD_LIGHT){
 
     const body = document.body;
 
-    function handler(event, _type){
+    function handler(event, type){
+
+        type || (type = event.type);
 
         const event_target = event.target;
-        const type = _type || event.type;
         let target = event_target;
         let id = event_target["_event_" + type];
 
         if(!id){
 
-            while(target !== body){
+            while(target){
+
+                if(target === body){
+
+                    return;
+                }
 
                 id = target.getAttribute(type);
 
@@ -211,13 +218,13 @@ if(!BUILD_LIGHT){
         if(fn){
 
             fn(target);
-
-            event.stopPropagation();
         }
         else if(DEBUG){
 
             console.warn("Route: '" + id + "', Event: '" + type + "' is undefined.");
         }
+
+        event.stopPropagation();
     }
 
     Mikado.prototype.route = function(id, fn){
@@ -226,29 +233,49 @@ if(!BUILD_LIGHT){
         return this;
     };
 
-    let has_click, has_moved;
+    let has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
+    let touch_x, touch_y;
+    let register_tap;
 
-    function handler_down(event){
+    if(has_touch){
 
-        has_click = (event.which || event.button) < 2 ? event.target : null;
+        function handler_down(event){
 
-        if(has_click){
-
-            event.stopPropagation();
+            pointer(event, event.touches);
         }
-    }
-    //function handler_move(){ has_moved = true }
-    function handler_end(event){
 
-        if(has_click === event.target){
+        function handler_end(event){
 
-            handler.call(this, event, "click");
-            // apply inline listeners
-            event.target["click"] && event.target["click"]();
+            let last_x = touch_x;
+            let last_y = touch_y;
+
+            pointer(event, event.changedTouches);
+
+            if((Math.abs(touch_x - last_x) < 50) &&
+               (Math.abs(touch_y - last_y) < 50)){
+
+                handler.call(this, event, "click");
+            }
         }
-    }
 
-    const has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
+        function pointer(event, touches){
+
+            if(touches){
+
+                touches = touches[0];
+            }
+
+            touch_x = touches ? touches["clientX"] : event["pageX"];
+            touch_y = touches ? touches["clientY"] : event["pageY"];
+        }
+
+        register_tap = function(add_or_remove){
+
+            register_event(add_or_remove, "touchstart", handler_down, false);
+            //register_event(add_or_remove, "touchmove", handler_move, false);
+            register_event(add_or_remove, "touchend", handler_end, false);
+        };
+    }
 
     /**
      * @param event
@@ -260,9 +287,9 @@ if(!BUILD_LIGHT){
 
         if(!events[event]){
 
-            if(event === "click"){
+            if(has_touch && (event === "click")){
 
-                register_click(1);
+                register_tap(1);
             }
             else{
 
@@ -285,9 +312,9 @@ if(!BUILD_LIGHT){
 
         if(events[event]){
 
-            if(event === "click"){
+            if(has_touch && (event === "click")){
 
-                register_click(0);
+                register_tap(0);
             }
             else{
 
@@ -299,13 +326,6 @@ if(!BUILD_LIGHT){
 
         return this;
     };
-
-    function register_click(add_or_remove){
-
-        register_event(add_or_remove, has_touch ? "touchstart" : "mousedown", handler_down, false);
-        //register_event(add_or_remove, has_touch ? "touchmove" : "mousemove", handler_move, 0);
-        register_event(add_or_remove, has_touch ? "touchend" : "mouseup", handler_end, false);
-    }
 
     /**
      * @param add_or_remove
