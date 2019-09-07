@@ -75,7 +75,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#load">Load Templates</a>
+            <a href="#event">Event Binding</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -83,7 +83,23 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#manipulate">Manipulate Virtual DOM</a>
+            <a href="#store">Data Store</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#load">Transport/Load Templates</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#manipulate">DOM Manipulation Collection</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -116,7 +132,7 @@ __Feature Comparison__
 ## API Overview
 
 Global methods:
-- <a href="#mikado.create">Mikado.__create__(template, \<options\>)</a>
+- <a href="#mikado.create">Mikado.__new__(template, \<options\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
 
@@ -126,10 +142,14 @@ Instance methods:
 - <a href="#view.render">View.__render__(items)</a>
 - <a href="#view.create">View.__create__(item)</a>
 - <a href="#view.add">View.__add__(item)</a>
+- <a href="#view.add">View.__update__(node, item)</a>
 - <a href="#view.append">View.__append__(items)</a>
 - <a href="#view.clear">View.__clear__()</a>
 - <a href="#view.replace">View.__replace__(node, node)</a>
 - <a href="#view.sync">View.__sync__()</a>
+- <a href="#view.sync">View.__get__(index)</a>
+- <a href="#view.sync">View.__index__(node)</a>
+- <a href="#view.sync">View.__parse__(template)</a>
 
 Instance methods (not included in mikado.light.js):
 - <a href="#view.move">View.__move__(node, index)</a>
@@ -146,6 +166,7 @@ Instance methods (not included in mikado.light.js):
 Instance properties:
 - ~~View.__dom__~~
 - <a href="#view.length">View.__length__</a>
+- <a href="#view.length">View.__store__</a>
 
 <a name="started" id="started"></a>
 ## Basic Example
@@ -180,17 +201,15 @@ mikado template/template.html
 
 > __Notation:__ mikado _{{input}} {{destination}}_
 
-Instead of `mikado` you can use `node task/compile` alternatively.
+Instead of `mikado` you can also use `node task/compile` alternatively. When a destination was not set, the input folder will be used instead.
 
-When a destination was not set, the input folder will be used instead.
-
-Now you have 4 different files:
+After compilation you will have 4 different files:
 1. __template.js__ the template compiled in ES5 compatible Javascript
 2. __template.es6.js__ the template compiled as an ES6 module
 3. __template.json__ the template compiled in JSON-compatible notation (<a href="#load">to load via http request</a>)
 4. __template.html__ the HTML-like template (reference, do not delete it)
 
-Assume there is an array of data to render (or one item):
+Assume there is an array of data to render (or just one item):
 ```js
 var items = [{
     user: "User A",
@@ -209,7 +228,6 @@ Load library and initialize template (ES5):
 <script src="mikado.min.js"></script>
 <script src="template/template.js"></script>
 <script>
-    // initialize template:
     var view = Mikado.new("template");
 </script>
 ```
@@ -221,56 +239,129 @@ Load library and initialize template (ES6):
 <script type="module">
     import Mikado from "./mikado.js";
     import template from "./template/template.es6.js";
-    // initialize template:
     var view = Mikado.new(template);
 </script>
 ```
 
-Initially mount to a DOM element as destination root and render the template with data:
+After creation you need mount to a DOM element initially as a destination root and render the template with data:
 ```js
-view.mount(document.body).render(items);
+view.mount(document.body);
+view.render(items);
 ```
 
-> You can chain every method.
+You can also chain methods:
+
+```js
+var view = Mikado.new(template).mount(document.body).render(items);
+```
 
 ## Advanced Example
 
 A bit more complex template:
 ```html
-<section id="{{item.id}}" class="{{view.theme}}" data-index="{{index}}">
-    <div class="{{item.class}} {{item.date === view.today ? 'on' : 'off'}}">
-        <div class="title" style="padding-bottom: 10px">{{item.title.toUpperCase()}}</div>
+<section id="{{item.id}}" class="{{this.state.theme}}" data-index="{{index}}">
+    {{@var is_today = item.date === view.today}}
+    <div class="{{item.class}} {{is_today ? 'on' : 'off'}}">
+        <div class="title" style="font-size: 2em">{{item.title.toUpperCase()}}</div>
         <div class="content {{index % 2 ? 'odd' : 'even'}}">{{#item.content}}</div>
-        <div class="footer">{{view.parseFooter(item.footer)}}</div>
+        <div class="footer">{{view.parseFooter(item)}}</div>
     </div>
 </section>
 ```
 
-Within a template you have access to the _item_ data, _view_ data and the keyword _index_. You cannot change the naming of those preserved keywords.
+You can use any Javascript within the {{ ... }} curly bracket notation.
 
-> The preserved keyword ___view___ contains an optional payload used for non-item specific data or function handlers.
+> To pass html markup as a string, the curly brackets needs to be followed by a "#" e.g. {{#...}}
 
-> The preserved keyword ___index___ represents the index of the currently rendered item.
+> To use Javascript outside an elements content you need to prevent concatenation of the returned value. For this purpose the curly brackets needs to be followed by a "@" e.g. {{@...}}
 
-> To pass html markup as a string, the curly brackets needs to be followed by a "#".
+Within a template you have access to the following indentifiers:
 
-> You can use any Javascript within {{ ... }} curly bracket notation.
+<table>
+    <tr></tr>
+    <tr>
+        <td>Identifier</td>
+        <td>Description</td>
+        <td>Passed Mode</td>
+    </tr>
+    <tr>
+        <td><b>item</b></td>
+        <td>A full reference to a passed data item.</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>view</b></td>
+        <td>An optional payload used to pass non-item specific data or helper functions.</td>
+        <td>manual</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>index</b></td>
+        <td>Represents the index of the currently rendered item.</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>this</b></td>
+        <td>Provides you access to the Mikado view instance.</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>this.<b>state</b></td>
+        <td>An object used to keep data as a state across runtime.</td>
+        <td>auto (manual set)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>this.<b>store</b></td>
+        <td>Gives access to the internal item store (Array).</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>this.<b>length</b></td>
+        <td>The length of all items actually rendered (to get length of stored items use <i>this.store.length</i> instead).</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>window</b></td>
+        <td>The global namespace</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>root</b></td>
+        <td>Points to the root element of a current rendered template (this is not the root of the view).</td>
+        <td>auto</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>self</b></td>
+        <td>Points to the current rendered element itself.</td>
+        <td>auto</td>
+    </tr>
+</table>
+
+You cannot change the naming of those preserved keywords.
 
 It is recommended to pass custom functions via the _view_ object (see example above). You can also nest more complex computations inline as an IIFE and return the result.
 
 ```html
-<div class="title">{{ 
+<div class="date">{{ 
     (function(){ 
-        var title = item.title;
+        var date = new Date();
         // ...
-        return title.toUpperCase(); 
+        return date.toLocaleString(); 
     }()) 
 }}</div>
 ```
 
-> Alternatively of accessing _item_, _view_ and _index_ you can also access variables from the global namespace.
+Alternatively of accessing _item_, _view_, _index_ and _this.state_ you can also access variables from the global namespace.
 
-For performance relevant tasks avoid passing html contents as string.
+> For performance relevant tasks avoid passing html contents as string.
 
 To finish the example above provide one single or an array of ___item___ data:
 ```js
@@ -289,17 +380,21 @@ Provide ___view___ data (non-item specific data and helper methods used by the t
 var view = {
     page: 1,
     today: "2019-01-11",
-    theme: "custom",
-    parseFooter: function(footer){ return footer; }
+    parseFooter: function(item){ return item.footer; }
 }
 ```
 
-Init a new template factory to an existing instance:
+Provide ___state___ data (application specific data and helper methods used by the template):
+```js
+view.state.theme = "custom";
+```
+
+Create a new view instance or initialize a new template factory to an existing instance:
 ```js
 view.init(template);
 ```
 
-Render the already mounted template:
+Mount to a new target or just render the already mounted template:
 ```js
 view.render(items, view);
 ```
@@ -311,13 +406,56 @@ view.render(items, view, function(){
 });
 ```
 
-Render asynchronously by using promises:
+To render asynchronously by using promises you need to create the view instance with the ___async___ option flag:
 ```js
-view.async = true;
+view = Mikado.new(template, { async: true });
+
 view.render(items, view).then(function(){
     console.log("finished.");
 });
 ```
+
+<a name="event" id="event"></a>
+## Event Bindings
+
+Lets take this example:
+```html
+<table data-id="{{item.id}}" root>
+    <tr>
+        <td>User:</td>
+        <td click="show-user">{{item.user}}</td>
+        <td><a click="delete-user:root">Delete</a></td>
+    </tr>
+</table>
+```
+
+There are 2 click listeners. The attribute value represents the name of the route. The second listener has a route separated by ":", this will delegate the event from the route "delete-user" to the closest element which contains the attribute "root".
+
+Define routes:
+```js
+view.route("show-user", function(node){
+
+    alert(node.textContent);
+
+}).route("delete-user", function(node){
+
+    alert(node.dataset.id);
+})
+```
+
+Routes are stored globally, so you can share routes through all Mikado instances.
+
+<b>List of all supported events:</b>
+- change, input, select, toggle
+- click, dblclick
+- keydown, keypress, keyup
+- mousedown, mouseenter, mouseleave, mousemove, mouseout, mouseover, mouseup, mousewheel
+- touchstart, touchmove, touchend, touchcancel
+- submit, reset
+- focus, blur
+- load, error
+- resize
+- scroll
 
 <a name="manipulate" id="manipulate"></a>
 ## Manipulate Views
