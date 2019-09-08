@@ -888,8 +888,13 @@ if(!BUILD_LIGHT){
             }
             else{
 
+                this.target.insertBefore(a, b);
+                this.target.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+
+                /*
                 b.replaceWith(a);
                 this.target.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                */
 
                 a["_idx"] = tmp_b;
                 b["_idx"] = tmp_a;
