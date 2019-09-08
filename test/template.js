@@ -40,5 +40,6 @@ Mikado.register({
     ],
     "s": "padding-right:10px;"
   },
-  "n": "template"
+  "n": "template",
+  "v": "0.0.7"
 });

@@ -193,10 +193,14 @@ function create_schema(root){
 
 if(json) create_schema(json);
 if(json) json = json.child.length ? json.child[0] : json.child;
-if(json) json.name = template_name;
+if(json){
+    json.name = template_name;
+    json.version = require("../package.json").version;
+}
 if(json) json = JSON.stringify(json, null, 2);
 
 json = json.replace(/"name":/g, "\"n\":")
+           .replace(/"version":/g, "\"v\":")
            .replace(/"tag":/g, "\"t\":")
            .replace(/"attr":/g, "\"a\":")
            .replace(/"class":/g, "\"c\":")
