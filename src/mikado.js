@@ -880,15 +880,23 @@ if(!BUILD_LIGHT){
                 tmp_b = b["_idx"];
             }
 
-            const tmp = a["_item"];
-            this.update(a, b["_item"], null, tmp_b);
-            this.update(b, tmp, null, tmp_a);
+            if(this.reuse){
 
-            // 2. Strategy Swap
-            /*
-            b.replaceWith(a);
-            this.target.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-            */
+                const tmp = a["_item"];
+                this.update(a, b["_item"], null, tmp_b);
+                this.update(b, tmp, null, tmp_a);
+            }
+            else{
+
+                b.replaceWith(a);
+                this.target.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+
+                a["_idx"] = tmp_b;
+                b["_idx"] = tmp_a;
+
+                this.dom[tmp_a] = b;
+                this.dom[tmp_b] = a;
+            }
 
             // 3. Strategy Swap
             /*
@@ -899,16 +907,6 @@ if(!BUILD_LIGHT){
                 else this.target.appendChild(a);
             }
             */
-
-            // Swap References
-            /*
-            a["_idx"] = tmp_b;
-            b["_idx"] = tmp_a;
-
-            this.dom[tmp_a] = b;
-            this.dom[tmp_b] = a;
-
-             */
 
             if(!BUILD_LIGHT && this.store){
 
