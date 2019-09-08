@@ -2,13 +2,17 @@
 <img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado.js" width="61.8%">
 
 <h1></h1>
-<h3>Web's smartest virtual DOM templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Web's smartest and fastest virtual DOM templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
 <a href="#started">Getting Started</a> &ensp;&bull;&ensp; <a href="#options">Options</a> &ensp;&bull;&ensp; <a href="#api">API</a> &ensp;&bull;&ensp; <a href="#builds">Custom Builds</a>
+
+Benchmark:
+
+https://krausest.github.io/js-framework-benchmark/current.html
 
 Demo:
 
