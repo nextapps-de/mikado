@@ -823,9 +823,30 @@ if(!BUILD_LIGHT){
 
         if(a !== b){
 
-            const next = b.nextSibling;
+            let tmp_a;
+            let tmp_b;
 
-            if(next === a){
+            if(typeof a === "number"){
+
+                tmp_a = a;
+                a = this.dom[a];
+            }
+            else{
+
+                tmp_a = a["_idx"];
+            }
+
+            if(typeof b === "number"){
+
+                tmp_b = b;
+                b = this.dom[b];
+            }
+            else{
+
+                tmp_b = b["_idx"];
+            }
+
+            if((tmp_b + 1) === tmp_a){
 
                 this.target.insertBefore(a, b);
             }
@@ -833,18 +854,15 @@ if(!BUILD_LIGHT){
 
                 this.target.insertBefore(b, a);
 
-                if(next){
+                if((tmp_b + 1) < this.length){
 
-                    this.target.insertBefore(a, next);
+                    this.target.insertBefore(a, this.dom[tmp_b + 1]);
                 }
                 else{
 
                     this.target.appendChild(a);
                 }
             }
-
-            const tmp_a = a["_idx"];
-            const tmp_b = b["_idx"];
 
             a["_idx"] = tmp_b;
             b["_idx"] = tmp_a;
@@ -895,7 +913,7 @@ if(!BUILD_LIGHT){
     };
 
     /**
-     * @param {Element} node
+     * @param {Element|number} node
      * @param {*=} item
      * @param {*=} view
      * @param {number=} index
@@ -908,7 +926,12 @@ if(!BUILD_LIGHT){
 
         if(!this.static){
 
-            if(typeof index === "undefined"){
+            if(typeof node === "number"){
+
+                index = node;
+                node = this.dom[node];
+            }
+            else if(typeof index === "undefined"){
 
                 index = node["_idx"];
             }
