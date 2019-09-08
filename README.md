@@ -131,14 +131,17 @@ __Feature Comparison__
 
 ## API Overview
 
+Constructor:
+- <a href="#mikado.create">__Mikado__(\<root\>, template, \<options\>)</a>
+
 Global methods:
 - <a href="#mikado.create">Mikado.__new__(template, \<options\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
 
 Instance methods:
-- <a href="#view.mount">View.__mount__(root)</a>
 - <a href="#view.init">View.__init__(template)</a>
+- <a href="#view.mount">View.__mount__(root)</a>
 - <a href="#view.render">View.__render__(items)</a>
 - <a href="#view.create">View.__create__(item)</a>
 - <a href="#view.add">View.__add__(item)</a>
@@ -146,10 +149,14 @@ Instance methods:
 - <a href="#view.append">View.__append__(items)</a>
 - <a href="#view.clear">View.__clear__()</a>
 - <a href="#view.replace">View.__replace__(node, node)</a>
+- <a href="#view.remove">View.__remove__(node)</a>
+- <a href="#view.item">View.__item__(index)</a>
+- <a href="#view.node">View.__node__(index)</a>
+- <a href="#view.index">View.__index__(node)</a>
+- <a href="#view.parse">View.__parse__(template)</a>
 - <a href="#view.sync">View.__sync__()</a>
-- <a href="#view.sync">View.__get__(index)</a>
-- <a href="#view.sync">View.__index__(node)</a>
-- <a href="#view.sync">View.__parse__(template)</a>
+- <a href="#view.sync">View.__listen__(event)</a>
+- <a href="#view.sync">View.__unlisten__(event)</a>
 
 Instance methods (not included in mikado.light.js):
 - <a href="#view.move">View.__move__(node, index)</a>
@@ -167,6 +174,59 @@ Instance properties:
 - ~~View.__dom__~~
 - <a href="#view.length">View.__length__</a>
 - <a href="#view.length">View.__store__</a>
+- <a href="#view.length">View.__state__</a>
+
+## Options
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Option</td>
+        <td>Description</td>
+        <td>Default</td>
+    </tr>
+    <tr>
+        <td><b>root</b></td>
+        <td>The destination root where the template should be rendered.</td>
+        <td>null</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>template</b></td>
+        <td>The template which should be assigned to the Mikado instance.</td>
+        <td></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>async</b></td>
+        <td>Perform render tasks asynchronously and return a Promise.</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>cache</b></td>
+        <td>Enable/disable caching. Enable caching when some of you items stay unchanged. Disable caching when changes on data requires a fully re-render more often.</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>store</b></td>
+        <td>Passed items for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the item data.</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>loose</b></td>
+        <td>When storage is enabled this flag removes also item data whenever a corresponding dom element was removed. When set to true you cannot use paged rendering.</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>reuse</b></td>
+        <td>When enabled all dom elements which are already rendered will be re-used for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Whe enabled make sure to use the <a>Virtual DOM Manipulation</a> helpers.</td>
+        <td>true</td>
+    </tr>
+</table>
 
 <a name="started" id="started"></a>
 ## Basic Example
@@ -503,6 +563,16 @@ Remove last 20 items:
 view.remove(-20);
 ```
 
+Remove next 20 items of a given node (including):
+```js
+view.remove(node, 20);
+```
+
+Remove previous 20 items of a given node (including):
+```js
+view.remove(node, -20);
+```
+
 Remove all:
 ```js
 view.clear();
@@ -557,12 +627,22 @@ Shuffle items/nodes:
 view.shuffle();
 ```
 
-Get the virtual DOM:
+Get a node from the virtual DOM:
 ```js
-var nodes = view.dom;
+var node = view.node(index);
 ```
 
-Re-Sync virtual DOM:
+Get an item from the store:
+```js
+var item = view.item(index);
+```
+
+Get the current index from a node:
+```js
+var index = view.index(node);
+```
+
+Re-Sync Virtual DOM:
 ```js
 view.sync();
 ```
@@ -623,6 +703,27 @@ view.mount(document.getElementById("new-root"));
 Chain methods:
 ```js
 view.mount(document.body).init("template").render(items);
+```
+
+## Best Practices
+
+A Mikado instance has a stronger relation to the template as to the root element. Please keep this example in mind:
+
+This is good:
+```js
+var view = new Mikado(template);
+
+view.mount(root_a).render(items);
+view.mount(root_b).render(items);
+view.mount(root_c).render(items);
+```
+
+This is bad:
+```js
+view.mount(root);
+view.init(tpl_a).render(items);
+view.init(tpl_b).render(items);
+view.init(tpl_c).render(items);
 ```
 
 <a name="includes" id="includes"></a>
