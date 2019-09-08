@@ -21,7 +21,7 @@ const events = {};
 const listener = {};
 
 /**
- * @param {HTMLElement|Template} root
+ * @param {Element|Template} root
  * @param {Template|Object=} template
  * @param {Object=} options
  * @constructor
@@ -65,13 +65,23 @@ export default function Mikado(root, template, options){
         this.cache = !options || (options["cache"] !== false);
     }
 
-    this.async = options && options["async"];
+    this.async = options && !!options["async"];
     this.reuse = !options || (options["reuse"] !== false);
 
     if(!BUILD_LIGHT){
 
-        const store = options && options["store"];
-        this.store = store && (typeof store === "object" ? store : []);
+        this.loose = options && !!options["loose"];
+
+        if(this.loose){
+
+            this.store = false;
+        }
+        else{
+
+            const store = options && options["store"];
+            this.store = store && (typeof store === "object" ? store : []);
+        }
+
         //this.index = store && options && options["index"];
     }
 
@@ -104,6 +114,9 @@ Mikado.prototype.mount = function(target){
     if(this.target !== target){
 
         this.target = target;
+
+        this.check();
+
         this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.children));
         this.length = this.dom.length;
     }
@@ -360,9 +373,14 @@ Mikado.prototype.index = function(node){
     return node["_idx"];
 };
 
-Mikado.prototype.get = function(index){
+Mikado.prototype.node = function(index){
 
     return this.dom[index];
+};
+
+Mikado.prototype.item = function(index){
+
+    return this.loose ? this.dom[index]["_item"] : this.store[index];
 };
 
 let id_counter = 0;
@@ -377,11 +395,31 @@ Mikado.prototype.init = function(template){
         this.update_path = null;
         this.clone = null;
         this.static = true;
+
+        this.check();
     }
 
     this.state = {};
 
     return this;
+};
+
+Mikado.prototype.check = function(){
+
+    if(this.target){
+
+        const id = this.target["_tpl"];
+
+        if(id !== this.id){
+
+            this.target["_tpl"] = this.id;
+
+            if(id){
+
+                this.clear();
+            }
+        }
+    }
 };
 
 function collection_to_array(collection){
@@ -416,6 +454,11 @@ Mikado.prototype.create = function(data, view, index){
     }
 
     const tmp = clone.cloneNode(true);
+
+    if(this.loose){
+
+        tmp["_item"] = data;
+    }
 
     //profiler_end("create");
 
@@ -493,21 +536,6 @@ Mikado.prototype.render = function(items, view, callback, skip_async){
 
     //profiler_start("render");
 
-    const id = this.target["_tpl"];
-
-    if(id){
-
-        if(id !== this.id){
-
-            this.target["_tpl"] = this.id;
-            this.clear();
-        }
-    }
-    else{
-
-        this.target["_tpl"] = this.id;
-    }
-
     if(items){
 
         let count = items.length;
@@ -584,15 +612,21 @@ Mikado.prototype.add = function(item, view, target){
     const length = this.length;
     const tmp = this.create(item, view, length);
 
+    if(!BUILD_LIGHT) {
+
+        if(this.store){
+
+            this.store[length] = item;
+        }
+        else if(this.loose){
+
+            tmp["_item"] = item;
+        }
+    }
+
     tmp["_idx"] = length;
     (target || this.target).appendChild(tmp);
     this.dom[length] = tmp;
-
-    if(!BUILD_LIGHT && this.store){
-
-        this.store[length] = item;
-    }
-
     this.length++;
 
     //profiler_end("add");
@@ -846,29 +880,35 @@ if(!BUILD_LIGHT){
                 tmp_b = b["_idx"];
             }
 
-            if((tmp_b + 1) === tmp_a){
+            const tmp = a["_item"];
+            this.update(a, b["_item"], null, tmp_b);
+            this.update(b, tmp, null, tmp_a);
 
-                this.target.insertBefore(a, b);
-            }
+            // 2. Strategy Swap
+            /*
+            b.replaceWith(a);
+            this.target.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+            */
+
+            // 3. Strategy Swap
+            /*
+            if((tmp_b + 1) === tmp_a) this.target.insertBefore(a, b);
             else{
-
                 this.target.insertBefore(b, a);
-
-                if((tmp_b + 1) < this.length){
-
-                    this.target.insertBefore(a, this.dom[tmp_b + 1]);
-                }
-                else{
-
-                    this.target.appendChild(a);
-                }
+                if((tmp_b + 1) < this.length) this.target.insertBefore(a, this.dom[tmp_b + 1]);
+                else this.target.appendChild(a);
             }
+            */
 
+            // Swap References
+            /*
             a["_idx"] = tmp_b;
             b["_idx"] = tmp_a;
 
             this.dom[tmp_a] = b;
             this.dom[tmp_b] = a;
+
+             */
 
             if(!BUILD_LIGHT && this.store){
 
@@ -898,14 +938,22 @@ if(!BUILD_LIGHT){
         }
 
         const tmp = this.create(item, view, index);
+
+        if(!BUILD_LIGHT) {
+
+            if(this.store){
+
+                this.store[index] = item;
+            }
+            else if(this.loose){
+
+                tmp["_item"] = item;
+            }
+        }
+
         node.replaceWith(tmp);
         //this.target.replaceChild(tmp, node);
         this.dom[index] = tmp;
-
-        if(!BUILD_LIGHT && this.store){
-
-            this.store[index] = item;
-        }
 
         //profiler_end("replace");
 
@@ -936,15 +984,29 @@ if(!BUILD_LIGHT){
                 index = node["_idx"];
             }
 
-            if(!BUILD_LIGHT && this.store){
+            if(!BUILD_LIGHT) {
 
-                if(item){
+                if(this.store){
 
-                    this.store[index] = item;
+                    if(item){
+
+                        this.store[index] = item;
+                    }
+                    else{
+
+                        item = this.store[index];
+                    }
                 }
-                else{
+                else if(this.loose){
 
-                    item = this.store[index];
+                    if(item){
+
+                        node["_item"] = item;
+                    }
+                    else{
+
+                        item = node["_item"];
+                    }
                 }
             }
 
