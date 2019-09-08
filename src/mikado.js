@@ -1091,7 +1091,6 @@ function resolve(root, path, cache){
 }
 
 let tmp_fn;
-let tmp_length;
 
 /**
  * @param {Template|Array<Template>} tpl
@@ -1124,32 +1123,33 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     let class_name = tpl["c"];
     const js = tpl["j"];
     let path_length = this.vpath.length;
-
-    tmp_fn += ";self=p[" + path_length + "];";
+    let has_update = 0;
+    let new_fn = "";
 
     if(js){
 
-        tmp_fn += js + ";";
+        new_fn += js + ";";
     }
 
     if(ENABLE_CACHE && this.cache){
 
-        tmp_fn += "this";
+        new_fn += "this";
     }
 
     if(class_name){
 
         if(typeof class_name === "object"){
 
-            tmp_fn += ENABLE_CACHE && this.cache ?
+            new_fn += ENABLE_CACHE && this.cache ?
 
                 "._setClass(self," + class_name[0] + ")"
             :
                 "self.className=" + class_name[0] + ";";
 
             this.vpath[path_length] = path;
-            dom_path[path_length++] = node;
+            dom_path[path_length] = node;
             this.static = false;
+            has_update++;
         }
         else{
 
@@ -1169,7 +1169,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof value === "object"){
 
-                tmp_fn += ENABLE_CACHE && this.cache ?
+                new_fn += ENABLE_CACHE && this.cache ?
 
                     "._setAttribute(self,'" + key + "'," + value[0] + ")"
                 :
@@ -1191,8 +1191,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         if(has_dynamic_values){
 
             this.vpath[path_length] = path;
-            dom_path[path_length++] = node;
+            dom_path[path_length] = node;
             this.static = false;
+            has_update++;
         }
     }
 
@@ -1204,14 +1205,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else if(style.length){
 
-            tmp_fn += ENABLE_CACHE && this.cache ?
+            new_fn += ENABLE_CACHE && this.cache ?
 
                 "._setCSS(self," + style[0] + ")"
             :
                 "self.style.cssText=" + style[0] + ";";
 
             this.vpath[path_length] = path;
-            dom_path[path_length++] = node;
+            dom_path[path_length] = node;
+            has_update++;
         }
         else{
 
@@ -1225,7 +1227,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 if(typeof value === "object"){
 
-                    tmp_fn += ENABLE_CACHE && this.cache ?
+                    new_fn += ENABLE_CACHE && this.cache ?
 
                         "._setStyle(self,'" + key + "'," + value[0] + ")"
                     :
@@ -1242,9 +1244,81 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             if(has_dynamic_values){
 
                 this.vpath[path_length] = path;
-                dom_path[path_length++] = node;
+                dom_path[path_length] = node;
                 this.static = false;
+                has_update++;
             }
+        }
+    }
+
+    if(!child){
+
+        if(text){
+
+            path += "|";
+
+            const is_object = typeof text === "object";
+
+            if(is_object){
+
+                text = text[0];
+            }
+
+            let text_node = document.createTextNode(text);
+
+            if(is_object){
+
+                new_fn += ENABLE_CACHE && this.cache ?
+
+                    "._setText(self," + text + ")"
+                :
+                    "self.nodeValue=" + text + ";";
+
+                if(dom_path[path_length]){
+
+                    path_length++;
+                }
+
+                this.vpath[path_length] = path;
+                dom_path[path_length] = text_node;
+                this.static = false;
+                has_update++;
+            }
+
+            node.appendChild(text_node);
+        }
+        else if(html){
+
+            if(typeof html === "object"){
+
+                html = html[0];
+                new_fn += ENABLE_CACHE && this.cache ?
+
+                    "._setHTML(self, " + html + ")"
+                :
+                    "self.innerHTML=" + html + ";";
+
+                this.vpath[path_length] = path;
+                dom_path[path_length] = node;
+                this.static = false;
+                has_update++;
+            }
+            else{
+
+                node.innerHTML = html;
+            }
+        }
+    }
+
+    if(has_update){
+
+        if(has_update > 1){
+
+            tmp_fn += "self=p[" + path_length + "];" + new_fn;
+        }
+        else{
+
+            tmp_fn += "p[" + path_length + "]" + new_fn.substring(4); // cut "self."
         }
     }
 
@@ -1269,57 +1343,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
         }
     }
-    else{
-
-        if(text){
-
-            path += "|";
-
-            const is_object = typeof text === "object";
-
-            if(is_object){
-
-                text = text[0];
-            }
-
-            let text_node = document.createTextNode(text);
-
-            if(is_object){
-
-                tmp_fn += ENABLE_CACHE && this.cache ?
-
-                    "._setText(self," + text + ")"
-                :
-                    "self.nodeValue=" + text + ";";
-
-                this.vpath[path_length] = path;
-                dom_path[path_length++] = text_node;
-                this.static = false;
-            }
-
-            node.appendChild(text_node);
-        }
-        else if(html){
-
-            if(typeof html === "object"){
-
-                html = html[0];
-                tmp_fn += ENABLE_CACHE && this.cache ?
-
-                    "._setHTML(self, " + html + ")"
-                :
-                    "self.innerHTML=" + html + ";";
-
-                this.vpath[path_length] = path;
-                dom_path[path_length++] = node;
-                this.static = false;
-            }
-            else{
-
-                node.innerHTML = html;
-            }
-        }
-    }
 
     if(!index && !this.static){
 
@@ -1327,7 +1350,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             tmp_fn ?
 
-                '"use strict";var root=p[0],self' + tmp_fn //+ ';'
+                '"use strict";var self;' + tmp_fn //+ ';'  // var root=p[0]
             :
                 ""
         ));
@@ -1514,6 +1537,36 @@ if(!BUILD_LIGHT){
 
         return this;
     };
+
+    function diff(node, item){
+
+        const node_item = node["_item"];
+
+        if(node_item){
+
+            //const changes = {};
+            const keys = Object.keys(item);
+            const length = keys.length;
+            let updates = 0;
+
+            for(let i = 0, key; i < length; i++){
+
+                key = keys[i];
+                //val = item[key];
+
+                if(item[key] !== node_item[key]){
+
+                    //changes[key] = val;
+                    updates++;
+                }
+            }
+
+            if(!updates){
+
+                return this;
+            }
+        }
+    }
 }
 
 /** @export */
