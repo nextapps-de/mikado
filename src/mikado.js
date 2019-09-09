@@ -77,10 +77,12 @@ export default function Mikado(root, template, options){
         if(this.loose){
 
             this.store = false;
+            //this.extern = false;
         }
         else{
 
-            this.store = store && (typeof store === "object" ? store : []);
+            this.extern = typeof store === "object";
+            this.store = store && (this.extern ? store : []);
         }
 
         //this.index = store && options && options["index"];
@@ -92,7 +94,7 @@ export default function Mikado(root, template, options){
     }
 
     this.init(template);
-}
+};
 
 Mikado["register"] = function(name, tpl){
 
@@ -105,9 +107,15 @@ Mikado["register"] = function(name, tpl){
     templates[name] = tpl;
 };
 
-Mikado["new"] = function(root, template, options){
+/**
+ * @param {Element|Template} root
+ * @param {Template|Object=} template
+ * @param {Object=} options
+ */
 
-    return new this(root, template, options);
+Mikado.new = function(root, template, options){
+
+    return new Mikado(root, template, options);
 };
 
 Mikado.prototype.mount = function(target){
@@ -118,7 +126,7 @@ Mikado.prototype.mount = function(target){
 
         this.check();
 
-        this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.children));
+        this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.childNodes));
         this.length = this.dom.length;
     }
 
@@ -231,7 +239,7 @@ if(!BUILD_LIGHT){
 
         if(fn){
 
-            fn(target);
+            fn(target, event);
         }
         else if(DEBUG){
 
@@ -363,7 +371,7 @@ if(!BUILD_LIGHT){
 
 Mikado.prototype.sync = function(){
 
-    this.root["_dom"] = this.dom = collection_to_array(this.root.children);
+    this.root["_dom"] = this.dom = collection_to_array(this.root.childNodes);
     this.length = this.dom.length;
 
     return this;
@@ -438,7 +446,7 @@ function collection_to_array(collection){
     return array;
 }
 
-Mikado.prototype.create = function(data, view, index){
+Mikado.prototype.create = function(item, view, index){
 
     //profiler_start("create");
 
@@ -451,22 +459,20 @@ Mikado.prototype.create = function(data, view, index){
 
     if(!this.static){
 
-        this.update_path(clone["_path"], data, index, view);
+        this.update_path(clone["_path"], item, index, view);
     }
 
     const tmp = clone.cloneNode(true);
 
     if(this.loose){
 
-        tmp["_item"] = data;
+        tmp["_item"] = item;
     }
 
     //profiler_end("create");
 
     return tmp;
 };
-
-//const raf = window.requestAnimationFrame;
 
 let timer;
 
@@ -478,17 +484,17 @@ let timer;
  * @returns {Mikado|Promise}
  */
 
-Mikado.prototype.render = function(items, view, callback, skip_async){
+Mikado.prototype.render = (function(items, view, callback, skip_async){
 
-    if(!this.root){
+    // TODO: remove this lines breaks browser optimizations
+    //if(DEBUG){
 
-        if(DEBUG){
+        if(!this.root){
 
-            console.error("Template was not mounted or root was not found.");
+            console.error(DEBUG ? "Template was not mounted or root was not found." : "");
+            return this;
         }
-
-        return this;
-    }
+    //}
 
     if(!BUILD_LIGHT && !items){
 
@@ -552,33 +558,45 @@ Mikado.prototype.render = function(items, view, callback, skip_async){
         let count = items.length;
         let fragment;
 
-        // add or update
+        this.reuse || this.clear();
 
-        for(let x = 0, node, item; x < count; x++){
+        if(!this.length){
 
-            item = items[x];
+            this.dom = new Array(count);
 
-            if((node = this.dom[x])){
+            if(!BUILD_LIGHT && this.store && !this.extern){
 
-                if(this.reuse){
-
-                    this.update(node, item, view, x);
-                }
-                else{
-
-                    this.replace(node, item, view, x);
-                }
-            }
-            else{
-
-                this.add(item, view, this.root || (fragment = document.createDocumentFragment()));
+                this.store = new Array(count);
             }
         }
 
-        // if(fragment){
-        //
-        //     this.root.appendChild(fragment);
-        // }
+        // add or update
+
+        for(let x = 0; x < count; x++){
+
+            if(x < this.length){
+
+                //if(this.reuse){
+
+                    this.update(this.dom[x], items[x], view, x);
+                // }
+                // else{
+                //
+                //     this.replace(node, item, view, x);
+                // }
+            }
+            else{
+
+                // TODO: remove unused fragment from this lines breaks browser optimizations
+                this.add(items[x], view, this.root || (fragment = document.createDocumentFragment()));
+            }
+        }
+
+        // TODO: remove unused fragment from this lines breaks browser optimizations
+        if(fragment){
+
+            this.root.appendChild(fragment);
+        }
 
         // reduce
 
@@ -607,7 +625,7 @@ Mikado.prototype.render = function(items, view, callback, skip_async){
     //profiler_end("render");
 
     return this;
-};
+});
 
 /**
  * @param {*=} item
@@ -655,8 +673,14 @@ Mikado.prototype.clear = function(){
 
     if(!BUILD_LIGHT && this.store){
 
-        // TODO: keep reference?
-        this.store = [];
+        if(this.extern){
+
+            this.store.splice(0);
+        }
+        else{
+
+            this.store = [];
+        }
     }
 
     if(ENABLE_CACHE && this.cache){
@@ -667,6 +691,21 @@ Mikado.prototype.clear = function(){
     //profiler_end("clear");
 
     return this;
+};
+
+Mikado.prototype.destroy = function(){
+
+    if(this.template){
+
+        templates[this.template["n"]] = null;
+    }
+
+    this.dom = null;
+    this.root = null;
+    this.template = null;
+    this.vpath = null;
+    this.update_path = null;
+    this.clone = null;
 };
 
 if(!BUILD_LIGHT){
@@ -1324,10 +1363,12 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(ENABLE_CACHE && this.cache){
 
-                tmp_fn += "this";
+                tmp_fn += "this" + new_fn + ";";
             }
+            else{
 
-            tmp_fn += new_fn + ";";
+                tmp_fn += new_fn;
+            }
         }
         else{
 

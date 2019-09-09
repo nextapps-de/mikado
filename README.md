@@ -24,7 +24,9 @@ Take a look into the source code of this pages.
 Actually in progress:
 - Conditional branches
 - Includes/partials
-- Live Templates (Local Development)
+- Live templates (local development)
+- Persistent state
+- Loop (through partial)
 
 #### Get Latest (Stable Release):
 
@@ -179,6 +181,7 @@ Instance properties:
 - <a href="#view.length">View.__length__</a>
 - <a href="#view.length">View.__store__</a>
 - <a href="#view.length">View.__state__</a>
+- <a href="#view.length">View.__id__</a>
 
 ## Options
 
@@ -397,14 +400,14 @@ Within a template you have access to the following indentifiers:
     </tr>
     <tr></tr>
     <tr>
-        <td><b>root</b></td>
-        <td>Points to the root element of a current rendered template (this is not the root where the view is mounted).</td>
+        <td><b><s>root</s></b></td>
+        <td><s>Points to the root element of a current rendered template (this is not the root where the view is mounted).</s></td>
         <td>auto</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>self</b></td>
-        <td>Points to the current rendered element itself.</td>
+        <td><b><s>self</s></b></td>
+        <td><s>Points to the current rendered element itself.</s></td>
         <td>auto</td>
     </tr>
 </table>
@@ -651,8 +654,60 @@ Re-Sync Virtual DOM:
 view.sync();
 ```
 
+<a name="store" id="store"></a>
+## Storage
+
+Enable storage by passing the options during initialization:
+```js
+var view = new Mikado(root, template, {
+    store: true,
+    loose: true
+});
+```
+
+Whenever you call the ___.render()___ function with passed item data, this data will keep in cache. Mikado will handle those data for you.
+```js
+view.render(items);
+```
+
+You can re-render the last/current state at any time without passing items again:
+```js
+view.render();
+```
+
+Or force an update to a specific index:
+```js
+view.update(index);
+```
+
+#### Loose Option
+
+When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. When enabled you cannot use <a>paginated render</a>.
+
+#### Extern/Custom Store
+
+You can also pass an reference to an external store. This store must be an Array-like type.
+```js
+var MyStore = [ /* Item Data */ ];
+```
+
+Pass in the external storage when initializing:
+```js
+var view = new Mikado(root, template, {
+    store: MyStore,
+    loose: false,
+    persist: false
+});
+```
+
+> Changes to the DOM may automatically change your data to keep the state in sync.
+
 <a name="load" id="load"></a>
 ## Transport / Load Templates
+
+> Mikado fully supports server-side rendering. The template (including dynamic expressions) will compile to plain JSON.
+
+If your application has a lot of views, you can save memory and performance when loading them at the moment a user has requested this view.
 
 Load template asynchronously into the global cache:
 ```js
@@ -709,6 +764,17 @@ Chain methods:
 view.mount(document.body).init("template").render(items);
 ```
 
+#### Static Templates
+
+When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing item data.
+
+When a template just needs to be rendered once you can create, mount, render. destroy and fully cleanup as follows:
+```js
+Mikado.new(template).mount(root).render().destroy();
+```
+
+When destroying a template, the next time the same template wants to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to destroy a view when it was closed by the user to free memory.
+
 ## Best Practices
 
 A Mikado instance has a stronger relation to the template as to the root element. Please keep this example in mind:
@@ -729,6 +795,19 @@ view.init(tpl_a).render(items);
 view.init(tpl_b).render(items);
 view.init(tpl_c).render(items);
 ```
+
+This is also good:
+```js
+var view_a = new Mikado(tpl_a);
+var view_b = new Mikado(tpl_b);
+var view_c = new Mikado(tpl_c);
+
+view_a.mount(root_c).render(items);
+view_b.mount(root_b).render(items);
+view_c.mount(root_a).render(items);
+```
+
+Ideally every template should have initialized by one (and only one) Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
 
 <a name="includes" id="includes"></a>
 ## Includes

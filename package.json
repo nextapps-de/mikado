@@ -3,8 +3,9 @@
   "name": "mikado",
   "description": "Web's smartest virtual DOM templating engine.",
   "homepage": "https://github.com/nextapps-de/mikado/",
-  "author": "Nextapps GmbH",
-  "version": "0.0.71",
+  "author": "Thomas Wilkerling",
+  "copyright": "Nextapps GmbH",
+  "version": "0.0.72",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -47,7 +48,7 @@
   "readme": "README.md",
   "dependencies": {},
   "devDependencies": {
-    "google-closure-compiler": "^20190904.0.0-nightly",
+    "google-closure-compiler": "^20190908.0.0-nightly",
     "html2json": "^1.0.2",
     "web-servo": "^0.5.1"
   }
