@@ -26,7 +26,9 @@ Actually in progress:
 - Includes/partials
 - Live templates (local development)
 - Persistent state
-- Loop (through partial)
+- Paginated Render
+- Loops (through partials)
+- Plugin API
 
 #### Get Latest (Stable Release):
 
@@ -113,6 +115,22 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
+            <a href="#storage">Storage</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#paging">Paginated Render</a>
+        </td>
+        <td>WIP</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
             <a href="#conditional">Conditional Branches</a>
         </td>
         <td>WIP</td>
@@ -128,7 +146,7 @@ __Feature Comparison__
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>2.1 kb</td>
+        <td>4.1 kb</td>
         <td>1.6 kb</td>
     </tr>
 </table>
@@ -144,9 +162,10 @@ Global methods:
 - <a href="#mikado.create">Mikado.__new__(template, \<options\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
+- <a href="#mikado.load">Mikado.__unload__(template)</a>
 
 Instance methods:
-- <a href="#view.init">View.__init__(template)</a>
+- <a href="#view.init">View.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">View.__mount__(root)</a>
 - <a href="#view.render">View.__render__(items)</a>
 - <a href="#view.create">View.__create__(item)</a>
@@ -161,10 +180,11 @@ Instance methods:
 - <a href="#view.index">View.__index__(node)</a>
 - <a href="#view.parse">View.__parse__(template)</a>
 - <a href="#view.sync">View.__sync__()</a>
-- <a href="#view.sync">View.__listen__(event)</a>
-- <a href="#view.sync">View.__unlisten__(event)</a>
+- <a href="#view.sync">View.__destroy__()</a>
 
 Instance methods (not included in mikado.light.js):
+- <a href="#view.sync">View.__listen__(event)</a>
+- <a href="#view.sync">View.__unlisten__(event)</a>
 - <a href="#view.move">View.__move__(node, index)</a>
 - <a href="#view.shift">View.__shift__(node, offset)</a>
 - <a href="#view.up">View.__up__(node)</a>
@@ -184,6 +204,8 @@ Instance properties:
 - <a href="#view.length">View.__id__</a>
 
 ## Options
+
+> Each Mikado instance can have its own options.
 
 <table>
     <tr></tr>
@@ -212,13 +234,13 @@ Instance properties:
     <tr></tr>
     <tr>
         <td><b>cache</b></td>
-        <td>Enable/disable caching. Enable caching when some of you items stay unchanged. Disable caching when changes on data requires a fully re-render more often.</td>
+        <td>Enable/disable caching. Caching can greatly increase performance (up to 20x). Be careful, it fully depends on your application, there are situations where a enabled cache performs slower.<br><b>Recommendation:</b> enable caching when several of your item data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>store</b></td>
-        <td>Passed items for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the item data.</td>
+        <td>Passed items for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the item data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "Extern Storage"</a>).</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -232,6 +254,18 @@ Instance properties:
         <td><b>reuse</b></td>
         <td>When enabled all dom elements which are already rendered will be re-used for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Whe enabled make sure to use the <a>Virtual DOM Manipulation</a> helpers.</td>
         <td>true</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>state</b></td>
+        <td>Pass an extern object which should be referenced as the state used within template expressions.</td>
+        <td>{ }</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>once</b></td>
+        <td>Performs the render of a template just one time. When finishing it fully cleansup (removes view, item data and also the template definition). This is useful for static views, which should persist in the app.</td>
+        <td>false</td>
     </tr>
 </table>
 
@@ -256,7 +290,9 @@ Save this template e.g. to _template/template.html_.
 
 > The preserved keyword ___item___ is a reference to a passed item. You can access the whole nested object.
 
-Install mikado via NPM to make the command line interface available:
+Mikado comes up with a template compiler which has to be run through Node.js and provides a command line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
+
+Install Mikado via NPM to make the command line interface available:
 ```npm
 npm install mikado
 ```
@@ -359,7 +395,7 @@ Within a template you have access to the following indentifiers:
     <tr></tr>
     <tr>
         <td><b>view</b></td>
-        <td>An optional payload used to pass non-item specific data or helper functions.</td>
+        <td>An optional payload used to manually pass in non-item specific data or helper functions.</td>
         <td>manual</td>
     </tr>
     <tr></tr>
@@ -377,7 +413,7 @@ Within a template you have access to the following indentifiers:
     <tr></tr>
     <tr>
         <td>this.<b>state</b></td>
-        <td>An object used to keep data as a state across runtime.</td>
+        <td>An object used to keep data as a state across runtime. State data are shared across all Mikado instances.</td>
         <td>auto (manual set)</td>
     </tr>
     <tr></tr>
@@ -512,17 +548,36 @@ view.route("show-user", function(node){
 
 Routes are stored globally, so you can share routes through all Mikado instances.
 
-<b>List of all supported events:</b>
+<b>List of all native supported events:</b>
 - change, input, select, toggle
 - click, dblclick
-- keydown, keypress, keyup
+- keydown, keyup, keypress
 - mousedown, mouseenter, mouseleave, mousemove, mouseout, mouseover, mouseup, mousewheel
-- touchstart, touchmove, touchend, touchcancel
+- touchstart, touchmove, touchend
 - submit, reset
 - focus, blur
 - load, error
 - resize
 - scroll
+
+<b>Synthetic events:</b>
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Event</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td><b>tap</b></td>
+        <td>The tap event is a synthetic click event for touch-enabled devices. It also fully prevents the 300ms click delay. The tap event automatically falls back to a native click listener when running on non-touchable device.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>swipe</b></td>
+        <td>* This gesture is currently in progress.</td>
+    </tr>
+</table>
 
 <a name="manipulate" id="manipulate"></a>
 ## Manipulate Views
@@ -705,9 +760,11 @@ var view = new Mikado(root, template, {
 <a name="load" id="load"></a>
 ## Transport / Load Templates
 
-> Mikado fully supports server-side rendering. The template (including dynamic expressions) will compile to plain JSON.
+> Mikado fully supports server-side rendering. The template (including dynamic expressions) will compile to plain compatible JSON.
 
 If your application has a lot of views, you can save memory and performance when loading them at the moment a user has requested this view.
+
+> Templates are shared across several Mikado instances.
 
 Load template asynchronously into the global cache:
 ```js
@@ -770,10 +827,21 @@ When a template has no dynamic expressions (within curly brackets) which needs t
 
 When a template just needs to be rendered once you can create, mount, render. destroy and fully cleanup as follows:
 ```js
-Mikado.new(template).mount(root).render().destroy();
+Mikado.new(template)
+      .mount(root)
+      .render()
+      .destroy()
+      .unload(template);
 ```
 
-When destroying a template, the next time the same template wants to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to destroy a view when it was closed by the user to free memory.
+Or use an option flag as a shorthand:
+```js
+Mikado.new(root, template, { once: true }).render();
+```
+
+When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
+
+When unloading templates explicitly the template will also removes completely. The next time the same template is going to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to destroy also dynamic views when it was closed by the user to free memory.
 
 ## Best Practices
 

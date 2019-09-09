@@ -19,6 +19,7 @@ const { requestAnimationFrame, cancelAnimationFrame } = window;
 const templates = {};
 const events = {};
 const listener = {};
+let state = {};
 
 /**
  * @param {Element|Template} root
@@ -67,6 +68,7 @@ export default function Mikado(root, template, options){
 
     this.async = options && !!options["async"];
     this.reuse = !options || (options["reuse"] !== false);
+    this.state = (options && options["state"]) || state;
 
     if(!BUILD_LIGHT){
 
@@ -84,8 +86,6 @@ export default function Mikado(root, template, options){
             this.extern = typeof store === "object";
             this.store = store && (this.extern ? store : []);
         }
-
-        //this.index = store && options && options["index"];
     }
 
     if(root){
@@ -407,8 +407,6 @@ Mikado.prototype.init = function(template){
 
         this.check();
     }
-
-    this.state = {};
 
     return this;
 };
