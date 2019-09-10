@@ -1,5 +1,4 @@
 {
-
     "_dom": "_d",
     "_idx": "_i",
     "_path": "_p",
@@ -18,12 +17,14 @@
     "_text": "_x",
     "_event_": "_e_",
     "_root_": "_r_",
+    "_keys": "k",
 
-    "_setClass": "_l",
-    "_setCSS": "_c",
-    "_setStyle": "_s",
-    "_setAttribute": "_a",
-    "_setText": "_t",
-    "_setHTML": "_h",
+    "setClass": "_l",
+    "setCSS": "_c",
+    "setStyle": "_s",
+    "\\.setAttribute\\(self": "._a(self",
+    "prototype\\[\"setAttribute\"\\]": "prototype[\"_a\"]",
+    "setText": "_t",
+    "setHTML": "_h",
     "this.target": "this._t"
 }

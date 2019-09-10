@@ -8,18 +8,36 @@
 
 "use strict";
 
+import "./event.js";
+import "./helper.js";
+import "./cache.js";
+import "./polyfill.js";
 //import { profiler_start, profiler_end } from "./profiler.js";
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
+
+const defaults = {
+
+    "store": false,
+    "loose": true,
+    "cache": true,
+    "async": false,
+    "reuse": true
+    //"flat": false,
+    //"diff": false
+};
+
+/**
+ * @dict
+ */
+
+let state = {};
 
 /**
  * @type {Object<string, Template>}
  */
 
 const templates = {};
-const events = {};
-const listener = {};
-let state = {};
 
 /**
  * @param {Element|Template} root
@@ -40,52 +58,8 @@ export default function Mikado(root, template, options){
     if(!template){
 
         options = root;
-        root = options["root"];
-        template = options["template"];
-    }
-
-    if(DEBUG){
-
-        if(!template){
-
-            console.error("Initialization Error: Template is not defined.");
-        }
-    }
-
-    if(typeof template === "string"){
-
-        template = templates[template];
-    }
-    else{
-
-        Mikado.register(template);
-    }
-
-    if(ENABLE_CACHE){
-
-        this.cache = !options || (options["cache"] !== false);
-    }
-
-    this.async = options && !!options["async"];
-    this.reuse = !options || (options["reuse"] !== false);
-    this.state = (options && options["state"]) || state;
-
-    if(!BUILD_LIGHT){
-
-        const store = options && options["store"];
-
-        this.loose = store && options && !!options["loose"];
-
-        if(this.loose){
-
-            this.store = false;
-            //this.extern = false;
-        }
-        else{
-
-            this.extern = typeof store === "object";
-            this.store = store && (this.extern ? store : []);
-        }
+        //root = options["root"];
+        //template = options["template"];
     }
 
     if(root){
@@ -93,18 +67,25 @@ export default function Mikado(root, template, options){
         this.mount(root);
     }
 
-    this.init(template);
+    this.init(/** @type {Template} */ (template), options);
 };
 
-Mikado["register"] = function(name, tpl){
+/**
+ * @param {string|Template} name
+ * @param {Template=} tpl
+ */
+
+Mikado.register = function(name, tpl){
 
     if(!tpl){
 
-        tpl = name;
+        tpl = /** @type {Template} */ (name);
         name = tpl["n"];
     }
 
     templates[name] = tpl;
+
+    return Mikado;
 };
 
 /**
@@ -171,204 +152,6 @@ const event_types = {
     "scroll": 1
 };
 
-if(!BUILD_LIGHT){
-
-    const body = document.body;
-
-    function handler(event, type){
-
-        type || (type = event.type);
-
-        const event_target = event.target;
-        let target = event_target;
-        let id = event_target["_event_" + type];
-
-        if(!id){
-
-            while(target){
-
-                if(target === body){
-
-                    return;
-                }
-
-                id = target.getAttribute(type);
-
-                if(id){
-
-                    if(id.indexOf(":") !== -1){
-
-                        const cmp = id.split(":");
-                        const root = cmp[1];
-
-                        id = 0;
-                        target = target.parentElement;
-
-                        while(target !== body){
-
-                            if(target.hasAttribute(root)){
-
-                                id = cmp[0];
-                                break;
-                            }
-
-                            target = target.parentElement;
-                        }
-                    }
-
-                    break;
-                }
-
-                target = target.parentElement;
-            }
-
-            if(!id){
-
-                return;
-            }
-
-            event_target["_event_" + type] = id;
-            event_target["_root_" + type] = target;
-        }
-        else{
-
-            target = event_target["_root_" + type];
-        }
-
-        const fn = listener[id];
-
-        if(fn){
-
-            fn(target, event);
-        }
-        else if(DEBUG){
-
-            console.warn("Route: '" + id + "', Event: '" + type + "' is undefined.");
-        }
-
-        event.stopPropagation();
-    }
-
-    Mikado.prototype.route = function(id, fn){
-
-        listener[id] = fn;
-        return this;
-    };
-
-    let has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
-    let touch_x, touch_y;
-    let register_tap;
-
-    if(has_touch){
-
-        function handler_down(event){
-
-            pointer(event, event.touches);
-        }
-
-        function handler_end(event){
-
-            let last_x = touch_x;
-            let last_y = touch_y;
-
-            pointer(event, event.changedTouches);
-
-            if((Math.abs(touch_x - last_x) < 50) &&
-               (Math.abs(touch_y - last_y) < 50)){
-
-                handler.call(this, event, "click");
-            }
-        }
-
-        function pointer(event, touches){
-
-            if(touches){
-
-                touches = touches[0];
-            }
-
-            touch_x = touches ? touches["clientX"] : event["pageX"];
-            touch_y = touches ? touches["clientY"] : event["pageY"];
-        }
-
-        register_tap = function(add_or_remove){
-
-            register_event(add_or_remove, "touchstart", handler_down, false);
-            //register_event(add_or_remove, "touchmove", handler_move, false);
-            register_event(add_or_remove, "touchend", handler_end, false);
-        };
-    }
-
-    /**
-     * @param event
-     * @param {Object|boolean=} options
-     * @returns {Mikado}
-     */
-
-    Mikado.prototype.listen = function(event, options){
-
-        if(!events[event]){
-
-            if(has_touch && (event === "click")){
-
-                register_tap(1);
-            }
-            else{
-
-                register_event(1, event, handler, options || true);
-            }
-
-            events[event] = 1;
-        }
-
-        return this;
-    };
-
-    /**
-     * @param event
-     * @param {Object|boolean=} options
-     * @returns {Mikado}
-     */
-
-    Mikado.prototype.unlisten = function(event, options){
-
-        if(events[event]){
-
-            if(has_touch && (event === "click")){
-
-                register_tap(0);
-            }
-            else{
-
-                register_event(0, event, handler, options || true);
-            }
-
-            events[event] = 0;
-        }
-
-        return this;
-    };
-
-    /**
-     * @param add_or_remove
-     * @param type
-     * @param handler
-     * @param {EventListenerOptions|boolean=} options
-     */
-
-    function register_event(add_or_remove, type, handler, options){
-
-        window[(add_or_remove ? "add": "remove") + "EventListener"](
-            type,
-            handler,
-            options || {
-                "passive": true,
-                "capture": true
-            }
-        );
-    }
-}
-
 Mikado.prototype.sync = function(){
 
     this.root["_dom"] = this.dom = collection_to_array(this.root.childNodes);
@@ -394,7 +177,84 @@ Mikado.prototype.item = function(index){
 
 let id_counter = 0;
 
-Mikado.prototype.init = function(template){
+/**
+ * @param {Template|string} template
+ * @param {Object=} options
+ * @returns {Mikado}
+ */
+
+Mikado.prototype.init = function(template, options){
+
+    if(DEBUG){
+
+        if(!template){
+
+            console.error("Initialization Error: Template is not defined.");
+        }
+    }
+
+    options = options ?
+
+        Object.assign({}, this.config || defaults, options)
+    :
+        defaults;
+
+    /** @export */
+    this.config = options;
+
+    if(typeof template === "string"){
+
+        template = templates[template];
+    }
+    else{
+
+        Mikado.register(template);
+    }
+
+    if(SUPPORT_CACHE){
+
+        this.cache = options["cache"];
+    }
+
+    if(SUPPORT_ASYNC){
+
+        this.async = options["async"];
+    }
+
+    this.reuse = options["reuse"];
+
+    /** @export */
+    this.state = options["state"] || state;
+
+    if(SUPPORT_STORAGE){
+
+        const store = options["store"];
+
+        if(store){
+
+            this.loose = options["loose"];
+
+            if(this.loose){
+
+                this.store = false;
+            }
+            else{
+
+                this.extern = typeof store === "object";
+
+                /** @export */
+                this.store = store && (this.extern ? store : []);
+            }
+
+            //this.flat = options["flat"];
+            //this.diff = options["diff"];
+        }
+        else{
+
+            this.store = false;
+            this.loose = false;
+        }
+    }
 
     if(this.template !== template){
 
@@ -494,7 +354,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
         }
     //}
 
-    if(!BUILD_LIGHT && !items){
+    if(SUPPORT_STORAGE && !items){
 
         items = this.store;
     }
@@ -502,7 +362,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
         callback = items;
 
-        if(!BUILD_LIGHT){
+        if(SUPPORT_STORAGE){
 
             items = this.store;
         }
@@ -513,7 +373,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
         view = null;
     }
 
-    if(!skip_async){
+    if(SUPPORT_ASYNC && !skip_async){
 
         if(callback){
 
@@ -562,7 +422,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
             this.dom = new Array(count);
 
-            if(!BUILD_LIGHT && this.store && !this.extern){
+            if(SUPPORT_STORAGE && this.store && !this.extern){
 
                 this.store = new Array(count);
             }
@@ -600,7 +460,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
         if(count < this.length){
 
-            if(!BUILD_LIGHT && this.store){
+            if(SUPPORT_STORAGE && this.store){
 
                 this.store.splice(count);
             }
@@ -639,7 +499,9 @@ Mikado.prototype.add = function(item, view, target){
     const length = this.length;
     const tmp = this.create(item, view, length);
 
-    if(!BUILD_LIGHT) {
+    if(SUPPORT_STORAGE) {
+
+        //item["_ref"] = tmp;
 
         if(this.store){
 
@@ -665,11 +527,11 @@ Mikado.prototype.clear = function(){
 
     //profiler_start("clear");
 
-    this.root.textContent = "";
     this.root["_dom"] = this.dom = [];
+    this.root.textContent = "";
     this.length = 0;
 
-    if(!BUILD_LIGHT && this.store){
+    if(SUPPORT_STORAGE && this.store){
 
         if(this.extern){
 
@@ -681,7 +543,7 @@ Mikado.prototype.clear = function(){
         }
     }
 
-    if(ENABLE_CACHE && this.cache){
+    if(SUPPORT_CACHE && this.cache){
 
         this.root["_html"] = null;
     }
@@ -691,11 +553,11 @@ Mikado.prototype.clear = function(){
     return this;
 };
 
-Mikado.prototype.destroy = function(){
+Mikado.prototype.destroy = function(unload){
 
-    if(this.template){
+    if(unload){
 
-        templates[this.template["n"]] = null;
+        this.unload();
     }
 
     this.dom = null;
@@ -706,11 +568,7 @@ Mikado.prototype.destroy = function(){
     this.clone = null;
 };
 
-if(!BUILD_LIGHT){
-
-    /**
-     * @export
-     */
+if(SUPPORT_ASYNC){
 
     Mikado.prototype.cancel = function(){
 
@@ -720,354 +578,203 @@ if(!BUILD_LIGHT){
             timer = null;
         }
     };
+}
 
-    /**
-     * @param {*=} items
-     * @param {*=} view
-     * @export
-     */
+/**
+ * @param {*=} items
+ * @param {*=} view
+ */
 
-    Mikado.prototype.append = function(items, view){
+Mikado.prototype.append = function(items, view){
 
-        //profiler_start("append");
+    //profiler_start("append");
 
-        const count = items.length;
+    const count = items.length;
 
-        for(let x = 0; x < count; x++){
+    for(let x = 0; x < count; x++){
 
-            this.add(items[x], view);
+        this.add(items[x], view);
+    }
+
+    //profiler_end("append");
+
+    return this;
+};
+
+Mikado.prototype.remove = function(node){
+
+    //profiler_start("remove");
+
+    const index = node["_idx"];
+
+    this.dom.splice(index, 1);
+    this.root.removeChild(node);
+    this.length--;
+
+    if(SUPPORT_STORAGE && this.store){
+
+        this.store.splice(index, 1);
+    }
+
+    for(let i = index; i < this.length; i++){
+
+        this.dom[i]["_idx"] = i;
+    }
+
+    //profiler_end("remove");
+
+    return this;
+};
+
+Mikado.prototype.replace = function(node, item, view, index){
+
+    //profiler_start("replace");
+
+    if(typeof index === "undefined"){
+
+        index = node["_idx"];
+    }
+
+    const tmp = this.create(item, view, index);
+
+    if(SUPPORT_STORAGE) {
+
+        if(this.store){
+
+            this.store[index] = item;
         }
+        else if(this.loose){
 
-        //profiler_end("append");
-
-        return this;
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.remove = function(node){
-
-        //profiler_start("remove");
-
-        const index = node["_idx"];
-
-        this.dom.splice(index, 1);
-        this.root.removeChild(node);
-        this.length--;
-
-        if(!BUILD_LIGHT && this.store){
-
-            this.store.splice(index, 1);
+            tmp["_item"] = item;
         }
+    }
 
-        for(let i = index; i < this.length; i++){
+    //node.replaceWith(tmp);
+    this.root.replaceChild(tmp, node);
+    this.dom[index] = tmp;
 
-            this.dom[i]["_idx"] = i;
+    //profiler_end("replace");
+
+    return this;
+};
+
+/**
+ * @param {Element|number} node
+ * @param {*=} item
+ * @param {*=} view
+ * @param {number=} index
+ */
+
+Mikado.prototype.update = function(node, item, view, index){
+
+    //profiler_start("update");
+
+    if(!this.static){
+
+        if(typeof node === "number"){
+
+            index = node;
+            node = this.dom[node];
         }
-
-        //profiler_end("remove");
-
-        return this;
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.up = function(a){
-
-        const index = a["_idx"];
-
-        if(index){
-
-            const a = this.dom[index];
-            const b = this.dom[index - 1];
-
-            this.root.insertBefore(a, b);
-
-            a["_idx"] = index - 1;
-            b["_idx"] = index;
-
-            this.dom[index] = b;
-            this.dom[index - 1] = a;
-
-            if(!BUILD_LIGHT && this.store){
-
-                const tmp = this.store[index - 1];
-
-                this.store[index - 1] = this.store[index];
-                this.store[index] = tmp;
-            }
-        }
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.down = function(a){
-
-        const index = a["_idx"];
-
-        if(index < this.length - 1){
-
-            const a = this.dom[index];
-            const b = this.dom[index + 1];
-
-            if(index === this.length - 2){
-
-                this.root.appendChild(a);
-            }
-            else{
-
-                this.root.insertBefore(a, b);
-            }
-
-            a["_idx"] = index + 1;
-            b["_idx"] = index;
-
-            this.dom[index] = b;
-            this.dom[index + 1] = a;
-
-            if(!BUILD_LIGHT && this.store){
-
-                const tmp = this.store[index + 1];
-
-                this.store[index + 1] = this.store[index];
-                this.store[index] = tmp;
-            }
-        }
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.first = function(a){
-
-        const index = a["_idx"];
-
-        if(index){
-
-            this.root.insertBefore(a, this.dom[0]);
-            const tmp = this.dom.splice(index, 1)[0];
-            this.dom.unshift(tmp);
-
-            for(let i = 0; i <= index; i++){
-
-                this.dom[i]["_idx"] = i;
-            }
-
-            if(!BUILD_LIGHT && this.store){
-
-                const tmp = this.store.splice(index, 1)[0];
-                this.store.unshift(tmp);
-            }
-        }
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.last = function(a){
-
-        const index = a["_idx"];
-
-        if(index < this.length - 1){
-
-            this.root.appendChild(a);
-            const tmp = this.dom.splice(index, 1)[0];
-            this.dom.push(tmp);
-
-            for(let i = index; i < this.length; i++){
-
-                this.dom[i]["_idx"] = i;
-            }
-
-            if(!BUILD_LIGHT && this.store){
-
-                const tmp = this.store.splice(index, 1)[0];
-                this.store.push(tmp);
-            }
-        }
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.swap = function(a, b){
-
-        //profiler_start("swap");
-
-        if(a !== b){
-
-            let tmp_a;
-            let tmp_b;
-
-            if(typeof a === "number"){
-
-                tmp_a = a;
-                a = this.dom[a];
-            }
-            else{
-
-                tmp_a = a["_idx"];
-            }
-
-            if(typeof b === "number"){
-
-                tmp_b = b;
-                b = this.dom[b];
-            }
-            else{
-
-                tmp_b = b["_idx"];
-            }
-
-            if(this.reuse){
-
-                const tmp = a["_item"];
-                this.update(a, b["_item"], null, tmp_b);
-                this.update(b, tmp, null, tmp_a);
-            }
-            else{
-
-                this.root.insertBefore(a, b);
-                this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-
-                /*
-                b.replaceWith(a);
-                this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                */
-
-                a["_idx"] = tmp_b;
-                b["_idx"] = tmp_a;
-
-                this.dom[tmp_a] = b;
-                this.dom[tmp_b] = a;
-            }
-
-            // 3. Strategy Swap
-            /*
-            if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
-            else{
-                this.root.insertBefore(b, a);
-                if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
-                else this.root.appendChild(a);
-            }
-            */
-
-            if(!BUILD_LIGHT && this.store){
-
-                const tmp = this.store[tmp_b];
-
-                this.store[tmp_b] = this.store[tmp_a];
-                this.store[tmp_a] = tmp;
-            }
-        }
-
-        //profiler_end("swap");
-
-        return this;
-    };
-
-    /**
-     * @export
-     */
-
-    Mikado.prototype.replace = function(node, item, view, index){
-
-        //profiler_start("replace");
-
-        if(typeof index === "undefined"){
+        else if(typeof index === "undefined"){
 
             index = node["_idx"];
         }
 
-        const tmp = this.create(item, view, index);
-
-        if(!BUILD_LIGHT) {
+        if(SUPPORT_STORAGE){
 
             if(this.store){
 
-                this.store[index] = item;
+                if(item){
+
+                    // if(this.flat && !diff(this.store[index], item, this.diff)){
+                    //
+                    //     return this;
+                    // }
+                    //
+                    // this.store[index] = this.flat ?
+                    //
+                    //     Object.assign({}, /** @type {Object} */ (item))
+                    // :
+                    //     item;
+
+                    this.store[index] = item;
+                }
+                else{
+
+                    item = this.store[index];
+                }
             }
             else if(this.loose){
 
-                tmp["_item"] = item;
+                if(item){
+
+                    // if(this.flat && !diff(node["_item"], item, this.diff)){
+                    //
+                    //     return this;
+                    // }
+                    //
+                    // node["_item"] = this.flat ?
+                    //
+                    //     Object.assign({}, /** @type {Object} */ (item))
+                    // :
+                    //     item;
+
+                    node["_item"] = item;
+                }
+                else{
+
+                    item = node["_item"];
+                }
             }
         }
 
-        node.replaceWith(tmp);
-        //this.root.replaceChild(tmp, node);
-        this.dom[index] = tmp;
+        this.update_path(node["_path"] || this.create_path(node), item, index, view);
+        //this.refresh(node, item, view, index);
+    }
 
-        //profiler_end("replace");
+    //profiler_end("update");
 
-        return this;
-    };
+    return this;
+};
 
-    /**
-     * @param {Element|number} node
-     * @param {*=} item
-     * @param {*=} view
-     * @param {number=} index
-     * @export
-     */
+/*
+Mikado.prototype.refresh = function(node, item, view, index){
 
-    Mikado.prototype.update = function(node, item, view, index){
+    this.update_path(node["_path"] || this.create_path(node), item, index, view);
+    return this;
+};
+*/
 
-        //profiler_start("update");
+function diff(store, item, diff){
 
-        if(!this.static){
+    let changes = null;
 
-            if(typeof node === "number"){
+    if(store){
 
-                index = node;
-                node = this.dom[node];
-            }
-            else if(typeof index === "undefined"){
+        const keys = store["_keys"] || (store["_keys"] = Object.keys(store));
+        const length = keys.length;
 
-                index = node["_idx"];
-            }
+        for(let i = 0, key, val; i < length; i++){
 
-            if(!BUILD_LIGHT) {
+            key = keys[i];
+            val = store[key];
 
-                if(this.store){
+            if(item[key] !== val){
 
-                    if(item){
+                if(diff){
 
-                        this.store[index] = item;
-                    }
-                    else{
-
-                        item = this.store[index];
-                    }
+                    (changes || (changes = {}))[key] = val;
                 }
-                else if(this.loose){
+                else{
 
-                    if(item){
-
-                        node["_item"] = item;
-                    }
-                    else{
-
-                        item = node["_item"];
-                    }
+                    return true;
                 }
             }
-
-            this.update_path(node["_path"] || this.create_path(node), item, index, view);
         }
+    }
 
-        //profiler_end("update");
-
-        return this;
-    };
+    return changes;
 }
 
 // resolve(nodes, "&") => root
@@ -1183,9 +890,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         if(typeof class_name === "object"){
 
-            new_fn += ENABLE_CACHE && this.cache ?
+            new_fn += SUPPORT_CACHE && this.cache ?
 
-                "._setClass(self," + class_name[0] + ")"
+                ".setClass(self," + class_name[0] + ")"
             :
                 "self.className=" + class_name[0] + ";";
 
@@ -1212,9 +919,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof value === "object"){
 
-                new_fn += ENABLE_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ?
 
-                    "._setAttribute(self,'" + key + "'," + value[0] + ")"
+                    ".setAttribute(self,'" + key + "'," + value[0] + ")"
                 :
                     "self.setAttribute('" + key + "'," + value[0] + ");";
 
@@ -1226,7 +933,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 node.setAttribute(key, value);
             }
 
-            if(event_types[key]){
+            if(SUPPORT_EVENTS && event_types[key]){
 
                 this.listen(key);
             }
@@ -1248,9 +955,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else if(style.length){
 
-            new_fn += ENABLE_CACHE && this.cache ?
+            new_fn += SUPPORT_CACHE && this.cache ?
 
-                "._setCSS(self," + style[0] + ")"
+                ".setCSS(self," + style[0] + ")"
             :
                 "self.style.cssText=" + style[0] + ";";
 
@@ -1270,9 +977,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 if(typeof value === "object"){
 
-                    new_fn += ENABLE_CACHE && this.cache ?
+                    new_fn += SUPPORT_CACHE && this.cache ?
 
-                        "._setStyle(self,'" + key + "'," + value[0] + ")"
+                        ".setStyle(self,'" + key + "'," + value[0] + ")"
                     :
                         "self.style.setProperty('" + key + "'," + value[0] + ");";
 
@@ -1311,9 +1018,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(is_object){
 
-                new_fn += ENABLE_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ?
 
-                    "._setText(self," + text + ")"
+                    ".setText(self," + text + ")"
                 :
                     "self.nodeValue=" + text + ";";
 
@@ -1335,9 +1042,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             if(typeof html === "object"){
 
                 html = html[0];
-                new_fn += ENABLE_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ?
 
-                    "._setHTML(self, " + html + ")"
+                    ".setHTML(self, " + html + ")"
                 :
                     "self.innerHTML=" + html + ";";
 
@@ -1359,7 +1066,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             tmp_fn += "self=p[" + path_length + "];";
 
-            if(ENABLE_CACHE && this.cache){
+            if(SUPPORT_CACHE && this.cache){
 
                 tmp_fn += "this" + new_fn + ";";
             }
@@ -1370,7 +1077,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else{
 
-            if(ENABLE_CACHE && this.cache){
+            if(SUPPORT_CACHE && this.cache){
 
                 tmp_fn += "this" + new_fn.replace(/self/g, "p[" + path_length + "]") + ";";
             }
@@ -1426,110 +1133,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
 // TODO: when rendering on a modified template all states hast to reset to its default template values
 
-if(ENABLE_CACHE) Mikado.prototype["_setText"] = function(target, text){
-
-    if(target["_text"] !== text){
-
-        target.nodeValue = text;
-        target["_text"] = text;
-    }
-
-    return this;
-};
-
-// TODO: when rendering on a modified template all states hast to reset to its default template values
-
-if(ENABLE_CACHE) Mikado.prototype["_setHTML"] = function(target, html){
-
-    if(target["_html"] !== html){
-
-        target.innerHTML = html;
-        target["_html"] = html;
-    }
-
-    return this;
-};
-
-// OK: when rendering on a modified template all states hast to reset to its default template values
-
-if(ENABLE_CACHE) Mikado.prototype["_setClass"] = function(target, class_name){
-
-    if(target["_class"] !== class_name){
-
-        target.className = class_name;
-        target["_class"] = class_name;
-        target["_class_cache"] = null; // TODO: Xone compatibility
-    }
-
-    return this;
-};
-
-// Ok: when rendering on a modified template all states hast to reset to its default template values
-
-if(ENABLE_CACHE) Mikado.prototype["_setStyle"] = function(target, style, value){
-
-    const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
-
-    if(style_cache[style] !== value){
-
-        style_cache[style] = value;
-        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-        target["_css"] = null;
-    }
-
-    return this;
-};
-
-/*
-Mikado.prototype["_setStyle"] = function(target, style, value){
-
-    const key = "_style_" + style;
-
-    if(target[key] !== value){
-
-        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-        target[key] = value;
-    }
-
-    return this;
-};
-*/
-
-// OK: when rendering on a modified template all states hast to reset to its default template values
-
-if(ENABLE_CACHE) Mikado.prototype["_setCSS"] = function(target, style){
-
-    if(target["_css"] !== style){
-
-        (target["_style"] || (target["_style"] = target.style)).cssText = style;
-        target["_css"] = style;
-        target["_style_cache"] = null; // TODO: Xone Compatibility
-    }
-
-    return this;
-};
-
-// https://jsperf.com/data-dataset/43
-// NOTE: when rendering on a modified template all states hast to reset to its default template values
-
-if(ENABLE_CACHE) Mikado.prototype["_setAttribute"] = function(target, attr, value){
-
-    const key = "_attr_" + attr;
-
-    if(target[key] !== value){
-
-        target.setAttribute(attr, value);
-        target[key] = value;
-    }
-
-    return this;
-};
-
-if(!BUILD_LIGHT){
-
-    /**
-     * @export
-     */
+if(SUPPORT_TRANSPORT){
 
     Mikado.prototype.load = function(file, callback){
 
@@ -1560,7 +1164,7 @@ if(!BUILD_LIGHT){
 
                 try{
 
-                    const tpl = JSON.parse(json);
+                    const tpl = /** @type {Template} */ (JSON.parse(json));
 
                     Mikado.register(file, tpl);
 
@@ -1584,74 +1188,20 @@ if(!BUILD_LIGHT){
         xhr.send();
     };
 
-    Mikado["load"] = Mikado.prototype.load;
+    /**
+     * @param {Template=} template
+     */
 
-    Mikado.prototype.shuffle = function(){
+    Mikado.prototype.unload = function(template){
 
-        const dom = this.dom;
+        template || (template = this.template);
 
-        for(let i = dom.length - 1; i > 0; i--) {
+        if(template){
 
-            let j = (Math.random() * (i + 1)) | 0;
-            let x = dom[i];
-            dom[i] = dom[j];
-            dom[j] = x;
+            templates[template["n"]] = null;
         }
-
-        return this;
     };
 
-    function diff(node, item){
-
-        const node_item = node["_item"];
-
-        if(node_item){
-
-            //const changes = {};
-            const keys = Object.keys(item);
-            const length = keys.length;
-            let updates = 0;
-
-            for(let i = 0, key; i < length; i++){
-
-                key = keys[i];
-                //val = item[key];
-
-                if(item[key] !== node_item[key]){
-
-                    //changes[key] = val;
-                    updates++;
-                }
-            }
-
-            if(!updates){
-
-                return this;
-            }
-        }
-    }
+    Mikado.load = Mikado.prototype.load;
+    Mikado.unload = Mikado.prototype.unload;
 }
-
-/** @export */
-Mikado.prototype.render;
-/** @export */
-Mikado.prototype.mount;
-/** @export */
-Mikado.register;
-
-/** @record */
-function Template() {}
-/** @type {!Template|Array<Template>} */
-Template.prototype.i;
-/** @type {!string|Array<string>} */
-Template.prototype.h;
-/** @type {!string|Array<string>} */
-Template.prototype.x;
-/** @type {!string|Object<string, string>|Array<Object<string, string>>} */
-Template.prototype.s;
-/** @type {!string|Array<string>} */
-Template.prototype.p;
-/** @type {!Object<string, string>} */
-Template.prototype.a;
-/** @type {!string|Array<string>} */
-Template.prototype.c;

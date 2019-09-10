@@ -2,19 +2,49 @@
  * @define {boolean}
  */
 
-const DEBUG = false;
+const DEBUG = true;
 
 /**
  * @define {boolean}
  */
 
-const BUILD_LIGHT = false;
+const USE_POLYFILL = true;
 
 /**
  * @define {boolean}
  */
 
-const ENABLE_CACHE = true;
+const SUPPORT_CACHE = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_EVENTS = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_STORAGE = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_HELPERS = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_ASYNC = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_TRANSPORT = true;
 
 /**
  * @define {string}

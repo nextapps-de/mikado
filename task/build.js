@@ -28,10 +28,12 @@ var options = (function(argv){
 
                 language_out = val;
             }
+            /*
             else if(index === "USE_POLYFILL"){
 
                 use_polyfill = val;
             }
+            */
             else{
 
                 flag_str += " --define='" + index + "=" + val + "'";
@@ -113,6 +115,13 @@ if(custom){
 }
 
 fs.writeFileSync("tmp/browser.js", fs.readFileSync("src/browser.js"));
+fs.writeFileSync("tmp/config.js", fs.readFileSync("src/config.js"));
+fs.writeFileSync("tmp/event.js", fs.readFileSync("src/event.js"));
+fs.writeFileSync("tmp/helper.js", fs.readFileSync("src/helper.js"));
+fs.writeFileSync("tmp/type.js", fs.readFileSync("src/type.js"));
+fs.writeFileSync("tmp/cache.js", fs.readFileSync("src/cache.js"));
+fs.writeFileSync("tmp/export.js", fs.readFileSync("src/export.js"));
+fs.writeFileSync("tmp/polyfill.js", fs.readFileSync("src/polyfill.js"));
 
 let src = fs.readFileSync("src/mikado.js");
 const rename = require('./rename.json');
@@ -131,7 +140,7 @@ fs.writeFileSync("tmp/mikado.js", src);
 
 var filename = "dist/mikado." + (options["RELEASE"] || "custom") + ".js";
 
-exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parameter + " --js='src/config.js' --js='tmp/browser.js' --js='tmp/mikado.js'" + flag_str + " --js_output_file='" + filename + "' && exit 0", function(){
+exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parameter + " --js='tmp/**.js'" + flag_str + " --js_output_file='" + filename + "' && exit 0", function(){
 
     let build = fs.readFileSync(filename);
     let preserve = fs.readFileSync("src/mikado.js", "utf8");
