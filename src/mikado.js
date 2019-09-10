@@ -1188,20 +1188,21 @@ if(SUPPORT_TRANSPORT){
         xhr.send();
     };
 
-    /**
-     * @param {Template=} template
-     */
-
-    Mikado.prototype.unload = function(template){
-
-        template || (template = this.template);
-
-        if(template){
-
-            templates[template["n"]] = null;
-        }
-    };
-
     Mikado.load = Mikado.prototype.load;
-    Mikado.unload = Mikado.prototype.unload;
 }
+
+/**
+ * @param {Template=} template
+ */
+
+Mikado.prototype.unload = function(template){
+
+    template || (template = this.template);
+
+    if(template){
+
+        templates[template["n"]] = null;
+    }
+};
+
+Mikado.unload = Mikado.prototype.unload;

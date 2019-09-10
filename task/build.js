@@ -51,6 +51,7 @@ var options = (function(argv){
 })(process.argv);
 
 const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "--light");
+const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
 //const extern = process.argv[2] === "--extern";
 
 const parameter = (function(opt){
@@ -147,7 +148,7 @@ exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parame
 
     const package_json = require("../package.json");
 
-    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + (light_version ? " (Light)" : ""));
+    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + (light_version ? " (Light)" : es5_version ? " (ES5)" : ""));
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
     fs.writeFileSync(filename, build);
 

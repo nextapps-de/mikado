@@ -3,15 +3,13 @@ import Mikado from "./mikado.js";
 /** @export */
 Mikado.register;
 /** @export */
-Mikado.load;
-/** @export */
 Mikado.unload;
+/** @export */
+Mikado.load;
 /** @export */
 Mikado.new;
 /** @export */
 Mikado.prototype.load;
-/** @export */
-Mikado.prototype.unload;
 /** @export */
 Mikado.prototype.update;
 /** @export */
@@ -24,6 +22,8 @@ Mikado.prototype.replace;
 Mikado.prototype.render;
 /** @export */
 Mikado.prototype.register;
+/** @export */
+Mikado.prototype.unload;
 /** @export */
 Mikado.prototype.remove;
 /** @export */
