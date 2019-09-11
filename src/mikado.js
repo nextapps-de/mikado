@@ -11,6 +11,7 @@
 import "./event.js";
 import "./helper.js";
 import "./cache.js";
+import "./store.js";
 import "./polyfill.js";
 //import { profiler_start, profiler_end } from "./profiler.js";
 
@@ -65,6 +66,12 @@ export default function Mikado(root, template, options){
     if(root){
 
         this.mount(root);
+    }
+    else{
+
+        this.dom = null;
+        this.root = null;
+        this.length = 0;
     }
 
     this.init(/** @type {Template} */ (template), options);
@@ -175,8 +182,6 @@ Mikado.prototype.item = function(index){
     return this.loose ? this.dom[index]["_item"] : this.store[index];
 };
 
-let id_counter = 0;
-
 /**
  * @param {Template|string} template
  * @param {Object=} options
@@ -259,11 +264,12 @@ Mikado.prototype.init = function(template, options){
     if(this.template !== template){
 
         this.template = template;
-        this.id = ++id_counter;
+        this.id = template["n"];
         this.vpath = null;
         this.update_path = null;
-        this.clone = null;
+        //this.clone = null;
         this.static = true;
+        this.clone = this.parse(template);
 
         this.check();
     }
@@ -310,22 +316,16 @@ Mikado.prototype.create = function(item, view, index){
 
     let clone = this.clone;
 
+    /*
     if(!clone){
 
         this.clone = clone = this.parse(this.template);
     }
+    */
 
-    if(!this.static){
-
-        this.update_path(clone["_path"], item, index, view);
-    }
+    this.static || this.update_path(clone["_path"], item, index, view);
 
     const tmp = clone.cloneNode(true);
-
-    if(this.loose){
-
-        tmp["_item"] = item;
-    }
 
     //profiler_end("create");
 
@@ -344,19 +344,22 @@ let timer;
 
 Mikado.prototype.render = (function(items, view, callback, skip_async){
 
-    // TODO: remove this lines breaks browser optimizations
-    //if(DEBUG){
+    if(DEBUG){
 
         if(!this.root){
 
-            console.error(DEBUG ? "Template was not mounted or root was not found." : "");
-            return this;
+            console.error("Template was not mounted or root was not found.");
         }
-    //}
+    }
 
     if(SUPPORT_STORAGE && !items){
 
         items = this.store;
+
+        if(this.loose){
+
+            this.store = null;
+        }
     }
     else if(typeof items === "function"){
 
@@ -411,22 +414,16 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
     //profiler_start("render");
 
-    if(items){
+    if(this.static){
 
-        let count = items.length;
-        let fragment;
+        this.dom[0] || this.add();
+    }
+    else if(items || this.loose){
 
-        this.reuse || this.clear();
+        let count = items ? items.length : this.length;
+        //let fragment;
 
-        if(!this.length){
-
-            this.dom = new Array(count);
-
-            if(SUPPORT_STORAGE && this.store && !this.extern){
-
-                this.store = new Array(count);
-            }
-        }
+        this.reuse || this.clear(/* resize: */ count);
 
         // add or update
 
@@ -440,21 +437,19 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
                 // }
                 // else{
                 //
-                //     this.replace(node, item, view, x);
+                //     this.replace(this.dom[x], items[x], view, x);
                 // }
             }
             else{
 
-                // TODO: remove unused fragment from this lines breaks browser optimizations
-                this.add(items[x], view, this.root || (fragment = document.createDocumentFragment()));
+                this.add(items[x], view, this.root /*|| (fragment = document.createDocumentFragment())*/);
             }
         }
 
-        // TODO: remove unused fragment from this lines breaks browser optimizations
-        if(fragment){
-
-            this.root.appendChild(fragment);
-        }
+        // if(fragment){
+        //
+        //     this.root.appendChild(fragment);
+        // }
 
         // reduce
 
@@ -474,10 +469,6 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
                 this.root.removeChild(nodes[x]);
             }
         }
-    }
-    else{
-
-        this.dom[0] || this.add();
     }
 
     //profiler_end("render");
@@ -523,11 +514,15 @@ Mikado.prototype.add = function(item, view, target){
     return this;
 };
 
-Mikado.prototype.clear = function(){
+/**
+ * @param {boolean=} resize
+ */
+
+Mikado.prototype.clear = function(resize){
 
     //profiler_start("clear");
 
-    this.root["_dom"] = this.dom = [];
+    this.root["_dom"] = this.dom = resize ? new Array(resize) : [];
     this.root.textContent = "";
     this.length = 0;
 
@@ -539,7 +534,7 @@ Mikado.prototype.clear = function(){
         }
         else{
 
-            this.store = [];
+            this.store = resize ? new Array(resize) : [];
         }
     }
 
@@ -649,6 +644,7 @@ Mikado.prototype.replace = function(node, item, view, index){
         }
     }
 
+    tmp["_idx"] = index;
     //node.replaceWith(tmp);
     this.root.replaceChild(tmp, node);
     this.dom[index] = tmp;

@@ -50,3 +50,7 @@ Mikado.prototype.append;
 Mikado.prototype.add;
 /** @export */
 Mikado.prototype.route;
+/** @export */
+Mikado.prototype.export;
+/** @export */
+Mikado.prototype.import;

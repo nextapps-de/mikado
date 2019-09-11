@@ -115,29 +115,37 @@ if(custom){
     options["RELEASE"] = "custom." + hashCode(parameter + flag_str).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 }
 
-fs.writeFileSync("tmp/browser.js", fs.readFileSync("src/browser.js"));
-fs.writeFileSync("tmp/config.js", fs.readFileSync("src/config.js"));
-fs.writeFileSync("tmp/event.js", fs.readFileSync("src/event.js"));
-fs.writeFileSync("tmp/helper.js", fs.readFileSync("src/helper.js"));
-fs.writeFileSync("tmp/type.js", fs.readFileSync("src/type.js"));
-fs.writeFileSync("tmp/cache.js", fs.readFileSync("src/cache.js"));
-fs.writeFileSync("tmp/export.js", fs.readFileSync("src/export.js"));
-fs.writeFileSync("tmp/polyfill.js", fs.readFileSync("src/polyfill.js"));
-
-let src = fs.readFileSync("src/mikado.js");
 const rename = require('./rename.json');
 
-src = String(src);
+[
+    "mikado.js",
+    "browser.js",
+    "config.js",
+    "event.js",
+    "helper.js",
+    "type.js",
+    "cache.js",
+    "export.js",
+    "store.js",
+    "polyfill.js"
 
-for(let key in rename){
+].forEach(function(file){
 
-    if(rename.hasOwnProperty(key)){
+    let src = fs.readFileSync("src/" + file);
+    //fs.writeFileSync("tmp/" + file, src);
 
-        src = src.replace(new RegExp(key, "g"), rename[key]);
+    src = String(src);
+
+    for(let key in rename){
+
+        if(rename.hasOwnProperty(key)){
+
+            src = src.replace(new RegExp(key, "g"), rename[key]);
+        }
     }
-}
 
-fs.writeFileSync("tmp/mikado.js", src);
+    fs.writeFileSync("tmp/" + file, src);
+});
 
 var filename = "dist/mikado." + (options["RELEASE"] || "custom") + ".js";
 

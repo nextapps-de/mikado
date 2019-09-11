@@ -2,7 +2,7 @@
 <img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado.js" width="61.8%">
 
 <h1></h1>
-<h3>Web's smartest and fastest virtual DOM templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Web's smartest virtual DOM templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
@@ -57,7 +57,6 @@ Actually in progress:
         <td></td>
     </tr>
 </table>
-
 
 __Node.js__
 
@@ -148,6 +147,31 @@ __Feature Comparison__
         <td>File Size (gzip)</td>
         <td>4.1 kb</td>
         <td>1.6 kb</td>
+    </tr>
+</table>
+
+## Benchmark
+
+<table>
+    <tr>
+        <td>Rank</td>
+        <td></td>
+        <td>Create New</td>
+        <td>Update All</td>
+        <td>Update Partial</td>
+        <td>Append</td>
+        <td>Refresh All</td>
+        <td>Remove All</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Mikado</td>
+        <td>133,954 op/s</td>
+        <td>483,574 op/s</td>
+        <td>1,129,951 op/s</td>
+        <td>128,211 op/s</td>
+        <td>13,119,933 op/s</td>
+        <td>2,309,468 op/s</td>
     </tr>
 </table>
 
