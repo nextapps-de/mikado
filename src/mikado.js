@@ -274,6 +274,11 @@ Mikado.prototype.init = function(template, options){
         this.check();
     }
 
+    if(options["once"]){
+
+        this.render().destroy(true);
+    }
+
     return this;
 };
 
@@ -479,7 +484,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 /**
  * @param {*=} item
  * @param {*=} view
- * @param {DocumentFragment=} target
+ * @param {Element|DocumentFragment=} target
  * @returns {Mikado}
  */
 

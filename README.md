@@ -82,6 +82,14 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
+            Render Cache
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
             <a href="#event">Event Binding</a>
         </td>
         <td>✓</td>
@@ -106,7 +114,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#manipulate">DOM Manipulation Collection</a>
+            <a href="#export">Export/Import Views</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -114,7 +122,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#storage">Storage</a>
+            <a href="#manipulate">VDOM Manipulation Helpers</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -180,35 +188,41 @@ __Feature Comparison__
 ## API Overview
 
 Constructor:
-- <a href="#mikado.create">__Mikado__(\<root\>, template, \<options\>)</a>
+- new <a href="#mikado.new">__Mikado__(\<root\>, template, \<options\>)</a>
 
 Global methods:
-- <a href="#mikado.create">Mikado.__new__(template, \<options\>)</a>
+- <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
+- <a href="#mikado.unload">Mikado.__unload__(template)</a>
+
+Global methods (not included in mikado.light.js):
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
-- <a href="#mikado.load">Mikado.__unload__(template)</a>
 
 Instance methods:
 - <a href="#view.init">View.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">View.__mount__(root)</a>
-- <a href="#view.render">View.__render__(items)</a>
+- <a href="#view.render">View.__render__(items, \<payload\>, \<callback\>)</a>
 - <a href="#view.create">View.__create__(item)</a>
-- <a href="#view.add">View.__add__(item)</a>
-- <a href="#view.add">View.__update__(node, item)</a>
-- <a href="#view.append">View.__append__(items)</a>
-- <a href="#view.clear">View.__clear__()</a>
-- <a href="#view.replace">View.__replace__(node, node)</a>
+- <a href="#view.add">View.__add__(item, \<payload\>)</a>
+- <a href="#view.update">View.__update__(node, item, \<payload\>)</a>
+- <a href="#view.append">View.__append__(items, \<payload\>)</a>
+- <a href="#view.replace">View.__replace__(node, item, \<payload\>)</a>
 - <a href="#view.remove">View.__remove__(node)</a>
+- <a href="#view.clear">View.__clear__(resize)</a>
 - <a href="#view.item">View.__item__(index)</a>
 - <a href="#view.node">View.__node__(index)</a>
 - <a href="#view.index">View.__index__(node)</a>
 - <a href="#view.parse">View.__parse__(template)</a>
+- <a href="#view.destroy">View.__destroy__(unload?)</a>
+- <a href="#view.unload">View.__unload__()</a>
 - <a href="#view.sync">View.__sync__()</a>
-- <a href="#view.sync">View.__destroy__()</a>
 
 Instance methods (not included in mikado.light.js):
-- <a href="#view.sync">View.__listen__(event)</a>
-- <a href="#view.sync">View.__unlisten__(event)</a>
+- <a href="#view.load">View.__load__(url, \<callback\>)</a>
+- <a href="#view.pager">View.__pager__(items, \<options\>, \<callback\>)</a>
+- <a href="#view.sort">View.__sort__(field, \<direction | handler\>)</a>
+- <a href="#view.listen">View.__listen__(event)</a>
+- <a href="#view.unlisten">View.__unlisten__(event)</a>
 - <a href="#view.move">View.__move__(node, index)</a>
 - <a href="#view.shift">View.__shift__(node, offset)</a>
 - <a href="#view.up">View.__up__(node)</a>
@@ -223,9 +237,10 @@ Instance methods (not included in mikado.light.js):
 Instance properties:
 - ~~View.__dom__~~
 - <a href="#view.length">View.__length__</a>
-- <a href="#view.length">View.__store__</a>
-- <a href="#view.length">View.__state__</a>
-- <a href="#view.length">View.__id__</a>
+- <a href="#view.store">View.__store__</a>
+- <a href="#view.state">View.__state__</a>
+- <a href="#view.id">View.__id__</a>
+- <a href="#view.options">View.__options__</a>
 
 ## Options
 
@@ -288,7 +303,7 @@ Instance properties:
     <tr></tr>
     <tr>
         <td><b>once</b></td>
-        <td>Performs the render of a template just one time. When finishing it fully cleansup (removes view, item data and also the template definition). This is useful for static views, which should persist in the app.</td>
+        <td>Performs the render of a template just one time. This only applies on <a href="static">static views</a>. The render ist starting immediately (do not call .render again!). When finishing it fully cleans up (removes view, item data and also the template definition). This is useful for static views, which should persist in the app.</td>
         <td>false</td>
     </tr>
 </table>
@@ -759,6 +774,22 @@ Or force an update to a specific index:
 view.update(index);
 ```
 
+#### Export / Import Views
+
+You can export the latest rendering state of a view along with its item data to the local storage.
+```js
+view.export();
+```
+
+You can import and render the stored view by:
+```js
+view.import().render();
+```
+
+> When exporting/importing templates, the ID is used as key. The template ID corresponds to its filename.
+
+You cannot export several instances of the same template which holds different data. Also the ___state___ is not included in the export.
+
 #### Loose Option
 
 When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. When enabled you cannot use <a>paginated render</a>.
@@ -845,22 +876,23 @@ Chain methods:
 view.mount(document.body).init("template").render(items);
 ```
 
+<a name="static" id="static"></a>
 #### Static Templates
 
 When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing item data.
 
-When a template just needs to be rendered once you can create, mount, render. destroy and fully cleanup as follows:
+When a template just needs to be rendered once you can create, mount, render. unload, destroy to fully cleanup as follows:
 ```js
 Mikado.new(template)
       .mount(root)
       .render()
-      .destroy()
-      .unload(template);
+      .unload(template)
+      .destroy();
 ```
 
 Or use an option flag as a shorthand:
 ```js
-Mikado.new(root, template, { once: true }).render();
+Mikado.new(root, template, { once: true });
 ```
 
 When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
