@@ -46,7 +46,7 @@ function remove_non_elemen_nodes(nodes) {
 
                 if(nodes.child[i].node === "text"){
 
-                    let text = nodes.child[i].text.replace(/\s+/g, ' ').trim();
+                    let text = nodes.child[i].text.replace(/\s+/g, ' ')/*.trim()*/;
 
                     if(text){
 
@@ -138,12 +138,23 @@ function remove_non_elemen_nodes(nodes) {
 
                 delete nodes.child;
             }
+            /*
+            else if(nodes.node === "root" && nodes.child.length === 1){
+
+                nodes = nodes.child[0];
+            }
+            */
             else if(nodes.child.length === 1){
 
                 nodes.child = nodes.child[0];
             }
         }
     }
+
+    // if(nodes.node === "root"){
+    //
+    //     delete nodes.node;
+    // }
 
     return nodes;
 }

@@ -23,19 +23,28 @@ if(SUPPORT_STORAGE){
 
         if(data){
 
-            localStorage.setItem(this.id, JSON.stringify(data));
+            localStorage.setItem(this.template/*this.id*/, JSON.stringify(data));
         }
+
+        return this;
     };
 
     Mikado.prototype.import = function(){
 
-        let data = localStorage.getItem(this.id);
+        let data = localStorage.getItem(this.template/*this.id*/);
 
         if(data){
 
             data = JSON.parse(data);
 
-            this.store = data;
+            if(this.extern){
+
+                this.store.push.apply(this.store, data);
+            }
+            else{
+
+                this.store = data;
+            }
 
             // if(this.store){
             //
@@ -49,10 +58,14 @@ if(SUPPORT_STORAGE){
             //     }
             // }
         }
+
+        return this;
     };
 
     Mikado.prototype.delete = function(id){
 
-        localStorage.removeItem(id || this.id);
+        localStorage.removeItem(id || this.template/*this.id*/);
+
+        return this;
     }
 }

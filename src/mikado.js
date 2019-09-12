@@ -114,7 +114,7 @@ Mikado.prototype.mount = function(target){
 
         this.check();
 
-        this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.childNodes));
+        this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.children));
         this.length = this.dom.length;
     }
 
@@ -161,7 +161,7 @@ const event_types = {
 
 Mikado.prototype.sync = function(){
 
-    this.root["_dom"] = this.dom = collection_to_array(this.root.childNodes);
+    this.root["_dom"] = this.dom = collection_to_array(this.root.children);
     this.length = this.dom.length;
 
     return this;
@@ -263,13 +263,13 @@ Mikado.prototype.init = function(template, options){
 
     if(this.template !== template){
 
-        this.template = template;
-        this.id = template["n"];
+        //this.template = template;
+        this.template = template["n"];
         this.vpath = null;
         this.update_path = null;
-        //this.clone = null;
+        //this.factory = null;
         this.static = true;
-        this.clone = this.parse(template);
+        this.factory = this.parse(template);
 
         this.check();
     }
@@ -288,9 +288,9 @@ Mikado.prototype.check = function(){
 
         const id = this.root["_tpl"];
 
-        if(id !== this.id){
+        if(id !== this.template){
 
-            this.root["_tpl"] = this.id;
+            this.root["_tpl"] = this.template;
 
             if(id){
 
@@ -319,18 +319,18 @@ Mikado.prototype.create = function(item, view, index){
 
     //profiler_start("create");
 
-    let clone = this.clone;
+    let factory = this.factory;
 
     /*
-    if(!clone){
+    if(!factory){
 
-        this.clone = clone = this.parse(this.template);
+        this.factory = factory = this.parse(this.template);
     }
     */
 
-    this.static || this.update_path(clone["_path"], item, index, view);
+    this.static || this.update_path(factory["_path"], item, index, view);
 
-    const tmp = clone.cloneNode(true);
+    const tmp = factory.cloneNode(true);
 
     //profiler_end("create");
 
@@ -562,10 +562,10 @@ Mikado.prototype.destroy = function(unload){
 
     this.dom = null;
     this.root = null;
-    this.template = null;
+    //this.template = null;
     this.vpath = null;
     this.update_path = null;
-    this.clone = null;
+    this.factory = null;
 };
 
 if(SUPPORT_ASYNC){
@@ -860,7 +860,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     //profiler_start("parse");
 
-    const node = document.createElement(tpl["t"] || "div");
+    const node = tpl["t"] || index ?
+
+        document.createElement(tpl["t"] || "div")
+    :
+        document.createDocumentFragment();
 
     if(!index){
 
@@ -964,6 +968,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
+            this.static = false;
             has_update++;
         }
         else{
@@ -1019,16 +1024,18 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(is_object){
 
+                if(dom_path[path_length]){
+
+                    concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
+                    new_fn = "";
+                    path_length++;
+                }
+
                 new_fn += SUPPORT_CACHE && this.cache ?
 
                     ".setText(self," + text + ")"
                 :
                     "self.nodeValue=" + text + ";";
-
-                if(dom_path[path_length]){
-
-                    path_length++;
-                }
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = text_node;
@@ -1061,33 +1068,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    if(has_update){
-
-        if(has_update > 1){
-
-            tmp_fn += "self=p[" + path_length + "];";
-
-            if(SUPPORT_CACHE && this.cache){
-
-                tmp_fn += "this" + new_fn + ";";
-            }
-            else{
-
-                tmp_fn += new_fn;
-            }
-        }
-        else{
-
-            if(SUPPORT_CACHE && this.cache){
-
-                tmp_fn += "this" + new_fn.replace(/self/g, "p[" + path_length + "]") + ";";
-            }
-            else{
-
-                tmp_fn += "p[" + path_length + "]" + new_fn.substring(4); // cut "self"
-            }
-        }
-    }
+    concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
 
     if(child){
 
@@ -1131,6 +1112,37 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     return node;
 };
+
+function concat_path(has_update, new_fn, path_length, cache){
+
+    if(has_update){
+
+        if(has_update > 1){
+
+            tmp_fn += "self=p[" + path_length + "];";
+
+            if(SUPPORT_CACHE && cache){
+
+                tmp_fn += "this" + new_fn + ";";
+            }
+            else{
+
+                tmp_fn += new_fn;
+            }
+        }
+        else{
+
+            if(SUPPORT_CACHE && cache){
+
+                tmp_fn += "this" + new_fn.replace(/self/g, "p[" + path_length + "]") + ";";
+            }
+            else{
+
+                tmp_fn += "p[" + path_length + "]" + new_fn.substring(4); // cut "self"
+            }
+        }
+    }
+}
 
 // TODO: when rendering on a modified template all states hast to reset to its default template values
 
@@ -1202,7 +1214,7 @@ Mikado.prototype.unload = function(template){
 
     if(template){
 
-        templates[template["n"]] = null;
+        templates[template/*["n"]*/] = null;
     }
 };
 

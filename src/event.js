@@ -71,7 +71,7 @@ if(SUPPORT_EVENTS){
         if(fn){
 
             event.preventDefault();
-            fn(target, event);
+            fn(target, event, event_target);
         }
         else if(DEBUG){
 
