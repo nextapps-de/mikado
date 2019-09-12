@@ -1,0 +1,15 @@
+<footer class="footer" style="{{ this.state.empty ? 'display:none' : '' }}">
+	<span class="todo-count"><strong>{{ item.left }}</strong><span> item left</span></span>
+	<ul class="filters">
+		<li>
+			<a class="{{ this.state.filter === 'all' ? 'selected' : '' }}" href="#/" click="route-all">All</a>
+		</li>
+		<li>
+			<a class="{{ this.state.filter === 'active' ? 'selected' : '' }}" href="#/active" click="route-active">Active</a>
+		</li>
+		<li>
+			<a class="{{ this.state.filter === 'completed' ? 'selected' : '' }}" href="#/completed" click="route-completed">Completed</a>
+		</li>
+	</ul>
+	<button class="clear-completed" click="clear-completed" style="{{ this.state.completed ? '' : 'display:none' }}">Clear completed</button>
+</footer>

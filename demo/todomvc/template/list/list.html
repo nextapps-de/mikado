@@ -1,0 +1,8 @@
+<li class="{{ item.completed ? 'completed' : '' }}" style="{{ (this.state.filter === 'completed' && !item.completed) || (this.state.filter === 'active' && item.completed) ? 'display:none' : '' }}" root>
+	<div class="view">
+		<input class="toggle" type="checkbox" checked="{{ item.completed }}" change="update-state:root">
+		<label for="item-{{ item.id }}" class="title" dblclick="enter-edit-mode:root">{{ item.title }}</label>
+		<button class="destroy" click="destroy:root"></button>
+	</div>
+	<input id="item-{{ item.id }}" class="edit" value="{{ item.title }}" keyup="edit:root" blur="edit:root">
+</li>
