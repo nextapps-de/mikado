@@ -1,5 +1,5 @@
 <footer class="footer" style="{{ this.state.empty ? 'display:none' : '' }}">
-	<span class="todo-count"><strong>{{ item.left }}</strong><span> item left</span></span>
+	<span class="todo-count"><strong>{{ this.state.left }}</strong><span> item left</span></span>
 	<ul class="filters">
 		<li>
 			<a class="{{ this.state.filter === 'all' ? 'selected' : '' }}" href="#/" click="route-all">All</a>

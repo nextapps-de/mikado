@@ -101,7 +101,7 @@ Mikado.register = function(name, tpl){
  * @param {Object=} options
  */
 
-Mikado.new = function(root, template, options){
+Mikado["new"] = function(root, template, options){
 
     return new Mikado(root, template, options);
 };

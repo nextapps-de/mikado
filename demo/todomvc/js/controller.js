@@ -1,66 +1,61 @@
 import { store, state, main, footer, list } from "./app.js";
 import { $, $$ } from "./helper.js";
 
-/**
- * @param {string} route
- * @param {Element=} target
- */
-
 export default function(route, target){
 
-	if(route){
+    if(route){
 
-		if(target){
+        if(target){
 
-			window.location.hash = route;
-		}
+            window.location.hash = route;
+        }
 
-		route = route.substring(2);
-	}
-	else{
+        route = route.substring(2);
+    }
+    else{
 
-		route = "all";
-	}
+        route = "all";
+    }
 
-	// update state:
-	state.filter = route;
+    // update state:
+    state.filter = route;
 
-	// render todos:
-	list.render(update);
+    // render todos:
+    list.render([{}], update);
 }
 
 // private helpers:
 
 function filter_by(filter){
 
-	return filter === "all" ?
+    return filter === "all" ?
 
-		store
-	:
-		store.filter(function(item){
+        store
+    :
+        store.filter(function(item){
 
-			return item["completed"] === (filter === "completed");
-		});
+            return item["completed"] === (filter === "completed");
+        });
 }
 
 export function update(){
 
-	state.left = filter_by("active").length;
-	state.completed = store.length - state.left;
-	state.empty = !store.length;
+    state.left = filter_by("active").length;
+    state.completed = store.length - state.left;
+    state.empty = !store.length;
 
-	main.render([state]);
-	footer.render([state]);
+    main.render([{}]);
+    footer.render([{}]);
 
-	$("#toggle-all").checked = !state.left;
+    $("#toggle-all").checked = !state.left;
 }
 
 export function init(){
 
-	const checkboxes = $$('.toggle[checked="false"]');
+    const checkboxes = $$('.toggle[checked="false"]');
 
-	for(let i = 0, length = checkboxes.length; i < length; i++){
+    for(let i = 0, length = checkboxes.length; i < length; i++){
 
-		checkboxes[i].checked = false;
-	}
+        checkboxes[i].checked = false;
+    }
 }

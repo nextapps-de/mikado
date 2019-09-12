@@ -37,6 +37,12 @@ Mikado.prototype.mount;
 /** @export */
 Mikado.prototype.item;
 /** @export */
+Mikado.prototype.index;
+/** @export */
+Mikado.prototype.store;
+/** @export */
+Mikado.prototype.state;
+/** @export */
 Mikado.prototype.destroy;
 /** @export */
 Mikado.prototype.create;
@@ -50,6 +56,10 @@ Mikado.prototype.append;
 Mikado.prototype.add;
 /** @export */
 Mikado.prototype.route;
+/** @export */
+Mikado.prototype.listen;
+/** @export */
+Mikado.prototype.unlisten;
 /** @export */
 Mikado.prototype.export;
 /** @export */

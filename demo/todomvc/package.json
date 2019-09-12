@@ -1,12 +1,15 @@
 {
   "private": true,
   "scripts": {
-    "compile": "node node_modules/mikado/task/compile ./../../template/main/main.html && node node_modules/mikado/task/compile ./../../template/footer/footer.html && node node_modules/mikado/task/compile ./../../template/app/app.html && node node_modules/mikado/task/compile ./../../template/list/list.html && echo Compile Complete. && exit 0"
+    "compile": "node node_modules/mikado/task/compile ./../../template/main/main.html && node node_modules/mikado/task/compile ./../../template/footer/footer.html && node node_modules/mikado/task/compile ./../../template/app/app.html && node node_modules/mikado/task/compile ./../../template/list/list.html && echo Compile Complete. && exit 0",
+    "server": "node task/server.js"
   },
   "dependencies": {
     "mikado": "0.0.83",
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "web-servo": "^0.5.1"
+  }
 }
