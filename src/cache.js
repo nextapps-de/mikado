@@ -2,7 +2,7 @@ import Mikado from "./mikado.js";
 
 if(SUPPORT_CACHE){
 
-    Mikado.prototype["setText"] = function(target, text){
+    Mikado.prototype.setText = function(target, text){
 
         if(target["_text"] !== text){
 
@@ -15,7 +15,7 @@ if(SUPPORT_CACHE){
 
     // TODO: when rendering on a modified template all states hast to reset to its default template values
 
-    Mikado.prototype["setHTML"] = function(target, html){
+    Mikado.prototype.setHTML = function(target, html){
 
         if(target["_html"] !== html){
 
@@ -28,7 +28,7 @@ if(SUPPORT_CACHE){
 
     // OK: when rendering on a modified template all states hast to reset to its default template values
 
-    Mikado.prototype["setClass"] = function(target, class_name){
+    Mikado.prototype.setClass = function(target, class_name){
 
         if(target["_class"] !== class_name){
 
@@ -42,7 +42,7 @@ if(SUPPORT_CACHE){
 
     // Ok: when rendering on a modified template all states hast to reset to its default template values
 
-    Mikado.prototype["setStyle"] = function(target, style, value){
+    Mikado.prototype.setStyle = function(target, style, value){
 
         const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
 
@@ -73,7 +73,7 @@ if(SUPPORT_CACHE){
 
     // OK: when rendering on a modified template all states hast to reset to its default template values
 
-    Mikado.prototype["setCSS"] = function(target, style){
+    Mikado.prototype.setCSS = function(target, style){
 
         if(target["_css"] !== style){
 
@@ -88,7 +88,7 @@ if(SUPPORT_CACHE){
     // https://jsperf.com/data-dataset/43
     // NOTE: when rendering on a modified template all states hast to reset to its default template values
 
-    Mikado.prototype["setAttribute"] = function(target, attr, value){
+    Mikado.prototype.setAttribute = function(target, attr, value){
 
         const key = "_attr_" + attr;
 

@@ -1,5 +1,6 @@
 .idea
-node_modules/*
+node_modules
+package-lock.json
 public/*
 assets/
 log/*
@@ -15,3 +16,13 @@ src/data/user/*
 src/php/lib/tcpdf/*
 !src/php/lib/tcpdf/tcpdf.php
 js-framework-benchmark
+
+demo/todomvc/task/
+demo/todomvc/template/app/*
+!demo/todomvc/template/app/app.html
+demo/todomvc/template/footer/*
+!demo/todomvc/template/footer/footer.html
+demo/todomvc/template/list/*
+!demo/todomvc/template/list/list.html
+demo/todomvc/template/main/*
+!demo/todomvc/template/main/main.html

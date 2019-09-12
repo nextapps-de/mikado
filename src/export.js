@@ -54,3 +54,15 @@ Mikado.prototype.route;
 Mikado.prototype.export;
 /** @export */
 Mikado.prototype.import;
+/** @export */
+Mikado.prototype.setText;
+/** @export */
+Mikado.prototype.setHTML;
+/** @export */
+Mikado.prototype.setClass;
+/** @export */
+Mikado.prototype.setStyle;
+/** @export */
+Mikado.prototype.setCSS;
+/** @export */
+Mikado.prototype.setAttribute;

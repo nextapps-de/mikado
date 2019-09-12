@@ -23,7 +23,7 @@
     "setCSS": "_c",
     "setStyle": "_s",
     "\\.setAttribute\\(self": "._a(self",
-    "prototype\\[\"setAttribute\"\\]": "prototype[\"_a\"]",
+    "prototype\\.setAttribute": "prototype._a",
     "setText": "_t",
     "setHTML": "_h",
     "this.target": "this._t"

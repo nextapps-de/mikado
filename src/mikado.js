@@ -860,11 +860,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     //profiler_start("parse");
 
-    const node = tpl["t"] || index ?
+    const node = /*tpl["t"] || index ?*/
 
-        document.createElement(tpl["t"] || "div")
-    :
-        document.createDocumentFragment();
+        document.createElement(tpl["t"] || "div");
+    //:
+    //    document.createDocumentFragment();
 
     if(!index){
 
