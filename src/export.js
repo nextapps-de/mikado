@@ -13,8 +13,6 @@ Mikado.prototype.load;
 /** @export */
 Mikado.prototype.update;
 /** @export */
-//Mikado.prototype.refresh;
-/** @export */
 Mikado.prototype.sync;
 /** @export */
 Mikado.prototype.replace;

@@ -115,9 +115,8 @@ if(custom){
     options["RELEASE"] = "custom." + hashCode(parameter + flag_str).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 }
 
-const rename = require('./rename.json');
+const files = [
 
-[
     "mikado.js",
     "browser.js",
     "config.js",
@@ -128,19 +127,19 @@ const rename = require('./rename.json');
     "export.js",
     "store.js",
     "polyfill.js"
+];
+const prename = require('./prename.json');
+const postname = require('./postname.json');
 
-].forEach(function(file){
+files.forEach(function(file){
 
-    let src = fs.readFileSync("src/" + file);
-    //fs.writeFileSync("tmp/" + file, src);
+    let src = String(fs.readFileSync("src/" + file));
 
-    src = String(src);
+    for(let key in prename){
 
-    for(let key in rename){
+        if(prename.hasOwnProperty(key)){
 
-        if(rename.hasOwnProperty(key)){
-
-            src = src.replace(new RegExp(key, "g"), rename[key]);
+            src = src.replace(new RegExp(key, "g"), prename[key]);
         }
     }
 
@@ -158,6 +157,15 @@ exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parame
 
     preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + (light_version ? " (Light)" : es5_version ? " (ES5)" : ""));
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
+
+    for(let key in postname){
+
+        if(postname.hasOwnProperty(key)){
+
+            build = build.replace(new RegExp(key, "g"), postname[key]);
+        }
+    }
+
     fs.writeFileSync(filename, build);
 
     console.log("Build Complete.");
