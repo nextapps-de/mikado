@@ -21,6 +21,8 @@ Mikado.prototype.replace;
 /** @export */
 Mikado.prototype.render;
 /** @export */
+Mikado.prototype.refresh;
+/** @export */
 Mikado.prototype.register;
 /** @export */
 Mikado.prototype.unload;

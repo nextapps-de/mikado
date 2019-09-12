@@ -101,7 +101,7 @@ Mikado.register = function(name, tpl){
  * @param {Object=} options
  */
 
-Mikado["new"] = function(root, template, options){
+Mikado.new = function(root, template, options){
 
     return new Mikado(root, template, options);
 };
@@ -337,6 +337,37 @@ Mikado.prototype.create = function(item, view, index){
     return tmp;
 };
 
+if(SUPPORT_STORAGE){
+
+    Mikado.prototype.refresh = function(view){
+
+        if(typeof view === "number"){
+
+            let index = view;
+            const node = this.dom[index];
+            let item = this.storage ? this.store[index] : node["_item"];
+
+            return this.update(node, item, null, index);
+        }
+
+        const items = this.store;
+        const count = items ? items.length : (this.loose ? this.length : 0);
+
+        // items delegated from import
+        if(this.loose){
+
+            this.store = null;
+        }
+
+        for(let x = 0; x < count; x++){
+
+            this.update(this.dom[x], items ? items[x] : null, view, x);
+        }
+
+        return this;
+    };
+}
+
 let timer;
 
 /**
@@ -357,10 +388,12 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
         }
     }
 
+    /*
     if(SUPPORT_STORAGE && !items){
 
         items = this.store;
 
+        // items delegated from import
         if(this.loose){
 
             this.store = null;
@@ -375,7 +408,9 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
             items = this.store;
         }
     }
-    else if(typeof view === "function"){
+    */
+
+    if(typeof view === "function"){
 
         callback = view;
         view = null;
@@ -670,8 +705,9 @@ Mikado.prototype.update = function(node, item, view, index){
 
     //profiler_start("update");
 
-    if(!this.static){
+    //if(!this.static){
 
+        /*
         if(typeof node === "number"){
 
             index = node;
@@ -681,71 +717,41 @@ Mikado.prototype.update = function(node, item, view, index){
 
             index = node["_idx"];
         }
+        */
 
         if(SUPPORT_STORAGE){
 
             if(this.store){
 
-                if(item){
-
-                    // if(this.flat && !diff(this.store[index], item, this.diff)){
-                    //
-                    //     return this;
-                    // }
-                    //
-                    // this.store[index] = this.flat ?
-                    //
-                    //     Object.assign({}, /** @type {Object} */ (item))
-                    // :
-                    //     item;
+                //if(item){
 
                     this.store[index] = item;
-                }
-                else{
-
-                    item = this.store[index];
-                }
+                // }
+                // else{
+                //
+                //     item = this.store[index];
+                // }
             }
             else if(this.loose){
 
-                if(item){
-
-                    // if(this.flat && !diff(node["_item"], item, this.diff)){
-                    //
-                    //     return this;
-                    // }
-                    //
-                    // node["_item"] = this.flat ?
-                    //
-                    //     Object.assign({}, /** @type {Object} */ (item))
-                    // :
-                    //     item;
+                //if(item){
 
                     node["_item"] = item;
-                }
-                else{
-
-                    item = node["_item"];
-                }
+                // }
+                // else{
+                //
+                //     item = node["_item"];
+                // }
             }
         }
 
         this.update_path(node["_path"] || this.create_path(node), item, index, view);
-        //this.refresh(node, item, view, index);
-    }
+    //}
 
     //profiler_end("update");
 
     return this;
 };
-
-/*
-Mikado.prototype.refresh = function(node, item, view, index){
-
-    this.update_path(node["_path"] || this.create_path(node), item, index, view);
-    return this;
-};
-*/
 
 function diff(store, item, diff){
 

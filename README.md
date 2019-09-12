@@ -16,21 +16,23 @@ https://krausest.github.io/js-framework-benchmark/current.html
 
 Demo:
 
-1. <a href="test/demo.html">Standard Javascript</a>
-2. <a href="test/demo.es6.html">ES6 Modules</a>
+1. <a href="demo/basic/demo.html">Basic Example (Standard Javascript)</a>
+2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
+3. <a href="demo/todomvc/">TodoMVC App</a>
+4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">Benchmark Basics</a>
 
-Take a look into the source code of this pages.
+Take a look into the source code of this pages is the best starting point.
 
 Actually in progress:
 - Conditional branches
 - Includes/partials
-- Live templates (local development)
-- Persistent state
+- Live templates (for local development)
+- ~~Persistent state~~ ✓
 - Paginated Render
 - Loops (through partials)
 - Plugin API
 
-#### Get Latest (Stable Release):
+#### Get Latest:
 
 <table>
     <tr></tr>
@@ -58,6 +60,8 @@ Actually in progress:
     </tr>
 </table>
 
+To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.0.8/`, or also a commit hash.
+
 __Node.js__
 
 ```npm
@@ -82,7 +86,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            Render Cache
+            VDOM Cache
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -125,14 +129,6 @@ __Feature Comparison__
             <a href="#manipulate">VDOM Manipulation Helpers</a>
         </td>
         <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            <a href="#paging">Paginated Render</a>
-        </td>
-        <td>WIP</td>
         <td>-</td>
     </tr>
     <tr></tr>
@@ -202,6 +198,7 @@ Instance methods:
 - <a href="#view.init">View.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">View.__mount__(root)</a>
 - <a href="#view.render">View.__render__(items, \<payload\>, \<callback\>)</a>
+- <a href="#view.render">View.__refresh__(\<payload\>)</a>
 - <a href="#view.create">View.__create__(item)</a>
 - <a href="#view.add">View.__add__(item, \<payload\>)</a>
 - <a href="#view.update">View.__update__(node, item, \<payload\>)</a>
@@ -242,6 +239,7 @@ Instance properties:
 - <a href="#view.id">View.__id__</a>
 - <a href="#view.options">View.__options__</a>
 
+<a name="options"></a>
 ## Options
 
 > Each Mikado instance can have its own options.
