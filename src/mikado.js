@@ -82,7 +82,7 @@ export default function Mikado(root, template, options){
  * @param {Template=} tpl
  */
 
-Mikado["register"] = function(name, tpl){
+Mikado.register = Mikado["register"] = function(name, tpl){
 
     if(!tpl){
 
@@ -101,7 +101,7 @@ Mikado["register"] = function(name, tpl){
  * @param {Object=} options
  */
 
-Mikado["new"] = function(root, template, options){
+Mikado.new = Mikado["new"] = function(root, template, options){
 
     return new Mikado(root, template, options);
 };
@@ -1207,7 +1207,7 @@ if(SUPPORT_TRANSPORT){
         xhr.send();
     };
 
-    Mikado["load"] = Mikado.prototype.load;
+    Mikado.load = Mikado["load"] = Mikado.prototype.load;
 }
 
 /**
@@ -1224,4 +1224,4 @@ Mikado.prototype.unload = function(template){
     }
 };
 
-Mikado["unload"] = Mikado.prototype.unload;
+Mikado.unload = Mikado["unload"] = Mikado.prototype.unload;

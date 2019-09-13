@@ -27,8 +27,6 @@ Mikado.prototype.unload;
 /** @export */
 Mikado.prototype.remove;
 /** @export */
-Mikado.prototype.parse;
-/** @export */
 Mikado.prototype.node;
 /** @export */
 Mikado.prototype.init;
