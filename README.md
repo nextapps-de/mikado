@@ -16,10 +16,10 @@ https://krausest.github.io/js-framework-benchmark/current.html
 
 Demo:
 
-1. <a href="demo/basic/demo.html">Basic Example (Standard Javascript)</a>
+1. <a href="demo/basic/demo.html">Basic Example (Classic Javascript)</a>
 2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
 3. <a href="demo/todomvc/">TodoMVC App</a>
-4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">Benchmark Basics</a>
+4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
 Take a look into the source code of this pages is the best starting point.
 
@@ -102,7 +102,15 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#store">Data Store</a>
+            <a href="#store">Data Binding</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#export">Persistent Storage</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -180,14 +188,14 @@ __Feature Comparison__
 </table>
 
 <a name="api"></a>
-
 ## API Overview
 
 Constructor:
-- new <a href="#mikado.new">__Mikado__(\<root\>, template, \<options\>)</a>
+- new <a href="#mikado.new">__Mikado__(\<root\>, template, \<options\>)</a> : view
 
 Global methods:
-- <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a>
+- <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a> : view
+- <a href="#mikado.once">Mikado.__once__(root, template)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.unload">Mikado.__unload__(template)</a>
 
@@ -195,49 +203,52 @@ Global methods (not included in mikado.light.js):
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
 
 Instance methods:
-- <a href="#view.init">View.__init__(\<template\>, \<options\>)</a>
-- <a href="#view.mount">View.__mount__(root)</a>
-- <a href="#view.render">View.__render__(items, \<payload\>, \<callback\>)</a>
-- <a href="#view.render">View.__refresh__(\<payload\>)</a>
-- <a href="#view.create">View.__create__(item)</a>
-- <a href="#view.add">View.__add__(item, \<payload\>)</a>
-- <a href="#view.update">View.__update__(node, item, \<payload\>)</a>
-- <a href="#view.append">View.__append__(items, \<payload\>)</a>
-- <a href="#view.replace">View.__replace__(node, item, \<payload\>)</a>
-- <a href="#view.remove">View.__remove__(node)</a>
-- <a href="#view.clear">View.__clear__(resize)</a>
-- <a href="#view.item">View.__item__(index)</a>
-- <a href="#view.node">View.__node__(index)</a>
-- <a href="#view.index">View.__index__(node)</a>
-- <a href="#view.parse">View.__parse__(template)</a>
-- <a href="#view.destroy">View.__destroy__(unload?)</a>
-- <a href="#view.unload">View.__unload__()</a>
-- <a href="#view.sync">View.__sync__()</a>
+- <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
+- <a href="#view.mount">view.__mount__(root)</a>
+- <a href="#view.render">view.__render__(items, \<payload\>, \<callback\>)</a>
+- <a href="#view.render">view.__refresh__(\<payload\>)</a>
+- <a href="#view.create">view.__create__(item)</a>
+- <a href="#view.add">view.__add__(item, \<payload\>)</a>
+- <a href="#view.update">view.__update__(node, item, \<payload\>)</a>
+- <a href="#view.append">view.__append__(items, \<payload\>)</a>
+- <a href="#view.replace">view.__replace__(node, item, \<payload\>)</a>
+- <a href="#view.remove">view.__remove__(node)</a>
+- <a href="#view.clear">view.__clear__(resize)</a>
+- <a href="#view.item">view.__item__(index)</a>
+- <a href="#view.node">view.__node__(index)</a>
+- <a href="#view.index">view.__index__(node)</a>
+- ~~view.__parse__(template)~~
+- <a href="#view.destroy">view.__destroy__(unload?)</a>
+- <a href="#view.unload">view.__unload__()</a>
+- <a href="#view.sync">view.__sync__()</a>
 
 Instance methods (not included in mikado.light.js):
-- <a href="#view.load">View.__load__(url, \<callback\>)</a>
-- <a href="#view.pager">View.__pager__(items, \<options\>, \<callback\>)</a>
-- <a href="#view.sort">View.__sort__(field, \<direction | handler\>)</a>
-- <a href="#view.listen">View.__listen__(event)</a>
-- <a href="#view.unlisten">View.__unlisten__(event)</a>
-- <a href="#view.move">View.__move__(node, index)</a>
-- <a href="#view.shift">View.__shift__(node, offset)</a>
-- <a href="#view.up">View.__up__(node)</a>
-- <a href="#view.down">View.__down__(node)</a>
-- <a href="#view.first">View.__first__(node)</a>
-- <a href="#view.last">View.__last__(node)</a>
-- <a href="#view.before">View.__before__(node, node)</a>
-- <a href="#view.after">View.__after__(node, node)</a>
-- <a href="#view.swap">View.__swap__(node, node)</a>
-- <a href="#view.shuffle">View.__shuffle__()</a>
+- <a href="#view.load">view.__import__()</a>
+- <a href="#view.load">view.__export__()</a>
+- <a href="#view.load">view.__load__(url, \<callback\>)</a>
+- <a href="#view.sort">view.__sort__(field, \<direction | handler\>)</a>
+- <a href="#view.listen">view.__listen__(event)</a>
+- <a href="#view.unlisten">view.__unlisten__(event)</a>
+- <a href="#view.move">view.__move__(node, index)</a>
+- <a href="#view.shift">view.__shift__(node, offset)</a>
+- <a href="#view.up">view.__up__(node)</a>
+- <a href="#view.down">view.__down__(node)</a>
+- <a href="#view.first">view.__first__(node)</a>
+- <a href="#view.last">view.__last__(node)</a>
+- <a href="#view.before">view.__before__(node, node)</a>
+- <a href="#view.after">view.__after__(node, node)</a>
+- <a href="#view.swap">view.__swap__(node, node)</a>
+- <a href="#view.shuffle">view.__shuffle__()</a>
+
+<!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
 
 Instance properties:
-- ~~View.__dom__~~
-- <a href="#view.length">View.__length__</a>
-- <a href="#view.store">View.__store__</a>
-- <a href="#view.state">View.__state__</a>
-- <a href="#view.id">View.__id__</a>
-- <a href="#view.options">View.__options__</a>
+- ~~view.__dom__~~
+- <a href="#view.length">view.__length__</a>
+- <a href="#view.store">view.__store__</a>
+- <a href="#view.state">view.__state__</a>
+- <a href="#options">view.__config__</a>
+- <a href="#view.id">view.__template__</a>
 
 <a name="options"></a>
 ## Options
@@ -394,6 +405,40 @@ You can also chain methods:
 ```js
 var view = Mikado.new(template).mount(document.body).render(items);
 ```
+
+## Rules and Conventions
+
+> Every template has to provide __one single root__ as the outer bound. This is a convention based on the concept of Mikado.
+
+Instead of doing this in a template:
+```html
+<header>
+    <nav></nav>
+</header>
+<section>
+    <p></p>
+</section>
+<footer>
+    <nav></nav>
+</footer>
+```
+
+Provide one single root by doing this:
+```html
+<main>
+    <header>
+        <nav></nav>
+    </header>
+    <section>
+        <p></p>
+    </section>
+    <footer>
+        <nav></nav>
+    </footer>
+</main>
+```
+
+You can also use a `<div>` or any other element as a template root.
 
 ## Advanced Example
 
@@ -616,17 +661,102 @@ Routes are stored globally, so you can share routes through all Mikado instances
     </tr>
 </table>
 
-<a name="manipulate" id="manipulate"></a>
-## Manipulate Views
+## Create, Initialize, Destroy Views
 
-You can decide to just one of these:
-1. manipulate the DOM directly or
-2. use the builtin-methods for those purposes
+<a name="mikado.new"></a>
+Create view from a template with options:
+```js
+var view = Mikado.new(template, options);
+```
 
-Using the builtin-methods have the best performance.
+<a name="mikado.new"></a>
+Create view from a template with options and also mount it to a target element:
+```js
+var view = Mikado.new(root, template, options);
+```
 
-> Do not mix manual changes to the DOM with builtin-methods, because manually changes will made the virtual DOM cache out of sync.
+<a name="view.mount"></a>
+Mount a view to a target element:
+```js
+view.mount(element);
+```
 
+<a name="view.init"></a>
+Initialize an existing view with new options:
+```js
+view.init(options);
+```
+
+Initialize an existing view also with a new template:
+```js
+view.init(template, options);
+```
+
+<a name="view.unload"></a>
+Unload/delete the template which is assigned to a view:
+```js
+view.unload();
+```
+
+<a name="view.destroy"></a>
+Destroy a view:
+```js
+view.destroy();
+```
+
+<a name="view.render"></a>
+## Render Templates (Assign Data)
+
+> When using storage, every render task also updates the storage data.
+
+Render a template incrementally through a set of item data:
+```js
+view.render(items);
+```
+
+Render a template with item data and also use view-specific data/handlers:
+```js
+view.render(items, view);
+```
+
+Schedule a render task asynchronously to the next animation frame:
+```js
+view.render(items, view, true);
+```
+
+Schedule a render task by using a callback:
+```js
+view.render(items, view, function(){
+    // finished
+});
+```
+
+Schedule a render task by using promises (requires option ___async___ to be enabled during initialization):
+```js
+view.render(items, view).then(function(){
+    // finished
+});
+```
+
+Render a static template (which uses no dynamic content):
+```js
+view.render();
+```
+
+<a name="view.refresh"></a>
+Repaint the current state of a dynamic template (which has item data, requires store to be enabled):
+```js
+view.refresh();
+```
+
+Repaint the current state on a specific index:
+```js
+view.refresh(index);
+```
+
+## Modify Views
+
+<a name="view.add"></a>
 Add one item to the end:
 ```js
 view.add(items);
@@ -637,6 +767,7 @@ Add one item before an index:
 view.add(items, 0); // add to beginning
 ```
 
+<a name="view.append"></a>
 Append multiple items to the end:
 ```js
 view.append(items);
@@ -647,6 +778,7 @@ Append multiple items before an index:
 view.append(items, 0); // append to beginning
 ```
 
+<a name="view.remove"></a>
 Remove a specific item/node:
 ```js
 view.remove(node);
@@ -672,78 +804,124 @@ Remove previous 20 items of a given node (including):
 view.remove(node, -20);
 ```
 
+<a name="view.clear"></a>
 Remove all:
 ```js
 view.clear();
 ```
 
+<a name="view.replace"></a>
 Replace an item/node:
 ```js
-view.replace(old_node, new_node);
+view.replace(old, new);
 ```
 
+<a name="view.update"></a>
 Update an single item/node:
 ```js
 view.update(node, item);
 ```
 
+<a name="view.sync"></a>
+Re-Sync Virtual DOM:
+```js
+view.sync();
+```
+
+### Useful Helpers
+
+<a name="view.node"></a>
+Get a node from the virtual DOM by index:
+```js
+var node = view.node(index);
+```
+
+<a name="view.item"></a>
+Get an item from the store by index:
+```js
+var item = view.item(index);
+```
+
+<a name="view.index"></a>
+Get the current index from a node:
+```js
+var index = view.index(node);
+```
+
+<a name="manipulate" id="manipulate"></a>
+## Manipulate Views
+
+You can decide to just one of these:
+1. manipulate the DOM directly or
+2. use the builtin-methods for those purposes
+
+Using the builtin-methods have the best performance.
+
+> Do not mix manual changes to the DOM with builtin-methods, because manually changes will made the virtual DOM cache out of sync.
+
+<a name="view.move"></a>
 Move an item/node to a specific index:
 ```js
 view.move(node, 15);
 ```
 
+<a name="view.shift"></a>
 Shift an item/node by a specific offset:
 ```js
 view.shift(node, 3);
 view.shift(node, -3);
 ```
 
+<a name="view.first"></a><a name="view.last"></a>
 Move an item/node to the top or bottom:
 ```js
 view.first(node);
 view.last(node);
 ```
 
+<a name="view.up"></a><a name="view.down"></a>
 Move an item/node by 1 index:
 ```js
 view.up(node);
 view.down(node);
 ```
 
+<a name="view.before"></a><a name="view.after"></a>
 Move an item/node before or after another item/node:
 ```js
 view.before(node_a, node_b);
 view.after(node_a, node_b);
 ```
 
+<a name="view.swap"></a>
 Swap two items/nodes:
 ```js
 view.swap(node_a, node_b);
 ```
 
+<a name="view.shuffle"></a>
 Shuffle items/nodes:
 ```js
 view.shuffle();
 ```
 
-Get a node from the virtual DOM:
+<a name="view.sort"></a>
+Sort items/nodes by a field from the item data:
 ```js
-var node = view.node(index);
+view.sort("title");
 ```
 
-Get an item from the store:
+Sort items/nodes by descending order:
 ```js
-var item = view.item(index);
+view.sort("title", "desc");
 ```
 
-Get the current index from a node:
+Sort items/nodes by a custom handler (should return negative, positive and zero offsets):
 ```js
-var index = view.index(node);
-```
-
-Re-Sync Virtual DOM:
-```js
-view.sync();
+view.sort(function(item_a, item_b){
+    return item_a.time < item_b.time ? 1 : 
+          (item_a.time > item_b.time ? -1 : 0)
+});
 ```
 
 <a name="store" id="store"></a>
@@ -918,7 +1096,7 @@ view.init(tpl_b).render(items);
 view.init(tpl_c).render(items);
 ```
 
-This is also good:
+Instead doing this:
 ```js
 var view_a = new Mikado(tpl_a);
 var view_b = new Mikado(tpl_b);
@@ -934,12 +1112,116 @@ Ideally every template should have initialized by one (and only one) Mikado inst
 <a name="includes" id="includes"></a>
 ## Includes
 
-_WIP_
+_WORK IN PROGRESS_
+
+Partials gets its own instance under the hood. This results in high performance and also makes template factories re-usable when sharing same partials across different views.
+
+> Be aware of circular includes. A partial cannot include itself. Especially when your include-chain growths remember this rule.
+
+Using the `{{: }}` notation to mark includes.
+
+You can include partials as follows:
+```html
+<section>
+    <title>{{: template/title }}</title>
+    <article>{{: template/article, item.content }}</article>
+    <footer>{{: template/footer }}</footer>
+</section>
+```
+
+```html
+<section>
+    <title include="template/title"></title>
+    <article include="template/article" as="item.content"></article>
+    <footer include="template/footer"></footer>
+</section>
+```
+
+The second include has a comma-separated value. The left side points to the template path, the right side is the reference which should be passed as ___item___ to the partial.
+
+Please notice, that the template requires one single root. When the template "template/title" has multiple nodes in the outer bound then wrap this into a new element as root or include as follows:
+```html
+<section>
+    <include>{{: template/title }}</include>
+    <include>{{: template/article, item.content }}</include>
+    <include>{{: template/footer }}</include>
+</section>
+```
+
+```html
+<section>
+    <include>template/title</include>
+    <include as="item.content">template/article</include>
+    <include>template/footer</include>
+</section>
+```
+
+> The pseudo-element ___\<include\>___ will extract into place. You cannot use dynamic expressions within curly brackets, just provide the path.
+
+In this example the template "template/title" gets the tag \<title\> as the template route.
+
+### Loop Partials
+
+_WORK IN PROGRESS_
+
+```html
+<main>
+    <title>{{: template/title }}</title>
+    <tweets>{{: template/tweet, item.tweets[] }}</tweets>
+</main>
+```
+
+In this example the template "tweet" loops the render through an array of tweets. The template "tweet" will get the array value from the current index as ___item___.
+
+### Inline Loops
+
+```html
+<main>
+    <title>{{ item.title }}</title>
+    <tweets for="item.tweets">
+        <section>{{ item.content }}</section>
+    </tweets>
+</main>
+```
 
 <a name="conditional" id="conditional"></a>
 ## Conditional Branches
 
-_WIP_
+_WORK IN PROGRESS_
+
+```html
+<main if="item.tweet.length">
+    <title>{{ item.title }}</title>
+    <section>{{ item.content }}</section>
+    <footer>{{ item.footer }}</footer>
+</main>
+<main else="item.contacts.length">
+    <title>{{ item.title }}</title>
+    <section>{{ item.content }}</section>
+    <footer>{{ item.footer }}</footer>
+</main>
+<main else>
+    Nothing found.
+</main>
+```
+
+```html
+<main>
+    <title>{{ item.title }}</title>
+    <tweets if="item.tweets.length" for="item.tweets">
+        <section>{{ item.content }}</section>
+    </tweets>
+</main>
+```
+
+```html
+<main>
+    <title>{{ item.title }}</title>
+    <tweets for="item.tweets">
+        <section if="item.content">{{ item.content }}</section>
+    </tweets>
+</main>
+```
 
 <a name="builds" id="builds"></a>
 ## Custom Builds
@@ -972,33 +1254,64 @@ The destination folder of the build is: _/dist/_
     <tr>
         <td>Flag</td>
         <td>Values</td>
+        <td>Info</td>
     </tr>
     <tr>
         <td>DEBUG</td>
         <td>true, false</td>
+        <td>Log debugging infos</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>BUILD_LIGHT</td>
+        <td>SUPPORT_CACHE</td>
         <td>true, false</td>
+        <td>VDOM Cache</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>ENABLE_CACHE</td>
+        <td>SUPPORT_EVENTS</td>
         <td>true, false</td>
+        <td>Template event bindings</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_STORAGE</td>
+        <td>true, false</td>
+        <td>Template data binding</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_HELPERS</td>
+        <td>true, false</td>
+        <td>VDOM Manipulation helpers</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_ASYNC</td>
+        <td>true, false</td>
+        <td>Asynchronous rendering (Promise Support)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_TRANSPORT</td>
+        <td>true, false</td>
+        <td>Load templates through the network</td>
     </tr>
     <tr>
         <td><br><b>Compiler Flags</b></td>
+        <td></td>
         <td></td>
     </tr>
     <tr>
         <td>USE_POLYFILL</td>
         <td>true, false</td>
+        <td>Include Polyfills (based on Ecmascript 5)</td>
     </tr>
     <tr></tr>
     <tr>
         <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br></td>
         <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT5_STRICT<br>ECMASCRIPT6<br>ECMASCRIPT6_STRICT<br>ECMASCRIPT_2015<br>ECMASCRIPT_2017<br>STABLE</td>
+        <td>Target language</td>
     </tr>
 </table>
 
