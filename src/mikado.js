@@ -267,8 +267,9 @@ Mikado.prototype.init = function(template, options){
         this.template = template["n"];
         this.vpath = null;
         this.update_path = null;
-        //this.factory = null;
         this.static = true;
+        if(SUPPORT_LOOP_INCLUDE) this.include = null;
+        //this.factory = null;
         this.factory = this.parse(template);
 
         this.check();
@@ -853,6 +854,7 @@ function resolve(root, path, cache){
 }
 
 let tmp_fn;
+let last_conditional;
 
 /**
  * @param {Template|Array<Template>} tpl
@@ -866,11 +868,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     //profiler_start("parse");
 
-    const node = /*tpl["t"] || index ?*/
-
-        document.createElement(tpl["t"] || "div");
-    //:
-    //    document.createDocumentFragment();
+    const node = document.createElement(tpl["t"] || "div");
 
     if(!index){
 
@@ -882,7 +880,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     }
 
     const style = tpl["s"];
-    const child = tpl["i"];
+    let child = tpl["i"];
     let text = tpl["x"];
     let html = tpl["h"];
     const attr = tpl["a"];
@@ -1015,7 +1013,29 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     if(!child){
 
-        if(text){
+        // create partial render tree
+        if(SUPPORT_LOOP_INCLUDE && tpl["@"]){
+
+            this.include || (this.include = []);
+
+            tmp_fn += "this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] > 0 ? "0," : "") + tpl["m"] + ")" : "") + ",index,view);";
+
+            const old_fn = tmp_fn;
+            tmp_fn = "";
+            this.include.push(new Mikado(node, typeof tpl["@"] === "string" ? templates[tpl["@"]] : tpl["@"], this.config));
+            tmp_fn = old_fn;
+
+            this.vpath[path_length] = path;
+            dom_path[path_length] = node;
+            this.static = false;
+            //has_update++;
+        }
+        // forward if include is on root (has no childs)
+        else if(SUPPORT_LOOP_INCLUDE && tpl["+"]){
+
+            child = templates[tpl["+"]];
+        }
+        else if(text){
 
             path += "|";
 
@@ -1030,6 +1050,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(is_object){
 
+                // collect text node
                 if(dom_path[path_length]){
 
                     concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
@@ -1058,7 +1079,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 html = html[0];
                 new_fn += SUPPORT_CACHE && this.cache ?
 
-                    ".setHTML(self, " + html + ")"
+                    ".setHTML(self," + html + ")"
                 :
                     "self.innerHTML=" + html + ";";
 
@@ -1074,33 +1095,70 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
+    if(SUPPORT_CONDITIONAL && tpl["f"]){
+
+        tmp_fn += ";if(" + tpl["f"] + "){" + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=false;" + (SUPPORT_CACHE && this.cache ? "this" : "");
+
+        if(!has_update){
+
+            this.vpath[path_length] = path;
+            dom_path[path_length] = node;
+            this.static = false;
+            //has_update++;
+        }
+    }
+
+    // push path before recursion
     concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
 
+    if(SUPPORT_CONDITIONAL && tpl["f"]){
+
+        tmp_fn += "}else " + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=true;" + (SUPPORT_CACHE && this.cache ? "this" : "");
+    }
+
     if(child){
+
+        let include;
 
         if(child.length){
 
             let tmp = ">";
 
-            for(let i = 0; i < child.length; i++){
+            for(let i = 0, current; i < child.length; i++){
 
                 if(i){
 
                     tmp += "+";
                 }
 
-                node.appendChild(this.parse(child[i], index + i + 1, path + tmp, dom_path));
+                current = child[i];
+
+                // self extracting include <include/>
+                if(SUPPORT_LOOP_INCLUDE && (include = current["+"])){
+
+                    current = templates[include];
+                }
+
+                // process child recursively
+                node.appendChild(this.parse(current, index + i + 1, path + tmp, dom_path));
             }
         }
         else{
 
+            // self extracting include <include/>
+            if(SUPPORT_LOOP_INCLUDE && (include = child["+"])){
+
+                child = templates[include];
+            }
+
+            // process child recursively
             node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
         }
     }
 
     if(!index && !this.static){
 
-        // console.log('"use strict";var self;' + tmp_fn);
+        // console.log('"use strict";var self' + tmp_fn);
         // console.log(dom_path);
         // console.log(this.vpath);
 
@@ -1108,7 +1166,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             tmp_fn ?
 
-                '"use strict";var self;' + tmp_fn //+ ';'  // var root=p[0]
+                '"use strict";var self' + tmp_fn //+ ';'  // var root=p[0]
             :
                 ""
         ));
@@ -1125,11 +1183,11 @@ function concat_path(has_update, new_fn, path_length, cache){
 
         if(has_update > 1){
 
-            tmp_fn += "self=p[" + path_length + "];";
+            tmp_fn += ";self=p[" + path_length + "];";
 
             if(SUPPORT_CACHE && cache){
 
-                tmp_fn += "this" + new_fn + ";";
+                tmp_fn += "this" + new_fn;
             }
             else{
 
@@ -1140,11 +1198,11 @@ function concat_path(has_update, new_fn, path_length, cache){
 
             if(SUPPORT_CACHE && cache){
 
-                tmp_fn += "this" + new_fn.replace(/self/g, "p[" + path_length + "]") + ";";
+                tmp_fn += new_fn.replace(/self/g, "p[" + path_length + "]") ;
             }
             else{
 
-                tmp_fn += "p[" + path_length + "]" + new_fn.substring(4); // cut "self"
+                tmp_fn += ";p[" + path_length + "]" + new_fn.substring(4); // cut "self"
             }
         }
     }

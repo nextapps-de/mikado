@@ -47,6 +47,18 @@ const SUPPORT_ASYNC = true;
 const SUPPORT_TRANSPORT = true;
 
 /**
+ * @define {boolean}
+ */
+
+const SUPPORT_LOOP_INCLUDE = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_CONDITIONAL = true;
+
+/**
  * @define {string}
  */
 

@@ -24,12 +24,12 @@ Demo:
 Take a look into the source code of this pages is the best starting point.
 
 Actually in progress:
-- Conditional branches
-- Includes/partials
+- ~~Conditional branches~~ ✓
+- ~~Includes/partials~~ ✓
 - Live templates (for local development)
 - ~~Persistent state~~ ✓
 - Paginated Render
-- Loops (through partials)
+- ~~Loops (through partials)~~ ✓
 - Plugin API
 
 #### Get Latest:
@@ -144,7 +144,7 @@ __Feature Comparison__
         <td>
             <a href="#conditional">Conditional Branches</a>
         </td>
-        <td>WIP</td>
+        <td>✓</td>
         <td>-</td>
     </tr>
     <tr></tr>
@@ -152,7 +152,7 @@ __Feature Comparison__
         <td>
             <a href="#includes">Includes/Partials</a>
         </td>
-        <td>WIP</td>
+        <td>✓</td>
         <td>-</td>
     </tr>
     <tr>
@@ -1112,63 +1112,50 @@ Ideally every template should have initialized by one (and only one) Mikado inst
 <a name="includes" id="includes"></a>
 ## Includes
 
-_WORK IN PROGRESS_
-
 Partials gets its own instance under the hood. This results in high performance and also makes template factories re-usable when sharing same partials across different views.
 
-> Be aware of circular includes. A partial cannot include itself. Especially when your include-chain growths remember this rule.
-
-Using the `{{: }}` notation to mark includes.
+> Be aware of circular includes. A partial cannot include itself (or later in its own chain). Especially when your include-chain growths remember this rule.
 
 You can include partials as follows:
 ```html
 <section>
-    <title>{{: template/title }}</title>
-    <article>{{: template/article, item.content }}</article>
-    <footer>{{: template/footer }}</footer>
+    <title include="title"></title>
+    <article include="article" as="item.content"></article>
+    <footer include="footer"></footer>
 </section>
 ```
 
+The ___include___ attribute is related to the template name (filename), the ___as___ attribute is the reference which should be passed as the ___item___ to the partial.
+
+Please notice, that each template requires one single root. When the template "template/title" has multiple nodes in the outer bound then wrap this into a new element as root or include as follows:
 ```html
 <section>
-    <title include="template/title"></title>
-    <article include="template/article" as="item.content"></article>
-    <footer include="template/footer"></footer>
+    <include>{{ template/title }}</include>
+    <include as="item.content">{{ template/article }}</include>
+    <include>{{ template/footer }}</include>
 </section>
 ```
 
-The second include has a comma-separated value. The left side points to the template path, the right side is the reference which should be passed as ___item___ to the partial.
-
-Please notice, that the template requires one single root. When the template "template/title" has multiple nodes in the outer bound then wrap this into a new element as root or include as follows:
+Use pseudo-element:
 ```html
 <section>
-    <include>{{: template/title }}</include>
-    <include>{{: template/article, item.content }}</include>
-    <include>{{: template/footer }}</include>
+    <include from="title"/>
+    <include from="article" as="item.content"/>
+    <include from="footer"/>
 </section>
 ```
 
-```html
-<section>
-    <include>template/title</include>
-    <include as="item.content">template/article</include>
-    <include>template/footer</include>
-</section>
-```
-
-> The pseudo-element ___\<include\>___ will extract into place. You cannot use dynamic expressions within curly brackets, just provide the path.
+> The pseudo-element ___\<include\>___ will extract into place. You cannot use dynamic expressions within curly brackets, just provide the name of the template.
 
 In this example the template "template/title" gets the tag \<title\> as the template route.
 
 ### Loop Partials
 
-_WORK IN PROGRESS_
-
 ```html
-<main>
-    <title>{{: template/title }}</title>
-    <tweets>{{: template/tweet, item.tweets[] }}</tweets>
-</main>
+<section>
+    <title>{{ item.title }}</title>
+    <tweets include="tweet" for="item.data" max="5"></tweets>
+</section>
 ```
 
 In this example the template "tweet" loops the render through an array of tweets. The template "tweet" will get the array value from the current index as ___item___.
@@ -1187,21 +1174,16 @@ In this example the template "tweet" loops the render through an array of tweets
 <a name="conditional" id="conditional"></a>
 ## Conditional Branches
 
-_WORK IN PROGRESS_
-
 ```html
 <main if="item.tweet.length">
     <title>{{ item.title }}</title>
     <section>{{ item.content }}</section>
     <footer>{{ item.footer }}</footer>
 </main>
-<main else="item.contacts.length">
+<main if="item.contacts.length">
     <title>{{ item.title }}</title>
     <section>{{ item.content }}</section>
     <footer>{{ item.footer }}</footer>
-</main>
-<main else>
-    Nothing found.
 </main>
 ```
 

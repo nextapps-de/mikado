@@ -44,11 +44,46 @@ function remove_non_elemen_nodes(nodes) {
 
             for(let i = 0; i < nodes.child.length; i++){
 
+                if(nodes.child[i].tag === "include"){
+
+                    if(nodes.child[i].child){
+
+                        // <include>{{ template }}</include>
+
+                        nodes.child[i].include = nodes.child[i].child[0].text;
+                        delete nodes.child[i].tag;
+                        delete nodes.child[i].child;
+                        delete nodes.child[i].node;
+
+                        continue;
+                    }
+                    else{
+
+                        // <include from="..."/>
+
+                        if(nodes.child[i].attr.from){
+
+                            nodes.child[i].attr.include = nodes.child[i].attr.from;
+                            delete nodes.child[i].tag;
+                            delete nodes.child[i].attr.from;
+                        }
+                        else{
+
+                            nodes.child[i].include = nodes.child[i].attr.from;
+                            delete nodes.child[i].tag;
+                            delete nodes.child[i].attr;
+                            delete nodes.child[i].node;
+
+                            continue;
+                        }
+                    }
+                }
+
                 if(nodes.child[i].node === "text"){
 
                     let text = nodes.child[i].text.replace(/\s+/g, ' ')/*.trim()*/;
 
-                    if(text){
+                    if(text.trim()){
 
                         if(text.indexOf("{{@") !== -1){
 
@@ -103,6 +138,44 @@ function remove_non_elemen_nodes(nodes) {
                         delete nodes.child[i].attr.style;
                     }
 
+                    if(nodes.child[i].attr.if){
+
+                        nodes.child[i].if = nodes.child[i].attr.if;
+                        delete nodes.child[i].attr.if;
+                    }
+
+                    // if(typeof nodes.child[i].attr.else !== "undefined"){
+                    //
+                    //     nodes.child[i].else = nodes.child[i].attr.else;
+                    //     delete nodes.child[i].attr.else;
+                    // }
+
+                    if(nodes.child[i].attr.include){
+
+                        if(nodes.child[i].attr.for){
+
+                            nodes.child[i]["ref"] = nodes.child[i].attr.include;
+                            delete nodes.child[i].attr.include;
+                        }
+                        else{
+
+                            nodes.child[i].include = nodes.child[i].attr.include;
+                            delete nodes.child[i].attr.include;
+                        }
+                    }
+
+                    if(nodes.child[i].attr.for){
+
+                        nodes.child[i].for = nodes.child[i].attr.for;
+                        delete nodes.child[i].attr.for;
+                    }
+
+                    if(nodes.child[i].attr.max){
+
+                        nodes.child[i]["max"] = nodes.child[i].attr.max;
+                        delete nodes.child[i].attr.max;
+                    }
+
                     const keys = Object.keys(nodes.child[i].attr);
 
                     if(keys.length === 0){
@@ -147,6 +220,17 @@ function remove_non_elemen_nodes(nodes) {
             else if(nodes.child.length === 1){
 
                 nodes.child = nodes.child[0];
+            }
+
+            if(nodes.for && !nodes.include){
+
+                nodes["ref"] = nodes.child;
+                delete nodes.child;
+            }
+
+            if(nodes.include && nodes.include.length === 1){
+
+                nodes.include = nodes.include[0];
             }
         }
     }
@@ -220,7 +304,13 @@ json = json.replace(/"name":/g, "\"n\":")
            .replace(/"style":/g, "\"s\":")
            .replace(/"css":/g, "\"p\":")
            .replace(/"child":/g, "\"i\":")
-           .replace(/"js":/g, "\"j\":");
+           .replace(/"js":/g, "\"j\":")
+           .replace(/"include":/g, "\"+\":")
+           .replace(/"ref":/g, "\"@\":")
+           .replace(/"for":/g, "\"r\":")
+           .replace(/"max":/g, "\"m\":")
+           .replace(/"if":/g, "\"f\":");
+           //.replace(/"else":/g, "\"e\":")
 
 writeFileSync(__dirname + '/../' + (dest_name || src_name) + '.json', json, 'utf8');
 
