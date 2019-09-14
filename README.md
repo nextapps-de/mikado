@@ -12,7 +12,8 @@
 
 Benchmark:
 
-https://krausest.github.io/js-framework-benchmark/current.html
+- https://krausest.github.io/js-framework-benchmark/current.html
+- <a href="#benchmark">Stress Test (Ranking)</a>
 
 Demo:
 
@@ -162,30 +163,89 @@ __Feature Comparison__
     </tr>
 </table>
 
+<a name="benchmark"></a>
 ## Benchmark
 
+Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
+
 <table>
+    <tr></tr>
     <tr>
-        <td>Rank</td>
-        <td></td>
-        <td>Create New</td>
-        <td>Update All</td>
-        <td>Update Partial</td>
-        <td>Append</td>
-        <td>Refresh All</td>
-        <td>Remove All</td>
+        <td><sup>Rank</sup></td>
+        <td><sup>Library</sup></td>
+        <td align=center><sup>Size Kb</sup></td>
+        <td align=center><sup>Memory B</sup></td>
+        <td align=center><sup>Create</sup></td>
+        <td align=center><sup>Update</sup></td>
+        <td align=center><sup>Partial</sup></td>
+        <td align=center><sup>Append</sup></td>
+        <td align=center><sup>Repaint</sup></td>
+        <td align=center><sup>Remove</sup></td>
+        <td align=center><sup><b>Score</b></sup></td>
     </tr>
     <tr>
         <td>1</td>
-        <td>Mikado</td>
-        <td>133,954 op/s</td>
-        <td>483,574 op/s</td>
-        <td>1,129,951 op/s</td>
-        <td>128,211 op/s</td>
-        <td>13,119,933 op/s</td>
-        <td>2,309,468 op/s</td>
+        <td>mikado-0.1.2</td>
+        <td align=right>2.00</td>
+        <td align=right>155392</td>
+        <td align=right>1352</td>
+        <td align=right>4788</td>
+        <td align=right>10980</td>
+        <td align=right>1565</td>
+        <td align=right>126113</td>
+        <td align=right>24614</td>
+        <td align=right><b>898</b></td>
     </tr>
+    <tr></tr>
+    <tr>
+        <td>2</td>
+        <td>domc-0.0.12</td>
+        <td align=right>4.46</td>
+        <td align=right>270056</td>
+        <td align=right>944</td>
+        <td align=right>4260</td>
+        <td align=right>9263</td>
+        <td align=right>904</td>
+        <td align=right>90809</td>
+        <td align=right>23681</td>
+        <td align=right><b>632</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>3</td>
+        <td>sinuous-0.14.2</td>
+        <td align=right>7.48</td>
+        <td align=right>265192</td>
+        <td align=right>377</td>
+        <td align=right>8757</td>
+        <td align=right>11026</td>
+        <td align=right>395</td>
+        <td align=right>195419</td>
+        <td align=right>14170</td>
+        <td align=right><b>620</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>4</td>
+        <td>surplus-0.5.3</td>
+        <td align=right>15.79</td>
+        <td align=right>166288</td>
+        <td align=right>578</td>
+        <td align=right>655</td>
+        <td align=right>655</td>
+        <td align=right>673</td>
+        <td align=right>638</td>
+        <td align=right>14810</td>
+        <td align=right><b>332</b></td>
+    </tr>
+    <tr></tr>
 </table>
+
+More results are coming soon.
+
+<code>Score = Sum<sub>test</sub>(max ops / self ops) / test count * 1000</code>
+
+The maximum possible score is 1000, that requires a library to be best in each category.
 
 <a name="api"></a>
 ## API Overview
