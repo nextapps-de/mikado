@@ -81,9 +81,6 @@ if(SUPPORT_EVENTS){
         event.stopPropagation();
     }
 
-    /**
-     * @export
-     */
     Mikado.prototype.route = function(id, fn){
 
         listener[id] = fn;

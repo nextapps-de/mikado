@@ -52,7 +52,6 @@ if(USE_POLYFILL){
 
             /**
              * @param {Function} callback
-             * @export
              */
 
             Promise.prototype.then = function(callback){

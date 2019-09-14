@@ -1,9 +1,6 @@
 import Mikado from "./mikado.js";
 
 if(SUPPORT_HELPERS){
-    /**
-     * @export
-     */
 
     Mikado.prototype.up = function(a){
 
@@ -31,10 +28,6 @@ if(SUPPORT_HELPERS){
             }
         }
     };
-
-    /**
-     * @export
-     */
 
     Mikado.prototype.down = function(a){
 
@@ -70,10 +63,6 @@ if(SUPPORT_HELPERS){
         }
     };
 
-    /**
-     * @export
-     */
-
     Mikado.prototype.first = function(a){
 
         const index = a["_idx"];
@@ -97,10 +86,6 @@ if(SUPPORT_HELPERS){
         }
     };
 
-    /**
-     * @export
-     */
-
     Mikado.prototype.last = function(a){
 
         const index = a["_idx"];
@@ -123,10 +108,6 @@ if(SUPPORT_HELPERS){
             }
         }
     };
-
-    /**
-     * @export
-     */
 
     Mikado.prototype.swap = function(a, b){
 

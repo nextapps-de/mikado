@@ -204,7 +204,6 @@ Mikado.prototype.init = function(template, options){
     :
         defaults;
 
-    /** @export */
     this.config = options;
 
     if(typeof template === "string"){
@@ -227,8 +226,6 @@ Mikado.prototype.init = function(template, options){
     }
 
     this.reuse = options["reuse"];
-
-    /** @export */
     this.state = options["state"] || state;
 
     if(SUPPORT_STORAGE){
@@ -246,8 +243,6 @@ Mikado.prototype.init = function(template, options){
             else{
 
                 this.extern = typeof store === "object";
-
-                /** @export */
                 this.store = store && (this.extern ? store : []);
             }
 

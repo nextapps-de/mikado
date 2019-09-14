@@ -9,6 +9,12 @@ Mikado.load;
 /** @export */
 Mikado.new;
 /** @export */
+//Mikado.config;
+/** @export */
+Mikado.state;
+/** @export */
+Mikado.store;
+/** @export */
 Mikado.prototype.load;
 /** @export */
 Mikado.prototype.update;
@@ -74,3 +80,16 @@ Mikado.prototype.setStyle;
 Mikado.prototype.setCSS;
 /** @export */
 Mikado.prototype.setAttribute;
+/** @export */
+Mikado.prototype.up;
+/** @export */
+Mikado.prototype.down;
+/** @export */
+Mikado.prototype.first;
+/** @export */
+Mikado.prototype.last;
+/** @export */
+Mikado.prototype.swap;
+
+/** @export */
+Promise.prototype.then;
