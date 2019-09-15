@@ -13,7 +13,7 @@
 Benchmark:
 
 - https://krausest.github.io/js-framework-benchmark/current.html
-- <a href="#benchmark">Stress Test (Ranking)</a>
+- <a href="#benchmark">Stress Test Benchmark</a>
 
 Demo:
 
@@ -165,7 +165,7 @@ __Feature Comparison__
 </table>
 
 <a name="benchmark"></a>
-## Benchmark
+## Benchmark (Stress Test)
 
 Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
 
@@ -174,7 +174,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td><sup>Rank</sup></td>
         <td><sup>Library</sup></td>
-        <td align=center><sup>Size Kb</sup></td>
+        <td align=center><sup>Size kB</sup></td>
         <td align=center><sup>Memory B</sup></td>
         <td align=center><sup>Create</sup></td>
         <td align=center><sup>Update</sup></td>
@@ -182,12 +182,12 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=center><sup>Append</sup></td>
         <td align=center><sup>Repaint</sup></td>
         <td align=center><sup>Remove</sup></td>
-        <td align=center><sup><b>Score</b></sup></td>
+        <td align=center><sup>Score</sup></td>
     </tr>
     <tr>
         <td>1</td>
         <td>mikado-0.1.2</td>
-        <td align=right>2.00</td>
+        <td align=right>2.0</td>
         <td align=right>155392</td>
         <td align=right>1352</td>
         <td align=right>4788</td>
@@ -228,6 +228,34 @@ Values represents operations per second, each benchmark task has to process an d
     <tr></tr>
     <tr>
         <td>4</td>
+        <td>redom-3.24.1</td>
+        <td align=right>2.88</td>
+        <td align=right>246936</td>
+        <td align=right>365</td>
+        <td align=right>2344</td>
+        <td align=right>5223</td>
+        <td align=right>373</td>
+        <td align=right>60523</td>
+        <td align=right>14571</td>
+        <td align=right><b>434</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>5</td>
+        <td>inferno-7.3.1</td>
+        <td align=right>8.4</td>
+        <td align=right>410960</td>
+        <td align=right>690</td>
+        <td align=right>2468</td>
+        <td align=right>3854</td>
+        <td align=right>622</td>
+        <td align=right>6876</td>
+        <td align=right>14176</td>
+        <td align=right><b>346</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>6</td>
         <td>surplus-0.5.3</td>
         <td align=right>15.79</td>
         <td align=right>166288</td>
@@ -244,9 +272,9 @@ Values represents operations per second, each benchmark task has to process an d
 
 More results are coming soon.
 
-<code>Score = Sum<sub>test</sub>(max ops / self ops) / test count * 1000</code>
+<code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
 
-The maximum possible score is 1000, that requires a library to be best in each category.
+The maximum possible score is 1000, that requires a library to be best in each category. This stress test is based on a __real life use case__, where you will fetch new data from a source and do computations on it. Libraries cannot use all their tricks for internal state caching, it measures the real workload of a real use case.
 
 <a name="api"></a>
 ## API Overview
