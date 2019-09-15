@@ -16,6 +16,9 @@ src/data/user/*
 src/php/lib/tcpdf/*
 !src/php/lib/tcpdf/tcpdf.php
 js-framework-benchmark
+server/cache/
+test/
+bench/
 
 demo/todomvc/task/
 demo/todomvc/template/app/*

@@ -27,8 +27,9 @@ Take a look into the source code of this pages is the best starting point.
 Actually in progress:
 - ~~Conditional branches~~ ✓
 - ~~Includes/partials~~ ✓
-- Live templates (for local development)
+- ~~Live templates (for local development)~~ ✓
 - ~~Persistent state~~ ✓
+- Express Middleware
 - Paginated Render
 - ~~Loops (through partials)~~ ✓
 - Plugin API
@@ -1134,6 +1135,95 @@ Mikado.new(root, template, { once: true });
 When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
 
 When unloading templates explicitly the template will also removes completely. The next time the same template is going to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to destroy also dynamic views when it was closed by the user to free memory.
+
+## Compiler Service / Live Templates
+
+Mikado provides you a webserver to serve templates via a simple RESTful API. This allows you to send views live from a server. Also this can be used for live reloading templates in a local development environment.
+
+Start the compiler server:
+
+```cmd
+npm run serve
+```
+
+The service is listening on localhost. The API has this specification:
+
+`{host}:{port}/:{type}/path/to/template.html`
+
+Examples:
+- localhost:3000/json/template/app.html
+- localhost:3000/json/template/app (_WIP_)
+- localhost:3000/template/app.json (_WIP_)
+
+They all have same semantics, you can use different forms for the same request.
+
+Types:
+<table>
+    <tr>
+        <td><b>json</b></td>
+        <td>Assign them via <a href="#mikado.register">Mikado.register</a> or just render the template <a href="#mikado.once">once</a>.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>es6</b></td>
+        <td>Import as ES6 compatible modules.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>js</b>&nbsp;/&nbsp;<b>es5</b></td>
+        <td>Uses Mikado from the global namespace. This requires a non-ES6 build of mikado or import "browser.js", both <u>before</u> loading this template.</td>
+    </tr>
+</table>
+
+#### Local Development
+
+The compiler service is also very useful to render templates ony the fly when modifying the source code. Use a flag to switch between development or production environment in your source code, e.g.:
+
+```js
+// production:
+import tpl_app from "./path/to/app.es6.js";
+import tpl_view from "./path/to/view.es6.js";
+
+if(DEBUG){
+    // development:
+    Mikado.load("http://localhost:3000/json/path/to/app.html", false);
+    Mikado.load("http://localhost:3000/json/path/to/view.html", false);
+    const app = Mikado.new("app");
+    const view = Mikado.new("view");
+}
+else{
+    const app = Mikado.new(tpl_app);
+    const view = Mikado.new(tpl_view);
+}
+
+// same code follows here ...
+```
+
+You can also import them as ES6 modules directly via an asynchronous IIFE:
+```js
+let tpl_app, tpl_view;
+
+(async function(){
+    if(DEBUG){
+        // development:
+        tpl_app = await import('http://localhost:3000/es6/test/app.es6.js');
+        tpl_view = await import('http://localhost:3000/es6/test/view.es6.js');
+    }
+    else{
+        // production:
+        tpl_app = await import("./path/to/app.html");
+        tpl_view = await import("./path/to/view.html");
+    }
+}());
+
+// same code follows here ...
+const app = Mikado.new(tpl_app);
+const view = Mikado.new(tpl_view);
+```
+
+#### Server-Side Rendering (SSR)
+
+Use the json format to delegate view data from server to the client. Actually just static templates are supported. An express middleware is actually in progress to create templates with dynamic expressions. When using SSR it may be useless to keep the template data as well as calculate all the optimizations for re-using. For this purpose use the method <a href="#mikado.once">___Mikado.once()___</a>.
 
 ## Best Practices
 

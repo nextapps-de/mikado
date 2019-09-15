@@ -37,21 +37,24 @@
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm run build && npm run build:light && npm run build:es5",
     "update": "npm install google-closure-compiler@nightly && npm install html2json@latest",
-    "server": "node task/server.js",
+    "serve": "node server/cluster.js",
+    "server": "node server/cluster.js",
+    "localhost": "node task/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
     "dist/",
     "src/",
     "task/",
+    "server/",
     "README.md",
     "LICENSE"
   ],
   "readme": "README.md",
   "dependencies": {},
   "devDependencies": {
+    "express": "^4.17.1",
     "google-closure-compiler": "^20190908.0.0-nightly",
-    "html2json": "^1.0.2",
-    "web-servo": "^0.5.1"
+    "html2json": "^1.0.2"
   }
 }

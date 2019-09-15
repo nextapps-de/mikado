@@ -1238,7 +1238,7 @@ if(SUPPORT_TRANSPORT){
 
                     const tpl = /** @type {Template} */ (JSON.parse(json));
 
-                    Mikado.register(file, tpl);
+                    Mikado.register(tpl);
 
                     if(self instanceof Mikado){
 
