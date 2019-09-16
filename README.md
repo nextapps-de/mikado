@@ -259,7 +259,20 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>14009</td>
         <td align=right><b>344</b></td>
     </tr>
-    <tr></tr>
+    <tr>
+        <td>7</td>
+        <td>innerHTML</td>
+        <td align=right>-</td>
+        <td align=right>406992</td>
+        <td align=right>983</td>
+        <td align=right>956</td>
+        <td align=right>854</td>
+        <td align=right>425</td>
+        <td align=right>847</td>
+        <td align=right>1742</td>
+        <td align=right>26346</td>
+        <td align=right><b>343</b></td>
+    </tr>
     <tr>
         <td>6</td>
         <td>surplus-0.5.3</td>
@@ -273,20 +286,6 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>1460</td>
         <td align=right>15469</td>
         <td align=right><b>294</b></td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>innerHTML</td>
-        <td align=right>-</td>
-        <td align=right>406992</td>
-        <td align=right>983</td>
-        <td align=right>956</td>
-        <td align=right>854</td>
-        <td align=right>425</td>
-        <td align=right>847</td>
-        <td align=right>1742</td>
-        <td align=right>26346</td>
-        <td align=right><b>259</b></td>
     </tr>
     <tr></tr>
     <tr>

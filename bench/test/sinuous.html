@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+    <title>sinuous</title>
+</head>
+<body>
+<div id="result" style="white-space: pre"></div>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    import { observable } from '../node_modules/sinuous/module/observable.js';
+    import { html } from '../node_modules/sinuous/module/sinuous.js';
+    import { template, t, o } from '../node_modules/sinuous/module/template.js';
+    import { map } from '../node_modules/sinuous/module/map.js';
+    import { suite, root } from "./../bench.js";
+
+    const data = observable([]);
+
+    const App = () => {
+
+        const Row = (item) => html`
+            <section data-id="${ item['id'] }" data-date="${ item['date'] }" data-index="${ item['index'] }">
+                <div class="${ item['class'] }" style="padding-right: 10px;">
+                    <div class="title">${ item['title'] }</div>
+                    <div class="content">${ item['content'] }</div>
+                    <div class="footer" href="show-test">${ item['footer'] }</div>
+                </div>
+            </section>
+        `;
+
+        return html`${map(data, Row)}`;
+    };
+
+    root.appendChild(App());
+
+    suite["sinuous"] = function(items){
+
+        data(items);
+    };
+
+</script>
+</body>
+</html>

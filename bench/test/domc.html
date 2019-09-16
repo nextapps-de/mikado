@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+    <title>domc</title>
+</head>
+<body>
+<div id="result" style="white-space: pre"></div>
+<div id="root">
+    <section v-map="item of items" data-id="{{item.id}}" data-date="{{item.date}}" data-index="{{item.index}}">
+        <div class="{{item.class}}" style="padding-right: 10px;">
+            <div class="title">{{item.title}}</div>
+            <div class="content">{{item.content}}</div>
+            <div class="footer" href="show-test">{{item.footer}}</div>
+        </div>
+    </section>
+</div>
+<script type="module">
+
+    "use strict";
+
+    import domc from '../node_modules/domc/index.js';
+    import '../node_modules/domc/vMap.js'
+    import '../node_modules/domc/vFor.js'
+    import { suite, root } from "./../bench.js";
+
+    let app = domc(root);
+    let scope = {items: []};
+    app.rehydrate(scope);
+
+    suite["domc"] = function(items){
+
+        scope.items = items;
+        root.update(scope);
+    };
+
+</script>
+</body>
+</html>

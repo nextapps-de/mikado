@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <title>innerHTML</title>
+</head>
+<body>
+<div id="result" style="white-space: pre"></div>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../bench.js";
+
+    suite["innerhtml"] = function(items){
+
+        root.innerHTML = render(items);
+    };
+
+    function render(items){
+
+        let html = "";
+
+        for(let i = 0; i < items.length; i++){
+
+            html += prototype(items[i]);
+        }
+
+        return html;
+    }
+
+    function prototype(item){
+
+        return (
+
+            '<section data-id="' + item.id + '" data-date="' + item.date + '" data-index="' + item.index + '">' +
+                '<div class="' + item.class + '" style="padding-right: 10px;">' +
+                    '<div class="title">' + item.title + '</div>' +
+                    '<div class="content">' + item.content + '</div>' +
+                    '<div class="footer" href="show-test">' + item.footer + '</div>' +
+                '</div>' +
+            '</section>'
+        );
+    };
+
+</script>
+</body>
+</html>
