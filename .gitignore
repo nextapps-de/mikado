@@ -2,23 +2,12 @@
 node_modules
 package-lock.json
 public/*
-assets/
 log/*
-old/
 tmp/
-vorlagen/
-src/img/min/
-src/img/meal/
-src/img/old/
-/phpMyAdmin/
-src/data/plan/*
-src/data/user/*
-src/php/lib/tcpdf/*
-!src/php/lib/tcpdf/tcpdf.php
 js-framework-benchmark
 server/cache/
-test/
-bench/
+#test/
+#bench/
 
 demo/todomvc/task/
 demo/todomvc/template/app/*

@@ -181,91 +181,127 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=center><sup>Partial</sup></td>
         <td align=center><sup>Append</sup></td>
         <td align=center><sup>Repaint</sup></td>
+        <td align=center><sup>Reduce</sup></td>
         <td align=center><sup>Remove</sup></td>
         <td align=center><sup>Score</sup></td>
     </tr>
     <tr>
         <td>1</td>
         <td>mikado-0.1.2</td>
-        <td align=right>2.0</td>
-        <td align=right>155392</td>
-        <td align=right>1352</td>
-        <td align=right>4788</td>
-        <td align=right>10980</td>
-        <td align=right>1565</td>
-        <td align=right>126113</td>
-        <td align=right>24614</td>
-        <td align=right><b>898</b></td>
+        <td align=right>2</td>
+        <td align=right>167336</td>
+        <td align=right>1599</td>
+        <td align=right>7158</td>
+        <td align=right>12829</td>
+        <td align=right>838</td>
+        <td align=right>251559</td>
+        <td align=right>28938</td>
+        <td align=right>25969</td>
+        <td align=right><b>945</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>2</td>
         <td>domc-0.0.12</td>
-        <td align=right>4.46</td>
-        <td align=right>270056</td>
-        <td align=right>944</td>
-        <td align=right>4260</td>
-        <td align=right>9263</td>
-        <td align=right>904</td>
-        <td align=right>90809</td>
-        <td align=right>23681</td>
-        <td align=right><b>632</b></td>
+        <td align=right>4,46</td>
+        <td align=right>207488</td>
+        <td align=right>957</td>
+        <td align=right>6575</td>
+        <td align=right>11284</td>
+        <td align=right>865</td>
+        <td align=right>92368</td>
+        <td align=right>20701</td>
+        <td align=right>24041</td>
+        <td align=right><b>704</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>3</td>
         <td>sinuous-0.14.2</td>
-        <td align=right>7.48</td>
+        <td align=right>7,48</td>
         <td align=right>265192</td>
-        <td align=right>377</td>
-        <td align=right>8757</td>
-        <td align=right>11026</td>
-        <td align=right>395</td>
-        <td align=right>195419</td>
-        <td align=right>14170</td>
-        <td align=right><b>620</b></td>
+        <td align=right>384</td>
+        <td align=right>9695</td>
+        <td align=right>11996</td>
+        <td align=right>384</td>
+        <td align=right>308152</td>
+        <td align=right>17639</td>
+        <td align=right>13464</td>
+        <td align=right><b>626</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>4</td>
         <td>redom-3.24.1</td>
-        <td align=right>2.88</td>
+        <td align=right>2,88</td>
         <td align=right>246936</td>
-        <td align=right>365</td>
-        <td align=right>2344</td>
-        <td align=right>5223</td>
-        <td align=right>373</td>
-        <td align=right>60523</td>
-        <td align=right>14571</td>
-        <td align=right><b>434</b></td>
+        <td align=right>369</td>
+        <td align=right>2632</td>
+        <td align=right>4790</td>
+        <td align=right>381</td>
+        <td align=right>58468</td>
+        <td align=right>19843</td>
+        <td align=right>11991</td>
+        <td align=right><b>446</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>5</td>
         <td>inferno-7.3.1</td>
-        <td align=right>8.4</td>
+        <td align=right>8,4</td>
         <td align=right>410960</td>
-        <td align=right>690</td>
-        <td align=right>2468</td>
-        <td align=right>3854</td>
-        <td align=right>622</td>
-        <td align=right>6876</td>
-        <td align=right>14176</td>
-        <td align=right><b>346</b></td>
+        <td align=right>706</td>
+        <td align=right>2623</td>
+        <td align=right>3199</td>
+        <td align=right>617</td>
+        <td align=right>5538</td>
+        <td align=right>6527</td>
+        <td align=right>14009</td>
+        <td align=right><b>344</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>6</td>
         <td>surplus-0.5.3</td>
-        <td align=right>15.79</td>
+        <td align=right>15,79</td>
         <td align=right>166288</td>
+        <td align=right>698</td>
+        <td align=right>632</td>
+        <td align=right>640</td>
+        <td align=right>282</td>
+        <td align=right>639</td>
+        <td align=right>1460</td>
+        <td align=right>15469</td>
+        <td align=right><b>294</b></td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>innerHTML</td>
+        <td align=right>-</td>
+        <td align=right>406992</td>
+        <td align=right>983</td>
+        <td align=right>956</td>
+        <td align=right>854</td>
+        <td align=right>425</td>
+        <td align=right>847</td>
+        <td align=right>1742</td>
+        <td align=right>26346</td>
+        <td align=right><b>259</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>8</td>
+        <td>jQuery</td>
+        <td align=right>31,26</td>
+        <td align=right>819032</td>
+        <td align=right>746</td>
+        <td align=right>650</td>
         <td align=right>578</td>
-        <td align=right>655</td>
-        <td align=right>655</td>
-        <td align=right>673</td>
-        <td align=right>638</td>
-        <td align=right>14810</td>
-        <td align=right><b>332</b></td>
+        <td align=right>305</td>
+        <td align=right>565</td>
+        <td align=right>895</td>
+        <td align=right>4919</td>
+        <td align=right><b>158</b></td>
     </tr>
     <tr></tr>
 </table>
@@ -607,14 +643,8 @@ Within a template you have access to the following indentifiers:
     </tr>
     <tr></tr>
     <tr>
-        <td><b><s>root</s></b></td>
-        <td><s>Points to the root element of a current rendered template (this is not the root where the view is mounted).</s></td>
-        <td>auto</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><b><s>self</s></b></td>
-        <td><s>Points to the current rendered element itself.</s></td>
+        <td><b>self</b></td>
+        <td>Points to the current rendered element itself. Using "js" node property or by using the {{@ marker grants you to have "self" available.</td>
         <td>auto</td>
     </tr>
 </table>

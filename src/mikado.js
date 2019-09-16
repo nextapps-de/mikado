@@ -111,9 +111,7 @@ Mikado.prototype.mount = function(target){
     if(this.root !== target){
 
         this.root = target;
-
         this.check();
-
         this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.children));
         this.length = this.dom.length;
     }
@@ -146,7 +144,6 @@ const event_types = {
     "touchstart": 1,
     "touchmove": 1,
     "touchend": 1,
-    "touchcancel": 1,
     "reset": 1,
     "select": 1,
     "submit": 1,
@@ -324,9 +321,10 @@ Mikado.prototype.create = function(item, view, index){
     }
     */
 
-    this.static || this.update_path(factory["_path"], item, index, view);
+    this.static || this.update_path(factory["_path"], factory["_cache"], item, index, view);
 
     const tmp = factory.cloneNode(true);
+    //tmp["_cache"] = {};
 
     //profiler_end("create");
 
@@ -459,6 +457,11 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
         let count = items ? items.length : this.length;
         //let fragment;
 
+        if(!count){
+
+            return this.clear();
+        }
+
         this.reuse || this.clear(/* resize: */ count);
 
         // add or update
@@ -564,6 +567,8 @@ Mikado.prototype.clear = function(resize){
 
     if(SUPPORT_STORAGE && this.store){
 
+        // TODO: check if replacing indexes is faster then empty
+
         if(this.extern){
 
             this.store.splice(0);
@@ -574,10 +579,11 @@ Mikado.prototype.clear = function(resize){
         }
     }
 
-    if(SUPPORT_CACHE && this.cache){
-
-        this.root["_html"] = null;
-    }
+    // Xone fallback:
+    // if(SUPPORT_CACHE && this.cache){
+    //
+    //     this.root["_html"] = null;
+    // }
 
     //profiler_end("clear");
 
@@ -741,7 +747,7 @@ Mikado.prototype.update = function(node, item, view, index){
             }
         }
 
-        this.update_path(node["_path"] || this.create_path(node), item, index, view);
+        this.update_path(node["_path"] || this.create_path(node), node["_cache"], item, index, view);
     //}
 
     //profiler_end("update");
@@ -802,7 +808,7 @@ Mikado.prototype.create_path = function(root){
     }
 
     root["_path"] = new_path;
-
+    root["_cache"] = {};
     //profiler_end("create_path");
 
     return new_path;
@@ -872,6 +878,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         tmp_fn = "";
         this.vpath = [];
         node["_path"] = dom_path = [];
+        node["_cache"] = {};
     }
 
     const style = tpl["s"];
@@ -888,21 +895,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     if(js){
 
         new_fn += js + ";";
+        has_update = 2; // force providing "self"
     }
 
     if(class_name){
 
         if(typeof class_name === "object"){
 
-            new_fn += SUPPORT_CACHE && this.cache ?
+            new_fn += SUPPORT_CACHE && this.cache ? (
 
-                ".setClass(self," + class_name[0] + ")"
-            :
+                SUPPORT_HELPERS ?
+
+                    ";v=" + class_name[0] + ";if(self._class!==v){self._class=v;self.className=v;}"
+                :
+                    ";v=" + class_name[0] + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v;}"
+            ):
                 "self.className=" + class_name[0] + ";";
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
-            this.static = false;
             has_update++;
         }
         else{
@@ -923,10 +934,14 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof value === "object"){
 
-                new_fn += SUPPORT_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ? (
 
-                    ".setAttribute(self,'" + key + "'," + value[0] + ")"
-                :
+                    SUPPORT_HELPERS ?
+
+                        ";v=" + value[0] + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v);}"
+                    :
+                        ";v=" + value[0] + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v);}"
+                ):
                     "self.setAttribute('" + key + "'," + value[0] + ");";
 
                 has_dynamic_values = true;
@@ -947,7 +962,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
-            this.static = false;
         }
     }
 
@@ -959,15 +973,18 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else if(style.length){
 
-            new_fn += SUPPORT_CACHE && this.cache ?
+            new_fn += SUPPORT_CACHE && this.cache ? (
 
-                ".setCSS(self," + style[0] + ")"
-            :
+                SUPPORT_HELPERS ?
+
+                    ";v=" + style[0] + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v;}"
+                :
+                    ";v=" + style[0] + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v;}"
+            ):
                 "self.style.cssText=" + style[0] + ";";
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
-            this.static = false;
             has_update++;
         }
         else{
@@ -982,10 +999,14 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 if(typeof value === "object"){
 
-                    new_fn += SUPPORT_CACHE && this.cache ?
+                    new_fn += SUPPORT_CACHE && this.cache ? (
 
-                        ".setStyle(self,'" + key + "'," + value[0] + ")"
-                    :
+                        SUPPORT_HELPERS ?
+
+                            ";v=" + value[0] + ";var t=self['_style_cache']||(self['_style_cache']={});if(t['" + key + "']!==v){t['" + key + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v);}"
+                        :
+                            ";v=" + value[0] + ";if(s['_style_" + key + path_length + "']!==v){s['_style_" + key + path_length + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v);}"
+                    ):
                         "self.style.setProperty('" + key + "'," + value[0] + ");";
 
                     has_dynamic_values = true;
@@ -1001,7 +1022,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = node;
-                this.static = false;
             }
         }
     }
@@ -1046,22 +1066,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             if(is_object){
 
                 // collect text node
-                if(dom_path[path_length]){
+                if(has_update){
 
                     concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
                     new_fn = "";
                     path_length++;
                 }
 
-                new_fn += SUPPORT_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ? (
 
-                    ".setText(self," + text + ")"
-                :
+                    SUPPORT_HELPERS ?
+
+                        ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v;};"
+                    :
+                        ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v;};"
+                ):
                     "self.nodeValue=" + text + ";";
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = text_node;
-                this.static = false;
                 has_update++;
             }
 
@@ -1072,15 +1095,18 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             if(typeof html === "object"){
 
                 html = html[0];
-                new_fn += SUPPORT_CACHE && this.cache ?
+                new_fn += SUPPORT_CACHE && this.cache ? (
 
-                    ".setHTML(self," + html + ")"
-                :
+                    SUPPORT_HELPERS ?
+
+                        ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v;};"
+                    :
+                        ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v;};"
+                ):
                     "self.innerHTML=" + html + ";";
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = node;
-                this.static = false;
                 has_update++;
             }
             else{
@@ -1103,8 +1129,13 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    // push path before recursion
-    concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
+    if(has_update){
+
+        this.static = false;
+
+        // push path before recursion
+        concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
+    }
 
     if(SUPPORT_CONDITIONAL && tpl["f"]){
 
@@ -1153,15 +1184,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     if(!index && !this.static){
 
-        // console.log('"use strict";var self' + tmp_fn);
+        // console.log('"use strict";var self,v' + tmp_fn);
         // console.log(dom_path);
         // console.log(this.vpath);
 
-        this.update_path = Function("p", "item", "index", "view", (
+        this.update_path = Function("p", "s", "item", "index", "view", (
 
             tmp_fn ?
 
-                '"use strict";var self' + tmp_fn //+ ';'  // var root=p[0]
+                '"use strict";var self,v;' + tmp_fn + ";" //+ ';'  // var root=p[0]
             :
                 ""
         ));
@@ -1174,33 +1205,17 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
 function concat_path(has_update, new_fn, path_length, cache){
 
-    if(has_update){
+    //if(has_update){ // already checked
 
-        if(has_update > 1){
+        if(cache || (has_update > 1)){
 
-            tmp_fn += ";self=p[" + path_length + "];";
-
-            if(SUPPORT_CACHE && cache){
-
-                tmp_fn += "this" + new_fn;
-            }
-            else{
-
-                tmp_fn += new_fn;
-            }
+            tmp_fn += ";self=p[" + path_length + "];" + new_fn;
         }
         else{
 
-            if(SUPPORT_CACHE && cache){
-
-                tmp_fn += new_fn.replace(/self/g, "p[" + path_length + "]") ;
-            }
-            else{
-
-                tmp_fn += ";p[" + path_length + "]" + new_fn.substring(4); // cut "self"
-            }
+            tmp_fn += new_fn.replace(/self/g, "p[" + path_length + "]")
         }
-    }
+    //}
 }
 
 // TODO: when rendering on a modified template all states hast to reset to its default template values

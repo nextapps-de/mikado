@@ -1,6 +1,6 @@
 import Mikado from "./mikado.js";
 
-if(SUPPORT_CACHE){
+if(SUPPORT_CACHE && SUPPORT_HELPERS){
 
     Mikado.prototype.setText = function(target, text){
 
