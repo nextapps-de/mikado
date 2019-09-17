@@ -1,4 +1,4 @@
-<section class="main" style="{{ this.state.empty ? 'display:none' : '' }}">
+<section class="main" if="!this.state.empty">
     <input id="toggle-all" class="toggle-all" type="checkbox" change="toggle-all">
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list"></ul>

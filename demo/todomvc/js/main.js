@@ -3,9 +3,6 @@
 import "./route.js";
 import "./event.js";
 import controller from "./controller.js";
-import { init } from "./controller.js";
-
-init();
 
 (window.onpopstate = function(){
 

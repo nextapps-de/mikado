@@ -21,8 +21,18 @@ export default function(route, target){
     state.filter = route;
 
     // render todos:
-    list.render([{}], update);
+    list.render(store, view, update);
 }
+
+export const view = {
+
+  is_visible: function(item){
+
+      return state.filter === "all" ||
+            (state.filter === "completed" && item.completed) ||
+            (state.filter === "active" && !item.completed)
+  }
+};
 
 // private helpers:
 
@@ -44,18 +54,8 @@ export function update(){
     state.completed = store.length - state.left;
     state.empty = !store.length;
 
-    main.render([{}]);
-    footer.render([{}]);
+    main.render({});
+    footer.render({});
 
     $("#toggle-all").checked = !state.left;
-}
-
-export function init(){
-
-    const checkboxes = $$('.toggle[checked="false"]');
-
-    for(let i = 0, length = checkboxes.length; i < length; i++){
-
-        checkboxes[i].checked = false;
-    }
 }

@@ -1,5 +1,5 @@
 import { store, list } from "./app.js";
-import { update } from "./controller.js";
+import { view, update } from "./controller.js";
 import { $, $$, keycode } from "./helper.js";
 
 /**
@@ -37,7 +37,7 @@ list.route("clear-completed", function(){
     }
 
     update();
-    list.render().export();
+    list.render(store, view).export();
 
 }).route("enter-edit-mode", function(target, event, self){
 
@@ -75,7 +75,7 @@ list.route("clear-completed", function(){
             list.remove(target);
         }
 
-        list.render().export();
+        list.render(store, view).export();
     }
     else if(event === KEYS.ESC) {
 
@@ -85,11 +85,9 @@ list.route("clear-completed", function(){
 }).route("update-state", function(target, event, self){
 
     const index = list.index(target);
-    const status = self.getAttribute("checked") === "false";
 
-    self.checked = status;
-    store[index]["completed"] = status;
-    list.update(index).export();
+    store[index]["completed"] = !!self.checked;
+    list.refresh(index, view).export();
     update();
 
 }).route("new-todo", function(target, event){
@@ -105,7 +103,7 @@ list.route("clear-completed", function(){
             "title": value,
             "completed": false
 
-        }).export();
+        }, view).export();
 
         update();
         target.value = "";

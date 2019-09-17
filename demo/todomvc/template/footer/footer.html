@@ -1,4 +1,4 @@
-<footer class="footer" style="{{ this.state.empty ? 'display:none' : '' }}">
+<footer class="footer" if="!this.state.empty">
     <span class="todo-count"><strong>{{ this.state.left }}</strong><span> item left</span></span>
     <ul class="filters">
         <li>
@@ -11,5 +11,5 @@
             <a class="{{ this.state.filter === 'completed' ? 'selected' : '' }}" href="#/completed" click="route-completed">Completed</a>
         </li>
     </ul>
-    <button class="clear-completed" click="clear-completed" style="{{ this.state.completed ? '' : 'display:none' }}">Clear completed</button>
+    <button class="clear-completed" click="clear-completed" if="!this.state.completed">Clear completed</button>
 </footer>

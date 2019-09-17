@@ -10,6 +10,7 @@
     "todomvc-common": "^1.0.0"
   },
   "devDependencies": {
+    "mikado-compile": "^0.0.1",
     "web-servo": "^0.5.1"
   }
 }
