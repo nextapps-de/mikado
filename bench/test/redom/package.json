@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "dependencies": {
+    "redom": "^3.24.1"
+  }
+}

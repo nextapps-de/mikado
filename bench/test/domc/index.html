@@ -17,10 +17,11 @@
 
     "use strict";
 
-    import domc from '../node_modules/domc/index.js';
-    import '../node_modules/domc/vMap.js'
-    import '../node_modules/domc/vFor.js'
-    import { suite, root } from "./../bench.js";
+    import { suite, root } from "./../../bench.js";
+
+    import domc from './node_modules/domc/index.js';
+    import './node_modules/domc/vMap.js'
+    import './node_modules/domc/vFor.js'
 
     let app = domc(root);
     let scope = {items: []};

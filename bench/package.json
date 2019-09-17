@@ -3,17 +3,7 @@
   "scripts": {
     "server": "node task/server.js"
   },
-  "dependencies": {
-    "domc": "0.0.12",
-    "inferno": "^7.3.1",
-    "inferno-create-element": "^7.3.1",
-    "jquery": "^3.4.1",
-    "mikado": "^0.1.2",
-    "redom": "^3.24.1",
-    "s-js": "^0.4.9",
-    "sinuous": "^0.14.2",
-    "surplus": "^0.5.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "web-servo": "^0.5.1"
   }

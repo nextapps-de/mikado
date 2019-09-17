@@ -5,15 +5,16 @@
 <body>
 <div id="result" style="white-space: pre"></div>
 <div id="root"></div>
-<script src="../../dist/mikado.light.js"></script>
+<script src="node_modules/mikado/dist/mikado.light.js"></script>
 <script type="module">
 
     "use strict";
 
+    import { suite, root } from "./../../bench.js";
+
     //import Mikado from "../../src/mikado.js";
-    import template from "./../template/template.es6.js";
-    import { suite, root } from "./../bench.js";
-    import { generate } from "./../data.js";
+    import template from "./template/template.es6.js";
+    //import { generate } from "./../data.js";
 
     const mikado = new Mikado(root, template, {
 
@@ -24,7 +25,6 @@
     });
 
     //mikado.render(generate(100));
-
 
     suite["mikado"] = function(items){
 

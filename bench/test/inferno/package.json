@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "dependencies": {
+    "inferno": "^7.3.1",
+    "inferno-create-element": "^7.3.1"
+  }
+}
