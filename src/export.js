@@ -9,11 +9,7 @@ Mikado.load;
 /** @export */
 Mikado.new;
 /** @export */
-//Mikado.config;
-/** @export */
-Mikado.state;
-/** @export */
-Mikado.store;
+Mikado.once;
 /** @export */
 Mikado.prototype.load;
 /** @export */
@@ -26,8 +22,6 @@ Mikado.prototype.replace;
 Mikado.prototype.render;
 /** @export */
 Mikado.prototype.refresh;
-/** @export */
-Mikado.prototype.register;
 /** @export */
 Mikado.prototype.unload;
 /** @export */
