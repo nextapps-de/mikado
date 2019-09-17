@@ -8,7 +8,19 @@
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
-<a href="#started">Getting Started</a> &ensp;&bull;&ensp; <a href="#options">Options</a> &ensp;&bull;&ensp; <a href="#api">API</a> &ensp;&bull;&ensp; <a href="#builds">Custom Builds</a>
+<a href="#started">Getting Started</a> &ensp;&bull;&ensp; 
+<a href="#options">Options</a> &ensp;&bull;&ensp; 
+<a href="#api">API</a> &ensp;&bull;&ensp; 
+<a href="#cli">Mikado CLI</a> &ensp;&bull;&ensp; 
+<a href="#builds">Custom Builds</a> &ensp;&bull;&ensp; 
+<a href="https://github.com/nextapps-de/mikado-compile">Template Compiler</a> &ensp;&bull;&ensp;
+<a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
+<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a>
+
+Services:
+- <a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> `npm install mikado-compile`
+- <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> `npm install mikado-server`
+- <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> `npm install mikado-express` _(WIP)_
 
 Benchmark:
 
@@ -24,7 +36,7 @@ Demo:
 
 Take a look into the source code of this pages is the best starting point.
 
-Actually in progress:
+Work in progress:
 - ~~Conditional branches~~ ✓
 - ~~Includes/partials~~ ✓
 - ~~Live templates (for local development)~~ ✓
@@ -203,7 +215,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td>2</td>
         <td>domc-0.0.12</td>
-        <td align=right>4,46</td>
+        <td align=right>4.46</td>
         <td align=right>207488</td>
         <td align=right>957</td>
         <td align=right>6575</td>
@@ -218,7 +230,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td>3</td>
         <td>sinuous-0.14.2</td>
-        <td align=right>7,48</td>
+        <td align=right>7.48</td>
         <td align=right>265192</td>
         <td align=right>384</td>
         <td align=right>9695</td>
@@ -233,7 +245,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td>4</td>
         <td>redom-3.24.1</td>
-        <td align=right>2,88</td>
+        <td align=right>2.88</td>
         <td align=right>246936</td>
         <td align=right>369</td>
         <td align=right>2632</td>
@@ -248,7 +260,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td>5</td>
         <td>inferno-7.3.1</td>
-        <td align=right>8,4</td>
+        <td align=right>8.4</td>
         <td align=right>410960</td>
         <td align=right>706</td>
         <td align=right>2623</td>
@@ -276,7 +288,7 @@ Values represents operations per second, each benchmark task has to process an d
     <tr>
         <td>6</td>
         <td>surplus-0.5.3</td>
-        <td align=right>15,79</td>
+        <td align=right>15.79</td>
         <td align=right>166288</td>
         <td align=right>698</td>
         <td align=right>632</td>
@@ -290,8 +302,8 @@ Values represents operations per second, each benchmark task has to process an d
     <tr></tr>
     <tr>
         <td>8</td>
-        <td>jQuery</td>
-        <td align=right>31,26</td>
+        <td>jquery-3.4.1</td>
+        <td align=right>31.26</td>
         <td align=right>819032</td>
         <td align=right>746</td>
         <td align=right>650</td>
@@ -337,12 +349,12 @@ Instance methods:
 - <a href="#view.append">view.__append__(items, \<payload\>)</a>
 - <a href="#view.replace">view.__replace__(node, item, \<payload\>)</a>
 - <a href="#view.remove">view.__remove__(node)</a>
-- <a href="#view.clear">view.__clear__(resize)</a>
+- <a href="#view.clear">view.__clear__(\<resize\>)</a>
 - <a href="#view.item">view.__item__(index)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
 - ~~view.__parse__(template)~~
-- <a href="#view.destroy">view.__destroy__(unload?)</a>
+- <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
 - <a href="#view.unload">view.__unload__()</a>
 - <a href="#view.sync">view.__sync__()</a>
 
@@ -350,7 +362,7 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.load">view.__import__()</a>
 - <a href="#view.load">view.__export__()</a>
 - <a href="#view.load">view.__load__(url, \<callback\>)</a>
-- <a href="#view.sort">view.__sort__(field, \<direction | handler\>)</a>
+- ~~view.__sort__(field, \<direction | handler\>)~~
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
 - <a href="#view.move">view.__move__(node, index)</a>
@@ -362,7 +374,7 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.before">view.__before__(node, node)</a>
 - <a href="#view.after">view.__after__(node, node)</a>
 - <a href="#view.swap">view.__swap__(node, node)</a>
-- <a href="#view.shuffle">view.__shuffle__()</a>
+- ~~view.__shuffle__()~~
 
 <!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
 
@@ -444,6 +456,13 @@ Instance properties:
 <a name="started" id="started"></a>
 ## Basic Example
 
+Install Mikado via NPM or include one of the distributed builds:
+```npm
+npm install mikado
+```
+
+> To make the command line interface available you have to install via NPM.
+
 Define a HTML-like template and use double curly brackets to mark dynamic expressions which should be calculated during runtime:
 ```html
 <table>
@@ -464,19 +483,19 @@ Save this template e.g. to _template/template.html_.
 
 Mikado comes up with a template compiler which has to be run through Node.js and provides a command line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
 
-Install Mikado via NPM to make the command line interface available:
+Install Mikado Compiler via NPM:
 ```npm
-npm install mikado
+npm install mikado-compile
 ```
 
 Compile the template through the command line by:
 ```cmd
-mikado template/template.html
+mikado compile template/template.html
 ```
 
 > __Notation:__ mikado _{{input}} {{destination}}_
 
-Instead of `mikado` you can also use `node task/compile` alternatively. When a destination was not set, the input folder will be used instead.
+Instead of `mikado compile` you can also use `npx mikado compile` alternatively. When a destination was not set, the input folder will be used instead.
 
 After compilation you will have 4 different files:
 1. __template.js__ the template compiled in ES5 compatible Javascript
@@ -1197,15 +1216,22 @@ When unloading templates explicitly the template will also removes completely. T
 
 Mikado provides you a webserver to serve templates via a simple RESTful API. This allows you to send views live from a server. Also this can be used for live reloading templates in a local development environment.
 
+Install Mikado Server via NPM:
+```npm
+npm install mikado-server
+```
+
 Start the compiler server:
 
 ```cmd
-npm run serve
+mikado server
 ```
+
+Instead of `mikado server` you can also use `npx mikado server` alternatively.
 
 The service is listening on localhost. The API has this specification:
 
-`{host}:{port}/:{type}/path/to/template.html`
+`{host}:{port}/:type/path/to/template.html`
 
 Examples:
 - localhost:3000/json/template/app.html
