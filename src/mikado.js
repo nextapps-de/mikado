@@ -289,9 +289,9 @@ Mikado.prototype.init = function(template, options){
     return this;
 };
 
-Mikado.once = Mikado["once"] = function(root, template, options){
+Mikado.once = Mikado["once"] = function(root, template, items, view, callback){
 
-    Mikado.new(root, template, options).render().destroy(true);
+    Mikado.new(root, template).render(items, view, callback).destroy(true);
 
     return Mikado;
 };

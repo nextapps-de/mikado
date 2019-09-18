@@ -343,7 +343,7 @@ Constructor:
 
 Global methods:
 - <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a> : view
-- <a href="#mikado.once">Mikado.__once__(root, template)</a>
+- <a href="#mikado.once">Mikado.__once__(root, template, \<items\>, \<payload\>, \<callback\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.unload">Mikado.__unload__(template)</a>
 
@@ -353,7 +353,7 @@ Global methods (not included in mikado.light.js):
 Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
-- <a href="#view.render">view.__render__(items, \<payload\>, \<callback\>)</a>
+- <a href="#view.render">view.__render__(\<items\>, \<payload\>, \<callback\>)</a>
 - <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
 - <a href="#view.create">view.__create__(item)</a>
 - <a href="#view.add">view.__add__(item, \<payload\>)</a>
@@ -396,7 +396,7 @@ Instance properties:
 - <a href="#view.length">view.__length__</a>
 - <a href="#view.store">view.__store__</a>
 - <a href="#view.state">view.__state__</a>
-- <a href="#options">view.__config__</a>
+- ~~view.__config__~~
 - <a href="#view.id">view.__template__</a>
 
 <a name="options"></a>
@@ -710,9 +710,9 @@ var items = [{
 }]
 ```
 
-Provide ___view___ data (non-item specific data and helper methods used by the template):
+Provide ___view___ payload (non-item specific data and helper methods used by the template):
 ```js
-var view = {
+var payload = {
     page: 1,
     today: "2019-01-11",
     parseFooter: function(item){ return item.footer; }
@@ -731,12 +731,12 @@ view.init(template);
 
 Mount to a new target or just render the already mounted template:
 ```js
-view.render(items, view);
+view.render(items, payload);
 ```
 
 Render asynchronously by providing a callback function:
 ```js
-view.render(items, view, function(){
+view.render(items, payload, function(){
     console.log("finished.");
 });
 ```
@@ -745,7 +745,7 @@ To render asynchronously by using promises you need to create the view instance 
 ```js
 view = Mikado.new(template, { async: true });
 
-view.render(items, view).then(function(){
+view.render(items, payload).then(function(){
     console.log("finished.");
 });
 ```
@@ -866,24 +866,24 @@ view.render(items);
 
 Render a template with item data and also use view-specific data/handlers:
 ```js
-view.render(items, view);
+view.render(items, payload);
 ```
 
 Schedule a render task asynchronously to the next animation frame:
 ```js
-view.render(items, view, true);
+view.render(items, payload, true);
 ```
 
 Schedule a render task by using a callback:
 ```js
-view.render(items, view, function(){
+view.render(items, payload, function(){
     // finished
 });
 ```
 
 Schedule a render task by using promises (requires option ___async___ to be enabled during initialization):
 ```js
-view.render(items, view).then(function(){
+view.render(items, payload).then(function(){
     // finished
 });
 ```
@@ -1143,33 +1143,6 @@ var store = view.store;
 view.store = store = [];
 ```
 
-<a name="view.state"></a>
-## State
-
-State pretty much acts like passing a <a href="#view.view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. State is directly assigned to each Mikado instance and do not has to pass during rendering. This all differ from using view payloads.
-
-Define state properties:
-```js
-view.state.date = new Date();
-view.state.today = function(){ return view.state.date === new Date() };
-```
-
-You can assign any value as state or function helpers. Do not de-reference the state from the Mikado instance. When using ___export()___ the state will just export non-object and non-functional values. You need to re-assign them when the application starts.
-
-Using extern states:
-```js
-var state = {
-    date: new Date(),
-    today: function(){ return view.state.date === new Date() }
-};
-```
-Assign extern states during initialization:
-```js
-var view = new Mikado(root, template, {
-    state: state
-});
-```
-
 #### Export / Import Views
 
 <a name="view.export"></a>
@@ -1210,7 +1183,32 @@ var view = new Mikado(root, template, {
 });
 ```
 
-> Changes to the DOM may automatically change your data to keep the state in sync.
+<a name="view.state"></a>
+## State
+
+State pretty much acts like passing a <a href="#view.view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. State is directly assigned to each Mikado instance and do not has to pass during rendering. This all differ from using view payloads.
+
+Define state properties:
+```js
+view.state.date = new Date();
+view.state.today = function(){ return view.state.date === new Date() };
+```
+
+You can assign any value as state or function helpers. Do not de-reference the state from the Mikado instance. When using ___export()___ the state will just export non-object and non-functional values. You need to re-assign them when the application starts.
+
+Using extern states:
+```js
+var state = {
+    date: new Date(),
+    today: function(){ return view.state.date === new Date() }
+};
+```
+Assign extern states during initialization:
+```js
+var view = new Mikado(root, template, {
+    state: state
+});
+```
 
 <a name="load" id="load"></a>
 ## Transport / Load Templates
@@ -1286,18 +1284,27 @@ view.mount(document.body).init("template").render(items);
 
 When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing item data.
 
-When a template just needs to be rendered once you can create, mount, render. unload, destroy to fully cleanup as follows:
+When a template just needs to be rendered once you can create, mount, render, unload and destroy (full cleanup) as follows:
 ```js
 Mikado.new(template)
       .mount(root)
       .render()
-      .unload(template)
+      .unload() // unload before destroy!
       .destroy();
 ```
 
-Or use an option flag as a shorthand:
+Destroy has a parameter flag to automatically unload before destroy:
 ```js
-Mikado.new(root, template, { once: true });
+Mikado.new(root, template)
+      .render()
+      .destroy(true);
+```
+
+You can also simply use a shorthand function:
+```js
+Mikado.once(root, template); // static view
+Mikado.once(root, template, items); // dynamic view
+Mikado.once(root, template, items, payload, callback);
 ```
 
 When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
