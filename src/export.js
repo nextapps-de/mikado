@@ -39,6 +39,10 @@ Mikado.prototype.index;
 /** @export */
 Mikado.prototype.find;
 /** @export */
+Mikado.prototype.search;
+/** @export */
+Mikado.prototype.where;
+/** @export */
 Mikado.prototype.store;
 /** @export */
 Mikado.prototype.state;

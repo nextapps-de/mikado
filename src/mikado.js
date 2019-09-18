@@ -191,6 +191,50 @@ if(SUPPORT_STORAGE){
             }
         }
     };
+
+    Mikado.prototype.search = function(item){
+
+        const values = Object.values(item);
+
+        for(let i = 0; i < this.length; i++){
+
+            if(Object.values(this.item(i)) === values){
+
+                return this.dom[i];
+            }
+        }
+    };
+
+    Mikado.prototype.where = function(payload){
+
+        const keys = Object.keys(payload);
+        const length = keys.length;
+        const results = [];
+
+        for(let x = 0, item, found; x < this.length; x++){
+
+            item = this.item(x);
+            found = true;
+
+            for(let y = 0, key; y < length; y++){
+
+                key = keys[y];
+
+                if(item[key] !== payload[key]){
+
+                    found = false;
+                    break;
+                }
+            }
+
+            if(found){
+
+                results[results.length] = item;
+            }
+        }
+
+        return results;
+    };
 }
 
 /**

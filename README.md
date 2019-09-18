@@ -30,9 +30,13 @@ This library was __not__ build for:
 -->
 
 Services:
-- <a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> `npm install mikado-compile`
-- <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> `npm install mikado-server`
-- <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> `npm install mikado-express` _(WIP)_
+- Mikado Runtime (Render Templates)<br>`npm install mikado`
+
+- <a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> (Compile Templates)<br>`npm install mikado-compile`
+
+- <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> (Serve Templates)<br>`npm install mikado-server`
+
+- <a href="https://github.com/nextapps-de/mikado-express">Express Middleware</a> (Server-Side Rendering) _\*WIP\*_<br>`npm install mikado-express`
 
 Benchmark:
 
@@ -190,8 +194,11 @@ __Feature Comparison__
 <a name="benchmark"></a>
 ## Benchmark (Stress Test)
 
-Run the benchmark: <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
-Sources and readme: <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
+Run the benchmark:<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
+
+Sources and readme:<br>
+<a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
 
 Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
 
@@ -333,7 +340,8 @@ Values represents operations per second, each benchmark task has to process an d
 
 <code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
 
-The maximum possible score is 1000, that requires a library to be best in each category. Read more about this test <a href="bench/">here</a>.
+The maximum possible score is 1000, that requires a library to be best in each category.<br>
+Read more about this test <a href="bench/">here</a>.
 
 <a name="api"></a>
 ## API Overview
@@ -366,6 +374,8 @@ Instance methods:
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
 - <a href="#view.find">view.__find__(item)</a>
+- <a href="#view.search">view.__search__(item)</a>
+- <a href="#view.where">view.__where__(payload)</a>
 - ~~view.__parse__(template)~~
 - <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
 - <a href="#view.unload">view.__unload__()</a>
@@ -987,7 +997,7 @@ view.sync();
 ### Useful Helpers
 
 <a name="view.node"></a>
-Get a node from the virtual DOM by index:
+Get a template root node from the DOM by index:
 ```js
 var node = view.node(index);
 ```
@@ -999,15 +1009,34 @@ var item = view.item(index);
 ```
 
 <a name="view.index"></a>
-Get the current index from a node:
+Get the index from a given node:
 ```js
 var index = view.index(node);
 ```
 
 <a name="view.find"></a>
-Find a node which corresponds to a data item:
+Find a node which corresponds to a data item (same reference):
 ```js
 var node = view.find(item);
+```
+
+<a name="view.search"></a>
+Find the first node which corresponds to a data item which has same content (that requires each item to be unique, otherwise use ___where___):
+```js
+var node = view.search(item);
+```
+
+<a name="view.where"></a>
+Find all nodes which matches a given payload (will always return an array, empty if no results was found):
+```js
+var node = view.where({
+    title: "foo",
+    active: true,
+    content: "bar"
+});
+```
+```js
+var node = view.where(item);
 ```
 
 Get the length of all items rendered (in store):
