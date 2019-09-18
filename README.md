@@ -31,7 +31,7 @@ Demo:
 
 1. <a href="demo/basic/demo.html">Basic Example (Classic Javascript)</a>
 2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
-3. <a href="demo/todomvc/">TodoMVC App</a>
+3. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
 Take a look into the source code of this pages is the best starting point.
@@ -42,7 +42,6 @@ Work in progress:
 - ~~Live templates (for local development)~~ ✓
 - ~~Persistent state~~ ✓
 - Express Middleware
-- Paginated Render
 - ~~Loops (through partials)~~ ✓
 - Plugin API
 
@@ -179,7 +178,7 @@ __Feature Comparison__
 <a name="benchmark"></a>
 ## Benchmark (Stress Test)
 
-Run the benchmark: <a href="https://nextapps-de.github.io/mikado/">https://nextapps-de.github.io/mikado/</a><br>
+Run the benchmark: <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
 Sources and readme: <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
 
 Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
@@ -345,7 +344,7 @@ Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
 - <a href="#view.render">view.__render__(items, \<payload\>, \<callback\>)</a>
-- <a href="#view.render">view.__refresh__(\<payload\>)</a>
+- <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
 - <a href="#view.create">view.__create__(item)</a>
 - <a href="#view.add">view.__add__(item, \<payload\>)</a>
 - <a href="#view.update">view.__update__(node, item, \<payload\>)</a>
@@ -356,27 +355,28 @@ Instance methods:
 - <a href="#view.item">view.__item__(index)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
+- <a href="#view.find">view.__find__(item)</a>
 - ~~view.__parse__(template)~~
 - <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
 - <a href="#view.unload">view.__unload__()</a>
 - <a href="#view.sync">view.__sync__()</a>
 
 Instance methods (not included in mikado.light.js):
-- <a href="#view.load">view.__import__()</a>
-- <a href="#view.load">view.__export__()</a>
+- <a href="#view.import">view.__import__()</a>
+- <a href="#view.export">view.__export__()</a>
 - <a href="#view.load">view.__load__(url, \<callback\>)</a>
 - ~~view.__sort__(field, \<direction | handler\>)~~
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
-- <a href="#view.move">view.__move__(node, index)</a>
-- <a href="#view.shift">view.__shift__(node, offset)</a>
-- <a href="#view.up">view.__up__(node)</a>
-- <a href="#view.down">view.__down__(node)</a>
-- <a href="#view.first">view.__first__(node)</a>
-- <a href="#view.last">view.__last__(node)</a>
-- <a href="#view.before">view.__before__(node, node)</a>
-- <a href="#view.after">view.__after__(node, node)</a>
-- <a href="#view.swap">view.__swap__(node, node)</a>
+- <a href="#view.move">view.__move__(node|index, index)</a>
+- <a href="#view.shift">view.__shift__(node|index, offset)</a>
+- <a href="#view.up">view.__up__(node|index)</a>
+- <a href="#view.down">view.__down__(node|index)</a>
+- <a href="#view.first">view.__first__(node|index)</a>
+- <a href="#view.last">view.__last__(node|index)</a>
+- <a href="#view.before">view.__before__(node|index, node|index)</a>
+- <a href="#view.after">view.__after__(node|index, node|index)</a>
+- <a href="#view.swap">view.__swap__(node|index, node|index)</a>
 - ~~view.__shuffle__()~~
 
 <!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
@@ -433,7 +433,7 @@ Instance properties:
     <tr></tr>
     <tr>
         <td><b>loose</b></td>
-        <td>When storage is enabled this flag removes also item data whenever a corresponding dom element was removed. When set to true you cannot use paged rendering.</td>
+        <td>When storage is enabled this flag removes also item data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -1039,6 +1039,7 @@ Swap two items/nodes:
 view.swap(node_a, node_b);
 ```
 
+<!--
 <a name="view.shuffle"></a>
 Shuffle items/nodes:
 ```js
@@ -1063,6 +1064,7 @@ view.sort(function(item_a, item_b){
           (item_a.time > item_b.time ? -1 : 0)
 });
 ```
+-->
 
 <a name="store" id="store"></a>
 ## Storage
@@ -1108,7 +1110,7 @@ You cannot export several instances of the same template which holds different d
 
 #### Loose Option
 
-When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. When enabled you cannot use <a>paginated render</a>.
+When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. <!--When enabled you cannot use <a>paginated render</a>.-->
 
 #### Extern/Custom Store
 

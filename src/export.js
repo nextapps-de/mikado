@@ -37,6 +37,8 @@ Mikado.prototype.item;
 /** @export */
 Mikado.prototype.index;
 /** @export */
+Mikado.prototype.find;
+/** @export */
 Mikado.prototype.store;
 /** @export */
 Mikado.prototype.state;

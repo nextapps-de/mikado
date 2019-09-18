@@ -267,7 +267,7 @@ function perform(warmup){
         }
         else{
 
-            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) , "http://localhost") //"https://nextapps-de.github.io"
+            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) + "," + memory, "https://raw.githack.com") //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
     }
     //console.log(((1000 / duration * test.loop) | 0) + "\t" + test.name, test.loop * 3000 / duration);

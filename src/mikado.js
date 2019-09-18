@@ -179,6 +179,20 @@ Mikado.prototype.item = function(index){
     return this.loose ? this.dom[index]["_item"] : this.store[index];
 };
 
+if(SUPPORT_STORAGE){
+
+    Mikado.prototype.find = function(item){
+
+        for(let i = 0; i < this.length; i++){
+
+            if(this.item(i) === item){
+
+                return this.dom[i];
+            }
+        }
+    };
+}
+
 /**
  * @param {Template|string} template
  * @param {Object=} options
