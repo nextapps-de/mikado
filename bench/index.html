@@ -1,14 +1,167 @@
 <html lang="en">
 <head>
-    <title>Stress Test</title>
+    <title>Benchmark of Web Templating Engines (Stress Test)</title>
+    <style>
+        body{
+            /*
+            background-color: #111;
+            color: #aaa;
+            */
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 300;
+            line-height: 26px;
+            font-size: 100%;
+        }
+        h1{
+            padding-top: 10px;
+        }
+        td{
+            text-align: right;
+        }
+        td:first-of-type{
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-<a href="test/domc/">domc</a><br>
-<a href="test/inferno/">inferno</a><br>
-<a href="test/mikado/">mikado</a><br>
-<a href="test/redom/">redom</a><br>
-<a href="test/sinuous/">sinuous</a><br>
-<a href="test/surplus/">surplus</a><br>
-<div id="result" style="white-space: pre"></div>
+<h1>Benchmark of Web Templating Engines (Stress Test)</h1>
+<hr>
+<table cellpadding="5" cellspacing="5">
+    <thead>
+        <tr>
+            <th>Library</th>
+            <th>Create</th>
+            <th>Update</th>
+            <th>Partial</th>
+            <th>Append</th>
+            <th>Repaint</th>
+            <th>Reduce</th>
+            <th>Remove</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody id="result"></tbody>
+</table>
+<br>
+<b>Single Tests:</b>
+<ul>
+    <li><a href="test/domc/">domc</a></li>
+    <li><a href="test/inferno/">inferno</a></li>
+    <li><a href="test/mikado/">mikado</a></li>
+    <li><a href="test/redom/">redom</a></li>
+    <li><a href="test/sinuous/">sinuous</a></li>
+    <li><a href="test/surplus/">surplus</a></li>
+    <li><a href="test/innerhtml/">innerHTML (native Javascript)</a></li>
+    <li><a href="test/jquery/">jquery</a></li>
+</ul>
+<br>
+<iframe id="iframe" hidden></iframe>
+<script src="test/mikado/dist/mikado.light.js"></script>
+<script src="tpl/row.js"></script>
+<script>
+
+    (function(){
+
+        const iframe = document.getElementById("iframe");
+        const result = document.getElementById("result");
+        const mikado = Mikado.new(result, "row");
+
+        const lib = [
+            "mikado", "domc", "inferno",
+            "redom", "sinuous", "surplus",
+            "innerHTML", "jquery"
+        ];
+
+        const test = [
+            "create", "update", "partial",
+            "append", "repaint", "reduce",
+            "remove"
+        ];
+
+        let current = new Array(lib.length);
+        let index = -1;
+
+        for(let x = 0; x < lib.length; x++){
+
+            current[x] = {
+
+                name: lib[x],
+                score: ""
+            };
+
+            for(let y = 0; y < test.length + 1; y++){
+
+                current[x][test[y]] = "";
+            }
+        }
+
+        mikado.render(current);
+
+        function runner(){
+
+            index++;
+            iframe.src = "test/" + lib[index] + "/";
+        }
+
+        function get_score(){
+
+            let max = new Array(test.length);
+
+            for(let y = 0; y < test.length; y++){
+
+                max[y] = 0;
+
+                for(let x = 0; x < lib.length; x++){
+
+                    if(current[x][test[y]] > max[y]){
+
+                        max[y] = current[x][test[y]];
+                    }
+                }
+            }
+
+            let score = new Array(lib.length);
+
+            for(let x = 0; x < lib.length; x++){
+
+                score[x] = 0;
+
+                for(let y = 0; y < test.length; y++){
+
+                    score[x] += current[x][test[y]] / max[y];
+                }
+
+                current[x]["score"] = (score[x] / (test.length + 1) * 1000 + 0.5) | 0;
+            }
+        }
+
+        window.onmessage = function(event){
+
+            if(event.origin === "http://localhost") { // "https://nextapps-de.github.io"
+
+                const parts = event.data.split(",");
+
+                current[index][parts[0]] = parseInt(parts[1], 10);
+                mikado.update(mikado.node(index), current[index]);
+
+                if(parts[0] === "remove"){
+
+                    if(index < lib.length - 1){
+
+                        setTimeout(runner, 200);
+                    }
+                    else{
+
+                        get_score();
+                        mikado.render(current);
+                    }
+                }
+            }
+        };
+
+        setTimeout(runner, 200);
+    }());
+
+</script>
 </body>
 </html>

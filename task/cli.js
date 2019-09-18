@@ -19,7 +19,7 @@ else{
 
         case "-compile":
         case "compile":
-            if(!existsSync("./../../mikado-compile/compile.js")){
+            if(!existsSync("../mikado-compile/compile.js") && !existsSync("./../../mikado-compile/compile.js")){
                 console.error("Error: Module was not found. Please run 'npm install mikado-compile'");
             }
             else if(!param2){
@@ -32,7 +32,7 @@ else{
 
         case "-server":
         case "server":
-            if(!existsSync("./../../mikado-server/server.js")){
+            if(!existsSync("../mikado-server/server.js") && !existsSync("./../../mikado-server/server.js")){
                 console.error("Error: Module was not found. Please run 'npm install mikado-server'");
             }
             else{

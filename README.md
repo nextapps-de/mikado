@@ -179,6 +179,9 @@ __Feature Comparison__
 <a name="benchmark"></a>
 ## Benchmark (Stress Test)
 
+Run the benchmark: <a href="https://nextapps-de.github.io/mikado/">https://nextapps-de.github.io/mikado/</a><br>
+Sources and readme: <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
+
 Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
 
 <table>

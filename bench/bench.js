@@ -188,29 +188,35 @@ function check(fn){
 function validate(item){
 
     let section = root.firstElementChild;
-    if(!section) return false;
-        section.dataset || (section = section.firstElementChild);
-        section.dataset || (section = section.firstElementChild);
+    if(!section) return msg("root.firstElementChild");
+        (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
+        (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
     const dataset = section.dataset;
-    if(dataset.id !== item.id) return false;
-    if(dataset.date !== item.date) return false;
-    if(dataset.index !== String(item.index)) return false;
+    if(dataset.id !== item.id) return msg("dataset.id");
+    if(dataset.date !== item.date) return msg("dataset.date");
+    if(dataset.index !== String(item.index)) return msg("dataset.index");
 
     const wrapper = section.firstElementChild;
-    if(wrapper.className !== item.class) return false;
-    if(wrapper.style.paddingRight !== "10px") return false;
+    if(wrapper.className !== item.class) return msg("wrapper.className");
+    if(wrapper.style.paddingRight !== "10px") return msg("wrapper.style");
 
     const title = wrapper.firstElementChild;
-    if(title.textContent !== item.title) return false;
+    if(title.textContent !== item.title) return msg("title.textContent");
 
     const content = title.nextElementSibling;
-    if(content.textContent !== item.content) return false;
+    if(content.textContent !== item.content) return msg("content.textContent");
 
     const footer = content.nextElementSibling;
-    if(footer.textContent !== item.footer) return false;
-    if(footer.getAttribute("href") !== "show-test") return false;
+    if(footer.textContent !== item.footer) return msg("footer.textContent");
+    if((footer.getAttribute("href") !== "show-test") && (footer.href !== "show-test")) return msg("footer.href");
 
     return true;
+}
+
+function msg(message){
+
+    console.error(message);
+    return false;
 }
 
 // #####################################################################################
@@ -238,11 +244,11 @@ function perform(warmup){
 
         if(test.start) test.start(i);
 
-        mem_start = window.performance.memory.usedJSHeapSize;
+        //mem_start = window.performance.memory.usedJSHeapSize;
         start = performance.now() ;
         test.fn(clone);
         duration += performance.now()  - start;
-        memory += window.performance.memory.usedJSHeapSize - mem_start;
+        //memory += window.performance.memory.usedJSHeapSize - mem_start;
 
         if(test.finish) test.finish(i);
     }
@@ -255,7 +261,14 @@ function perform(warmup){
     }
     else{
 
-        result.nodeValue = str_results += ((1000 / duration * test.loop) | 0) + "\t" + test.name + "\t" + memory + /*"\t" + (test.loop * 3000 / duration) +*/ "\n";
+        if(window === window.top){
+
+            result.nodeValue = str_results += ((1000 / duration * test.loop) | 0) + "\t" + test.name + /*"\t" + memory*/ + /*"\t" + (test.loop * 3000 / duration) +*/ "\n";
+        }
+        else{
+
+            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) , "http://localhost") //"https://nextapps-de.github.io"
+        }
     }
     //console.log(((1000 / duration * test.loop) | 0) + "\t" + test.name, test.loop * 3000 / duration);
 
