@@ -223,11 +223,13 @@ function msg(message){
 // #####################################################################################
 
 let str_results = "";
+const perf = window.performance;
+      perf.memory || (perf.memory = { usedJSHeapSize: 0 });
 
 function perform(warmup){
 
     const test = warmup || queue.shift();
-    let start, duration = 0, memory = 0, mem_start;
+    let start, duration = 0, memory = 0, mem_start, tmp;
 
     if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
@@ -244,11 +246,12 @@ function perform(warmup){
 
         if(test.start) test.start(i);
 
-        //mem_start = window.performance.memory.usedJSHeapSize;
-        start = performance.now() ;
+        mem_start = perf.memory.usedJSHeapSize;
+        start = perf.now() ;
         test.fn(clone);
-        duration += performance.now()  - start;
-        //memory += window.performance.memory.usedJSHeapSize - mem_start;
+        duration += perf.now()  - start;
+        tmp = perf.memory.usedJSHeapSize - mem_start;
+        if(tmp > 0) memory += tmp;
 
         if(test.finish) test.finish(i);
     }
@@ -263,11 +266,11 @@ function perform(warmup){
 
         if(window === window.top){
 
-            result.nodeValue = str_results += ((1000 / duration * test.loop) | 0) + "\t" + test.name + /*"\t" + memory*/ + /*"\t" + (test.loop * 3000 / duration) +*/ "\n";
+            result.nodeValue = str_results += test.name.padEnd(10) + String((1000 / duration * test.loop) | 0).padStart(8) + " op/s, Memory:\t"  + (memory ? ((memory / test.loop) | 0) : "-") + "\n";
         }
         else{
 
-            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) + "," + memory, "https://raw.githack.com") //"https://nextapps-de.github.io" "https://raw.githack.com"
+            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) + "," + ((memory / test.loop) | 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
     }
     //console.log(((1000 / duration * test.loop) | 0) + "\t" + test.name, test.loop * 3000 / duration);

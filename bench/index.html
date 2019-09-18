@@ -30,6 +30,8 @@
     <thead>
         <tr>
             <th>Library</th>
+            <th>Size</th>
+            <th>Memory</th>
             <th>Create</th>
             <th>Update</th>
             <th>Partial</th>
@@ -66,14 +68,14 @@
         const result = document.getElementById("result");
         const mikado = Mikado.new(result, "row");
 
-        const lib = [
+        const lib = shuffle([
             "mikado", "domc", "inferno",
             "redom", "sinuous", "surplus",
             "innerHTML", "jquery"
-        ];
+        ]);
 
         const test = [
-            "create", "update", "partial",
+            "size", "memory", "create", "update", "partial",
             "append", "repaint", "reduce",
             "remove"
         ];
@@ -81,15 +83,41 @@
         let current = new Array(lib.length);
         let index = -1;
 
+        let size = {
+
+            "mikado": 2,
+            "domc": 4.46,
+            "inferno": 8.4,
+            "redom": 2.88,
+            "sinuous": 7.48,
+            "surplus": 15.79,
+            "innerHTML": 0,
+            "jquery": 31.26
+        };
+
+        let memory = {
+
+            "mikado": 167336,
+            "domc": 207488,
+            "inferno": 265192,
+            "redom": 246936,
+            "sinuous": 410960,
+            "surplus": 406992,
+            "innerHTML": 166288,
+            "jquery": 819032
+        };
+
         for(let x = 0; x < lib.length; x++){
 
             current[x] = {
 
                 name: lib[x],
+                size: size[lib[x]],
+                memory: 0,
                 score: ""
             };
 
-            for(let y = 0; y < test.length + 1; y++){
+            for(let y = 2; y < test.length + 1; y++){
 
                 current[x][test[y]] = "";
             }
@@ -113,9 +141,24 @@
 
                 for(let x = 0; x < lib.length; x++){
 
-                    if(current[x][test[y]] > max[y]){
+                    if((test[y] === "size") || (test[y] === "memory")){
 
-                        max[y] = current[x][test[y]];
+                        if((test[y] === "memory") && (current[x][test[y]] === 0)){
+
+                            current[x][test[y]] = memory[lib[x]];
+                        }
+
+                        if(current[x][test[y]] && (current[x][test[y]] < max[y])){
+
+                            max[y] = current[x][test[y]];
+                        }
+                    }
+                    else{
+
+                        if(current[x][test[y]] > max[y]){
+
+                            max[y] = current[x][test[y]];
+                        }
                     }
                 }
             }
@@ -128,20 +171,28 @@
 
                 for(let y = 0; y < test.length; y++){
 
-                    score[x] += current[x][test[y]] / max[y];
+                    if((test[y] === "size") || (test[y] === "memory")){
+
+                        score[x] += max[y] / current[x][test[y]];
+                    }
+                    else{
+
+                        score[x] += current[x][test[y]] / max[y];
+                    }
                 }
 
-                current[x]["score"] = (score[x] / (test.length + 1) * 1000 + 0.5) | 0;
+                current[x]["score"] = (score[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
             }
         }
 
         window.onmessage = function(event){
 
-            if(event.origin === "https://raw.githack.com") { // "https://nextapps-de.github.io" "https://raw.githack.com"
+            if(event.origin === location.protocol + "//" + location.hostname) { // "https://nextapps-de.github.io" "https://raw.githack.com"
 
                 const parts = event.data.split(",");
 
                 current[index][parts[0]] = parseInt(parts[1], 10);
+                current[index]["memory"] += parseInt(parts[2], 10);
                 mikado.update(mikado.node(index), current[index]);
 
                 if(parts[0] === "remove"){
@@ -158,6 +209,19 @@
                 }
             }
         };
+
+        function shuffle(items){
+
+            for(let i = items.length - 1, j, x; i > 0; i--) {
+
+                j = (Math.random() * (i + 1)) | 0;
+                x = items[i];
+                items[i] = items[j];
+                items[j] = x;
+            }
+
+            return items;
+        }
 
         setTimeout(runner, 200);
     }());

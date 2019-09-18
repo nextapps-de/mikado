@@ -10,6 +10,18 @@ Mikado.register({
     {
       "t": "td",
       "x": [
+        "item.size"
+      ]
+    },
+    {
+      "t": "td",
+      "x": [
+        "item.memory"
+      ]
+    },
+    {
+      "t": "td",
+      "x": [
         "item.create"
       ]
     },
