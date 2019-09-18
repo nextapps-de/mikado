@@ -75,9 +75,9 @@
         ]);
 
         const test = [
-            "size", "memory", "create", "update", "partial",
-            "append", "repaint", "reduce",
-            "remove"
+            "size", "memory", "create",
+            "update", "partial", "append",
+            "repaint", "reduce", "remove"
         ];
 
         let current = new Array(lib.length);
@@ -85,7 +85,7 @@
 
         let size = {
 
-            "mikado": 2,
+            "mikado": 2.0,
             "domc": 4.46,
             "inferno": 8.4,
             "redom": 2.88,
@@ -120,6 +120,7 @@
             for(let y = 2; y < test.length + 1; y++){
 
                 current[x][test[y]] = "";
+                current[x]["color_" + test[y]] = "transparent";
             }
         }
 
@@ -128,7 +129,7 @@
         function runner(){
 
             index++;
-            iframe.src = "test/" + lib[index] + "/";
+            iframe.src = "test/" + lib[index].toLowerCase() + "/";
         }
 
         function get_score(){
@@ -148,7 +149,7 @@
                             current[x][test[y]] = memory[lib[x]];
                         }
 
-                        if(current[x][test[y]] && (current[x][test[y]] < max[y])){
+                        if(current[x][test[y]] && ((current[x][test[y]] < max[y]) || !max[y])){
 
                             max[y] = current[x][test[y]];
                         }
@@ -173,16 +174,31 @@
 
                     if((test[y] === "size") || (test[y] === "memory")){
 
-                        score[x] += max[y] / current[x][test[y]];
+                        if(current[x][test[y]]){
+
+                            score[x] += max[y] / current[x][test[y]];
+                            current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
+                        }
                     }
                     else{
 
                         score[x] += current[x][test[y]] / max[y];
+                        current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
                 }
 
                 current[x]["score"] = (score[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
+                current[x]["color_score"] = color(current[x]["score"], 1000);
             }
+        }
+
+        function color(current, max){
+
+            const percent = current / max * 100;
+            const r = percent < 50 ? 255 : (255 - (percent * 2 - 100) * 255 / 100) | 0;
+            const g = percent > 50 ? 255 : ((percent * 2) * 255 / 100) | 0;
+
+            return 'rgb(' + r + ', ' + g + ', 0)';
         }
 
         window.onmessage = function(event){

@@ -17,6 +17,18 @@
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
 <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a>
 
+This library was build by reversed engineering and aims these primary goals:
+1. providing a clean, simple and __non-cryptic__ tool for developers who loves using living standards and common styles
+2. designer-readable templates based on pure html (the best known markup in the web)
+3. providing the best overall performance
+
+<!--
+This library was __not__ build for:
+- replacing Angular, React or Co.
+- mimic to be Angular, React or Co.
+- fit to any of your favourite templating frameworks you are already using
+-->
+
 Services:
 - <a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> `npm install mikado-compile`
 - <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> `npm install mikado-server`
@@ -319,11 +331,9 @@ Values represents operations per second, each benchmark task has to process an d
     <tr></tr>
 </table>
 
-More results are coming soon.
-
 <code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
 
-The maximum possible score is 1000, that requires a library to be best in each category. This stress test is based on a __real life use case__, where you will fetch new data from a source and do computations on it. Libraries cannot use all their tricks for internal state caching, it measures the real workload of a real use case.
+The maximum possible score is 1000, that requires a library to be best in each category. Read more about this test <a href="bench/">here</a>.
 
 <a name="api"></a>
 ## API Overview
@@ -894,6 +904,12 @@ Repaint the current state on a specific index:
 view.refresh(index);
 ```
 
+<a name="view.create"></a>
+Just create a template without adding/assigning/rendering to the root:
+```js
+var partial = view.create(item);
+```
+
 ## Modify Views
 
 <a name="view.add"></a>
@@ -963,7 +979,7 @@ view.update(node, item);
 ```
 
 <a name="view.sync"></a>
-Re-Sync Virtual DOM:
+Re-Sync DOM:
 ```js
 view.sync();
 ```
@@ -986,6 +1002,22 @@ var item = view.item(index);
 Get the current index from a node:
 ```js
 var index = view.index(node);
+```
+
+<a name="view.find"></a>
+Find a node which corresponds to a data item:
+```js
+var node = view.find(item);
+```
+
+Get the length of all items rendered (in store):
+```js
+var length = view.length;
+```
+
+Get the current template name which is assigned to a Mikado instance:
+```js
+var name = view.template;
 ```
 
 <a name="manipulate" id="manipulate"></a>
@@ -1092,13 +1124,61 @@ Or force an update to a specific index:
 view.update(index);
 ```
 
+Access to the store:
+```js
+var store = view.store;
+```
+
+Do not de-reference the store, e.g.:
+```js
+var store = view.store;
+// ...
+store = [];
+```
+
+Instead do this:
+```js
+var store = view.store;
+// ...
+view.store = store = [];
+```
+
+<a name="view.state"></a>
+## State
+
+State pretty much acts like passing a <a href="#view.view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. State is directly assigned to each Mikado instance and do not has to pass during rendering. This all differ from using view payloads.
+
+Define state properties:
+```js
+view.state.date = new Date();
+view.state.today = function(){ return view.state.date === new Date() };
+```
+
+You can assign any value as state or function helpers. Do not de-reference the state from the Mikado instance. When using ___export()___ the state will just export non-object and non-functional values. You need to re-assign them when the application starts.
+
+Using extern states:
+```js
+var state = {
+    date: new Date(),
+    today: function(){ return view.state.date === new Date() }
+};
+```
+Assign extern states during initialization:
+```js
+var view = new Mikado(root, template, {
+    state: state
+});
+```
+
 #### Export / Import Views
 
+<a name="view.export"></a>
 You can export the latest rendering state of a view along with its item data to the local storage.
 ```js
 view.export();
 ```
 
+<a name="view.import"></a>
 You can import and render the stored view by:
 ```js
 view.import().render();
@@ -1108,10 +1188,12 @@ view.import().render();
 
 You cannot export several instances of the same template which holds different data. Also the ___state___ is not included in the export.
 
+<a name="options.loose"></a>
 #### Loose Option
 
 When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. <!--When enabled you cannot use <a>paginated render</a>.-->
 
+<a name="extern"></a>
 #### Extern/Custom Store
 
 You can also pass an reference to an external store. This store must be an Array-like type.
@@ -1187,6 +1269,11 @@ view.init("template");
 __.mount()__ assigns a new root destination to an instance:
 ```js
 view.mount(document.getElementById("new-root"));
+```
+
+__.unload()__ unloads a template by name (filename):
+```js
+view.unload("template");
 ```
 
 Chain methods:
@@ -1442,6 +1529,26 @@ In this example the template "tweet" loops the render through an array of tweets
     </tweets>
 </main>
 ```
+
+## About Data Binding
+
+Instead of bind nodes/vnodes to a data item Mikado bind/references data items to nodes. The <a href="#options.loose">loose</a> option lets you control how is data handled when its corresponding node was removed from the dom. You might think there is a drawback in missing diffing, but lets take an example:
+
+```html
+<item>A</item>
+<item>B</item>
+<item>C</item>
+```
+
+Assume that the items content stay unchanged and just the order should changes to:
+
+```html
+<item>C</item>
+<item>A</item>
+<item>B</item>
+```
+
+Some libs may try to swap nodes to its new place. But that has a noticeable bigger impact to the dom of a factor of 5 and higher (!) in comparison when existing nodes wil just re-rendered with the new data (for which the option <a href="#options.reuse">reuse</a> is for). The decoupled event delegation of Mikado allows you to keep listeners referenced to the right node. Surely that's not the same, but I never had a situation where this was an issue. Just keep in mind to use template notations for any value which should change dynamically (e.g. the attribute "checked") and you are save. Since Mikado was reversed engineered and the goal "keeping real nodes" was not on the table, it shouldn't be a mandatory criteria for you. If so, then you are lucky that you can use one of the dozen other templating libs out there.
 
 <a name="builds" id="builds"></a>
 ## Custom Builds

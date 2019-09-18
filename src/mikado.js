@@ -673,7 +673,17 @@ Mikado.prototype.remove = function(node){
 
     //profiler_start("remove");
 
-    const index = node["_idx"];
+    let index;
+
+    if(typeof node === "number"){
+
+        index = node;
+        node = this.dom[index];
+    }
+    else{
+
+        index = node["_idx"];
+    }
 
     this.dom.splice(index, 1);
     this.root.removeChild(node);
@@ -1074,7 +1084,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             const old_fn = tmp_fn;
             tmp_fn = "";
-            this.include.push(new Mikado(node, typeof tpl["@"] === "string" ? templates[tpl["@"]] : tpl["@"], this.config));
+            this.include.push(new Mikado(node, typeof tpl["@"] === "string" ? templates[tpl["@"]] : tpl["@"], Object.assign(this.config, { "store": false, "loose": false })));
             tmp_fn = old_fn;
 
             this.vpath[path_length] = path;
