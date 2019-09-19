@@ -17,9 +17,9 @@
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
 <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a>
 
-This library was build by reversed engineering and aims these primary goals:
-1. providing a clean, simple and __non-cryptic__ tool for developers who loves using living standards and common styles
-2. designer-readable templates based on pure html (the best known markup in the web)
+This library was build by reversed engineering with these primary goals as its base:
+1. providing a clean, simple and __non-cryptic__ tool for developers who focus on living standards and common styles
+2. designer-readable templates based on pure html (most famous and compatible markup in the web)
 3. providing the best overall performance
 
 <!--
@@ -341,7 +341,7 @@ Values represents operations per second, each benchmark task has to process an d
 <code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
 
 The maximum possible score is 1000, that requires a library to be best in each category.<br>
-Read more about this test <a href="bench/">here</a>.
+Read more about this test <a href="bench/#readme">here</a>.
 
 <a name="api"></a>
 ## API Overview
@@ -389,7 +389,6 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
 - <a href="#view.move">view.__move__(node|index, index)</a>
-- <a href="#view.shift">view.__shift__(node|index, offset)</a>
 - <a href="#view.up">view.__up__(node|index)</a>
 - <a href="#view.down">view.__down__(node|index)</a>
 - <a href="#view.first">view.__first__(node|index)</a>
@@ -398,6 +397,25 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.after">view.__after__(node|index, node|index)</a>
 - <a href="#view.swap">view.__swap__(node|index, node|index)</a>
 - ~~view.__shuffle__()~~
+
+Cache helpers (not included in mikado.light.js):
+- <a href="#view.setText">view.__setText__(node, text)</a>
+- <a href="#view.getText">view.__getText__(node)</a>
+- <a href="#view.setHTML">view.__setHTML__(node, html)</a>
+- <a href="#view.getHTML">view.__getHTML__(node)</a>
+- <a href="#view.setClass">view.__setClass__(node, class)</a>
+- <a href="#view.getClass">view.__getClass__(node)</a>
+- <a href="#view.hasClass">view.__hasClass__(node, class)</a>
+- <a href="#view.removeClass">view.__removeClass__(node, class)</a>
+- <a href="#view.toggleClass">view.__toggleClass__(node, class)</a>
+- <a href="#view.setStyle">view.__setStyle__(node, property, value)</a>
+- <a href="#view.getStyle">view.__getStyle__(node, property)</a>
+- <a href="#view.setCSS">view.__setCSS__(node, css)</a>
+- <a href="#view.getCSS">view.__getCSS__(node)</a>
+- <a href="#view.setAttribute">view.__setAttribute__(node, attr, value)</a>
+- <a href="#view.getAttribute">view.__getAttribute__(node, attr)</a>
+- <a href="#view.hasAttribute">view.__hasAttribute__(node, attr)</a>
+- <a href="#view.removeAttribute">view.__removeAttribute__(node, attr)</a>
 
 <!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
 
@@ -1052,25 +1070,13 @@ var name = view.template;
 <a name="manipulate" id="manipulate"></a>
 ## Manipulate Views
 
-You can decide to just one of these:
-1. manipulate the DOM directly or
-2. use the builtin-methods for those purposes
-
-Using the builtin-methods have the best performance.
-
-> Do not mix manual changes to the DOM with builtin-methods, because manually changes will made the virtual DOM cache out of sync.
+Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To prevent re-syncing Mikado provides you several helper functions to manipulate the dom and also keep them in sync. Using the helper function also grants you a maximum performance.
 
 <a name="view.move"></a>
 Move an item/node to a specific index:
 ```js
-view.move(node, 15);
-```
-
-<a name="view.shift"></a>
-Shift an item/node by a specific offset:
-```js
-view.shift(node, 3);
-view.shift(node, -3);
+view.move(node, 15);  // 15 from start
+view.move(node, -15); // 15 from end
 ```
 
 <a name="view.first"></a><a name="view.last"></a>
@@ -1087,6 +1093,12 @@ view.up(node);
 view.down(node);
 ```
 
+Shift an item/node by a specific offset:
+```js
+view.up(node, 3);
+view.down(node, 3);
+```
+
 <a name="view.before"></a><a name="view.after"></a>
 Move an item/node before or after another item/node:
 ```js
@@ -1100,13 +1112,96 @@ Swap two items/nodes:
 view.swap(node_a, node_b);
 ```
 
-<!--
-<a name="view.shuffle"></a>
-Shuffle items/nodes:
+#### Caching Helpers
+
+<a name="view.setAttribute"></a>
+Set attribute of a node (will not replaces old attributes):
 ```js
-view.shuffle();
+view.setAttribute(node, "href", "/foo");
+```
+```js
+view.setAttribute(node, {
+    id: "foo",
+    href: "/foo"
+});
 ```
 
+<a name="view.getAttribute"></a>
+Get attribute of a node:
+```js
+var attr = view.getAttribute(node, "href");
+```
+
+<a name="view.setClass"></a>
+Set class name of a node (fully replaces old classes):
+```js
+view.setClass(node, "class_a class_b");
+```
+```js
+view.setClass(node, ["class_a", "class_b"]);
+```
+
+<a name="view.getClass"></a>
+Get class names of a node (returns an array):
+```js
+var classlist = view.getClass(node);
+```
+
+<a name="view.setCSS"></a>
+Set inline styles of a node (fully replaces old styles):
+```js
+view.setCSS(node, "top: 0; padding-right: 10px");
+```
+```js
+view.setCSS(node, ["top: 0", "padding-right: 10px"]);
+```
+
+<a name="view.getCSS"></a>
+Get all inline styles of a node:
+```js
+var css = view.getCSS(node);
+```
+
+<a name="view.setStyle"></a>
+Set inline styles of a node (will not replaces old styles):
+```js
+view.setStyle(node, "padding-right", "10px");
+```
+```js
+view.setStyle(node, {"top": 0, "padding-right": "10px"});
+```
+
+<a name="view.getStyle"></a>
+Get a specific inline style of a node:
+```js
+var style = view.getStyle(node, "padding-right");
+```
+
+<a name="view.setText"></a>
+Set text of a node:
+```js
+view.setText(node, "This is a title.");
+```
+
+<a name="view.getText"></a>
+Get text of a node:
+```js
+var text = view.getText(node);
+```
+
+<a name="view.setHTML"></a>
+Set inner html of a node:
+```js
+view.setHTML(node, "<b>This is a title.</b>");
+```
+
+<a name="view.getHTML"></a>
+Get inner html of a node:
+```js
+var html = view.getHTML(node);
+```
+
+<!--
 <a name="view.sort"></a>
 Sort items/nodes by a field from the item data:
 ```js
@@ -1308,11 +1403,13 @@ Chain methods:
 view.mount(document.body).init("template").render(items);
 ```
 
-<a name="static" id="static"></a>
+<a name="static"></a>
 #### Static Templates
 
 When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing item data.
 
+<a name="mikado.once"></a>
+#### Once (One-time rendering)
 When a template just needs to be rendered once you can create, mount, render, unload and destroy (full cleanup) as follows:
 ```js
 Mikado.new(template)
@@ -1332,6 +1429,8 @@ Mikado.new(root, template)
 You can also simply use a shorthand function:
 ```js
 Mikado.once(root, template); // static view
+```
+```js
 Mikado.once(root, template, items); // dynamic view
 Mikado.once(root, template, items, payload, callback);
 ```
@@ -1372,17 +1471,22 @@ Types:
 <table>
     <tr>
         <td><b>json</b></td>
-        <td>Assign them via <a href="#mikado.register">Mikado.register</a> or just render the template <a href="#mikado.once">once</a>.</td>
+        <td>Assign them manually via <a href="#mikado.register">Mikado.register</a> or just render the template <a href="#mikado.once">once</a>.</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>es6</b></td>
-        <td>Import as ES6 compatible modules.</td>
+        <td>Import as an ES6 compatible module.</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>js</b>&nbsp;/&nbsp;<b>es5</b></td>
+        <td><b>es5</b></td>
         <td>Uses Mikado from the global namespace. This requires a non-ES6 build of mikado or import "browser.js", both <u>before</u> loading this template.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>js</b></td>
+        <td>A synonym for es5.</td>
     </tr>
 </table>
 

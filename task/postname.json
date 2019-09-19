@@ -2,5 +2,6 @@
     "\\[\"new\"\\]": ".new",
     "\\[\"register\"\\]": ".register",
     "\\[\"load\"\\]": ".load",
-    "\\[\"unload\"\\]": ".unload"
+    "\\[\"unload\"\\]": ".unload",
+    "\\[\"once\"\\]": ".once"
 }

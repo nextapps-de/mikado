@@ -17,14 +17,8 @@
     "_text": "_x",
     "_event_": "_e_",
     "_root_": "_r_",
-    "_keys": "k",
+    "_cache": "$",
 
-    "setClass": "_l",
-    "setCSS": "_c",
-    "setStyle": "_s",
     "\\.setAttribute\\(self": "._a(self",
-    "prototype\\.setAttribute": "prototype._a",
-    "setText": "_t",
-    "setHTML": "_h",
     "this.target": "this._t"
 }

@@ -71,15 +71,29 @@ Mikado.prototype.import;
 /** @export */
 Mikado.prototype.setText;
 /** @export */
+Mikado.prototype.getText;
+/** @export */
 Mikado.prototype.setHTML;
+/** @export */
+Mikado.prototype.getHTML;
 /** @export */
 Mikado.prototype.setClass;
 /** @export */
+Mikado.prototype.getClass;
+/** @export */
 Mikado.prototype.setStyle;
+/** @export */
+Mikado.prototype.getStyle;
 /** @export */
 Mikado.prototype.setCSS;
 /** @export */
+Mikado.prototype.getCSS;
+/** @export */
 Mikado.prototype.setAttribute;
+/** @export */
+Mikado.prototype.getAttribute;
+/** @export */
+Mikado.prototype.move;
 /** @export */
 Mikado.prototype.up;
 /** @export */
@@ -90,6 +104,5 @@ Mikado.prototype.first;
 Mikado.prototype.last;
 /** @export */
 Mikado.prototype.swap;
-
 /** @export */
 Promise.prototype.then;

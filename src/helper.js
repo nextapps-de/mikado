@@ -2,41 +2,114 @@ import Mikado from "./mikado.js";
 
 if(SUPPORT_HELPERS){
 
-    Mikado.prototype.up = function(a){
+    Mikado.prototype.move = function(a, position){
 
-        const index = a["_idx"];
+        let index;
+
+        if(typeof a === "number"){
+
+            index = a;
+            a = this.dom[a];
+        }
+        else{
+
+            index = a["_idx"];
+        }
+
+        if(index !== position){
+
+            if(position < 0){
+
+                position = this.length - position;
+            }
+
+            if(index < position){
+
+                this.down(a, position - index);
+            }
+            else if(index > position){
+
+                this.up(a, index - position);
+            }
+        }
+
+        return this;
+    };
+
+    Mikado.prototype.up = function(a, offset){
+
+        let index;
+
+        if(typeof a === "number"){
+
+            index = a;
+            a = this.dom[a];
+        }
+        else{
+
+            index = a["_idx"];
+        }
 
         if(index){
 
-            const a = this.dom[index];
-            const b = this.dom[index - 1];
+            const b = this.dom[Math.max(index - (offset || 1), 0)];
 
             this.root.insertBefore(a, b);
 
-            a["_idx"] = index - 1;
-            b["_idx"] = index;
+            update(this.dom, SUPPORT_STORAGE && this.store, a, b, index - (offset || 1), index);
 
-            this.dom[index] = b;
-            this.dom[index - 1] = a;
-
-            if(SUPPORT_STORAGE && this.store){
-
-                const tmp = this.store[index - 1];
-
-                this.store[index - 1] = this.store[index];
-                this.store[index] = tmp;
-            }
+            // a["_idx"] = index - 1;
+            // b["_idx"] = index;
+            //
+            // this.dom[index] = b;
+            // this.dom[index - 1] = a;
+            //
+            // if(SUPPORT_STORAGE && this.store){
+            //
+            //     const tmp = this.store[index - 1];
+            //
+            //     this.store[index - 1] = this.store[index];
+            //     this.store[index] = tmp;
+            // }
         }
+
+        return this;
     };
 
-    Mikado.prototype.down = function(a){
+    function update(dom, store, a, b, index_b, index_a){
 
-        const index = a["_idx"];
+        a["_idx"] = index_b;
+        b["_idx"] = index_a;
+
+        dom[index_a] = b;
+        dom[index_b] = a;
+
+        if(SUPPORT_STORAGE && store){
+
+            const tmp = store[index_b];
+
+            store[index_b] = store[index_a];
+            store[index_a] = tmp;
+        }
+    }
+
+    Mikado.prototype.down = function(a, offset){
+
+        let index;
+
+        if(typeof a === "number"){
+
+            index = a;
+            a = this.dom[a];
+        }
+        else{
+
+            index = a["_idx"];
+        }
 
         if(index < this.length - 1){
 
-            const a = this.dom[index];
-            const b = this.dom[index + 1];
+            const b = this.dom[Math.min(index + (offset || 1), this.length - 1)];
 
             if(index === this.length - 2){
 
@@ -47,69 +120,88 @@ if(SUPPORT_HELPERS){
                 this.root.insertBefore(a, b);
             }
 
-            a["_idx"] = index + 1;
-            b["_idx"] = index;
+            update(this.dom, SUPPORT_STORAGE && this.store, a, b, index + (offset || 1), index);
 
-            this.dom[index] = b;
-            this.dom[index + 1] = a;
-
-            if(SUPPORT_STORAGE && this.store){
-
-                const tmp = this.store[index + 1];
-
-                this.store[index + 1] = this.store[index];
-                this.store[index] = tmp;
-            }
+            // a["_idx"] = index + 1;
+            // b["_idx"] = index;
+            //
+            // this.dom[index] = b;
+            // this.dom[index + 1] = a;
+            //
+            // if(SUPPORT_STORAGE && this.store){
+            //
+            //     const tmp = this.store[index + 1];
+            //
+            //     this.store[index + 1] = this.store[index];
+            //     this.store[index] = tmp;
+            // }
         }
+
+        return this;
     };
 
     Mikado.prototype.first = function(a){
 
-        const index = a["_idx"];
+        return this.up(a, this.length);
 
-        if(index){
-
-            this.root.insertBefore(a, this.dom[0]);
-            const tmp = this.dom.splice(index, 1)[0];
-            this.dom.unshift(tmp);
-
-            for(let i = 0; i <= index; i++){
-
-                this.dom[i]["_idx"] = i;
-            }
-
-            if(SUPPORT_STORAGE && this.store){
-
-                const tmp = this.store.splice(index, 1)[0];
-                this.store.unshift(tmp);
-            }
-        }
+        // const index = a["_idx"];
+        //
+        // if(index){
+        //
+        //     this.root.insertBefore(a, this.dom[0]);
+        //     const tmp = this.dom.splice(index, 1)[0];
+        //     this.dom.unshift(tmp);
+        //
+        //     for(let i = 0; i <= index; i++){
+        //
+        //         this.dom[i]["_idx"] = i;
+        //     }
+        //
+        //     if(SUPPORT_STORAGE && this.store){
+        //
+        //         const tmp = this.store.splice(index, 1)[0];
+        //         this.store.unshift(tmp);
+        //     }
+        // }
+        //
+        // return this;
     };
 
     Mikado.prototype.last = function(a){
 
-        const index = a["_idx"];
+        return this.down(a, this.length);
 
-        if(index < this.length - 1){
-
-            this.root.appendChild(a);
-            const tmp = this.dom.splice(index, 1)[0];
-            this.dom.push(tmp);
-
-            for(let i = index; i < this.length; i++){
-
-                this.dom[i]["_idx"] = i;
-            }
-
-            if(SUPPORT_STORAGE && this.store){
-
-                const tmp = this.store.splice(index, 1)[0];
-                this.store.push(tmp);
-            }
-        }
+        // const index = a["_idx"];
+        //
+        // if(index < this.length - 1){
+        //
+        //     this.root.appendChild(a);
+        //     const tmp = this.dom.splice(index, 1)[0];
+        //     this.dom.push(tmp);
+        //
+        //     for(let i = index; i < this.length; i++){
+        //
+        //         this.dom[i]["_idx"] = i;
+        //     }
+        //
+        //     if(SUPPORT_STORAGE && this.store){
+        //
+        //         const tmp = this.store.splice(index, 1)[0];
+        //         this.store.push(tmp);
+        //     }
+        // }
+        //
+        // return this;
     };
 
-    Mikado.prototype.swap = function(a, b){
+    /**
+     * @param a
+     * @param b
+     * @param {Object=} view
+     * @returns {Mikado}
+     */
+
+    Mikado.prototype.swap = function(a, b, view){
 
         //profiler_start("swap");
 
@@ -138,27 +230,30 @@ if(SUPPORT_HELPERS){
                 tmp_b = b["_idx"];
             }
 
-            if(this.reuse){
+            if(a !== b){
 
-                const tmp = a["_item"];
-                this.update(a, b["_item"], null, tmp_b);
-                this.update(b, tmp, null, tmp_a);
-            }
-            else{
+                if(this.reuse){
 
-                this.root.insertBefore(a, b);
-                this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                    const tmp = a["_item"];
+                    this.update(a, b["_item"], view, tmp_b);
+                    this.update(b, tmp, view, tmp_a);
+                }
+                else{
 
-                /*
-                b.replaceWith(a);
-                this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                */
+                    this.root.insertBefore(a, b);
+                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
 
-                a["_idx"] = tmp_b;
-                b["_idx"] = tmp_a;
+                    /*
+                    b.replaceWith(a);
+                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                    */
 
-                this.dom[tmp_a] = b;
-                this.dom[tmp_b] = a;
+                    a["_idx"] = tmp_b;
+                    b["_idx"] = tmp_a;
+
+                    this.dom[tmp_a] = b;
+                    this.dom[tmp_b] = a;
+                }
             }
 
             // 3. Strategy Swap
@@ -185,18 +280,35 @@ if(SUPPORT_HELPERS){
         return this;
     };
 
-    Mikado.prototype.shuffle = function(){
+    Mikado.prototype.before = function(a, b){
 
-        const dom = this.dom;
+        const index_a = a["_idx"];
+        const index_b = b["_idx"];
 
-        for(let i = dom.length - 1; i > 0; i--) {
+        if(index_a !== index_b - 1){
 
-            let j = (Math.random() * (i + 1)) | 0;
-            let x = dom[i];
-            dom[i] = dom[j];
-            dom[j] = x;
+            this.root.insertBefore(a, b);
+            update(this.dom, SUPPORT_STORAGE && this.store, a, b, b["_idx"], index_a);
         }
+    };
 
-        return this;
+    Mikado.prototype.after = function(a, b){
+
+        const index_a = a["_idx"];
+        const index_b = b["_idx"];
+
+        if(index_a !== index_b + 1){
+
+            if(index_b === this.length - 1){
+
+                this.root.appendChild(a);
+            }
+            else{
+
+                this.root.insertBefore(a, this.dom[index_b + 1]);
+            }
+
+            update(this.dom, SUPPORT_STORAGE && this.store, a, b, index_b, index_a);
+        }
     };
 }
