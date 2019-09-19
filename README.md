@@ -17,18 +17,6 @@
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
 <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a>
 
-This library was build by reversed engineering with these primary goals as its base:
-1. providing a clean, simple and __non-cryptic__ tool for developers who focus on living standards and common styles
-2. designer-readable templates based on pure html (most famous and compatible markup in the web)
-3. providing the best overall performance
-
-<!--
-This library was __not__ build for:
-- replacing Angular, React or Co.
-- mimic to be Angular, React or Co.
-- fit to any of your favourite templating frameworks you are already using
--->
-
 Services:
 - Mikado Runtime (Render Templates)<br>`npm install mikado`
 
@@ -115,7 +103,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            VDOM Cache
+            <a href="#cache">DOM State Caching</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -186,8 +174,8 @@ __Feature Comparison__
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>4.1 kb</td>
-        <td>1.6 kb</td>
+        <td>4.3 kb</td>
+        <td>2.0 kb</td>
     </tr>
 </table>
 
@@ -230,7 +218,7 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>251559</td>
         <td align=right>28938</td>
         <td align=right>25969</td>
-        <td align=right><b>945</b></td>
+        <td align=right><b>949</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -245,22 +233,22 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>92368</td>
         <td align=right>20701</td>
         <td align=right>24041</td>
-        <td align=right><b>704</b></td>
+        <td align=right><b>708</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>3</td>
         <td>sinuous-0.14.2</td>
-        <td align=right>7.48</td>
+        <td align=right>5.6</td>
         <td align=right>265192</td>
-        <td align=right>384</td>
-        <td align=right>9695</td>
-        <td align=right>11996</td>
-        <td align=right>384</td>
-        <td align=right>308152</td>
-        <td align=right>17639</td>
-        <td align=right>13464</td>
-        <td align=right><b>626</b></td>
+        <td align=right>629</td>
+        <td align=right>9214</td>
+        <td align=right>11545</td>
+        <td align=right>571</td>
+        <td align=right>308677</td>
+        <td align=right>18060</td>
+        <td align=right>13749</td>
+        <td align=right><b>676</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -275,7 +263,7 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>58468</td>
         <td align=right>19843</td>
         <td align=right>11991</td>
-        <td align=right><b>446</b></td>
+        <td align=right><b>448</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -290,10 +278,10 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>5538</td>
         <td align=right>6527</td>
         <td align=right>14009</td>
-        <td align=right><b>344</b></td>
+        <td align=right><b>345</b></td>
     </tr>
     <tr>
-        <td>7</td>
+        <td>6</td>
         <td>innerHTML</td>
         <td align=right>-</td>
         <td align=right>406992</td>
@@ -307,7 +295,7 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right><b>343</b></td>
     </tr>
     <tr>
-        <td>6</td>
+        <td>7</td>
         <td>surplus-0.5.3</td>
         <td align=right>15.79</td>
         <td align=right>166288</td>
@@ -335,7 +323,6 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>4919</td>
         <td align=right><b>158</b></td>
     </tr>
-    <tr></tr>
 </table>
 
 <code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
@@ -398,25 +385,6 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.swap">view.__swap__(node|index, node|index)</a>
 - ~~view.__shuffle__()~~
 
-Cache helpers (not included in mikado.light.js):
-- <a href="#view.setText">view.__setText__(node, text)</a>
-- <a href="#view.getText">view.__getText__(node)</a>
-- <a href="#view.setHTML">view.__setHTML__(node, html)</a>
-- <a href="#view.getHTML">view.__getHTML__(node)</a>
-- <a href="#view.setClass">view.__setClass__(node, class)</a>
-- <a href="#view.getClass">view.__getClass__(node)</a>
-- <a href="#view.hasClass">view.__hasClass__(node, class)</a>
-- <a href="#view.removeClass">view.__removeClass__(node, class)</a>
-- <a href="#view.toggleClass">view.__toggleClass__(node, class)</a>
-- <a href="#view.setStyle">view.__setStyle__(node, property, value)</a>
-- <a href="#view.getStyle">view.__getStyle__(node, property)</a>
-- <a href="#view.setCSS">view.__setCSS__(node, css)</a>
-- <a href="#view.getCSS">view.__getCSS__(node)</a>
-- <a href="#view.setAttribute">view.__setAttribute__(node, attr, value)</a>
-- <a href="#view.getAttribute">view.__getAttribute__(node, attr)</a>
-- <a href="#view.hasAttribute">view.__hasAttribute__(node, attr)</a>
-- <a href="#view.removeAttribute">view.__removeAttribute__(node, attr)</a>
-
 <!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
 
 Instance properties:
@@ -426,6 +394,25 @@ Instance properties:
 - <a href="#view.state">view.__state__</a>
 - ~~view.__config__~~
 - <a href="#view.id">view.__template__</a>
+
+Global helpers (not included in mikado.light.js):
+- <a href="#Mikado.setText">Mikado.__setText__(node, text)</a>
+- <a href="#Mikado.getText">Mikado.__getText__(node)</a>
+- <a href="#Mikado.setHTML">Mikado.__setHTML__(node, html)</a>
+- <a href="#Mikado.getHTML">Mikado.__getHTML__(node)</a>
+- <a href="#Mikado.setClass">Mikado.__setClass__(node, class)</a>
+- <a href="#Mikado.getClass">Mikado.__getClass__(node)</a>
+- <a href="#Mikado.hasClass">Mikado.__hasClass__(node, class)</a>
+- <a href="#Mikado.removeClass">Mikado.__removeClass__(node, class)</a>
+- <a href="#Mikado.toggleClass">Mikado.__toggleClass__(node, class)</a>
+- <a href="#Mikado.setStyle">Mikado.__setStyle__(node, property, value)</a>
+- <a href="#Mikado.getStyle">Mikado.__getStyle__(node, property)</a>
+- <a href="#Mikado.setCSS">Mikado.__setCSS__(node, css)</a>
+- <a href="#Mikado.getCSS">Mikado.__getCSS__(node)</a>
+- <a href="#Mikado.setAttribute">Mikado.__setAttribute__(node, attr, value)</a>
+- <a href="#Mikado.getAttribute">Mikado.__getAttribute__(node, attr)</a>
+- <a href="#Mikado.hasAttribute">Mikado.__hasAttribute__(node, attr)</a>
+- <a href="#Mikado.removeAttribute">Mikado.__removeAttribute__(node, attr)</a>
 
 <a name="options"></a>
 ## Options
@@ -459,7 +446,7 @@ Instance properties:
     <tr></tr>
     <tr>
         <td><b>cache</b></td>
-        <td>Enable/disable caching. Caching can greatly increase performance (up to 20x). Be careful, it fully depends on your application, there are situations where a enabled cache performs slower.<br><b>Recommendation:</b> enable caching when several of your item data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.</td>
+        <td>Enable/disable <a href="#cache">caching</a>. Caching can greatly increase performance (up to 20x).</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -622,7 +609,32 @@ Provide one single root by doing this:
 </main>
 ```
 
-You can also use a `<div>` or any other element as a template root.
+You can also use a `<div>` or any other element as a template root (also custom elements).
+
+Mixing text nodes __and__ child nodes within __same__ root is actually not possible:
+```html
+<main>
+    {{ item.title }}
+    <section>{{ item.content }}</section>
+    {{ item.footer }}
+</main>
+```
+
+This may provided in the future, in the meanwhile just wrap text nodes into its own child:
+```html
+<main>
+    <title>{{ item.title }}</title>
+    <section>{{ item.content }}</section>
+    <footer>{{ item.footer }}</footer>
+</main>
+```
+
+This example has not this issue, because text nodes and child nodes are not mixed:
+```html
+<main>
+    <section>{{ item.title }} foobar {{ item.footer }}</section>
+</main>
+```
 
 ## Advanced Example
 
@@ -922,7 +934,7 @@ view.render();
 ```
 
 <a name="view.refresh"></a>
-Repaint the current state of a dynamic template (which has item data, requires store to be enabled):
+Repaint the current state of a dynamic template (which has item data, requires ___store___ to be enabled):
 ```js
 view.refresh();
 ```
@@ -933,10 +945,12 @@ view.refresh(index);
 ```
 
 <a name="view.create"></a>
-Just create a template without adding/assigning/rendering to the root:
+Just create an template without adding/assigning/rendering them to the root ("orphan"):
 ```js
 var partial = view.create(item);
 ```
+
+Orphans are not a part of the internal render tree. The construction of orphans is really fast. You could also use the light version of Mikado an apply your own stack on top of this method.
 
 ## Modify Views
 
@@ -1112,93 +1126,176 @@ Swap two items/nodes:
 view.swap(node_a, node_b);
 ```
 
+<a name="cache"></a>
+## DOM State Caching
+
+Caching of DOM properties can greatly increase performance (up to 20x). There are just few situations where caching will not improve performance, it fully depends on your application.
+
+> __Recommendation:__ enable caching when several of your item data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.
+
+Caching is by default enabled, this may change in future, so best is to explicitly set this flag when initializing:
+```js
+var view = new Mikado(template, { cache: true });
+```
+
+We strongly recommended to read the next section to understand how caching is working.
+
+#### The Concept
+
+Let's take a simple template as an example:
+```html
+<root>
+    <div class="active">{{ item.title }}</div>
+</root>
+```
+
+The template above has just one dynamically expression. It could be rendered as follows:
+```js
+view.render({ title: "foobar" });
+```
+
+Assume you get new data and wants to update the view, but the new data has still the same value for _title_:
+```js
+view.render({ title: "foobar" });
+```
+
+This time, the property will not changed. That specific part now executes more than 10,000 times faster. Make maximum use of this strategy will speed up things amazingly.
+
+> When caching is enabled it automatically applies for all dynamic expressions within a template by default.
+
+So whenever you like to change one of the nodes attributes or contents (e.g. style, class, properties, dataset, etc) you just wrap this as an expression within the template and it will apply automatically.
+
+For example, when you would like to change the classname also, then just wrap in as an expression:
+```html
+<root>
+    <div class="{{ view.active }}">{{ item.title }}</div>
+</root>
+```
+
+You do not have to use item data only, you can also use a payload <a href="#view">view</a> or the <a href="#state">state</a> property. This make using and re-using templates very flexible.
+
+Now lets come to the __most important part__ when using caching properly. Assume you have rendered the template above with caching enabled. Now you __manually__ change DOM attributes:
+```js
+var node = document.getElementsByClassName("active")[0];
+node.textContent = "manual change";
+```
+
+The changes will apply to the DOM. Now you re-render the template with the "old" state:
+```js
+view.render({ title: "foobar" });
+```
+
+This time the change will not apply. Because the internal cache assumes that the current value is still "foobar" and skips the change.
+
+Basically you have 2 options in this situation:
+
+1. do not manually change dom properties or states (instead change all through rendering templates)
+2. using the <a href="#cache-helpers">caching helpers</a> which Mikado provides you exactly to this purpose.
+
+Do not worry, there exist an rescue method to force re-sync:
+```js
+view.sync(); // re-sync dom nodes
+```
+```js
+view.sync(true); // re-sync dom nodes and properties
+```
+
+Please keep in mind that manual changes to the DOM has its limits:
+
+> Generally do not __manually change__ dom properties or states which are __not covered by the template__. Changes that aren't covered by the template may gets lost when re-rendering (in few situations this will not being an issue).
+
+<a name="cache-helpers"></a>
 #### Caching Helpers
+
+> Caching helpers will help you to bypass manual changes to the DOM without going out of sync.
+
+You can also use these helpers for all changes to any DOM node independent of it is part of the template or not. Generally these helpers increase every DOM access. 
 
 <a name="view.setAttribute"></a>
 Set attribute of a node (will not replaces old attributes):
 ```js
-view.setAttribute(node, "href", "/foo");
+Mikado.setAttribute(node, "href", "/foo");
 ```
 ```js
-view.setAttribute(node, {
+Mikado.setAttribute(node, {
     id: "foo",
     href: "/foo"
 });
 ```
 
-<a name="view.getAttribute"></a>
+<a name="Mikado.getAttribute"></a>
 Get attribute of a node:
 ```js
-var attr = view.getAttribute(node, "href");
+var attr = Mikado.getAttribute(node, "href");
 ```
 
-<a name="view.setClass"></a>
+<a name="Mikado.setClass"></a>
 Set class name of a node (fully replaces old classes):
 ```js
-view.setClass(node, "class_a class_b");
+Mikado.setClass(node, "class_a class_b");
 ```
 ```js
-view.setClass(node, ["class_a", "class_b"]);
+Mikado.setClass(node, ["class_a", "class_b"]);
 ```
 
-<a name="view.getClass"></a>
+<a name="Mikado.getClass"></a>
 Get class names of a node (returns an array):
 ```js
-var classlist = view.getClass(node);
+var classlist = Mikado.getClass(node);
 ```
 
-<a name="view.setCSS"></a>
+<a name="Mikado.setCSS"></a>
 Set inline styles of a node (fully replaces old styles):
 ```js
-view.setCSS(node, "top: 0; padding-right: 10px");
+Mikado.setCSS(node, "top: 0; padding-right: 10px");
 ```
 ```js
-view.setCSS(node, ["top: 0", "padding-right: 10px"]);
+Mikado.setCSS(node, ["top: 0", "padding-right: 10px"]);
 ```
 
-<a name="view.getCSS"></a>
+<a name="Mikado.getCSS"></a>
 Get all inline styles of a node:
 ```js
-var css = view.getCSS(node);
+var css = Mikado.getCSS(node);
 ```
 
-<a name="view.setStyle"></a>
+<a name="Mikado.setStyle"></a>
 Set inline styles of a node (will not replaces old styles):
 ```js
-view.setStyle(node, "padding-right", "10px");
+Mikado.setStyle(node, "padding-right", "10px");
 ```
 ```js
-view.setStyle(node, {"top": 0, "padding-right": "10px"});
+Mikado.setStyle(node, {"top": 0, "padding-right": "10px"});
 ```
 
-<a name="view.getStyle"></a>
+<a name="Mikado.getStyle"></a>
 Get a specific inline style of a node:
 ```js
-var style = view.getStyle(node, "padding-right");
+var style = Mikado.getStyle(node, "padding-right");
 ```
 
-<a name="view.setText"></a>
+<a name="Mikado.setText"></a>
 Set text of a node:
 ```js
-view.setText(node, "This is a title.");
+Mikado.setText(node, "This is a title.");
 ```
 
-<a name="view.getText"></a>
+<a name="Mikado.getText"></a>
 Get text of a node:
 ```js
-var text = view.getText(node);
+var text = Mikado.getText(node);
 ```
 
-<a name="view.setHTML"></a>
+<a name="Mikado.setHTML"></a>
 Set inner html of a node:
 ```js
-view.setHTML(node, "<b>This is a title.</b>");
+Mikado.setHTML(node, "<b>This is a title.</b>");
 ```
 
-<a name="view.getHTML"></a>
+<a name="Mikado.getHTML"></a>
 Get inner html of a node:
 ```js
-var html = view.getHTML(node);
+var html = Mikado.getHTML(node);
 ```
 
 <!--
@@ -1437,7 +1534,7 @@ Mikado.once(root, template, items, payload, callback);
 
 When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
 
-When unloading templates explicitly the template will also removes completely. The next time the same template is going to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to destroy also dynamic views when it was closed by the user to free memory.
+When unloading templates explicitly the template will also removes completely. The next time the same template is going to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to unload views to free memory when they was closed by the user.
 
 ## Compiler Service / Live Templates
 
@@ -1480,6 +1577,11 @@ Types:
     </tr>
     <tr></tr>
     <tr>
+        <td><b>module</b></td>
+        <td>A synonym for es6.</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td><b>es5</b></td>
         <td>Uses Mikado from the global namespace. This requires a non-ES6 build of mikado or import "browser.js", both <u>before</u> loading this template.</td>
     </tr>
@@ -1497,18 +1599,15 @@ The compiler service is also very useful to render templates ony the fly when mo
 ```js
 // production:
 import tpl_app from "./path/to/app.es6.js";
-import tpl_view from "./path/to/view.es6.js";
+let app;
 
 if(DEBUG){
     // development:
     Mikado.load("http://localhost:3000/json/path/to/app.html", false);
-    Mikado.load("http://localhost:3000/json/path/to/view.html", false);
-    const app = Mikado.new("app");
-    const view = Mikado.new("view");
+    app = Mikado.new("app");
 }
 else{
-    const app = Mikado.new(tpl_app);
-    const view = Mikado.new(tpl_view);
+    app = Mikado.new(tpl_app);
 }
 
 // same code follows here ...
@@ -1516,63 +1615,28 @@ else{
 
 You can also import them as ES6 modules directly via an asynchronous IIFE:
 ```js
-let tpl_app, tpl_view;
+let tpl_app;
 
 (async function(){
     if(DEBUG){
         // development:
-        tpl_app = await import('http://localhost:3000/es6/test/app.es6.js');
-        tpl_view = await import('http://localhost:3000/es6/test/view.es6.js');
+        tpl_app = await import('http://localhost:3000/es6/path/to/app.html');
     }
     else{
         // production:
         tpl_app = await import("./path/to/app.html");
-        tpl_view = await import("./path/to/view.html");
     }
 }());
 
 // same code follows here ...
 const app = Mikado.new(tpl_app);
-const view = Mikado.new(tpl_view);
 ```
 
 #### Server-Side Rendering (SSR)
 
-Use the json format to delegate view data from server to the client. Actually just static templates are supported. An express middleware is actually in progress to create templates with dynamic expressions. When using SSR it may be useless to keep the template data as well as calculate all the optimizations for re-using. For this purpose use the method <a href="#mikado.once">___Mikado.once()___</a>.
+_WIP_
 
-## Best Practices
-
-A Mikado instance has a stronger relation to the template as to the root element. Please keep this example in mind:
-
-This is good:
-```js
-var view = new Mikado(template);
-
-view.mount(root_a).render(items);
-view.mount(root_b).render(items);
-view.mount(root_c).render(items);
-```
-
-This is bad:
-```js
-view.mount(root);
-view.init(tpl_a).render(items);
-view.init(tpl_b).render(items);
-view.init(tpl_c).render(items);
-```
-
-Instead doing this:
-```js
-var view_a = new Mikado(tpl_a);
-var view_b = new Mikado(tpl_b);
-var view_c = new Mikado(tpl_c);
-
-view_a.mount(root_c).render(items);
-view_b.mount(root_b).render(items);
-view_c.mount(root_a).render(items);
-```
-
-Ideally every template should have initialized by one (and only one) Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
+Use the json format to delegate view data from server to the client. Actually just static templates are supported. An express middleware is actually in progress to create templates with dynamic expressions.
 
 <a name="includes" id="includes"></a>
 ## Includes
@@ -1669,6 +1733,54 @@ In this example the template "tweet" loops the render through an array of tweets
     </tweets>
 </main>
 ```
+
+## Best Practices
+
+A Mikado instance has a stronger relation to the template as to the root element. Please keep this example in mind:
+
+This is good:
+```js
+var view = new Mikado(template);
+
+view.mount(root_a).render(items);
+view.mount(root_b).render(items);
+view.mount(root_c).render(items);
+```
+
+This is bad:
+```js
+view.mount(root);
+view.init(tpl_a).render(items);
+view.init(tpl_b).render(items);
+view.init(tpl_c).render(items);
+```
+
+Instead doing this:
+```js
+var view_a = new Mikado(tpl_a);
+var view_b = new Mikado(tpl_b);
+var view_c = new Mikado(tpl_c);
+
+view_a.mount(root_c).render(items);
+view_b.mount(root_b).render(items);
+view_c.mount(root_a).render(items);
+```
+
+Ideally every template should have initialized by one (and only one) Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
+
+## Motivation
+
+This library was build by reversed engineering with these primary goals as its base:
+1. providing a clean, simple and __non-cryptic__ tool for developers who focus on living standards and common styles
+2. designer-readable templates based on pure html (most famous and compatible markup in the web)
+3. providing the best overall performance
+
+<!--
+This library was __not__ build for:
+- replacing Angular, React or Co.
+- mimic to be Angular, React or Co.
+- fit to any of your favourite templating frameworks you are already using
+-->
 
 ## About Data Binding
 
