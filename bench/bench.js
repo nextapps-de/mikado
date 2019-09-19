@@ -208,7 +208,7 @@ function validate(item){
 
     const footer = content.nextElementSibling;
     if(footer.textContent !== item.footer) return msg("footer.textContent");
-    if((footer.getAttribute("href") !== "show-test") && (footer.href !== "show-test")) return msg("footer.href");
+    //if((footer.getAttribute("href") !== "show-test") && (footer.href !== "show-test")) return msg("footer.href");
 
     return true;
 }

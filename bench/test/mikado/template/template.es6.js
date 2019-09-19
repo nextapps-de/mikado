@@ -26,9 +26,6 @@ export default {
         ]
       },
       {
-        "a": {
-          "href": "show-test"
-        },
         "c": "footer",
         "x": [
           "item.footer"
