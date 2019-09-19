@@ -13,6 +13,23 @@ import "./helper.js";
 import "./cache.js";
 import "./store.js";
 import "./polyfill.js";
+import {
+    getAttribute,
+    getClass,
+    getCSS,
+    getHTML,
+    getText,
+    hasAttribute,
+    hasClass,
+    removeAttribute,
+    setAttribute,
+    setClass,
+    setCSS,
+    setHTML,
+    setText,
+    setStyle,
+    getStyle
+} from "./cache.js";
 //import { profiler_start, profiler_end } from "./profiler.js";
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
@@ -340,7 +357,6 @@ Mikado.prototype.init = function(template, options){
 Mikado.once = Mikado["once"] = function(root, template, items, view, callback){
 
     Mikado.new(root, template).render(items, view, callback).destroy(true);
-
     return Mikado;
 };
 
@@ -454,13 +470,17 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
         }
     }
 
-    if(typeof view === "function"){
-
-        callback = view;
-        view = null;
-    }
-
     if(SUPPORT_ASYNC && !skip_async){
+
+        if(view){
+
+            if((typeof view === "function") ||
+               (typeof view === "boolean")){
+
+                callback = view;
+                view = null;
+            }
+        }
 
         if(this.timer){
 
@@ -1363,3 +1383,23 @@ Mikado.prototype.unload = function(template){
 };
 
 Mikado.unload = Mikado["unload"] = Mikado.prototype.unload;
+
+if(SUPPORT_CACHE && SUPPORT_HELPERS){
+
+    Mikado.setText = setText;
+    Mikado.getText = getText;
+    Mikado.setHTML = setHTML;
+    Mikado.getHTML = getHTML;
+    Mikado.setClass = setClass;
+    Mikado.getClass = getClass;
+    Mikado.hasClass = hasClass;
+    Mikado.setStyle = setStyle;
+    Mikado.getStyle = getStyle;
+    //Mikado.setStyle = setStyle;
+    Mikado.setCSS = setCSS;
+    Mikado.getCSS = getCSS;
+    Mikado.setAttribute = setAttribute;
+    Mikado.getAttribute = getAttribute;
+    Mikado.hasAttribute = hasAttribute;
+    Mikado.removeAttribute = removeAttribute;
+}

@@ -27,7 +27,10 @@ if(USE_POLYFILL){
 
     if(SUPPORT_ASYNC){
 
-        Promise || (window["Promise"] = function(){
+        window["requestAnimationFrame"] || (window["requestAnimationFrame"] = window.setTimeout);
+        window["cancelAnimationFrame"] || (window["cancelAnimationFrame"] = window.clearTimeout);
+
+        window["Promise"] || (window["Promise"] = function(){
 
             /**
              * @param {Function} fn

@@ -1,0 +1,45 @@
+{
+  "public": false,
+  "preferGlobal": false,
+  "scripts": {
+    "test:production": "mocha --timeout=3000 test --exit",
+    "test:light": "mocha --timeout=3000 test/ --exit",
+    "test:develop": "mocha --timeout=3000 --exit",
+    "test:browser": "nyc instrument ./dist/mikado.pre.js ./dist/ && nyc --reporter=html --reporter=text --cache false mocha-headless-chrome -f index.html?coverage -c .nyc_output/coverage.json",
+    "test:es5": "mocha-phantomjs index.html",
+    "test": "npm run test:develop && npm run test:production && npm run test:light && npm run test:browser && npm run test:coverage",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "server": "node server.js"
+  },
+  "nyc": {
+    "per-file": true,
+    "all": true,
+    "exclude-after-remap": false,
+    "include": [
+      "dist/mikado.pre.js"
+    ]
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "task/",
+    "server/",
+    "README.md",
+    "LICENSE"
+  ],
+  "readme": "README.md",
+  "dependencies": {
+    "mocha-phantomjs": "^4.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "codacy-coverage": "^3.4.0",
+    "coveralls": "^3.0.5",
+    "mocha": "^6.2.0",
+    "mikado-compile": "0.0.3",
+    "mocha-headless-chrome": "^2.0.3",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^14.1.1",
+    "web-servo": "^0.5.1"
+  }
+}

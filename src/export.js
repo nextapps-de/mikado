@@ -81,6 +81,12 @@ Mikado.prototype.setClass;
 /** @export */
 Mikado.prototype.getClass;
 /** @export */
+Mikado.prototype.hasClass;
+/** @export */
+Mikado.prototype.removeClass;
+/** @export */
+Mikado.prototype.toggleClass;
+/** @export */
 Mikado.prototype.setStyle;
 /** @export */
 Mikado.prototype.getStyle;
@@ -92,6 +98,10 @@ Mikado.prototype.getCSS;
 Mikado.prototype.setAttribute;
 /** @export */
 Mikado.prototype.getAttribute;
+/** @export */
+Mikado.prototype.hasAttribute;
+/** @export */
+Mikado.prototype.removeAttribute;
 /** @export */
 Mikado.prototype.move;
 /** @export */

@@ -6,6 +6,7 @@ console.log();
 
 fs.existsSync("log") || fs.mkdirSync("log");
 fs.existsSync("tmp") || fs.mkdirSync("tmp");
+fs.existsSync("dist") || fs.mkdirSync("dist");
 
 let flag_str = "";
 let language_out;
@@ -54,7 +55,7 @@ const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "
 const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
 //const extern = process.argv[2] === "--extern";
 
-const parameter = (function(opt){
+let parameter = (function(opt){
 
     let parameter = '';
 
@@ -69,7 +70,7 @@ const parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
+    compilation_level: options["RELEASE"] === "pre" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
     use_types_for_optimization: true,
     //new_type_inf: true,
     jscomp_warning: "newCheckTypes",
@@ -108,6 +109,10 @@ const parameter = (function(opt){
     //formatting: "PRETTY_PRINT"
 });
 
+if(options["RELEASE"] === "pre"){
+    parameter += ' --formatting=PRETTY_PRINT';
+}
+
 const custom = (!options["RELEASE"] || (options["RELEASE"] === "custom"));
 
 if(custom){
@@ -128,18 +133,21 @@ const files = [
     "store.js",
     "polyfill.js"
 ];
+
 const prename = require('./prename.json');
-const postname = require('./postname.json');
 
 files.forEach(function(file){
 
     let src = String(fs.readFileSync("src/" + file));
 
-    for(let key in prename){
+    if(options["RELEASE"] !== "pre"){
 
-        if(prename.hasOwnProperty(key)){
+        for(let key in prename){
 
-            src = src.replace(new RegExp(key, "g"), prename[key]);
+            if(prename.hasOwnProperty(key)){
+
+                src = src.replace(new RegExp(key, "g"), prename[key]);
+            }
         }
     }
 
@@ -154,6 +162,7 @@ exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parame
     let preserve = fs.readFileSync("src/mikado.js", "utf8");
 
     const package_json = require("../package.json");
+    const postname = require('./postname.json');
 
     preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + (light_version ? " (Light)" : es5_version ? " (ES5)" : ""));
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
@@ -166,7 +175,15 @@ exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parame
         }
     }
 
-    fs.writeFileSync(filename, build);
+    if(options["RELEASE"] === "pre"){
+
+        fs.existsSync("test/dist") || fs.mkdirSync("test/dist");
+        fs.writeFileSync("test/" + filename, build);
+    }
+    else{
+
+        fs.writeFileSync(filename, build);
+    }
 
     console.log("Build Complete.");
 });

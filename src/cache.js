@@ -1,215 +1,210 @@
-import Mikado from "./mikado.js";
+export function setText(target, text){
 
-if(SUPPORT_CACHE && SUPPORT_HELPERS){
+    if(target["_text"] !== text){
 
-    Mikado.prototype.setText = function(target, text){
+        target.nodeValue = text;
+        target["_text"] = text;
+    }
 
-        if(target["_text"] !== text){
+    return this;
+}
 
-            target.nodeValue = text;
-            target["_text"] = text;
-        }
+export function getText(target){
 
-        return this;
-    };
+    return (
 
-    Mikado.prototype.getText = function(target){
+        typeof target["_text"] === "undefined" ?
 
-        return (
+            target["_text"] = target.nodeValue
+        :
+            target["_text"]
+    );
+}
 
-            typeof target["_text"] === "undefined" ?
+// TODO: when rendering on a modified template all states hast to reset to its default template values
 
-                target["_text"] = target.nodeValue
-            :
-                target["_text"]
-        );
-    };
+export function setHTML(target, html){
 
-    // TODO: when rendering on a modified template all states hast to reset to its default template values
+    if(target["_html"] !== html){
 
-    Mikado.prototype.setHTML = function(target, html){
+        target.innerHTML = html;
+        target["_html"] = html;
+    }
 
-        if(target["_html"] !== html){
+    return this;
+}
 
-            target.innerHTML = html;
-            target["_html"] = html;
-        }
+export function getHTML(target){
 
-        return this;
-    };
+    return (
 
-    Mikado.prototype.getHTML = function(target){
+        typeof target["_html"] === "undefined" ?
 
-        return (
+            target["_html"] = target.innerHTML
+        :
+            target["_html"]
+    );
+}
 
-            typeof target["_html"] === "undefined" ?
+// OK: when rendering on a modified template all states hast to reset to its default template values
 
-                target["_html"] = target.innerHTML
-            :
-                target["_html"]
-        );
-    };
+export function setClass(target, class_name){
 
-    // OK: when rendering on a modified template all states hast to reset to its default template values
+    if(target["_class"] !== class_name){
 
-    Mikado.prototype.setClass = function(target, class_name){
+        target.className = class_name;
+        target["_class"] = class_name;
+        target["_class_cache"] = null; // TODO: Xone compatibility
+    }
 
-        if(target["_class"] !== class_name){
+    return this;
+}
 
-            target.className = class_name;
-            target["_class"] = class_name;
-            target["_class_cache"] = null; // TODO: Xone compatibility
-        }
+export function getClass(target){
 
-        return this;
-    };
+    return (
 
-    Mikado.prototype.getClass = function(target){
+        typeof target["_class"] === "undefined" ?
 
-        return (
+            target["_class"] = target.className
+        :
+            target["_class"]
+    );
+}
 
-            typeof target["_class"] === "undefined" ?
+export function hasClass(target, classname){
 
-                target["_class"] = target.className
-            :
-                target["_class"]
-        );
-    };
+    if(typeof target["_class"] === "undefined"){
 
-    Mikado.prototype.hasClass = function(target, classname){
+        target["_class"] = target.className;
+    }
 
-        if(typeof target["_class"] === "undefined"){
+    return ("#" + target["_class"].replace(/ /g, "#") + "#").indexOf("#" + classname + "#") !== -1;
+}
 
-            target["_class"] = target.className;
-        }
+// Ok: when rendering on a modified template all states hast to reset to its default template values
 
-        return ("#" + target["_class"].replace(/ /g, "#") + "#").indexOf("#" + classname + "#") !== -1;
-    };
+export function setStyle(target, style, value){
 
-    // Ok: when rendering on a modified template all states hast to reset to its default template values
+    const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
 
-    Mikado.prototype.setStyle = function(target, style, value){
+    if(style_cache[style] !== value){
 
-        const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
+        style_cache[style] = value;
+        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
+        target["_css"] = null;
+    }
 
-        if(style_cache[style] !== value){
+    return this;
+}
 
-            style_cache[style] = value;
-            (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-            target["_css"] = null;
-        }
+export function getStyle(target, style){
 
-        return this;
-    };
+    const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
 
-    Mikado.prototype.getStyle = function(target, style){
+    return (
 
-        const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
+        typeof style_cache[style] === "undefined" ?
 
-        return (
+            style_cache[style] = (target["_style"] || (target["_style"] = target.style)).getPropertyValue(style)
+        :
+            style_cache[style]
+    );
+}
 
-            typeof style_cache[style] === "undefined" ?
+/*
+export function setStyle(target, style, value){
 
-                style_cache[style] = (target["_style"] || (target["_style"] = target.style)).getPropertyValue(style)
-            :
-                style_cache[style]
-        );
-    };
+    const key = "_style_" + style;
 
-    /*
-    Mikado.prototype["setStyle"] = function(target, style, value){
+    if(target[key] !== value){
 
-        const key = "_style_" + style;
+        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
+        target[key] = value;
+    }
 
-        if(target[key] !== value){
+    return this;
+}
+*/
 
-            (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-            target[key] = value;
-        }
+// OK: when rendering on a modified template all states hast to reset to its default template values
 
-        return this;
-    };
-    */
+export function setCSS(target, style){
 
-    // OK: when rendering on a modified template all states hast to reset to its default template values
+    if(target["_css"] !== style){
 
-    Mikado.prototype.setCSS = function(target, style){
+        (target["_style"] || (target["_style"] = target.style)).cssText = style;
+        target["_css"] = style;
+        target["_style_cache"] = null; // TODO: Xone Compatibility
+    }
 
-        if(target["_css"] !== style){
+    return this;
+}
 
-            (target["_style"] || (target["_style"] = target.style)).cssText = style;
-            target["_css"] = style;
-            target["_style_cache"] = null; // TODO: Xone Compatibility
-        }
+export function getCSS(target){
 
-        return this;
-    };
+    return (
 
-    Mikado.prototype.getCSS = function(target){
+        typeof target["_css"] === "undefined" ?
 
-        return (
+            target["_css"] = (target["_style"] || (target["_style"] = target.style)).cssText
+        :
+            target["_css"]
+    );
+}
 
-            typeof target["_css"] === "undefined" ?
+// https://jsperf.com/data-dataset/43
+// NOTE: when rendering on a modified template all states hast to reset to its default template values
 
-                target["_css"] = (target["_style"] || (target["_style"] = target.style)).cssText
-            :
-                target["_css"]
-        );
-    };
+export function setAttribute(target, attr, value){
 
-    // https://jsperf.com/data-dataset/43
-    // NOTE: when rendering on a modified template all states hast to reset to its default template values
+    const key = "_attr_" + attr;
 
-    Mikado.prototype.setAttribute = function(target, attr, value){
+    if(target[key] !== value){
 
-        const key = "_attr_" + attr;
+        target.setAttribute(attr, value);
+        target[key] = value;
+    }
 
-        if(target[key] !== value){
+    return this;
+}
 
-            target.setAttribute(attr, value);
-            target[key] = value;
-        }
+export function getAttribute(target, attr){
 
-        return this;
-    };
+    const key = "_attr_" + attr;
 
-    Mikado.prototype.getAttribute = function(target, attr){
+    return (
 
-        const key = "_attr_" + attr;
+        typeof target[key] === "undefined" ?
 
-        return (
+            target[key] = target.getAttribute(attr)
+        :
+            target[key]
+    );
+}
 
-            typeof target[key] === "undefined" ?
+export function hasAttribute(target, attr){
 
-                target[key] = target.getAttribute(attr)
-            :
-                target[key]
-        );
-    };
+    const key = "_attr_" + attr;
 
-    Mikado.prototype.hasAttribute = function(target, attr){
+    if(typeof target[key] === "undefined"){
 
-        const key = "_attr_" + attr;
+        target[key] = target.getAttribute(attr);
+    }
 
-        if(typeof target[key] === "undefined"){
+    return !!target[key] ;
+}
 
-            target[key] = target.getAttribute(attr);
-        }
+export function removeAttribute(target, attr){
 
-        return !!target[key] ;
-    };
+    const key = "_attr_" + attr;
 
-    Mikado.prototype.removeAttribute = function(target, attr){
+    if(target[key]){
 
-        const key = "_attr_" + attr;
+        delete target[key];
+    }
 
-        if(target[key]){
+    target.removeAttribute(attr);
 
-            delete target[key];
-        }
-
-        target.removeAttribute(attr);
-
-        return this;
-    };
+    return this;
 }

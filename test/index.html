@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tests</title>
+    <link rel="stylesheet" media="all" href="node_modules/mocha/mocha.css">
+    <style>
+        body{
+            background-color: #151515;
+            filter: invert(1);
+        }
+    </style>
+</head>
+<body>
+    <div id="mocha"><p><a href=".">Index</a></p></div>
+    <div id="messages"></div>
+    <div id="fixtures"></div>
+    <div id="root-1" hidden></div>
+    <div id="root-2" hidden></div>
+    <div id="root-3" hidden></div>
+    <script src="node_modules/mocha/mocha.js"></script>
+    <script src="node_modules/chai/chai.js"></script>
+    <script>
+        var param = window.location.search.substr(1);
+        if(param === "coverage"){
+            document.write('<script type="text/javascript" src="dist/dist/mikado.pre.js"><\/script>');
+        }
+        else if(param === "es5" || param === "light" || param === "min"){
+            document.write('<script type="text/javascript" src="../dist/mikado.' + param + '.js"><\/script>');
+        }
+        else{
+            document.write('<script type="text/javascript" src="dist/mikado.pre.js"><\/script>');
+        }
+    </script>
+    <script src="template.js"></script>
+    <script src="data.js"></script>
+    <script>
+        window.initMochaPhantomJS && initMochaPhantomJS();
+        mocha.ui('bdd');
+        mocha.reporter('html');
+        mocha.setup('bdd');
+        var expect = chai.expect;
+        var env = "min";
+    </script>
+    <script src="test.js"></script>
+    <script>
+        if(window.mochaPhantomJS) mochaPhantomJS.run();
+        else mocha.run();
+    </script>
+</body>
+</html>
