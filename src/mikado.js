@@ -117,43 +117,6 @@ Mikado.prototype.mount = function(target){
     return this;
 };
 
-/**
- * @dict
- */
-
-const event_types = {
-
-    "tap": 1,
-    "change": 1,
-    "click": 1,
-    "dblclick": 1,
-    "input": 1,
-    "keydown": 1,
-    "keypress": 1,
-    "keyup": 1,
-    "mousedown": 1,
-    "mouseenter": 1,
-    "mouseleave": 1,
-    "mousemove": 1,
-    "mouseout": 1,
-    "mouseover": 1,
-    "mouseup": 1,
-    "mousewheel": 1,
-    "touchstart": 1,
-    "touchmove": 1,
-    "touchend": 1,
-    "reset": 1,
-    "select": 1,
-    "submit": 1,
-    "toggle": 1,
-    "blur": 1,
-    "error": 1,
-    "focus": 1,
-    "load": 1,
-    "resize": 1,
-    "scroll": 1
-};
-
 Mikado.prototype.sync = function(){
 
     this.root["_dom"] = this.dom = collection_to_array(this.root.children);
@@ -966,6 +929,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     let text = tpl["x"];
     let html = tpl["h"];
     const attr = tpl["a"];
+    const events = SUPPORT_EVENTS && tpl["e"];
     let class_name = tpl["c"];
     const js = tpl["j"];
     let path_length = this.vpath.length;
@@ -1008,15 +972,35 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    if(attr){
+    if(attr || events){
 
-        const keys = Object.keys(attr);
+        let keys;
         let has_dynamic_values;
+
+        if(attr){
+
+            keys = Object.keys(attr);
+        }
+
+        if(SUPPORT_EVENTS && events){
+
+            const tmp = Object.keys(events);
+            keys = keys ? keys.concat(tmp) : tmp;
+        }
 
         for(let i = 0; i < keys.length; i++){
 
             const key = keys[i];
-            let value = attr[key];
+            let value;
+
+            if(!attr || typeof (value = attr[key]) === "undefined"){
+
+                if(SUPPORT_EVENTS){
+
+                    value = events[key];
+                    this.listen(key);
+                }
+            }
 
             if(typeof value === "object"){
 
@@ -1036,11 +1020,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             else{
 
                 node.setAttribute(key, value);
-            }
-
-            if(SUPPORT_EVENTS && event_types[key]){
-
-                this.listen(key);
             }
         }
 

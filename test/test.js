@@ -597,6 +597,404 @@ describe("Cache Helpers", function(){
     });
 });
 
+describe("DOM Manipulation", function(){
+
+    it("Should have been used 'up' properly (index)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[9];
+
+        mikado.up(10);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[9]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[9]).to.equal(mikado.dom[9]);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[9]["_idx"]).to.equal(9);
+
+        tmp_a = root_1.children[10];
+        tmp_b = root_1.children[9];
+
+        mikado.up(10, 1);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[9]).to.equal(tmp_a);
+
+        mikado.up(10, -1);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[9]).to.equal(tmp_a);
+    });
+
+    it("Should have been used 'up' properly (index + offset)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[5];
+        var tmp_c = root_1.children[9];
+
+        mikado.up(10, 5);
+
+        expect(root_1.children[5]).to.equal(tmp_a);
+        expect(root_1.children[6]).to.equal(tmp_b);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        expect(mikado.dom[5]["_idx"]).to.equal(5);
+        expect(mikado.dom[6]["_idx"]).to.equal(6);
+        expect(mikado.dom[7]["_idx"]).to.equal(7);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+
+        expect(root_1.children[5]).to.equal(mikado.dom[5]);
+        expect(root_1.children[6]).to.equal(mikado.dom[6]);
+        expect(root_1.children[7]).to.equal(mikado.dom[7]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+    });
+
+    it("Should have been used 'up' properly (first)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[0];
+        var tmp_c = root_1.children[1];
+
+        mikado.first(10);
+
+        expect(root_1.children[0]).to.equal(tmp_a);
+        expect(root_1.children[1]).to.equal(tmp_b);
+        expect(root_1.children[2]).to.equal(tmp_c);
+
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[9]["_idx"]).to.equal(9);
+        expect(mikado.dom[1]["_idx"]).to.equal(1);
+        expect(mikado.dom[0]["_idx"]).to.equal(0);
+
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[9]).to.equal(mikado.dom[9]);
+        expect(root_1.children[1]).to.equal(mikado.dom[1]);
+        expect(root_1.children[0]).to.equal(mikado.dom[0]);
+    });
+
+    it("Should have been used 'down' properly (index)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+
+        mikado.down(10);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[11]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        tmp_a = root_1.children[10];
+        tmp_b = root_1.children[11];
+
+        mikado.down(10, 1);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[11]).to.equal(tmp_a);
+
+        mikado.down(10, -1);
+
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[11]).to.equal(tmp_a);
+    });
+
+    it("Should have been used 'down' properly (index + offset)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+        var tmp_c = root_1.children[15];
+
+        mikado.down(10, 5);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[14]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+    });
+
+    it("Should have been used 'down' properly (last)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[length - 1];
+        var tmp_c = root_1.children[11];
+
+        mikado.last(10);
+
+        expect(root_1.children[length - 1]).to.equal(tmp_a);
+        expect(root_1.children[length - 2]).to.equal(tmp_b);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        expect(mikado.dom[length - 1]["_idx"]).to.equal(length - 1);
+        expect(mikado.dom[length - 2]["_idx"]).to.equal(length - 2);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[length - 1]).to.equal(mikado.dom[length - 1]);
+        expect(root_1.children[length - 2]).to.equal(mikado.dom[length - 2]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+    });
+
+    it("Should have been used 'shift' properly (down)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+        var tmp_c = root_1.children[15];
+
+        mikado.shift(10, 5);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[14]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+
+        mikado.shift(10, 0);
+        expect(root_1.children[10]).to.equal(tmp_b);
+
+        mikado.shift(10, length);
+        expect(root_1.children[length - 1]).to.equal(tmp_b);
+    });
+
+    it("Should have been used 'shift' properly (up)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[5];
+        var tmp_c = root_1.children[9];
+
+        mikado.shift(10, -5);
+
+        expect(root_1.children[5]).to.equal(tmp_a);
+        expect(root_1.children[6]).to.equal(tmp_b);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        expect(mikado.dom[5]["_idx"]).to.equal(5);
+        expect(mikado.dom[6]["_idx"]).to.equal(6);
+        expect(mikado.dom[7]["_idx"]).to.equal(7);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+
+        expect(root_1.children[5]).to.equal(mikado.dom[5]);
+        expect(root_1.children[6]).to.equal(mikado.dom[6]);
+        expect(root_1.children[7]).to.equal(mikado.dom[7]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+
+        mikado.shift(10, 0);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        mikado.shift(10, -length);
+        expect(root_1.children[0]).to.equal(tmp_c);
+    });
+
+    it("Should have been used 'move' properly (down)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+        var tmp_c = root_1.children[15];
+
+        mikado.move(10, 15);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[14]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+
+        mikado.move(10, 10);
+        expect(root_1.children[10]).to.equal(tmp_b);
+
+        mikado.move(10, length * 2);
+        expect(root_1.children[length - 1]).to.equal(tmp_b);
+
+        mikado.move(length - 1, -2);
+        expect(root_1.children[length - 3]).to.equal(tmp_b);
+    });
+
+    it("Should have been used 'move' properly (up)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[5];
+        var tmp_c = root_1.children[9];
+
+        mikado.move(10, 5);
+
+        expect(root_1.children[5]).to.equal(tmp_a);
+        expect(root_1.children[6]).to.equal(tmp_b);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        expect(mikado.dom[5]["_idx"]).to.equal(5);
+        expect(mikado.dom[6]["_idx"]).to.equal(6);
+        expect(mikado.dom[7]["_idx"]).to.equal(7);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+
+        expect(root_1.children[5]).to.equal(mikado.dom[5]);
+        expect(root_1.children[6]).to.equal(mikado.dom[6]);
+        expect(root_1.children[7]).to.equal(mikado.dom[7]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+
+        mikado.move(10, 10);
+        expect(root_1.children[10]).to.equal(tmp_c);
+
+        mikado.move(10, 0);
+        expect(root_1.children[0]).to.equal(tmp_c);
+
+        mikado.move(0, -10);
+        expect(root_1.children[length - 11]).to.equal(tmp_c);
+    });
+
+    it("Should have been used 'before' properly", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+        var tmp_c = root_1.children[15];
+
+        mikado.before(10, 16);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[14]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+
+        mikado.before(10, 11);
+        expect(root_1.children[10]).to.equal(tmp_b);
+
+        mikado.before(10, length * 2);
+        expect(root_1.children[length - 1]).to.equal(tmp_b);
+
+        mikado.before(length - 1, -2);
+        expect(root_1.children[length - 3]).to.equal(tmp_b);
+
+        mikado.before(-2, -2);
+        expect(root_1.children[length - 4]).to.equal(tmp_b);
+
+        mikado.before(-3, -1);
+        expect(root_1.children[length - 3]).to.equal(tmp_b);
+
+        mikado.before(-2, -4);
+        expect(root_1.children[length - 6]).to.equal(tmp_b);
+    });
+
+    it("Should have been used 'after' properly", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        var length = root_1.children.length;
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[11];
+        var tmp_c = root_1.children[15];
+
+        mikado.after(10, 14);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[14]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+
+        mikado.after(10, 9);
+        expect(root_1.children[10]).to.equal(tmp_b);
+
+        mikado.after(10, length * 2);
+        expect(root_1.children[length - 1]).to.equal(tmp_b);
+
+        mikado.after(length - 1, -2);
+        expect(root_1.children[length - 3]).to.equal(tmp_b);
+
+        mikado.after(-2, -2);
+        expect(root_1.children[length - 2]).to.equal(tmp_b);
+
+        mikado.after(-1, -3);
+        expect(root_1.children[length - 3]).to.equal(tmp_b);
+
+        mikado.after(-2, -1);
+        expect(root_1.children[length - 1]).to.equal(tmp_b);
+    });
+});
+
 function validate(node, item){
 
     expect(node.outerHTML).to.equal(prototype(item));
