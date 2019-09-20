@@ -114,17 +114,56 @@ describe("Mount", function(){
 
 describe("Render", function(){
 
+    it("Should not have been rendered", function(){
+
+        var mikado = new Mikado(root_1, "template");
+
+        mikado.render();
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+
+        mikado.render([]);
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+
+        mikado.render(null);
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+
+        mikado.render(undefined);
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+    });
+
     it("Should have been rendered properly", function(){
 
         var mikado = new Mikado(root_1, "template");
 
         mikado.render(data);
-        expect(mikado.root).to.equal(root_1);
+
         expect(mikado.length).to.equal(data.length);
         expect(mikado.dom.length).to.equal(data.length);
         expect(mikado.dom).to.equal(mikado.root["_dom"]);
         expect(mikado.dom[0]).to.equal(root_1.firstElementChild);
         expect(mikado.dom[data.length - 1]).to.equal(root_1.lastElementChild);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been rendered properly (single item)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+
+        mikado.render(data[0]);
+
+        expect(mikado.length).to.equal(1);
+        expect(mikado.dom.length).to.equal(1);
+        expect(mikado.dom).to.equal(mikado.root["_dom"]);
+        expect(mikado.dom[0]).to.equal(root_1.firstElementChild);
+        validate(mikado.dom[0], data[0]);
     });
 
     it("Should have been indexed properly", function(){
@@ -132,6 +171,7 @@ describe("Render", function(){
         var mikado = new Mikado(root_1, "template");
 
         mikado.render(data);
+
         expect(mikado.dom[0]["_idx"]).to.equal(0);
         expect(mikado.dom[data.length - 1]["_idx"]).to.equal(data.length - 1);
     });
@@ -143,19 +183,25 @@ describe("Render", function(){
         mikado.mount(root_2).render(data.slice(10, 19));
 
         mikado.mount(root_1);
+
         expect(mikado.dom).to.equal(root_1._dom);
         expect(mikado.dom[0]["_idx"]).to.equal(0);
         expect(mikado.dom[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
 
         mikado.mount(root_2);
+
         expect(mikado.dom).to.equal(root_2._dom);
         expect(mikado.dom[0]["_idx"]).to.equal(0);
         expect(mikado.dom[0].dataset.id).to.equal(data[10]["id"]);
+        validate(mikado.dom[0], data[10]);
 
         mikado.mount(root_1);
+
         expect(mikado.dom).to.equal(root_1._dom);
         expect(mikado.dom[0]["_idx"]).to.equal(0);
         expect(mikado.dom[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
     });
 
     it("Should have been cleared properly", function(){
@@ -163,10 +209,12 @@ describe("Render", function(){
         var mikado = new Mikado(root_1, "template");
 
         mikado.render(data);
+
         expect(mikado.length).to.equal(data.length);
         expect(mikado.dom.length).to.equal(data.length);
 
         mikado.clear();
+
         expect(mikado.dom).to.equal(root_1._dom);
         expect(mikado.dom.length).to.equal(0);
         expect(mikado.length).to.equal(0);
@@ -180,6 +228,7 @@ describe("Render (Async)", function(){
         var mikado = new Mikado(root_1, "template");
 
         mikado.render(data, true);
+
         expect(mikado.root).to.equal(root_1);
         expect(mikado.length).to.equal(0);
         expect(mikado.dom.length).to.equal(0);
@@ -190,6 +239,7 @@ describe("Render (Async)", function(){
             expect(mikado.dom.length).to.equal(data.length);
             expect(mikado.dom[0]).to.equal(root_1.firstElementChild);
             expect(mikado.dom[data.length - 1]).to.equal(root_1.lastElementChild);
+            validate(mikado.dom[0], data[0]);
 
             done();
         });
@@ -205,6 +255,7 @@ describe("Render (Async)", function(){
             expect(mikado.dom.length).to.equal(data.length);
             expect(mikado.dom[0]).to.equal(root_1.firstElementChild);
             expect(mikado.dom[data.length - 1]).to.equal(root_1.lastElementChild);
+            validate(mikado.dom[0], data[0]);
 
             done();
         });
@@ -224,6 +275,7 @@ describe("Render (Async)", function(){
             expect(mikado.dom.length).to.equal(data.length);
             expect(mikado.dom[0]).to.equal(root_1.firstElementChild);
             expect(mikado.dom[data.length - 1]).to.equal(root_1.lastElementChild);
+            validate(mikado.dom[0], data[0]);
 
             done();
         });
@@ -231,6 +283,168 @@ describe("Render (Async)", function(){
         expect(mikado.root).to.equal(root_1);
         expect(mikado.length).to.equal(0);
         expect(mikado.dom.length).to.equal(0);
+    });
+});
+
+describe("Update", function(){
+
+    it("Should have been updated all properly", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        expect(root_1.children[1].dataset.id).to.equal(data[1]["id"]);
+        validate(mikado.dom[0], data[0]);
+        validate(mikado.dom[1], data[1]);
+
+        var tmp = data[0]["id"];
+        data[0]["id"] = data[1]["id"];
+        data[1]["id"] = tmp;
+
+        mikado.render(data);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        expect(root_1.children[1].dataset.id).to.equal(data[1]["id"]);
+        validate(mikado.dom[0], data[0]);
+        validate(mikado.dom[1], data[1]);
+    });
+
+    it("Should have been updated properly (direct)", function(){
+
+        var mikado = new Mikado(root_1, "template");
+        mikado.render(data);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+
+        var tmp = data[0]["id"];
+        data[0]["id"] = data[1]["id"];
+        data[1]["id"] = tmp;
+
+        mikado.update(root_1.children[0], data[0]);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been refreshed properly (single)", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+
+        var tmp = data[0]["id"];
+        data[0]["id"] = data[1]["id"];
+        data[1]["id"] = tmp;
+
+        mikado.refresh(0);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been refreshed properly (all)", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+
+        var tmp = data[0]["id"];
+        data[0]["id"] = data[1]["id"];
+        data[1]["id"] = tmp;
+
+        mikado.refresh();
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        validate(mikado.dom[0], data[0]);
+    });
+});
+
+describe("Store", function(){
+
+    it("Should have been stored items properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: true, loose: false });
+        mikado.render(data);
+
+        expect(mikado.store.length).to.equal(data.length);
+        expect(mikado.store[0]).to.equal(data[0]);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been referenced items properly (loose)", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: true, loose: true });
+
+        mikado.render(data);
+        expect(mikado.dom.length).to.equal(data.length);
+        expect(mikado.dom[0]["_item"]).to.equal(data[0]);
+        validate(mikado.dom[0], data[0]);
+
+        mikado.render();
+        expect(mikado.dom.length).to.equal(data.length);
+        expect(mikado.dom[0]["_item"]).to.equal(data[0]);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been used an external store properly", function(){
+
+        var store = data.slice(0);
+        var mikado = new Mikado(root_1, "template", { store: store, loose: false });
+
+        mikado.render();
+        expect(mikado.store).to.equal(store);
+        validate(mikado.dom[0], data[0]);
+        validate(mikado.dom[0], store[0]);
+
+        // swap items
+        var tmp = store[0];
+        store[0] = store[1];
+        store[1] = tmp;
+        mikado.render();
+        expect(store[1]).to.equal(tmp);
+        validate(mikado.dom[0], data[1]);
+        validate(mikado.dom[1], data[0]);
+        validate(mikado.dom[1], store[1]);
+
+        // remove first item
+        store.shift();
+        mikado.render();
+        expect(store[0]).to.equal(tmp);
+        validate(mikado.dom[0], data[0]);
+        validate(mikado.dom[0], store[0]);
+
+        // render through over new items
+        mikado.render(store[0]);
+        expect(store[0]).to.equal(tmp);
+        expect(mikado.store.length).to.equal(store.length);
+        validate(mikado.dom[0], store[0]);
+
+        // clear root
+        mikado.clear();
+        mikado.render();
+        expect(store[0]).to.equal(tmp);
+        expect(mikado.store.length).to.equal(store.length);
+
+        // clear store
+        store.splice(0);
+        mikado.render();
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+        expect(mikado.store.length).to.equal(0);
+
+        // assign new store
+        mikado.store = store = data.slice(0);
+        mikado.render();
+        expect(mikado.store).to.equal(store);
+        expect(mikado.length).to.equal(store.length);
+        expect(mikado.dom.length).to.equal(store.length);
+        validate(mikado.dom[0], store[0]);
     });
 });
 
@@ -319,7 +533,7 @@ if(HTMLElement.prototype.click) describe("Event", function(){
 
 describe("Cache", function(){
 
-    it("Should not have been cached", function(){
+    it("Should not have been cached (cache = false)", function(){
 
         var mikado = new Mikado(root_1, "template", { cache: false });
         mikado.render(data);
@@ -331,11 +545,27 @@ describe("Cache", function(){
         mikado.render(data);
 
         expect(root_1.firstElementChild.dataset.id).to.equal(tmp);
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should not have been cached (reuse = false)", function(){
+
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: false });
+        mikado.render(data);
+        // cache will create during second run!
+        mikado.render(data);
+
+        var tmp = root_1.firstElementChild.dataset.id;
+        root_1.firstElementChild.dataset.id = "changed";
+        mikado.render(data);
+
+        expect(root_1.firstElementChild.dataset.id).to.equal(tmp);
+        validate(mikado.dom[0], data[0]);
     });
 
     it("Should have been cached properly", function(){
 
-        var mikado = new Mikado(root_1, "template", { cache: true });
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
         mikado.render(data);
         // cache will create during second run!
         mikado.render(data);
@@ -345,14 +575,15 @@ describe("Cache", function(){
         mikado.render(data);
 
         expect(root_1.firstElementChild.dataset.id).to.equal("changed");
+        validate(mikado.dom[0], Object.assign(data[0], { id: "changed" }));
     });
 });
 
 describe("Cache Helpers", function(){
 
-    it("Should not have been set attribute in sync", function(){
+    it("Should have been set attribute in sync", function(){
 
-        var mikado = new Mikado(root_1, "template", { cache: true });
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
         mikado.render(data);
         // cache will create during second run!
         mikado.render(data);
@@ -362,5 +593,25 @@ describe("Cache Helpers", function(){
         mikado.render(data);
 
         expect(root_1.firstElementChild.dataset.id).to.equal(tmp);
+        validate(mikado.dom[0], data[0]);
     });
 });
+
+function validate(node, item){
+
+    expect(node.outerHTML).to.equal(prototype(item));
+}
+
+function prototype(item){
+
+    return (
+
+        '<section root="" data-id="' + item.id + '" data-date="' + item.date + '" data-index="' + item.index + '">' +
+            '<div click="attach" class="' + item.class + '" style="padding-right: 10px;">' +
+                '<div class="title" click="delegate:root">' + item.title + '</div>' +
+                '<div class="content">' + item.content + '</div>' +
+                '<div class="footer">' + item.footer + '</div>' +
+            '</div>' +
+        '</section>'
+    );
+}

@@ -13,36 +13,17 @@ import "./helper.js";
 import "./cache.js";
 import "./store.js";
 import "./polyfill.js";
-import {
-    getAttribute,
-    getClass,
-    getCSS,
-    getHTML,
-    getText,
-    hasAttribute,
-    hasClass,
-    removeAttribute,
-    setAttribute,
-    setClass,
-    setCSS,
-    setHTML,
-    setText,
-    setStyle,
-    getStyle
-} from "./cache.js";
 //import { profiler_start, profiler_end } from "./profiler.js";
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
 
 const defaults = {
 
-    "store": false,
+    "store": true,
     "loose": true,
     "cache": true,
     "async": false,
     "reuse": true
-    //"flat": false,
-    //"diff": false
 };
 
 /**
@@ -424,14 +405,14 @@ if(SUPPORT_STORAGE){
 
         if(typeof index === "number"){
 
-            const node = this.dom[index];
-            let item = this.store ? this.store[index] : node["_item"];
+            return this.update(this.dom[index], null, view, index);
+    }
+        else {
 
-            return this.update(node, item, view, index);
+            view = index;
         }
 
-        const items = this.store;
-        const count = items ? items.length : (this.loose ? this.length : 0);
+        const count = this.store ? this.store.length : this.length;
 
         // items delegated from import
         if(this.loose){
@@ -441,7 +422,7 @@ if(SUPPORT_STORAGE){
 
         for(let x = 0; x < count; x++){
 
-            this.update(this.dom[x], items ? items[x] : null, view, x);
+            this.update(this.dom[x], null, view, x);
         }
 
         return this;
@@ -451,7 +432,7 @@ if(SUPPORT_STORAGE){
 /**
  * @param {Array<*>|Function=} items
  * @param {Object|Function=} view
- * @param {Function=} callback
+ * @param {Function|boolean=} callback
  * @param {boolean=} skip_async
  * @returns {Mikado|Promise}
  */
@@ -477,7 +458,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
             if((typeof view === "function") ||
                (typeof view === "boolean")){
 
-                callback = view;
+                callback = /** @type {Function|boolean} */ (view);
                 view = null;
             }
         }
@@ -527,31 +508,42 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
         this.dom[0] || this.add();
     }
-    else if(items || this.loose){
+    else{
 
-        if(items && (typeof items.length === "undefined")){
+        let count;
 
-            items = [items];
+        if(items) {
+
+            if(typeof items.length === "undefined"){
+
+                items = [items];
+                count = 1;
+            }
+            else{
+
+                count = items.length;
+            }
         }
+        else if(SUPPORT_STORAGE){
 
-        let count = items ? items.length : this.length;
+            count = this.store ? this.store.length : this.length;
+        }
 
         if(!count){
 
             return this.clear();
         }
 
-        // this.clear() performs faster than this.replace()
+        // TODO: strategy of when this.clear() performs faster than this.replace()
         this.reuse || this.clear(/* resize: */ count);
 
         // add or update
-
         for(let x = 0; x < count; x++){
 
             if(x < this.length){
 
                 //if(this.reuse){
-                    this.update(this.dom[x], items[x], view, x);
+                    this.update(this.dom[x], items ? items[x] : null, view, x);
                 // }
                 // else{
                 //     this.replace(this.dom[x], items[x], view, x);
@@ -559,7 +551,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
             }
             else{
 
-                this.add(items[x], view, this.root);
+                this.add(items ? items[x] : this.store[x], view, this.root);
             }
         }
 
@@ -567,7 +559,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
         if(count < this.length){
 
-            if(SUPPORT_STORAGE && this.store){
+            if(SUPPORT_STORAGE && this.store && !this.extern){
 
                 this.store.splice(count);
             }
@@ -636,18 +628,18 @@ Mikado.prototype.clear = function(resize){
     this.root.textContent = "";
     this.length = 0;
 
-    if(SUPPORT_STORAGE && this.store){
+    if(SUPPORT_STORAGE && this.store && !this.extern){
 
         // TODO: check if replacing indexes is faster then empty
 
-        if(this.extern){
-
-            this.store.splice(0);
-        }
-        else{
+        // if(this.extern){
+        //
+        //     this.store.splice(0);
+        // }
+        // else{
 
             this.store = resize ? new Array(resize) : [];
-        }
+        //}
     }
 
     // Xone fallback:
@@ -728,7 +720,7 @@ Mikado.prototype.remove = function(node){
     this.root.removeChild(node);
     this.length--;
 
-    if(SUPPORT_STORAGE && this.store){
+    if(SUPPORT_STORAGE && this.store && !this.extern){
 
         this.store.splice(index, 1);
     }
@@ -813,25 +805,25 @@ Mikado.prototype.update = function(node, item, view, index){
 
             if(this.store){
 
-                //if(item){
+                if(item){
 
                     this.store[index] = item;
-                // }
-                // else{
-                //
-                //     item = this.store[index];
-                // }
+                }
+                else{
+
+                    item = this.store[index];
+                }
             }
             else if(this.loose){
 
-                //if(item){
+                if(item){
 
                     node["_item"] = item;
-                // }
-                // else{
-                //
-                //     item = node["_item"];
-                // }
+                }
+                else{
+
+                    item = node["_item"];
+                }
             }
         }
 
@@ -1383,23 +1375,3 @@ Mikado.prototype.unload = function(template){
 };
 
 Mikado.unload = Mikado["unload"] = Mikado.prototype.unload;
-
-if(SUPPORT_CACHE && SUPPORT_HELPERS){
-
-    Mikado.setText = setText;
-    Mikado.getText = getText;
-    Mikado.setHTML = setHTML;
-    Mikado.getHTML = getHTML;
-    Mikado.setClass = setClass;
-    Mikado.getClass = getClass;
-    Mikado.hasClass = hasClass;
-    Mikado.setStyle = setStyle;
-    Mikado.getStyle = getStyle;
-    //Mikado.setStyle = setStyle;
-    Mikado.setCSS = setCSS;
-    Mikado.getCSS = getCSS;
-    Mikado.setAttribute = setAttribute;
-    Mikado.getAttribute = getAttribute;
-    Mikado.hasAttribute = hasAttribute;
-    Mikado.removeAttribute = removeAttribute;
-}
