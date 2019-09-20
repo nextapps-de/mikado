@@ -21,7 +21,7 @@ queue.push({
         clone = shuffle(items).slice(0);
     },
     fn: null,
-    finish: function(){
+    end: function(){
         this.fn([]);
         //root.textContent = "";
     },
@@ -43,7 +43,7 @@ queue.push({
         clone = shuffle(items).slice(0);
     },
     fn: null,
-    finish: null,
+    end: null,
     complete: function(){
         this.fn([]);
         //root.textContent = "";
@@ -65,7 +65,7 @@ queue.push({
             update(items, index).slice(0);
     },
     fn: null,
-    finish: null,
+    end: null,
     complete: function(){
         this.fn([]);
         //root.textContent = "";
@@ -85,7 +85,7 @@ queue.push({
         clone = clone.concat(shuffle(items)).slice(0);
     },
     fn: null,
-    finish: function(){
+    end: function(){
         this.fn([]);
         //root.textContent = "";
     },
@@ -146,6 +146,51 @@ queue.push({
         //root.textContent = "";
     }
 });
+
+/*
+let defer_test, defer_start, defer_duration, defer_count;
+
+export function defer(){
+
+    defer_duration += (perf.now() - defer_start);
+
+    if(++defer_count < defer_test.loop){
+
+        Promise.resolve().then(defer_test.defer);
+    }
+    else{
+
+        console.log(defer_duration);
+    }
+}
+
+queue.push({
+    name: "click",
+    warmup: true,
+    defer: function(){
+        defer_start = perf.now();
+        root.firstElementChild.firstElementChild.firstElementChild.dispatchEvent(new MouseEvent("click", {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        }));
+    },
+    loop: 200000,
+    init: function(){
+        //root.textContent = "";
+        defer_duration = 0;
+        defer_count = 0;
+        this.fn(items.slice(0));
+    },
+    test: null,
+    start: null,
+    fn: null,
+    complete: function(){
+        this.fn([]);
+        //root.textContent = "";
+    }
+});
+*/
 
 // #####################################################################################
 // #####################################################################################
@@ -208,7 +253,6 @@ function validate(item){
 
     const footer = content.nextElementSibling;
     if(footer.textContent !== item.footer) return msg("footer.textContent");
-    //if((footer.getAttribute("href") !== "show-test") && (footer.href !== "show-test")) return msg("footer.href");
 
     return true;
 }
@@ -229,7 +273,7 @@ const perf = window.performance;
 function perform(warmup){
 
     const test = warmup || queue.shift();
-    let start, duration = 0, memory = 0, mem_start, tmp;
+    let duration = 0, memory = 0;
 
     if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
@@ -240,20 +284,32 @@ function perform(warmup){
         return perform(test);
     }
 
+    let loops = warmup ? test.loop / 10 : test.loop;
+
     if(test.init) test.init();
 
-    for(let i = 0, loops = warmup ? test.loop / 10 : test.loop; i < loops; i++){
+    /*
+    if(test.defer){
+
+        defer_test = test;
+        if(test.start) test.start();
+        test.defer();
+        return;
+    }
+    */
+
+    for(let i = 0, start, mem_start, tmp; i < loops; i++){
 
         if(test.start) test.start(i);
 
         mem_start = perf.memory.usedJSHeapSize;
-        start = perf.now() ;
+        start = perf.now();
         test.fn(clone);
-        duration += perf.now()  - start;
+        duration += perf.now() - start;
         tmp = perf.memory.usedJSHeapSize - mem_start;
         if(tmp > 0) memory += tmp;
 
-        if(test.finish) test.finish(i);
+        if(test.end) test.end(i);
     }
 
     if(test.complete) test.complete();
@@ -273,7 +329,6 @@ function perform(warmup){
             window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) + "," + ((memory / test.loop) | 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
     }
-    //console.log(((1000 / duration * test.loop) | 0) + "\t" + test.name, test.loop * 3000 / duration);
 
     if(queue.length){
 

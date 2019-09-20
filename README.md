@@ -2,7 +2,7 @@
 <img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado.js" width="61.8%">
 
 <h1></h1>
-<h3>Web's smartest templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Web's fastest templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
@@ -41,17 +41,6 @@ Demo:
 3. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
-Take a look into the source code of this pages is the best starting point.
-
-Work in progress:
-- ~~Conditional branches~~ ✓
-- ~~Includes/partials~~ ✓
-- ~~Live templates (for local development)~~ ✓
-- ~~Persistent state~~ ✓
-- Express Middleware
-- ~~Loops (through partials)~~ ✓
-- Plugin API
-
 #### Get Latest:
 
 <table>
@@ -87,6 +76,14 @@ __Node.js__
 ```npm
 npm install mikado
 ```
+
+__Changes for 0.4.0__
+- `change` The option field ___store___ could pass an object, than it is always an external store, or it set to _true_ then it is automatically a "loose" store.
+- `remove` The option flag ___loose___ has been removed (it is the default strategy).
+- `change` External stores no longer automatically change (there are handled as read-only).
+- `beta` new option field ___observe___ (reactive data store).
+- `beta` new attribute ___bind___ for input elements (reactive input elements).
+- `beta` supports using of ___native templates___ instead of compile and parse JSON
 
 __Feature Comparison__
 <table>
@@ -154,7 +151,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#manipulate">VDOM Manipulation Helpers</a>
+            <a href="#manipulate">DOM Manipulation Helpers</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -1777,13 +1774,17 @@ This library was build by reversed engineering with these primary goals as its b
 1. providing a clean, simple and __non-cryptic__ tool for developers who focus on living standards and common styles
 2. designer-readable templates based on pure html (most famous and compatible markup in the web)
 3. providing the best overall performance
+4. can be flexibly integrated into every stack
 
 <!--
 This library was __not__ build for:
 - replacing Angular, React or Co.
 - mimic to be Angular, React or Co.
 - fit to any of your favourite templating frameworks you are already using
--->
+
+__Why is it smart?__
+
+Everyone has a different idea about the term "smart". Mikado is not a React and Angular, but these are whales and the opposite of smart. Mikado is just 2kB in the smallest version and offers a multitude of possibilities for this size, the best performance, the smallest memory consumption and an intuitive experience for developers (including tooling), which fully masters Mikado in less than 30 minutes. That's what meant to be "smart".
 
 ## About Data Binding
 
@@ -1804,6 +1805,7 @@ Assume that the items content stay unchanged and just the order should changes t
 ```
 
 Some libs may try to swap nodes to its new place. But that has a noticeable bigger impact to the dom of a factor of 5 and higher (!) in comparison when existing nodes wil just re-rendered with the new data (for which the option <a href="#options.reuse">reuse</a> is for). The decoupled event delegation of Mikado allows you to keep listeners referenced to the right node. Surely that's not the same, but I never had a situation where this was an issue. Just keep in mind to use template notations for any value which should change dynamically (e.g. the attribute "checked") and you are save. Since Mikado was reversed engineered and the goal "keeping real nodes" was not on the table, it shouldn't be a mandatory criteria for you. If so, then you are lucky that you can use one of the dozen other templating libs out there.
+-->
 
 <a name="builds" id="builds"></a>
 ## Custom Builds
@@ -1847,7 +1849,7 @@ The destination folder of the build is: _/dist/_
     <tr>
         <td>SUPPORT_CACHE</td>
         <td>true, false</td>
-        <td>VDOM Cache</td>
+        <td>DOM Cache</td>
     </tr>
     <tr></tr>
     <tr>
@@ -1865,7 +1867,7 @@ The destination folder of the build is: _/dist/_
     <tr>
         <td>SUPPORT_HELPERS</td>
         <td>true, false</td>
-        <td>VDOM Manipulation helpers</td>
+        <td>DOM Manipulation helpers</td>
     </tr>
     <tr></tr>
     <tr>
@@ -1878,6 +1880,12 @@ The destination folder of the build is: _/dist/_
         <td>SUPPORT_TRANSPORT</td>
         <td>true, false</td>
         <td>Load templates through the network</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_TEMPLATE_EXTENSION</td>
+        <td>true, false</td>
+        <td>Use loops, includes and conditionals within templates</td>
     </tr>
     <tr>
         <td><br><b>Compiler Flags</b></td>

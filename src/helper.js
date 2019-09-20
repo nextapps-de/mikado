@@ -31,7 +31,7 @@ if(SUPPORT_HELPERS){
     };
 
     // relative position
-    Mikado.prototype.shift = function(a, offset){
+    Mikado.prototype.shift = function(a, offset, view){
 
         if(!offset){
 
@@ -61,24 +61,34 @@ if(SUPPORT_HELPERS){
                 Math.min(index + offset, this.length - 1);
 
             const b = this.dom[pos];
+            const multi_update = (up && (index - pos > 1)) || (!up && (pos - index > 1));
 
-            if(up){
+            if(SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)){
 
-                this.root.insertBefore(a, b);
+                const tmp = this.store ? this.store[index] : a["_item"];
+                this.update(a, this.store ? this.store[pos] : b["_item"], view, pos);
+                this.update(b, tmp, view, index);
             }
             else{
 
-                if(pos === this.length - 1){
+                if(up){
 
-                    this.root.appendChild(a);
+                    this.root.insertBefore(a, b);
                 }
                 else{
 
-                    this.root.insertBefore(a, this.dom[pos + 1]);
+                    if(pos === this.length - 1){
+
+                        this.root.appendChild(a);
+                    }
+                    else{
+
+                        this.root.insertBefore(a, this.dom[pos + 1]);
+                    }
                 }
             }
 
-            if((up && (index - pos > 1)) || (!up && (pos - index > 1))){
+            if(multi_update){
 
                 const tmp = this.dom[index];
                 const tmp_store = SUPPORT_STORAGE && this.store && this.store[index];
@@ -175,92 +185,6 @@ if(SUPPORT_HELPERS){
         return this.shift(a, this.length);
     };
 
-    /**
-     * @param a
-     * @param b
-     * @param {Object=} view
-     * @returns {Mikado}
-     */
-
-    Mikado.prototype.swap = function(a, b, view){
-
-        //profiler_start("swap");
-
-        if(a !== b){
-
-            let tmp_a;
-            let tmp_b;
-
-            if(typeof a === "number"){
-
-                tmp_a = a;
-                a = this.dom[a];
-            }
-            else{
-
-                tmp_a = a["_idx"];
-            }
-
-            if(typeof b === "number"){
-
-                tmp_b = b;
-                b = this.dom[b];
-            }
-            else{
-
-                tmp_b = b["_idx"];
-            }
-
-            if(tmp_a !== tmp_b){
-
-                if(this.reuse){
-
-                    const tmp = a["_item"];
-                    this.update(a, b["_item"], view, tmp_b);
-                    this.update(b, tmp, view, tmp_a);
-                }
-                else{
-
-                    this.root.insertBefore(a, b);
-                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-
-                    // 2. Strategy Swap
-                    /*
-                    b.replaceWith(a);
-                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                    */
-
-                    // 3. Strategy Swap
-                    /*
-                    if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
-                    else{
-                        this.root.insertBefore(b, a);
-                        if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
-                        else this.root.appendChild(a);
-                    }
-                    */
-
-                    a["_idx"] = tmp_b;
-                    b["_idx"] = tmp_a;
-
-                    this.dom[tmp_a] = b;
-                    this.dom[tmp_b] = a;
-                }
-
-                if(SUPPORT_STORAGE && this.store){
-
-                    const tmp = this.store[tmp_b];
-                    this.store[tmp_b] = this.store[tmp_a];
-                    this.store[tmp_a] = tmp;
-                }
-            }
-        }
-
-        //profiler_end("swap");
-
-        return this;
-    };
-
     Mikado.prototype.before = function(tmp_a, tmp_b){
 
         if(typeof tmp_a !== "number"){
@@ -327,6 +251,92 @@ if(SUPPORT_HELPERS){
 
             this.shift(tmp_a, tmp_b - tmp_a + 1);
         }
+
+        return this;
+    };
+
+    /**
+     * @param a
+     * @param b
+     * @param {Object=} view
+     * @returns {Mikado}
+     */
+
+    Mikado.prototype.swap = function(a, b, view){
+
+        //profiler_start("swap");
+
+        if(a !== b){
+
+            let tmp_a;
+            let tmp_b;
+
+            if(typeof a === "number"){
+
+                tmp_a = a;
+                a = this.dom[a];
+            }
+            else{
+
+                tmp_a = a["_idx"];
+            }
+
+            if(typeof b === "number"){
+
+                tmp_b = b;
+                b = this.dom[b];
+            }
+            else{
+
+                tmp_b = b["_idx"];
+            }
+
+            if(tmp_a !== tmp_b){
+
+                if(SUPPORT_STORAGE && this.reuse && (this.storage || this.loose)){
+
+                    const tmp = this.store ? this.store[tmp_a] : a["_item"];
+                    this.update(a, this.store ? this.store[tmp_b] : b["_item"], view, tmp_b);
+                    this.update(b, tmp, view, tmp_a);
+                }
+                else{
+
+                    this.root.insertBefore(a, b);
+                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+
+                    // 2. Strategy Swap
+                    /*
+                    b.replaceWith(a);
+                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                    */
+
+                    // 3. Strategy Swap
+                    /*
+                    if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
+                    else{
+                        this.root.insertBefore(b, a);
+                        if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
+                        else this.root.appendChild(a);
+                    }
+                    */
+
+                    a["_idx"] = tmp_b;
+                    b["_idx"] = tmp_a;
+
+                    this.dom[tmp_a] = b;
+                    this.dom[tmp_b] = a;
+
+                    if(SUPPORT_STORAGE && this.store){
+
+                        const tmp = this.store[tmp_b];
+                        this.store[tmp_b] = this.store[tmp_a];
+                        this.store[tmp_a] = tmp;
+                    }
+                }
+            }
+        }
+
+        //profiler_end("swap");
 
         return this;
     };

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -31,10 +31,10 @@
   },
   "scripts": {
     "compile": "node task/compile && echo Compile Complete. && exit 0",
-    "build": "node task/build RELEASE=min USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_LOOP_INCLUDE=true SUPPORT_CONDITIONAL=true && exit 0",
-    "build:light": "node task/build RELEASE=light USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_LOOP_INCLUDE=false SUPPORT_CONDITIONAL=false && exit 0",
-    "build:es5": "node task/build RELEASE=es5 USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_LOOP_INCLUDE=true SUPPORT_CONDITIONAL=true && exit 0",
-    "build:pre": "node task/build RELEASE=pre USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_LOOP_INCLUDE=true SUPPORT_CONDITIONAL=true && exit 0",
+    "build": "node task/build RELEASE=min USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_CONDITIONAL=true && exit 0",
+    "build:light": "node task/build RELEASE=light USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_CONDITIONAL=false && exit 0",
+    "build:es5": "node task/build RELEASE=es5 USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_CONDITIONAL=true && exit 0",
+    "build:pre": "node task/build RELEASE=pre USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_CONDITIONAL=true && exit 0",
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre",
     "update": "npm install google-closure-compiler@nightly",

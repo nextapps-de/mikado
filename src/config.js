@@ -50,13 +50,7 @@ const SUPPORT_TRANSPORT = true;
  * @define {boolean}
  */
 
-const SUPPORT_LOOP_INCLUDE = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_CONDITIONAL = true;
+const SUPPORT_TEMPLATE_EXTENSION = true;
 
 /**
  * @define {string}

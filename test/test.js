@@ -601,7 +601,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'up' properly (index)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var tmp_a = root_1.children[10];
@@ -632,7 +632,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'up' properly (index + offset)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var tmp_a = root_1.children[10];
@@ -658,7 +658,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'up' properly (first)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var tmp_a = root_1.children[10];
@@ -684,7 +684,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'down' properly (index)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var tmp_a = root_1.children[10];
@@ -715,7 +715,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'down' properly (index + offset)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var tmp_a = root_1.children[10];
@@ -741,7 +741,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'down' properly (last)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -768,7 +768,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'shift' properly (down)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -801,7 +801,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'shift' properly (up)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -834,7 +834,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'move' properly (down)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -870,7 +870,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'move' properly (up)", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -906,7 +906,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'before' properly", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -951,7 +951,7 @@ describe("DOM Manipulation", function(){
 
     it("Should have been used 'after' properly", function(){
 
-        var mikado = new Mikado(root_1, "template");
+        var mikado = new Mikado(root_1, "template", { reuse: false });
         mikado.render(data);
 
         var length = root_1.children.length;
@@ -992,6 +992,51 @@ describe("DOM Manipulation", function(){
 
         mikado.after(-2, -1);
         expect(root_1.children[length - 1]).to.equal(tmp_b);
+    });
+
+    it("Should have been used 'swap' properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { reuse: false });
+        mikado.render(data);
+
+        var tmp_a = root_1.children[10];
+        var tmp_b = root_1.children[15];
+        var tmp_c = root_1.children[11];
+
+        mikado.swap(10, 15);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[11]).to.equal(tmp_c);
+
+        expect(mikado.dom[15]["_idx"]).to.equal(15);
+        expect(mikado.dom[14]["_idx"]).to.equal(14);
+        expect(mikado.dom[10]["_idx"]).to.equal(10);
+        expect(mikado.dom[11]["_idx"]).to.equal(11);
+
+        expect(root_1.children[15]).to.equal(mikado.dom[15]);
+        expect(root_1.children[14]).to.equal(mikado.dom[14]);
+        expect(root_1.children[10]).to.equal(mikado.dom[10]);
+        expect(root_1.children[11]).to.equal(mikado.dom[11]);
+
+        mikado = new Mikado(root_1, "template", { store: true, reuse: true, loose: false });
+        mikado.render(data);
+
+        tmp_a = root_1.children[10];
+        tmp_b = root_1.children[15];
+        tmp_c = root_1.children[11];
+
+        mikado.swap(10, 15);
+
+        expect(root_1.children[15]).to.equal(tmp_a);
+        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[11]).to.equal(tmp_c);
+
+        console.log(mikado.store);
+
+        expect(mikado.store[15]).to.equal(data[10]);
+        expect(mikado.store[10]).to.equal(data[15]);
+        expect(mikado.store[11]).to.equal(data[11]);
     });
 });
 

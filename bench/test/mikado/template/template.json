@@ -35,8 +35,8 @@
     "c": [
       "item.class"
     ],
-    "s": "padding-right:10px;"
+    "s": "padding-right: 10px;"
   },
-  "n": "",
-  "v": "0.1.2"
+  "n": "template",
+  "v": "0.0.4"
 }

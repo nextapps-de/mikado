@@ -1,4 +1,4 @@
-/**
+/**!
  * Mikado.js
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
@@ -57,8 +57,6 @@ export default function Mikado(root, template, options){
     if(!template){
 
         options = root;
-        //root = options["root"];
-        //template = options["template"];
     }
 
     if(root){
@@ -283,7 +281,7 @@ Mikado.prototype.init = function(template, options){
         this.vpath = null;
         this.update_path = null;
         this.static = true;
-        if(SUPPORT_LOOP_INCLUDE) this.include = null;
+        if(SUPPORT_TEMPLATE_EXTENSION) this.include = null;
         //this.factory = null;
         this.factory = this.parse(template);
 
@@ -1094,7 +1092,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     if(!child){
 
         // create partial render tree
-        if(SUPPORT_LOOP_INCLUDE && tpl["@"]){
+        if(SUPPORT_TEMPLATE_EXTENSION && tpl["@"]){
 
             this.include || (this.include = []);
 
@@ -1111,7 +1109,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             //has_update++;
         }
         // forward if include is on root (has no childs)
-        else if(SUPPORT_LOOP_INCLUDE && tpl["+"]){
+        else if(SUPPORT_TEMPLATE_EXTENSION && tpl["+"]){
 
             child = templates[tpl["+"]];
         }
@@ -1181,7 +1179,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    if(SUPPORT_CONDITIONAL && tpl["f"]){
+    if(SUPPORT_TEMPLATE_EXTENSION && tpl["f"]){
 
         tmp_fn += ";if(" + tpl["f"] + "){" + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=false";
 
@@ -1220,7 +1218,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 current = child[i];
 
                 // self extracting include <include/>
-                if(SUPPORT_LOOP_INCLUDE && (include = current["+"])){
+                if(SUPPORT_TEMPLATE_EXTENSION && (include = current["+"])){
 
                     current = templates[include];
                 }
@@ -1232,7 +1230,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         else{
 
             // self extracting include <include/>
-            if(SUPPORT_LOOP_INCLUDE && (include = child["+"])){
+            if(SUPPORT_TEMPLATE_EXTENSION && (include = child["+"])){
 
                 child = templates[include];
             }
@@ -1242,7 +1240,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    if(SUPPORT_CONDITIONAL && tpl["f"]){
+    if(SUPPORT_TEMPLATE_EXTENSION && tpl["f"]){
 
         tmp_fn += "}else " + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=true";
     }

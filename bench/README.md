@@ -1,8 +1,14 @@
 # Benchmark of Web Templating Engines
 
-Run the benchmark: <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
+Run the benchmark:<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
 
 This stress test is based on a __real life use case__, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
+
+This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
+https://krausest.github.io/js-framework-benchmark/current.html
+
+#### Local Installation
 
 Go to the folder ___bench___ and install dependencies:
 ```cmd
