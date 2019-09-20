@@ -211,9 +211,9 @@ Values represents operations per second, each benchmark task has to process an d
     </tr>
     <tr>
         <td>1</td>
-        <td>mikado-0.1.2</td>
+        <td>mikado</td>
         <td align=right>2</td>
-        <td align=right>167336</td>
+        <td align=right>93010</td>
         <td align=right>1599</td>
         <td align=right>7158</td>
         <td align=right>12829</td>
@@ -221,110 +221,110 @@ Values represents operations per second, each benchmark task has to process an d
         <td align=right>251559</td>
         <td align=right>28938</td>
         <td align=right>25969</td>
-        <td align=right><b>949</b></td>
+        <td align=right><b>938</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>2</td>
-        <td>domc-0.0.12</td>
+        <td>domc</td>
         <td align=right>4.46</td>
-        <td align=right>207488</td>
-        <td align=right>957</td>
-        <td align=right>6575</td>
-        <td align=right>11284</td>
-        <td align=right>865</td>
-        <td align=right>92368</td>
-        <td align=right>20701</td>
-        <td align=right>24041</td>
-        <td align=right><b>708</b></td>
+        <td align=right>108992</td>
+        <td align=right>947</td>
+        <td align=right>6121</td>
+        <td align=right>10953</td>
+        <td align=right>974</td>
+        <td align=right>91689</td>
+        <td align=right>23280</td>
+        <td align=right>25113</td>
+        <td align=right><b>719</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>3</td>
-        <td>sinuous-0.14.2</td>
-        <td align=right>5.6</td>
-        <td align=right>265192</td>
-        <td align=right>629</td>
+        <td>sinuous</td>
+        <td align=right>7.48</td>
+        <td align=right>264323</td>
+        <td align=right>612</td>
         <td align=right>9214</td>
-        <td align=right>11545</td>
-        <td align=right>571</td>
+        <td align=right>11303</td>
+        <td align=right>635</td>
         <td align=right>308677</td>
-        <td align=right>18060</td>
-        <td align=right>13749</td>
-        <td align=right><b>676</b></td>
+        <td align=right>16679</td>
+        <td align=right>14226</td>
+        <td align=right><b>628</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>4</td>
-        <td>redom-3.24.1</td>
-        <td align=right>2.88</td>
-        <td align=right>246936</td>
-        <td align=right>369</td>
-        <td align=right>2632</td>
-        <td align=right>4790</td>
-        <td align=right>381</td>
-        <td align=right>58468</td>
-        <td align=right>19843</td>
-        <td align=right>11991</td>
-        <td align=right><b>448</b></td>
+        <td>surplus</td>
+        <td align=right>15.79</td>
+        <td align=right>189611</td>
+        <td align=right>845</td>
+        <td align=right>5683</td>
+        <td align=right>6944</td>
+        <td align=right>742</td>
+        <td align=right>56654</td>
+        <td align=right>14186</td>
+        <td align=right>23477</td>
+        <td align=right><b>515</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>5</td>
-        <td>inferno-7.3.1</td>
-        <td align=right>8.4</td>
-        <td align=right>410960</td>
-        <td align=right>706</td>
-        <td align=right>2623</td>
-        <td align=right>3199</td>
-        <td align=right>617</td>
-        <td align=right>5538</td>
-        <td align=right>6527</td>
-        <td align=right>14009</td>
-        <td align=right><b>345</b></td>
-    </tr>
-    <tr>
-        <td>6</td>
-        <td>innerHTML</td>
-        <td align=right>-</td>
-        <td align=right>406992</td>
-        <td align=right>983</td>
-        <td align=right>956</td>
-        <td align=right>854</td>
-        <td align=right>425</td>
-        <td align=right>847</td>
-        <td align=right>1742</td>
-        <td align=right>26346</td>
-        <td align=right><b>343</b></td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>surplus-0.5.3</td>
-        <td align=right>15.79</td>
-        <td align=right>166288</td>
-        <td align=right>698</td>
-        <td align=right>632</td>
-        <td align=right>640</td>
-        <td align=right>282</td>
-        <td align=right>639</td>
-        <td align=right>1460</td>
-        <td align=right>15469</td>
-        <td align=right><b>294</b></td>
+        <td>redom</td>
+        <td align=right>2.88</td>
+        <td align=right>363451</td>
+        <td align=right>402</td>
+        <td align=right>2576</td>
+        <td align=right>5402</td>
+        <td align=right>401</td>
+        <td align=right>61482</td>
+        <td align=right>19031</td>
+        <td align=right>12104</td>
+        <td align=right><b>404</b></td>
     </tr>
     <tr></tr>
     <tr>
+        <td>6</td>
+        <td>inferno</td>
+        <td align=right>8.4</td>
+        <td align=right>238827</td>
+        <td align=right>739</td>
+        <td align=right>2684</td>
+        <td align=right>3537</td>
+        <td align=right>553</td>
+        <td align=right>5778</td>
+        <td align=right>7028</td>
+        <td align=right>14066</td>
+        <td align=right><b>336</b></td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>innerHTML</td>
+        <td align=right></td>
+        <td align=right>476345</td>
+        <td align=right>1043</td>
+        <td align=right>996</td>
+        <td align=right>902</td>
+        <td align=right>458</td>
+        <td align=right>901</td>
+        <td align=right>1654</td>
+        <td align=right>26178</td>
+        <td align=right><b>320</b></td>
+    </tr>
+    <tr>
         <td>8</td>
-        <td>jquery-3.4.1</td>
+        <td>jquery</td>
         <td align=right>31.26</td>
-        <td align=right>819032</td>
-        <td align=right>746</td>
-        <td align=right>650</td>
-        <td align=right>578</td>
-        <td align=right>305</td>
-        <td align=right>565</td>
-        <td align=right>895</td>
-        <td align=right>4919</td>
-        <td align=right><b>158</b></td>
+        <td align=right>642049</td>
+        <td align=right>727</td>
+        <td align=right>647</td>
+        <td align=right>598</td>
+        <td align=right>329</td>
+        <td align=right>601</td>
+        <td align=right>957</td>
+        <td align=right>4994</td>
+        <td align=right><b>149</b></td>
     </tr>
 </table>
 

@@ -20,6 +20,7 @@
     var compile = window.SurplusCompiler.compile,
         //data = window.SurplusDataMixin.default,
         SArray = window.SArray.default;
+    var todos = SArray([]);
 
     var Todo = t => ({
             id: S.data(t.id),
@@ -30,12 +31,11 @@
             content: S.data(t.content),
             footer: S.data(t.footer)
         }),
-        todos = SArray([]),
         view = eval(compile(`
             <div>
                 {todos.map(todo =>
-                    <section data-id={todo.id()} data-date={todo.date()} data-index={todo.index()}>
-                        <div className={todo.class()} style-padding-right={'10px'}>
+                    <section data-id={todo.id} data-date={todo.date} data-index={todo.index}>
+                        <div className={todo.class} style-padding-right="10px">
                             <div class="title">{todo.title}</div>
                             <div class="content">{todo.content}</div>
                             <div class="footer">{todo.footer}</div>
@@ -49,7 +49,7 @@
 
     suite["surplus"] = function(items){
 
-        todos(items.map(Todo));
+        todos(items);
     };
 
 </script>
