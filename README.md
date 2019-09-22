@@ -81,9 +81,9 @@ __Changes for 0.4.0__
 - `change` The option field ___store___ could pass an object, than it is always an external store, or it set to _true_ then it is automatically a "loose" store.
 - `remove` The option flag ___loose___ has been removed (it is the default strategy).
 - `change` External stores no longer automatically change (there are handled as read-only).
-- `beta` new option field ___observe___ (reactive data store).
-- `beta` new attribute ___bind___ for input elements (reactive input elements).
-- `beta` supports using of ___native templates___ instead of compile and parse JSON
+- `beta` new option field ___<a href="#observe">observe</a>___ (reactive data store).
+- `beta` new attribute ___<a href="#bind">bind</a>___ for input elements (reactive input elements).
+- `beta` supports using of ___<a href="#template">native templates</a>___ as an alternative to compile and parse JSON
 
 __Feature Comparison__
 <table>
@@ -1732,6 +1732,74 @@ In this example the template "tweet" loops the render through an array of tweets
         <section if="item.content">{{ item.content }}</section>
     </tweets>
 </main>
+```
+
+<a name="bind" id="bind"></a>
+## Bind Input Elements
+
+_WIP (v0.4.0)_
+
+The attribute ___bind___ provides you a 2-way-binding of input elements with your data store.
+
+```html
+<main>
+    <input type="text" bind="{{ item.name }}">
+    <input type="checkbox" bind="{{ item.status }}">
+    <input type="radio" value="female" bind="{{ item.gender }}">
+    <input type="radio" value="male" bind="{{ item.gender }}">
+</main>
+```
+
+When data is changed, the input elements will automatically update, as well as other turn around, when the input elements gets new data the store will automatically update.
+
+<a name="observe" id="observe"></a>
+## Data Observer
+
+_WIP (v0.4.0)_
+
+__Use with internal store:__
+```js
+var data = [...];
+var view = new Mikado(template, { observe: true });
+view.render(data);
+```
+
+When data changes, the corresponding dom element will automatically change:
+```js
+view.store[0].title = "New Title";
+```
+
+__Use with external store:__
+```js
+var store = [];
+var view = new Mikado(template, { observe: store });
+```
+
+When data changes, the corresponding dom element will automatically change:
+```js
+store[0].title = "New Title";
+```
+
+<a name="template" id="template"></a>
+## Using Native Templates
+
+_WIP (v0.4.0)_
+
+Native templates do not need to compile and parsed through JSON. That made templates usable just in place.
+
+```html
+<template name="my-list">
+    <table>
+        <tr>
+            <td>User:</td>
+            <td>{{item.user}}</td>
+        </tr>
+        <tr>
+            <td>Tweets:</td>
+            <td>{{item.tweets.length}}</td>
+        </tr>
+    </table>
+</template>
 ```
 
 ## Best Practices
