@@ -13,6 +13,7 @@ import "./helper.js";
 import "./cache.js";
 import "./store.js";
 import "./polyfill.js";
+import create_proxy from "./proxy.js";
 //import { profiler_start, profiler_end } from "./profiler.js";
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
@@ -23,7 +24,8 @@ const defaults = {
     "loose": true,
     "cache": true,
     "async": false,
-    "reuse": true
+    "reuse": true,
+    "proxy": false
 };
 
 /**
@@ -37,6 +39,12 @@ let state = {};
  */
 
 const templates = {};
+
+/**
+ * @type {Object<string, Template>}
+ */
+
+const parsed = {};
 
 /**
  * @param {Element|Template} root
@@ -135,31 +143,31 @@ Mikado.prototype.node = function(index){
 
 if(SUPPORT_STORAGE){
 
-    Mikado.prototype.item = function(index){
+    Mikado.prototype.data = function(index){
 
-        return this.loose ? this.dom[index]["_item"] : this.store[index];
+        return this.loose ? this.dom[index]["_data"] : this.store[index];
     };
 
     if(SUPPORT_HELPERS){
 
-        Mikado.prototype.find = function(item){
+        Mikado.prototype.find = function(data){
 
             for(let i = 0; i < this.length; i++){
 
-                if(this.item(i) === item){
+                if(this.data(i) === data){
 
                     return this.dom[i];
                 }
             }
         };
 
-        Mikado.prototype.search = function(item){
+        Mikado.prototype.search = function(data){
 
-            const values = Object.values(item).join("^");
+            const values = Object.values(data).join("^");
 
             for(let i = 0; i < this.length; i++){
 
-                if(Object.values(this.item(i)).join("^") === values){
+                if(Object.values(this.data(i)).join("^") === values){
 
                     return this.dom[i];
                 }
@@ -172,16 +180,16 @@ if(SUPPORT_STORAGE){
             const length = keys.length;
             const results = [];
 
-            for(let x = 0, item, found; x < this.length; x++){
+            for(let x = 0, data, found; x < this.length; x++){
 
-                item = this.item(x);
+                data = this.data(x);
                 found = true;
 
                 for(let y = 0, key; y < length; y++){
 
                     key = keys[y];
 
-                    if(item[key] !== payload[key]){
+                    if(data[key] !== payload[key]){
 
                         found = false;
                         break;
@@ -190,7 +198,7 @@ if(SUPPORT_STORAGE){
 
                 if(found){
 
-                    results[results.length] = item;
+                    results[results.length] = this.dom[x];
                 }
             }
 
@@ -248,11 +256,12 @@ Mikado.prototype.init = function(template, options){
 
     if(SUPPORT_STORAGE){
 
-        const store = options["store"];
+        const observe = SUPPORT_REACTIVE && options["proxy"];
+        const store = typeof observe === "object" ? observe : options["store"] || observe;
 
         if(store){
 
-            this.loose = options["loose"];
+            this.loose = typeof store !== "object" && options["loose"];
 
             if(this.loose){
 
@@ -261,16 +270,23 @@ Mikado.prototype.init = function(template, options){
             else{
 
                 this.extern = typeof store === "object";
-                this.store = store && (this.extern ? store : []);
+                this.store = this.extern ? store : [];
             }
 
-            //this.flat = options["flat"];
-            //this.diff = options["diff"];
+            if(SUPPORT_REACTIVE){
+
+                this.proxy = observe && {};
+            }
         }
         else{
 
             this.store = false;
             this.loose = false;
+
+            if(SUPPORT_REACTIVE){
+
+                this.proxy = false;
+            }
         }
     }
 
@@ -283,22 +299,17 @@ Mikado.prototype.init = function(template, options){
         this.static = true;
         if(SUPPORT_TEMPLATE_EXTENSION) this.include = null;
         //this.factory = null;
-        this.factory = this.parse(template);
+        this.factory = /*parsed[this.template] || (parsed[this.template] =*/ this.parse(template)/*)*/;
 
         this.check();
     }
 
-    // if(options["once"]){
-    //
-    //     this.render().destroy(true);
-    // }
-
     return this;
 };
 
-Mikado.once = Mikado["once"] = function(root, template, items, view, callback){
+Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
-    Mikado.new(root, template).render(items, view, callback).destroy(true);
+    Mikado.new(root, template).render(data, view, callback).destroy(true);
     return Mikado;
 };
 
@@ -327,17 +338,17 @@ function collection_to_array(collection){
     let length = collection.length;
     const array = new Array(length);
 
-    for(let i = 0, item; i < length; i++) {
+    for(let i = 0, node; i < length; i++) {
 
-        item = collection[i];
-        item["_idx"] = i;
-        array[i] = item;
+        node = collection[i];
+        node["_idx"] = i;
+        array[i] = node;
     }
 
     return array;
 }
 
-Mikado.prototype.create = function(item, view, index){
+Mikado.prototype.create = function(data, view, index){
 
     //profiler_start("create");
 
@@ -350,7 +361,7 @@ Mikado.prototype.create = function(item, view, index){
     }
     */
 
-    this.static || this.update_path(factory["_path"], factory["_cache"], item, index, view);
+    this.static || this.update_path(factory["_path"], factory["_cache"], data, index, view);
 
     const tmp = factory.cloneNode(true);
     //tmp["_cache"] = {};
@@ -375,7 +386,7 @@ if(SUPPORT_STORAGE){
 
         const count = this.store ? this.store.length : this.length;
 
-        // items delegated from import
+        // data delegated from import
         if(this.loose){
 
             this.store = null;
@@ -391,14 +402,14 @@ if(SUPPORT_STORAGE){
 }
 
 /**
- * @param {Array<*>|Function=} items
+ * @param {Array<*>|Function=} data
  * @param {Object|Function=} view
  * @param {Function|boolean=} callback
  * @param {boolean=} skip_async
  * @returns {Mikado|Promise}
  */
 
-Mikado.prototype.render = (function(items, view, callback, skip_async){
+Mikado.prototype.render = (function(data, view, callback, skip_async){
 
     if(DEBUG){
 
@@ -436,7 +447,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
             this.timer = requestAnimationFrame(function(){
 
                 self.timer = 0;
-                self.render(items, view, null, true);
+                self.render(data, view, null, true);
 
                 if(typeof callback === "function"){
 
@@ -456,7 +467,7 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
                 self.timer = requestAnimationFrame(function(){
 
                     self.timer = 0;
-                    self.render(items, view, null, true);
+                    self.render(data, view, null, true);
                     resolve();
                 });
             });
@@ -473,16 +484,16 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 
         let count;
 
-        if(items) {
+        if(data) {
 
-            if(typeof items.length === "undefined"){
+            if(typeof data.length === "undefined"){
 
-                items = [items];
+                data = [data];
                 count = 1;
             }
             else{
 
-                count = items.length;
+                count = data.length;
             }
         }
         else if(SUPPORT_STORAGE){
@@ -504,15 +515,15 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
             if(x < this.length){
 
                 //if(this.reuse){
-                    this.update(this.dom[x], items ? items[x] : null, view, x);
+                    this.update(this.dom[x], data ? data[x] : null, view, x);
                 // }
                 // else{
-                //     this.replace(this.dom[x], items[x], view, x);
+                //     this.replace(this.dom[x], data[x], view, x);
                 // }
             }
             else{
 
-                this.add(items ? items[x] : this.store[x], view, this.root);
+                this.add(data ? data[x] : this.store[x], view, this.root);
             }
         }
 
@@ -542,28 +553,33 @@ Mikado.prototype.render = (function(items, view, callback, skip_async){
 });
 
 /**
- * @param {*=} item
+ * @param {*=} data
  * @param {*=} view
  * @param {Element|DocumentFragment=} target
  * @returns {Mikado}
  */
 
-Mikado.prototype.add = function(item, view, target){
+Mikado.prototype.add = function(data, view, target){
 
     //profiler_start("add");
 
     const length = this.length;
-    const tmp = this.create(item, view, length);
+    const tmp = this.create(data, view, length);
 
     if(SUPPORT_STORAGE) {
 
+        if(SUPPORT_REACTIVE && this.proxy){
+
+            data = create_proxy(data, tmp["_path"] || this.create_path(tmp), this.proxy)
+        }
+
         if(this.store){
 
-            this.store[length] = item;
+            this.store[length] = data;
         }
         else if(this.loose){
 
-            tmp["_item"] = item;
+            tmp["_data"] = data;
         }
     }
 
@@ -626,6 +642,7 @@ Mikado.prototype.destroy = function(unload){
     this.vpath = null;
     this.update_path = null;
     this.factory = null;
+    this.length = 0;
 };
 
 if(SUPPORT_ASYNC){
@@ -641,19 +658,19 @@ if(SUPPORT_ASYNC){
 }
 
 /**
- * @param {*=} items
+ * @param {*=} data
  * @param {*=} view
  */
 
-Mikado.prototype.append = function(items, view){
+Mikado.prototype.append = function(data, view){
 
     //profiler_start("append");
 
-    const count = items.length;
+    const count = data.length;
 
     for(let x = 0; x < count; x++){
 
-        this.add(items[x], view);
+        this.add(data[x], view);
     }
 
     //profiler_end("append");
@@ -696,7 +713,7 @@ Mikado.prototype.remove = function(node){
     return this;
 };
 
-Mikado.prototype.replace = function(node, item, view, index){
+Mikado.prototype.replace = function(node, data, view, index){
 
     //profiler_start("replace");
 
@@ -705,17 +722,22 @@ Mikado.prototype.replace = function(node, item, view, index){
         index = node["_idx"];
     }
 
-    const tmp = this.create(item, view, index);
+    const tmp = this.create(data, view, index);
 
     if(SUPPORT_STORAGE) {
 
+        if(SUPPORT_REACTIVE && this.proxy){
+
+            data = create_proxy(data, tmp["_path"] || this.create_path(tmp), this.proxy)
+        }
+
         if(this.store){
 
-            this.store[index] = item;
+            this.store[index] = data;
         }
         else if(this.loose){
 
-            tmp["_item"] = item;
+            tmp["_data"] = data;
         }
     }
 
@@ -731,12 +753,12 @@ Mikado.prototype.replace = function(node, item, view, index){
 
 /**
  * @param {Element|number} node
- * @param {*=} item
+ * @param {*=} data
  * @param {*=} view
  * @param {number=} index
  */
 
-Mikado.prototype.update = function(node, item, view, index){
+Mikado.prototype.update = function(node, data, view, index){
 
     //profiler_start("update");
 
@@ -766,29 +788,29 @@ Mikado.prototype.update = function(node, item, view, index){
 
             if(this.store){
 
-                if(item){
+                if(data){
 
-                    this.store[index] = item;
+                    this.store[index] = data;
                 }
                 else{
 
-                    item = this.store[index];
+                    data = this.store[index];
                 }
             }
             else if(this.loose){
 
-                if(item){
+                if(data){
 
-                    node["_item"] = item;
+                    node["_data"] = data;
                 }
                 else{
 
-                    item = node["_item"];
+                    data = node["_data"];
                 }
             }
         }
 
-        this.update_path(node["_path"] || this.create_path(node), node["_cache"], item, index, view);
+        this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
     //}
 
     //profiler_end("update");
@@ -796,7 +818,8 @@ Mikado.prototype.update = function(node, item, view, index){
     return this;
 };
 
-function diff(store, item, diff){
+/*
+function diff(store, data, diff){
 
     let changes = null;
 
@@ -810,7 +833,7 @@ function diff(store, item, diff){
             key = keys[i];
             val = store[key];
 
-            if(item[key] !== val){
+            if(data[key] !== val){
 
                 if(diff){
 
@@ -826,6 +849,7 @@ function diff(store, item, diff){
 
     return changes;
 }
+*/
 
 // resolve(nodes, "&") => root
 // resolve(nodes, "&>") => root.firstElementChild
@@ -897,6 +921,7 @@ function resolve(root, path, cache){
 
 let tmp_fn;
 let last_conditional;
+let root_node;
 
 /**
  * @param {Template|Array<Template>} tpl
@@ -918,11 +943,13 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         path = "&";
         tmp_fn = "";
         this.vpath = [];
+        if(SUPPORT_REACTIVE && this.proxy) this.proxy = {};
         node["_path"] = dom_path = [];
         node["_cache"] = {};
+        root_node = node;
     }
 
-    const style = tpl["s"];
+    let style = tpl["s"];
     let child = tpl["i"];
     let text = tpl["x"];
     let html = tpl["h"];
@@ -950,20 +977,30 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         if(typeof class_name === "object"){
 
+            let observable = class_name[1];
+            class_name = class_name[0];
+
             new_fn += SUPPORT_CACHE && this.cache ? (
 
                 SUPPORT_HELPERS ?
 
-                    ";v=" + class_name[0] + ";if(self._class!==v){self._class=v;self.className=v}"
-                :
-                    ";v=" + class_name[0] + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}"
-            ):
-                ";self.className=" + class_name[0];
+                        ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}"
+                    :
+                        ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}"
+                ):
+                    ";self.className=" + class_name;
+
+            if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                this.proxy[class_name] || (this.proxy[class_name] = []);
+                this.proxy[class_name].push(["class", path_length]);
+            }
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
             has_update++;
         }
+        
         else{
 
             node.className = class_name;
@@ -1002,15 +1039,24 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof value === "object"){
 
+                let observable = value[1];
+                value = value[0];
+
                 new_fn += SUPPORT_CACHE && this.cache ? (
 
                     SUPPORT_HELPERS ?
 
-                        ";v=" + value[0] + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v)}"
-                    :
-                        ";v=" + value[0] + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}"
-                ):
-                    ";self.setAttribute('" + key + "'," + value[0] + ")";
+                            ";v=" + value + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v)}"
+                        :
+                            ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}"
+                    ):
+                        ";self.setAttribute('" + key + "'," + value + ")";
+
+                if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                    this.proxy[value] || (this.proxy[value] = []);
+                    this.proxy[value].push(["attr", path_length, key]);
+                }
 
                 has_dynamic_values = true;
                 has_update++;
@@ -1036,15 +1082,24 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else if(style.length){
 
+            let observable = style[1];
+            style = style[0];
+
             new_fn += SUPPORT_CACHE && this.cache ? (
 
                 SUPPORT_HELPERS ?
 
-                    ";v=" + style[0] + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}"
-                :
-                    ";v=" + style[0] + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}"
-            ):
-                ";self.style.cssText=" + style[0];
+                        ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}"
+                    :
+                        ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}"
+                ):
+                    ";self.style.cssText=" + style;
+
+            if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                this.proxy[style] || (this.proxy[style] = []);
+                this.proxy[style].push(["css", path_length]);
+            }
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
@@ -1058,19 +1113,28 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             for(let i = 0; i < keys.length; i++){
 
                 const key = keys[i];
-                const value = style[key];
+                let value = style[key];
 
                 if(typeof value === "object"){
+
+                    let observable = value[1];
+                    value = value[0];
 
                     new_fn += SUPPORT_CACHE && this.cache ? (
 
                         SUPPORT_HELPERS ?
 
-                            ";v=" + value[0] + ";var t=self['_style_cache']||(self['_style_cache']={});if(t['" + key + "']!==v){t['" + key + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v)}"
-                        :
-                            ";v=" + value[0] + ";if(s['_style_" + key + path_length + "']!==v){s['_style_" + key + path_length + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v)}"
-                    ):
-                        ";self.style.setProperty('" + key + "'," + value[0] + ")";
+                                ";v=" + value + ";var t=self['_style_cache']||(self['_style_cache']={});if(t['" + key + "']!==v){t['" + key + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v)}"
+                            :
+                                ";v=" + value + ";if(s['_style_" + key + path_length + "']!==v){s['_style_" + key + path_length + "']=v;(self._style||(self._style=self.style)).setProperty('" + key + "',v)}"
+                        ):
+                            ";self.style.setProperty('" + key + "'," + value + ")";
+
+                    if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                        this.proxy[value] || (this.proxy[value] = []);
+                        this.proxy[value].push(["style", path_length, key]);
+                    }
 
                     has_dynamic_values = true;
                     has_update++;
@@ -1100,7 +1164,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             const old_fn = tmp_fn;
             tmp_fn = "";
-            this.include.push(new Mikado(node, typeof tpl["@"] === "string" ? templates[tpl["@"]] : tpl["@"], Object.assign(this.config, { "store": false, "loose": false, "async": false })));
+            this.include.push(new Mikado(node, typeof tpl["@"] === "string" ? templates[tpl["@"]] : tpl["@"], Object.assign(this.config, { "store": false, /*"loose": false,*/ "async": false })));
             tmp_fn = old_fn;
 
             this.vpath[path_length] = path;
@@ -1117,10 +1181,12 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             path += "|";
 
+            let observable;
             const is_object = typeof text === "object";
 
             if(is_object){
 
+                observable = text[1];
                 text = text[0];
             }
 
@@ -1140,11 +1206,17 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                     SUPPORT_HELPERS ?
 
-                        ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}"
-                    :
-                        ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}"
-                ):
-                    ";self.nodeValue=" + text;
+                            ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}"
+                        :
+                            ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}"
+                    ):
+                        ";self.nodeValue=" + text;
+
+                if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                    this.proxy[text] || (this.proxy[text] = []);
+                    this.proxy[text].push(["text", path_length]);
+                }
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = text_node;
@@ -1157,16 +1229,24 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof html === "object"){
 
+                let observable = html[1];
                 html = html[0];
+
                 new_fn += SUPPORT_CACHE && this.cache ? (
 
                     SUPPORT_HELPERS ?
 
-                        ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}"
-                    :
-                        ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}"
-                ):
-                    ";self.innerHTML=" + html;
+                            ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}"
+                        :
+                            ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}"
+                    ):
+                        ";self.innerHTML=" + html;
+
+                if(SUPPORT_REACTIVE && this.proxy && observable){
+
+                    this.proxy[html] || (this.proxy[html] = []);
+                    this.proxy[html].push(["html", path_length]);
+                }
 
                 this.vpath[path_length] = path;
                 dom_path[path_length] = node;
@@ -1251,7 +1331,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         // console.log(dom_path);
         // console.log(this.vpath);
 
-        if(tmp_fn) this.update_path = Function("p", "s", "item", "index", "view", (
+        if(tmp_fn) this.update_path = Function("p", "s", "data", "index", "view", (
 
             '"use strict";var self,v' + tmp_fn
         ));

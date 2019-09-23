@@ -153,7 +153,7 @@ export function getCSS(target){
     );
 }
 
-// https://jsperf.com/data-dataset/43
+// https://jsperf.com/data-dataet/43
 // NOTE: when rendering on a modified template all states hast to reset to its default template values
 
 export function setAttribute(target, attr, value){

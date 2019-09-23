@@ -131,6 +131,7 @@ const files = [
     "cache.js",
     "export.js",
     "store.js",
+    "proxy.js",
     "polyfill.js"
 ];
 

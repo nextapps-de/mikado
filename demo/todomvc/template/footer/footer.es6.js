@@ -25,12 +25,14 @@ export default {
           "i": {
             "t": "a",
             "a": {
-              "href": "#/",
-              "click": "route-all"
+              "href": "#/"
             },
             "c": [
               " this.state.filter === 'all' ? 'selected' : '' "
             ],
+            "e": {
+              "click": "route-all"
+            },
             "x": "All"
           }
         },
@@ -39,12 +41,14 @@ export default {
           "i": {
             "t": "a",
             "a": {
-              "href": "#/active",
-              "click": "route-active"
+              "href": "#/active"
             },
             "c": [
               " this.state.filter === 'active' ? 'selected' : '' "
             ],
+            "e": {
+              "click": "route-active"
+            },
             "x": "Active"
           }
         },
@@ -53,12 +57,14 @@ export default {
           "i": {
             "t": "a",
             "a": {
-              "href": "#/completed",
-              "click": "route-completed"
+              "href": "#/completed"
             },
             "c": [
               " this.state.filter === 'completed' ? 'selected' : '' "
             ],
+            "e": {
+              "click": "route-completed"
+            },
             "x": "Completed"
           }
         }
@@ -67,16 +73,16 @@ export default {
     },
     {
       "t": "button",
-      "a": {
-        "click": "clear-completed"
-      },
       "c": "clear-completed",
       "f": "!this.state.completed",
+      "e": {
+        "click": "clear-completed"
+      },
       "x": "Clear completed"
     }
   ],
   "c": "footer",
   "f": "!this.state.empty",
   "n": "footer",
-  "v": "0.1.3"
+  "v": "0.0.5"
 };

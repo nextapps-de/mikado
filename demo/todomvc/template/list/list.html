@@ -1,8 +1,8 @@
-<li class="{{ item.completed ? 'completed' : '' }}" if="view.is_visible(item)" root>
+<li class="{{ data.completed ? 'completed' : '' }}" if="view.is_visible(data)" root>
     <div class="view">
-        <input class="{{ view.is_visible(item) ? 'toggle' : '' }}" type="checkbox" js="self.checked = !!item.completed" change="update-state:root">
-        <label for="item-{{ item.id }}" class="title" dblclick="enter-edit-mode:root">{{ item.title }}</label>
+        <input class="{{ view.is_visible(data) ? 'toggle' : '' }}" type="checkbox" js="self.checked = !!data.completed" change="update-state:root">
+        <label for="item-{{ data.id }}" class="title" dblclick="enter-edit-mode:root">{{ data.title }}</label>
         <button class="destroy" click="destroy:root"></button>
     </div>
-    <input id="item-{{ item.id }}" class="edit" value="{{ item.title }}" keyup="edit:root" blur="edit:root">
+    <input id="item-{{ data.id }}" class="edit" value="{{ data.title }}" keyup="edit:root" blur="edit:root">
 </li>

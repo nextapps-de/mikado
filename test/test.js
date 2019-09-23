@@ -61,7 +61,7 @@ describe("Initialize", function(){
         expect(mikado).to.respondTo("node");
         expect(mikado).to.respondTo("init");
         expect(mikado).to.respondTo("mount");
-        expect(mikado).to.respondTo("item");
+        expect(mikado).to.respondTo("data");
         expect(mikado).to.respondTo("index");
         expect(mikado).to.respondTo("destroy");
         expect(mikado).to.respondTo("create");
@@ -153,7 +153,7 @@ describe("Render", function(){
         validate(mikado.dom[0], data[0]);
     });
 
-    it("Should have been rendered properly (single item)", function(){
+    it("Should have been rendered properly (single data)", function(){
 
         var mikado = new Mikado(root_1, "template");
 
@@ -363,32 +363,92 @@ describe("Update", function(){
         expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
         validate(mikado.dom[0], data[0]);
     });
+
+    it("Should have been replaced properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        mikado.replace(mikado.dom[10], data[11]);
+        mikado.replace(mikado.dom[11], data[10]);
+
+        expect(mikado.dom[10].dataset.id).to.equal(data[11]["id"]);
+        expect(mikado.dom[11].dataset.id).to.equal(data[10]["id"]);
+    });
+
+    it("Should have been removed properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        mikado.remove(mikado.dom[10]);
+        mikado.remove(mikado.dom[10]);
+
+        expect(mikado.dom[10].dataset.id).to.equal(data[12]["id"]);
+        expect(mikado.dom[11].dataset.id).to.equal(data[13]["id"]);
+    });
+
+    it("Should have been appended properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        mikado.append([data[10], data[11], data[12]]);
+
+        var length = mikado.length;
+        expect(mikado.dom[length-3].dataset.id).to.equal(data[10]["id"]);
+        expect(mikado.dom[length-2].dataset.id).to.equal(data[11]["id"]);
+        expect(mikado.dom[length-1].dataset.id).to.equal(data[12]["id"]);
+    });
+
+    it("Should have been cleared properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        mikado.clear();
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom.length).to.equal(0);
+        expect(root_1.innerHTML).to.equal("");
+    });
+
+    it("Should have been destroyed properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { store: data, loose: false });
+        mikado.render(data);
+
+        mikado.destroy();
+
+        expect(mikado.length).to.equal(0);
+        expect(mikado.dom).to.equal(null);
+        expect(mikado.root).to.equal(null);
+    });
 });
 
 describe("Store", function(){
 
-    it("Should have been stored items properly", function(){
+    it("Should have been stored data properly", function(){
 
         var mikado = new Mikado(root_1, "template", { store: true, loose: false });
         mikado.render(data);
 
-        expect(mikado.store.length).to.equal(data.length);
-        expect(mikado.store[0]).to.equal(data[0]);
+        expect(mikado.data(0)).to.equal(data[0]);
         validate(mikado.dom[0], data[0]);
     });
 
-    it("Should have been referenced items properly (loose)", function(){
+    it("Should have been referenced data properly (loose)", function(){
 
         var mikado = new Mikado(root_1, "template", { store: true, loose: true });
 
         mikado.render(data);
         expect(mikado.dom.length).to.equal(data.length);
-        expect(mikado.dom[0]["_item"]).to.equal(data[0]);
+        expect(mikado.dom[0]["_data"]).to.equal(data[0]);
         validate(mikado.dom[0], data[0]);
 
         mikado.render();
         expect(mikado.dom.length).to.equal(data.length);
-        expect(mikado.dom[0]["_item"]).to.equal(data[0]);
+        expect(mikado.dom[0]["_data"]).to.equal(data[0]);
         validate(mikado.dom[0], data[0]);
     });
 
@@ -402,7 +462,7 @@ describe("Store", function(){
         validate(mikado.dom[0], data[0]);
         validate(mikado.dom[0], store[0]);
 
-        // swap items
+        // swap data
         var tmp = store[0];
         store[0] = store[1];
         store[1] = tmp;
@@ -412,14 +472,14 @@ describe("Store", function(){
         validate(mikado.dom[1], data[0]);
         validate(mikado.dom[1], store[1]);
 
-        // remove first item
+        // remove first data
         store.shift();
         mikado.render();
         expect(store[0]).to.equal(tmp);
         validate(mikado.dom[0], data[0]);
         validate(mikado.dom[0], store[0]);
 
-        // render through over new items
+        // render through over new data
         mikado.render(store[0]);
         expect(store[0]).to.equal(tmp);
         expect(mikado.store.length).to.equal(store.length);
@@ -581,7 +641,7 @@ describe("Cache", function(){
 
 describe("Cache Helpers", function(){
 
-    it("Should have been set attribute in sync", function(){
+    it("Should have been set/get attribute in sync", function(){
 
         var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
         mikado.render(data);
@@ -594,6 +654,61 @@ describe("Cache Helpers", function(){
 
         expect(root_1.firstElementChild.dataset.id).to.equal(tmp);
         validate(mikado.dom[0], data[0]);
+
+        expect(Mikado.getAttribute(root_1.firstElementChild, "data-id")).to.equal(tmp);
+    });
+
+    it("Should have been set/get/has class in sync", function(){
+
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
+        mikado.render(data);
+        // cache will create during second run!
+        mikado.render(data);
+
+        var tmp = root_1.children[0].children[0].className;
+        Mikado.setClass(root_1.children[0].children[0], "changed");
+        expect(Mikado.hasClass(root_1.children[0].children[0], tmp.split(" ")[0])).to.equal(false);
+        expect(Mikado.hasClass(root_1.children[0].children[0], "changed")).to.equal(true);
+        mikado.render(data);
+
+        expect(root_1.children[0].children[0].className).to.equal(tmp);
+        validate(mikado.dom[0], data[0]);
+
+        expect(Mikado.getClass(root_1.children[0].children[0])).to.equal(tmp);
+        expect(Mikado.hasClass(root_1.children[0].children[0], tmp.split(" ")[0])).to.equal(true);
+    });
+});
+
+describe("DOM Helpers", function(){
+
+    it("Should have been find properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
+        mikado.render(data);
+
+        expect(mikado.find(data[10])).to.equal(mikado.dom[10]);
+    });
+
+    it("Should have been search properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
+        mikado.render(data);
+
+        expect(mikado.search(data[10])).to.equal(mikado.dom[10]);
+
+        data[10] = Object.assign({}, data[10]);
+
+        expect(mikado.find(data[10])).to.be.undefined;
+        expect(mikado.search(data[10])).to.equal(mikado.dom[10]);
+    });
+
+    it("Should have been used 'where' properly", function(){
+
+        var mikado = new Mikado(root_1, "template", { cache: true, reuse: true });
+        mikado.render(data);
+
+        expect(mikado.where(data[10])[0]).to.equal(mikado.dom[10]);
+        expect(mikado.where({id : data[10].id})[0]).to.equal(mikado.dom[10]);
     });
 });
 
@@ -1019,7 +1134,7 @@ describe("DOM Manipulation", function(){
         expect(root_1.children[10]).to.equal(mikado.dom[10]);
         expect(root_1.children[11]).to.equal(mikado.dom[11]);
 
-        mikado = new Mikado(root_1, "template", { store: true, reuse: true, loose: false });
+        mikado = new Mikado(root_1, "template", { store: data, reuse: true });
         mikado.render(data);
 
         tmp_a = root_1.children[10];
@@ -1028,32 +1143,133 @@ describe("DOM Manipulation", function(){
 
         mikado.swap(10, 15);
 
-        expect(root_1.children[15]).to.equal(tmp_a);
-        expect(root_1.children[10]).to.equal(tmp_b);
+        expect(root_1.children[15]).to.equal(tmp_b);
+        expect(root_1.children[10]).to.equal(tmp_a);
         expect(root_1.children[11]).to.equal(tmp_c);
 
-        console.log(mikado.store);
-
-        expect(mikado.store[15]).to.equal(data[10]);
-        expect(mikado.store[10]).to.equal(data[15]);
-        expect(mikado.store[11]).to.equal(data[11]);
+        expect(root_1.children[15].dataset.id).to.equal(data[10].id);
+        expect(root_1.children[10].dataset.id).to.equal(data[15].id);
+        expect(root_1.children[11].dataset.id).to.equal(data[11].id);
     });
 });
 
-function validate(node, item){
+describe("Proxy", function(){
 
-    expect(node.outerHTML).to.equal(prototype(item));
+    it("Should have been made data observable (internal store)", function(){
+
+        var items = data.slice(0);
+        var mikado = new Mikado(root_1, "proxy", { proxy: true, loose: false });
+        mikado.render(items);
+
+        mikado.store[0].id = "foo";
+        mikado.store[1].id = "bar";
+
+        expect(root_1.children[0].dataset.id).to.equal("foo");
+        expect(root_1.children[1].dataset.id).to.equal("bar");
+    });
+
+    it("Should have been made data observable (internal store + loose)", function(){
+
+        var items = data.slice(0);
+        var mikado = new Mikado(root_1, "proxy", { proxy: true, loose: true });
+        mikado.render(items);
+
+        mikado.data(0).id = "foo";
+        mikado.data(1).id = "bar";
+
+        expect(root_1.children[0].dataset.id).to.equal("foo");
+        expect(root_1.children[1].dataset.id).to.equal("bar");
+    });
+
+    it("Should have been made data observable (external store)", function(){
+
+        var items = data.slice(0);
+        var mikado = new Mikado(root_1, "proxy", { proxy: items, loose: false });
+        mikado.render(items);
+
+        items[0].id = "foo";
+        items[1].id = "bar";
+
+        expect(root_1.children[0].dataset.id).to.equal("foo");
+        expect(root_1.children[1].dataset.id).to.equal("bar");
+
+        mikado.store[0].id = "bar";
+        mikado.store[1].id = "foo";
+
+        expect(root_1.children[0].dataset.id).to.equal("bar");
+        expect(root_1.children[1].dataset.id).to.equal("foo");
+    });
+
+    it("Should have been made data observable (external store + loose)", function(){
+
+        var items = data.slice(0);
+        var mikado = new Mikado(root_1, "proxy", { proxy: items, loose: true });
+        mikado.render(items);
+
+        items[0].id = "foo";
+        items[1].id = "bar";
+
+        expect(root_1.children[0].dataset.id).to.equal("foo");
+        expect(root_1.children[1].dataset.id).to.equal("bar");
+
+        mikado.data(0).id = "bar";
+        mikado.data(1).id = "foo";
+
+        expect(root_1.children[0].dataset.id).to.equal("bar");
+        expect(root_1.children[1].dataset.id).to.equal("foo");
+    });
+});
+
+describe("Import/Export", function(){
+
+    it("Should have been exported properly", function(){
+
+        var mikado = new Mikado(root_1, "proxy", { store: true, loose: false });
+        mikado.render(data);
+
+        mikado.export();
+
+        expect(localStorage.getItem(mikado.template)).to.not.equal(null);
+        expect(JSON.parse(localStorage.getItem(mikado.template))[10].id).to.equal(data[10].id);
+    });
+
+    it("Should have been imported properly", function(){
+
+        var mikado = new Mikado(root_1, "proxy", { store: true, loose: false });
+
+        mikado.import();
+
+        expect(mikado.store[10].id).to.equal(data[10].id);
+
+        mikado.render();
+
+        expect(mikado.dom[10].dataset.id).to.equal(data[10].id);
+    });
+
+    it("Should have been deleted properly", function(){
+
+        var mikado = new Mikado(root_1, "proxy", { store: true, loose: false });
+
+        mikado.delete();
+
+        expect(localStorage.getItem(mikado.template)).to.equal(null);
+    });
+});
+
+function validate(node, data){
+
+    expect(node.outerHTML).to.equal(factory(data));
 }
 
-function prototype(item){
+function factory(data){
 
     return (
 
-        '<section root="" data-id="' + item.id + '" data-date="' + item.date + '" data-index="' + item.index + '">' +
-            '<div click="attach" class="' + item.class + '" style="padding-right: 10px;">' +
-                '<div class="title" click="delegate:root">' + item.title + '</div>' +
-                '<div class="content">' + item.content + '</div>' +
-                '<div class="footer">' + item.footer + '</div>' +
+        '<section root="" data-id="' + data.id + '" data-date="' + data.date + '" data-index="' + data.index + '">' +
+            '<div click="attach" class="' + data.class + '" style="padding-right: 10px;">' +
+                '<div class="title" click="delegate:root">' + data.title + '</div>' +
+                '<div class="content">' + data.content + '</div>' +
+                '<div class="footer">' + data.footer + '</div>' +
             '</div>' +
         '</section>'
     );

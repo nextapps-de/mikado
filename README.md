@@ -18,7 +18,10 @@
 <a href="#builds">Custom Builds</a> &ensp;&bull;&ensp; 
 <a href="https://github.com/nextapps-de/mikado-compile">Template Compiler</a> &ensp;&bull;&ensp;
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
-<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a>
+<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;
+<a href="CHANGELOG.md">Changelog</a>
+
+Migrate to 0.4.x? Read <a href="CHANGELOG.md">Changelog</a>.
 
 Services:
 - Mikado Runtime (Render Templates)<br>`npm install mikado`
@@ -40,6 +43,10 @@ Demo:
 2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
 3. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
+
+#### Preview 0.4.x
+`beta` new attribute ___<a href="#bind">bind</a>___ for input elements (reactive input elements).<br>
+`beta` supports using of ___<a href="#template">native templates</a>___ as an alternative to compile and parse JSON.<br>
 
 #### Get Latest:
 
@@ -76,14 +83,6 @@ __Node.js__
 ```npm
 npm install mikado
 ```
-
-__Changes for 0.4.0__
-- `change` The option field ___store___ could pass an object, than it is always an external store, or it set to _true_ then it is automatically a "loose" store.
-- `remove` The option flag ___loose___ has been removed (it is the default strategy).
-- `change` External stores no longer automatically change (there are handled as read-only).
-- `beta` new option field ___<a href="#observe">observe</a>___ (reactive data store).
-- `beta` new attribute ___<a href="#bind">bind</a>___ for input elements (reactive input elements).
-- `beta` supports using of ___<a href="#template">native templates</a>___ as an alternative to compile and parse JSON
 
 __Feature Comparison__
 <table>
@@ -338,7 +337,7 @@ Constructor:
 
 Global methods:
 - <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a> : view
-- <a href="#mikado.once">Mikado.__once__(root, template, \<items\>, \<payload\>, \<callback\>)</a>
+- <a href="#mikado.once">Mikado.__once__(root, template, \<data\>, \<payload\>, \<callback\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
 - <a href="#mikado.unload">Mikado.__unload__(template)</a>
 
@@ -348,20 +347,20 @@ Global methods (not included in mikado.light.js):
 Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
-- <a href="#view.render">view.__render__(\<items\>, \<payload\>, \<callback\>)</a>
+- <a href="#view.render">view.__render__(\<data\>, \<payload\>, \<callback\>)</a>
 - <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
-- <a href="#view.create">view.__create__(item)</a>
-- <a href="#view.add">view.__add__(item, \<payload\>)</a>
-- <a href="#view.update">view.__update__(node, item, \<payload\>)</a>
-- <a href="#view.append">view.__append__(items, \<payload\>)</a>
-- <a href="#view.replace">view.__replace__(node, item, \<payload\>)</a>
+- <a href="#view.create">view.__create__(data)</a>
+- <a href="#view.add">view.__add__(data, \<payload\>)</a>
+- <a href="#view.update">view.__update__(node, data, \<payload\>)</a>
+- <a href="#view.append">view.__append__(data, \<payload\>)</a>
+- <a href="#view.replace">view.__replace__(node, data, \<payload\>)</a>
 - <a href="#view.remove">view.__remove__(node)</a>
 - <a href="#view.clear">view.__clear__(\<resize\>)</a>
-- <a href="#view.item">view.__item__(index)</a>
+- <a href="#view.data">view.__data__(index)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
-- <a href="#view.find">view.__find__(item)</a>
-- <a href="#view.search">view.__search__(item)</a>
+- <a href="#view.find">view.__find__(data)</a>
+- <a href="#view.search">view.__search__(data)</a>
 - <a href="#view.where">view.__where__(payload)</a>
 - ~~view.__parse__(template)~~
 - <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
@@ -385,7 +384,7 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.swap">view.__swap__(node|index, node|index)</a>
 - ~~view.__shuffle__()~~
 
-<!-- <a href="#view.pager">view.__pager__(items, \<options\>, \<callback\>)</a> -->
+<!-- <a href="#view.pager">view.__pager__(data, \<options\>, \<callback\>)</a> -->
 
 Instance properties:
 - ~~view.__dom__~~
@@ -452,13 +451,13 @@ Global helpers (not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>store</b></td>
-        <td>Passed items for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the item data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "Extern Storage"</a>).</td>
+        <td>Passed data for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "Extern Storage"</a>).</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>loose</b></td>
-        <td>When storage is enabled this flag removes also item data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
+        <td>When storage is enabled this flag removes also data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -476,7 +475,7 @@ Global helpers (not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>once</b></td>
-        <td>Performs the render of a template just one time. This only applies on <a href="static">static views</a>. The render ist starting immediately (do not call .render again!). When finishing it fully cleans up (removes view, item data and also the template definition). This is useful for static views, which should persist in the app.</td>
+        <td>Performs the render of a template just one time. This only applies on <a href="static">static views</a>. The render ist starting immediately (do not call .render again!). When finishing it fully cleans up (removes view, data and also the template definition). This is useful for static views, which should persist in the app.</td>
         <td>false</td>
     </tr>
 </table>
@@ -496,18 +495,18 @@ Define a HTML-like template and use double curly brackets to mark dynamic expres
 <table>
     <tr>
         <td>User:</td>
-        <td>{{item.user}}</td>
+        <td>{{data.user}}</td>
     </tr>
     <tr>
         <td>Tweets:</td>
-        <td>{{item.tweets.length}}</td>
+        <td>{{data.tweets.length}}</td>
     </tr>
 </table>
 ```
 
 Save this template e.g. to _template/template.html_.
 
-> The preserved keyword ___item___ is a reference to a passed item. You can access the whole nested object.
+> The preserved keyword ___data___ is a reference to a passed data. You can access the whole nested object.
 
 Mikado comes up with a template compiler which has to be run through Node.js and provides a command line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
 
@@ -531,9 +530,9 @@ After compilation you will have 4 different files:
 3. __template.json__ the template compiled in JSON-compatible notation (<a href="#load">to load via http request</a>)
 4. __template.html__ the HTML-like template (reference, do not delete it)
 
-Assume there is an array of data to render (or just one item):
+Assume there is an array of data to render (or just one data):
 ```js
-var items = [{
+var data = [{
     user: "User A",
     tweets: ["foo", "bar", "foobar"]
 },{
@@ -568,13 +567,13 @@ Load library and initialize template (ES6):
 After creation you need mount to a DOM element initially as a destination root and render the template with data:
 ```js
 view.mount(document.body);
-view.render(items);
+view.render(data);
 ```
 
 You can also chain methods:
 
 ```js
-var view = Mikado.new(template).mount(document.body).render(items);
+var view = Mikado.new(template).mount(document.body).render(data);
 ```
 
 ## Rules and Conventions
@@ -614,25 +613,25 @@ You can also use a `<div>` or any other element as a template root (also custom 
 Mixing text nodes __and__ child nodes within __same__ root is actually not possible:
 ```html
 <main>
-    {{ item.title }}
-    <section>{{ item.content }}</section>
-    {{ item.footer }}
+    {{ data.title }}
+    <section>{{ data.content }}</section>
+    {{ data.footer }}
 </main>
 ```
 
 This may provided in the future, in the meanwhile just wrap text nodes into its own child:
 ```html
 <main>
-    <title>{{ item.title }}</title>
-    <section>{{ item.content }}</section>
-    <footer>{{ item.footer }}</footer>
+    <title>{{ data.title }}</title>
+    <section>{{ data.content }}</section>
+    <footer>{{ data.footer }}</footer>
 </main>
 ```
 
 This example has not this issue, because text nodes and child nodes are not mixed:
 ```html
 <main>
-    <section>{{ item.title }} foobar {{ item.footer }}</section>
+    <section>{{ data.title }} foobar {{ data.footer }}</section>
 </main>
 ```
 
@@ -640,12 +639,12 @@ This example has not this issue, because text nodes and child nodes are not mixe
 
 A bit more complex template:
 ```html
-<section id="{{item.id}}" class="{{this.state.theme}}" data-index="{{index}}">
-    {{@var is_today = item.date === view.today}}
-    <div class="{{item.class}} {{is_today ? 'on' : 'off'}}">
-        <div class="title" style="font-size: 2em">{{item.title.toUpperCase()}}</div>
-        <div class="content {{index % 2 ? 'odd' : 'even'}}">{{#item.content}}</div>
-        <div class="footer">{{view.parseFooter(item)}}</div>
+<section id="{{data.id}}" class="{{this.state.theme}}" data-index="{{index}}">
+    {{@var is_today = data.date === view.today}}
+    <div class="{{data.class}} {{is_today ? 'on' : 'off'}}">
+        <div class="title" style="font-size: 2em">{{data.title.toUpperCase()}}</div>
+        <div class="content {{index % 2 ? 'odd' : 'even'}}">{{#data.content}}</div>
+        <div class="footer">{{view.parseFooter(data)}}</div>
     </div>
 </section>
 ```
@@ -666,20 +665,20 @@ Within a template you have access to the following indentifiers:
         <td>Passed Mode</td>
     </tr>
     <tr>
-        <td><b>item</b></td>
-        <td>A full reference to a passed data item.</td>
+        <td><b>data</b></td>
+        <td>A full reference to a passed data.</td>
         <td>auto</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>view</b></td>
-        <td>An optional payload used to manually pass in non-item specific data or helper functions.</td>
+        <td>An optional payload used to manually pass in non-data specific data or helper functions.</td>
         <td>manual</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>index</b></td>
-        <td>Represents the index of the currently rendered item.</td>
+        <td>Represents the index of the currently rendered data.</td>
         <td>auto</td>
     </tr>
     <tr></tr>
@@ -697,13 +696,13 @@ Within a template you have access to the following indentifiers:
     <tr></tr>
     <tr>
         <td>this.<b>store</b></td>
-        <td>Gives access to the internal item store (Array).</td>
+        <td>Gives access to the internal data store (Array).</td>
         <td>auto</td>
     </tr>
     <tr></tr>
     <tr>
         <td>this.<b>length</b></td>
-        <td>The length of all items actually rendered (to get length of stored items use <i>this.store.length</i> instead).</td>
+        <td>The length of all data actually rendered (to get length of stored data use <i>this.store.length</i> instead).</td>
         <td>auto</td>
     </tr>
     <tr></tr>
@@ -734,13 +733,13 @@ It is recommended to pass custom functions via the _view_ object (see example ab
 }}</div>
 ```
 
-Alternatively of accessing _item_, _view_, _index_ and _this.state_ you can also access variables from the global namespace.
+Alternatively of accessing _data_, _view_, _index_ and _this.state_ you can also access variables from the global namespace.
 
 > For performance relevant tasks avoid passing html contents as string.
 
-To finish the example above provide one single or an array of ___item___ data:
+To finish the example above provide one single or an array of ___data___ data:
 ```js
-var items = [{
+var data = [{
     id: "230BA161-675A-2288-3B15-C343DB3A1DFC",
     date: "2019-01-11",
     class: "yellow, green",
@@ -750,12 +749,12 @@ var items = [{
 }]
 ```
 
-Provide ___view___ payload (non-item specific data and helper methods used by the template):
+Provide ___view___ payload (non-data specific data and helper methods used by the template):
 ```js
 var payload = {
     page: 1,
     today: "2019-01-11",
-    parseFooter: function(item){ return item.footer; }
+    parseFooter: function(data){ return data.footer; }
 }
 ```
 
@@ -771,12 +770,12 @@ view.init(template);
 
 Mount to a new target or just render the already mounted template:
 ```js
-view.render(items, payload);
+view.render(data, payload);
 ```
 
 Render asynchronously by providing a callback function:
 ```js
-view.render(items, payload, function(){
+view.render(data, payload, function(){
     console.log("finished.");
 });
 ```
@@ -785,7 +784,7 @@ To render asynchronously by using promises you need to create the view instance 
 ```js
 view = Mikado.new(template, { async: true });
 
-view.render(items, payload).then(function(){
+view.render(data, payload).then(function(){
     console.log("finished.");
 });
 ```
@@ -795,10 +794,10 @@ view.render(items, payload).then(function(){
 
 Lets take this example:
 ```html
-<table data-id="{{item.id}}" root>
+<table data-id="{{data.id}}" root>
     <tr>
         <td>User:</td>
-        <td click="show-user">{{item.user}}</td>
+        <td click="show-user">{{data.user}}</td>
         <td><a click="delete-user:root">Delete</a></td>
     </tr>
 </table>
@@ -814,7 +813,7 @@ view.route("show-user", function(node){
 
 }).route("delete-user", function(node){
 
-    alert(node.dataset.id);
+    alert(node.dataet.id);
 })
 ```
 
@@ -899,31 +898,31 @@ view.destroy();
 
 > When using storage, every render task also updates the storage data.
 
-Render a template incrementally through a set of item data:
+Render a template incrementally through a set of data:
 ```js
-view.render(items);
+view.render(data);
 ```
 
-Render a template with item data and also use view-specific data/handlers:
+Render a template with data and also use view-specific data/handlers:
 ```js
-view.render(items, payload);
+view.render(data, payload);
 ```
 
 Schedule a render task asynchronously to the next animation frame:
 ```js
-view.render(items, payload, true);
+view.render(data, payload, true);
 ```
 
 Schedule a render task by using a callback:
 ```js
-view.render(items, payload, function(){
+view.render(data, payload, function(){
     // finished
 });
 ```
 
 Schedule a render task by using promises (requires option ___async___ to be enabled during initialization):
 ```js
-view.render(items, payload).then(function(){
+view.render(data, payload).then(function(){
     // finished
 });
 ```
@@ -934,7 +933,7 @@ view.render();
 ```
 
 <a name="view.refresh"></a>
-Repaint the current state of a dynamic template (which has item data, requires ___store___ to be enabled):
+Repaint the current state of a dynamic template (which has data, requires ___store___ to be enabled):
 ```js
 view.refresh();
 ```
@@ -947,7 +946,7 @@ view.refresh(index);
 <a name="view.create"></a>
 Just create an template without adding/assigning/rendering them to the root ("orphan"):
 ```js
-var partial = view.create(item);
+var partial = view.create(data);
 ```
 
 Orphans are not a part of the internal render tree. The construction of orphans is really fast. You could also use the light version of Mikado an apply your own stack on top of this method.
@@ -955,49 +954,49 @@ Orphans are not a part of the internal render tree. The construction of orphans 
 ## Modify Views
 
 <a name="view.add"></a>
-Add one item to the end:
+Add one data to the end:
 ```js
-view.add(items);
+view.add(data);
 ```
 
-Add one item before an index:
+Add one data before an index:
 ```js
-view.add(items, 0); // add to beginning
+view.add(data, 0); // add to beginning
 ```
 
 <a name="view.append"></a>
-Append multiple items to the end:
+Append multiple data to the end:
 ```js
-view.append(items);
+view.append(data);
 ```
 
-Append multiple items before an index:
+Append multiple data before an index:
 ```js
-view.append(items, 0); // append to beginning
+view.append(data, 0); // append to beginning
 ```
 
 <a name="view.remove"></a>
-Remove a specific item/node:
+Remove a specific data/node:
 ```js
 view.remove(node);
 ```
 
-Remove first 20 items:
+Remove first 20 data:
 ```js
 view.remove(20);
 ```
 
-Remove last 20 items:
+Remove last 20 data:
 ```js
 view.remove(-20);
 ```
 
-Remove next 20 items of a given node (including):
+Remove next 20 data of a given node (including):
 ```js
 view.remove(node, 20);
 ```
 
-Remove previous 20 items of a given node (including):
+Remove previous 20 data of a given node (including):
 ```js
 view.remove(node, -20);
 ```
@@ -1009,15 +1008,15 @@ view.clear();
 ```
 
 <a name="view.replace"></a>
-Replace an item/node:
+Replace an data/node:
 ```js
 view.replace(old, new);
 ```
 
 <a name="view.update"></a>
-Update an single item/node:
+Update an single data/node:
 ```js
-view.update(node, item);
+view.update(node, data);
 ```
 
 <a name="view.sync"></a>
@@ -1034,10 +1033,10 @@ Get a template root node from the DOM by index:
 var node = view.node(index);
 ```
 
-<a name="view.item"></a>
-Get an item from the store by index:
+<a name="view.data"></a>
+Get an data from the store by index:
 ```js
-var item = view.item(index);
+var data = view.data(index);
 ```
 
 <a name="view.index"></a>
@@ -1047,15 +1046,15 @@ var index = view.index(node);
 ```
 
 <a name="view.find"></a>
-Find a node which corresponds to a data item (same reference):
+Find a node which corresponds to a data (same reference):
 ```js
-var node = view.find(item);
+var node = view.find(data);
 ```
 
 <a name="view.search"></a>
-Find the first node which corresponds to a data item which has same content (that requires each item to be unique, otherwise use ___where___):
+Find the first node which corresponds to a data which has same content (that requires each data to be unique, otherwise use ___where___):
 ```js
-var node = view.search(item);
+var node = view.search(data);
 ```
 
 <a name="view.where"></a>
@@ -1068,10 +1067,10 @@ var node = view.where({
 });
 ```
 ```js
-var node = view.where(item);
+var node = view.where(data);
 ```
 
-Get the length of all items rendered (in store):
+Get the length of all data rendered (in store):
 ```js
 var length = view.length;
 ```
@@ -1087,41 +1086,41 @@ var name = view.template;
 Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To prevent re-syncing Mikado provides you several helper functions to manipulate the dom and also keep them in sync. Using the helper function also grants you a maximum performance.
 
 <a name="view.move"></a>
-Move an item/node to a specific index:
+Move an data/node to a specific index:
 ```js
 view.move(node, 15);  // 15 from start
 view.move(node, -15); // 15 from end
 ```
 
 <a name="view.first"></a><a name="view.last"></a>
-Move an item/node to the top or bottom:
+Move an data/node to the top or bottom:
 ```js
 view.first(node);
 view.last(node);
 ```
 
 <a name="view.up"></a><a name="view.down"></a>
-Move an item/node by 1 index:
+Move an data/node by 1 index:
 ```js
 view.up(node);
 view.down(node);
 ```
 
-Shift an item/node by a specific offset:
+Shift an data/node by a specific offset:
 ```js
 view.up(node, 3);
 view.down(node, 3);
 ```
 
 <a name="view.before"></a><a name="view.after"></a>
-Move an item/node before or after another item/node:
+Move an data/node before or after another data/node:
 ```js
 view.before(node_a, node_b);
 view.after(node_a, node_b);
 ```
 
 <a name="view.swap"></a>
-Swap two items/nodes:
+Swap two data/nodes:
 ```js
 view.swap(node_a, node_b);
 ```
@@ -1131,7 +1130,7 @@ view.swap(node_a, node_b);
 
 Caching of DOM properties can greatly increase performance (up to 20x). There are just few situations where caching will not improve performance, it fully depends on your application.
 
-> __Recommendation:__ enable caching when several of your item data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.
+> __Recommendation:__ enable caching when several of your data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.
 
 Caching is by default enabled, this may change in future, so best is to explicitly set this flag when initializing:
 ```js
@@ -1145,7 +1144,7 @@ We strongly recommended to read the next section to understand how caching is wo
 Let's take a simple template as an example:
 ```html
 <root>
-    <div class="active">{{ item.title }}</div>
+    <div class="active">{{ data.title }}</div>
 </root>
 ```
 
@@ -1163,16 +1162,16 @@ This time, the property will not changed. That specific part now executes more t
 
 > When caching is enabled it automatically applies for all dynamic expressions within a template by default.
 
-So whenever you like to change one of the nodes attributes or contents (e.g. style, class, properties, dataset, etc) you just wrap this as an expression within the template and it will apply automatically.
+So whenever you like to change one of the nodes attributes or contents (e.g. style, class, properties, dataet, etc) you just wrap this as an expression within the template and it will apply automatically.
 
 For example, when you would like to change the classname also, then just wrap in as an expression:
 ```html
 <root>
-    <div class="{{ view.active }}">{{ item.title }}</div>
+    <div class="{{ view.active }}">{{ data.title }}</div>
 </root>
 ```
 
-You do not have to use item data only, you can also use a payload <a href="#view">view</a> or the <a href="#state">state</a> property. This make using and re-using templates very flexible.
+You do not have to use data only, you can also use a payload <a href="#view">view</a> or the <a href="#state">state</a> property. This make using and re-using templates very flexible.
 
 Now lets come to the __most important part__ when using caching properly. Assume you have rendered the template above with caching enabled. Now you __manually__ change DOM attributes:
 ```js
@@ -1300,21 +1299,21 @@ var html = Mikado.getHTML(node);
 
 <!--
 <a name="view.sort"></a>
-Sort items/nodes by a field from the item data:
+Sort data/nodes by a field from the data:
 ```js
 view.sort("title");
 ```
 
-Sort items/nodes by descending order:
+Sort data/nodes by descending order:
 ```js
 view.sort("title", "desc");
 ```
 
-Sort items/nodes by a custom handler (should return negative, positive and zero offsets):
+Sort data/nodes by a custom handler (should return negative, positive and zero offsets):
 ```js
-view.sort(function(item_a, item_b){
-    return item_a.time < item_b.time ? 1 : 
-          (item_a.time > item_b.time ? -1 : 0)
+view.sort(function(data_a, data_b){
+    return data_a.time < data_b.time ? 1 : 
+          (data_a.time > data_b.time ? -1 : 0)
 });
 ```
 -->
@@ -1322,27 +1321,24 @@ view.sort(function(item_a, item_b){
 <a name="store" id="store"></a>
 ## Storage
 
-Enable storage by passing the options during initialization:
+Enable internal storage by passing the options during initialization:
 ```js
-var view = new Mikado(root, template, {
-    store: true,
-    loose: true
-});
+var view = new Mikado(template, { store: true });
 ```
 
-Whenever you call the ___.render()___ function with passed item data, this data will keep in cache. Mikado will handle those data for you.
+Whenever you call the ___.render()___ function along with passed data, this data will keep in cache. Mikado will handle those data for you (internal storage).
 ```js
-view.render(items);
+view.render(data);
 ```
 
-You can re-render the last/current state at any time without passing items again:
+You can re-render the last/current state at any time without passing data again:
 ```js
 view.render();
 ```
 
 Or force an update to a specific index:
 ```js
-view.update(index);
+view.refresh(index);
 ```
 
 Access to the store:
@@ -1364,28 +1360,18 @@ var store = view.store;
 view.store = store = [];
 ```
 
-#### Export / Import Views
-
-<a name="view.export"></a>
-You can export the latest rendering state of a view along with its item data to the local storage.
-```js
-view.export();
-```
-
-<a name="view.import"></a>
-You can import and render the stored view by:
-```js
-view.import().render();
-```
-
-> When exporting/importing templates, the ID is used as key. The template ID corresponds to its filename.
-
-You cannot export several instances of the same template which holds different data. Also the ___state___ is not included in the export.
-
 <a name="options.loose"></a>
 #### Loose Option
 
-When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any item data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application. <!--When enabled you cannot use <a>paginated render</a>.-->
+When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application.
+```js
+var view = new Mikado(template, { store: true, loose: true });
+```
+
+To get a data item back from a node you cannot access `view.store[]` when ___loose___ option is enabled. You have to get the item via node index:
+```js
+var item = view.data(0);
+```
 
 <a name="extern"></a>
 #### Extern/Custom Store
@@ -1403,6 +1389,24 @@ var view = new Mikado(root, template, {
     persist: false
 });
 ```
+
+#### Export / Import Views
+
+<a name="view.export"></a>
+You can export the data of a view to the local storage.
+```js
+view.export();
+```
+
+<a name="view.import"></a>
+You can import and render the stored data by:
+```js
+view.import().render();
+```
+
+> When exporting/importing templates, the ID is used as key. The template ID corresponds to its filename.
+
+Actually you cannot export several instances of the same template which holds different data. Also the ___state___ is not included in the export.
 
 <a name="view.state"></a>
 ## State
@@ -1472,7 +1476,7 @@ Mikado.load("https://my-site.com/templates/template.json", false);
 Assign template to a new Mikado instance, mount and render:
 ```js
 var view = Mikado.new("template");
-view.mount(document.body).render(items);
+view.mount(document.body).render(data);
 ```
 
 __.load()__ loads and initialize a new template to an existing Mikado instance:
@@ -1497,13 +1501,13 @@ view.unload("template");
 
 Chain methods:
 ```js
-view.mount(document.body).init("template").render(items);
+view.mount(document.body).init("template").render(data);
 ```
 
 <a name="static"></a>
 #### Static Templates
 
-When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing item data.
+When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing data.
 
 <a name="mikado.once"></a>
 #### Once (One-time rendering)
@@ -1528,8 +1532,8 @@ You can also simply use a shorthand function:
 Mikado.once(root, template); // static view
 ```
 ```js
-Mikado.once(root, template, items); // dynamic view
-Mikado.once(root, template, items, payload, callback);
+Mikado.once(root, template, data); // dynamic view
+Mikado.once(root, template, data, payload, callback);
 ```
 
 When destroying a template, template definitions will still remain in the global cache. Maybe for later use or when another instances uses the same template (which is generally not recommended).
@@ -1649,18 +1653,18 @@ You can include partials as follows:
 ```html
 <section>
     <title include="title"></title>
-    <article include="article" as="item.content"></article>
+    <article include="article" as="data.content"></article>
     <footer include="footer"></footer>
 </section>
 ```
 
-The ___include___ attribute is related to the template name (filename), the ___as___ attribute is the reference which should be passed as the ___item___ to the partial.
+The ___include___ attribute is related to the template name (filename), the ___as___ attribute is the reference which should be passed as the ___data___ to the partial.
 
 Please notice, that each template requires one single root. When the template "template/title" has multiple nodes in the outer bound then wrap this into a new element as root or include as follows:
 ```html
 <section>
     <include>{{ template/title }}</include>
-    <include as="item.content">{{ template/article }}</include>
+    <include as="data.content">{{ template/article }}</include>
     <include>{{ template/footer }}</include>
 </section>
 ```
@@ -1669,7 +1673,7 @@ Use pseudo-element:
 ```html
 <section>
     <include from="title"/>
-    <include from="article" as="item.content"/>
+    <include from="article" as="data.content"/>
     <include from="footer"/>
 </section>
 ```
@@ -1682,20 +1686,20 @@ In this example the template "template/title" gets the tag \<title\> as the temp
 
 ```html
 <section>
-    <title>{{ item.title }}</title>
-    <tweets include="tweet" for="item.data" max="5"></tweets>
+    <title>{{ data.title }}</title>
+    <tweets include="tweet" for="data.data" max="5"></tweets>
 </section>
 ```
 
-In this example the template "tweet" loops the render through an array of tweets. The template "tweet" will get the array value from the current index as ___item___.
+In this example the template "tweet" loops the render through an array of tweets. The template "tweet" will get the array value from the current index as ___data___.
 
 ### Inline Loops
 
 ```html
 <main>
-    <title>{{ item.title }}</title>
-    <tweets for="item.tweets">
-        <section>{{ item.content }}</section>
+    <title>{{ data.title }}</title>
+    <tweets for="data.tweets">
+        <section>{{ data.content }}</section>
     </tweets>
 </main>
 ```
@@ -1704,32 +1708,32 @@ In this example the template "tweet" loops the render through an array of tweets
 ## Conditional Branches
 
 ```html
-<main if="item.tweet.length">
-    <title>{{ item.title }}</title>
-    <section>{{ item.content }}</section>
-    <footer>{{ item.footer }}</footer>
+<main if="data.tweet.length">
+    <title>{{ data.title }}</title>
+    <section>{{ data.content }}</section>
+    <footer>{{ data.footer }}</footer>
 </main>
-<main if="item.contacts.length">
-    <title>{{ item.title }}</title>
-    <section>{{ item.content }}</section>
-    <footer>{{ item.footer }}</footer>
+<main if="data.contacts.length">
+    <title>{{ data.title }}</title>
+    <section>{{ data.content }}</section>
+    <footer>{{ data.footer }}</footer>
 </main>
 ```
 
 ```html
 <main>
-    <title>{{ item.title }}</title>
-    <tweets if="item.tweets.length" for="item.tweets">
-        <section>{{ item.content }}</section>
+    <title>{{ data.title }}</title>
+    <tweets if="data.tweets.length" for="data.tweets">
+        <section>{{ data.content }}</section>
     </tweets>
 </main>
 ```
 
 ```html
 <main>
-    <title>{{ item.title }}</title>
-    <tweets for="item.tweets">
-        <section if="item.content">{{ item.content }}</section>
+    <title>{{ data.title }}</title>
+    <tweets for="data.tweets">
+        <section if="data.content">{{ data.content }}</section>
     </tweets>
 </main>
 ```
@@ -1743,42 +1747,92 @@ The attribute ___bind___ provides you a 2-way-binding of input elements with you
 
 ```html
 <main>
-    <input type="text" bind="{{ item.name }}">
-    <input type="checkbox" bind="{{ item.status }}">
-    <input type="radio" value="female" bind="{{ item.gender }}">
-    <input type="radio" value="male" bind="{{ item.gender }}">
+    <input type="text" bind="{{ data.name }}">
+    <input type="checkbox" bind="{{ data.status }}">
+    <input type="radio" value="female" bind="{{ data.gender }}">
+    <input type="radio" value="male" bind="{{ data.gender }}">
 </main>
 ```
 
 When data is changed, the input elements will automatically update, as well as other turn around, when the input elements gets new data the store will automatically update.
 
-<a name="observe" id="observe"></a>
-## Data Observer
+<a name="proxy" id="proxy"></a>
+## Reactive Proxy (Observer)
 
-_WIP (v0.4.0)_
+Mikado provides you a reactive way to listen and apply changes of data to the DOM. It is based on the new ES6 proxy feature which gives awesome performance and fully falls back to classical observer when proxy is not available. Using an reactive strategy can additionally boost performance beyond a factor of 100 when updating data. It depends on you application / current view: this feature has an advantage when updating data has to process more often than creating new.
+
+__Template markup__:
+```html
+<table>
+    <tr>
+        <td>Name:</td>
+        <td>{{= data.name }}</td>
+    </tr>
+    <tr>
+        <td>Email:</td>
+        <td>{{= data.email }}</td>
+    </tr>
+</table>
+```
+
+> The epxression for an observable property has to start with: "{{="
 
 __Use with internal store:__
 ```js
 var data = [...];
-var view = new Mikado(template, { observe: true });
+var view = new Mikado(template, { proxy: true });
 view.render(data);
 ```
 
 When data changes, the corresponding dom element will automatically change:
 ```js
-view.store[0].title = "New Title";
+view.store[0].name = "New Name";
 ```
 
 __Use with external store:__
 ```js
 var store = [];
-var view = new Mikado(template, { observe: store });
+var view = new Mikado(template, { proxy: store });
 ```
 
 When data changes, the corresponding dom element will automatically change:
 ```js
-store[0].title = "New Title";
+store[0].name = "New Name";
 ```
+
+#### Limitations
+
+Proxy actually comes with some limitations on template expressions. Improving those restrictions is already work in progress and will release in v0.5.0.
+
+1.&nbsp;Fields from deeply nested data objects are not reactive:
+```js
+var data = {
+    id: "foobar", // <-- observable
+    content: {    // <-- observable
+        title: "title",  // <-- not
+        body: "body",    // <-- not
+        footer: "footer" // <-- not
+    }
+};
+```
+
+2.&nbsp;Conditional or advanced template expressions are not supported:
+```html
+<table>
+    <tr>
+        <td>Name:</td>
+        <!-- Supported: -->
+        <td>{{= data.name }}</td>
+    </tr>
+    <tr>
+        <td>Tweets:</td>
+        <!-- Not Supported: -->
+        <td>{{= data.tweets ? data.tweets.length : 0 }}</td>
+    </tr>
+</table>
+```
+
+Just use plain property notation within curly brackets.
 
 <a name="template" id="template"></a>
 ## Using Native Templates
@@ -1788,15 +1842,15 @@ _WIP (v0.4.0)_
 Native templates do not need to compile and parsed through JSON. That made templates usable just in place.
 
 ```html
-<template name="my-list">
+<template id="my-list">
     <table>
         <tr>
             <td>User:</td>
-            <td>{{item.user}}</td>
+            <td>{{data.user}}</td>
         </tr>
         <tr>
             <td>Tweets:</td>
-            <td>{{item.tweets.length}}</td>
+            <td>{{data.tweets.length}}</td>
         </tr>
     </table>
 </template>
@@ -1810,17 +1864,17 @@ This is good:
 ```js
 var view = new Mikado(template);
 
-view.mount(root_a).render(items);
-view.mount(root_b).render(items);
-view.mount(root_c).render(items);
+view.mount(root_a).render(data);
+view.mount(root_b).render(data);
+view.mount(root_c).render(data);
 ```
 
 This is bad:
 ```js
 view.mount(root);
-view.init(tpl_a).render(items);
-view.init(tpl_b).render(items);
-view.init(tpl_c).render(items);
+view.init(tpl_a).render(data);
+view.init(tpl_b).render(data);
+view.init(tpl_c).render(data);
 ```
 
 Instead doing this:
@@ -1829,9 +1883,9 @@ var view_a = new Mikado(tpl_a);
 var view_b = new Mikado(tpl_b);
 var view_c = new Mikado(tpl_c);
 
-view_a.mount(root_c).render(items);
-view_b.mount(root_b).render(items);
-view_c.mount(root_a).render(items);
+view_a.mount(root_c).render(data);
+view_b.mount(root_b).render(data);
+view_c.mount(root_a).render(data);
 ```
 
 Ideally every template should have initialized by one (and only one) Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
@@ -1856,20 +1910,20 @@ Everyone has a different idea about the term "smart". Mikado is not a React and 
 
 ## About Data Binding
 
-Instead of bind nodes/vnodes to a data item Mikado bind/references data items to nodes. The <a href="#options.loose">loose</a> option lets you control how is data handled when its corresponding node was removed from the dom. You might think there is a drawback in missing diffing, but lets take an example:
+Instead of bind nodes/vnodes to a data Mikado bind/references data to nodes. The <a href="#options.loose">loose</a> option lets you control how is data handled when its corresponding node was removed from the dom. You might think there is a drawback in missing diffing, but lets take an example:
 
 ```html
-<item>A</item>
-<item>B</item>
-<item>C</item>
+<data>A</data>
+<data>B</data>
+<data>C</data>
 ```
 
-Assume that the items content stay unchanged and just the order should changes to:
+Assume that the data content stay unchanged and just the order should changes to:
 
 ```html
-<item>C</item>
-<item>A</item>
-<item>B</item>
+<data>C</data>
+<data>A</data>
+<data>B</data>
 ```
 
 Some libs may try to swap nodes to its new place. But that has a noticeable bigger impact to the dom of a factor of 5 and higher (!) in comparison when existing nodes wil just re-rendered with the new data (for which the option <a href="#options.reuse">reuse</a> is for). The decoupled event delegation of Mikado allows you to keep listeners referenced to the right node. Surely that's not the same, but I never had a situation where this was an issue. Just keep in mind to use template notations for any value which should change dynamically (e.g. the attribute "checked") and you are save. Since Mikado was reversed engineered and the goal "keeping real nodes" was not on the table, it shouldn't be a mandatory criteria for you. If so, then you are lucky that you can use one of the dozen other templating libs out there.
@@ -1954,6 +2008,12 @@ The destination folder of the build is: _/dist/_
         <td>SUPPORT_TEMPLATE_EXTENSION</td>
         <td>true, false</td>
         <td>Use loops, includes and conditionals within templates</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_REACTIVE</td>
+        <td>true, false</td>
+        <td>Use reactive data binding</td>
     </tr>
     <tr>
         <td><br><b>Compiler Flags</b></td>

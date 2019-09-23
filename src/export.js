@@ -33,7 +33,7 @@ Mikado.prototype.init;
 /** @export */
 Mikado.prototype.mount;
 /** @export */
-Mikado.prototype.item;
+Mikado.prototype.data;
 /** @export */
 Mikado.prototype.index;
 /** @export */

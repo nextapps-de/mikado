@@ -53,6 +53,12 @@ const SUPPORT_TRANSPORT = true;
 const SUPPORT_TEMPLATE_EXTENSION = true;
 
 /**
+ * @define {boolean}
+ */
+
+const SUPPORT_REACTIVE = true;
+
+/**
  * @define {string}
  */
 

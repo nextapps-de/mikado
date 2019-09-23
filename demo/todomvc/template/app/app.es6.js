@@ -14,10 +14,12 @@ export default {
               "t": "input",
               "a": {
                 "placeholder": "What needs to be done?",
-                "keyup": "new-todo",
                 "autofocus": ""
               },
-              "c": "new-todo"
+              "c": "new-todo",
+              "e": {
+                "keyup": "new-todo"
+              }
             }
           ],
           "c": "header"
@@ -51,7 +53,7 @@ export default {
             },
             "x": "Thomas Wilkerling"
           },
-          "x": "Created by"
+          "x": "Created by "
         },
         {
           "t": "p",
@@ -62,12 +64,12 @@ export default {
             },
             "x": "TodoMVC"
           },
-          "x": "Part of"
+          "x": "Part of "
         }
       ],
       "c": "info"
     }
   ],
   "n": "app",
-  "v": "0.1.3"
+  "v": "0.0.5"
 };

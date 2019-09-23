@@ -4,88 +4,88 @@ Mikado.register({
     {
       "t": "td",
       "x": [
-        "item.name"
+        "data.name"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_size"
+        "'background-color:' + data.color_size"
       ],
       "x": [
-        "item.size"
+        "data.size"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_memory"
+        "'background-color:' + data.color_memory"
       ],
       "x": [
-        "item.memory"
+        "data.memory"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_create"
+        "'background-color:' + data.color_create"
       ],
       "x": [
-        "item.create"
+        "data.create"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_update"
+        "'background-color:' + data.color_update"
       ],
       "x": [
-        "item.update"
+        "data.update"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_partial"
+        "'background-color:' + data.color_partial"
       ],
       "x": [
-        "item.partial"
+        "data.partial"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_append"
+        "'background-color:' + data.color_append"
       ],
       "x": [
-        "item.append"
+        "data.append"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_repaint"
+        "'background-color:' + data.color_repaint"
       ],
       "x": [
-        "item.repaint"
+        "data.repaint"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_reduce"
+        "'background-color:' + data.color_reduce"
       ],
       "x": [
-        "item.reduce"
+        "data.reduce"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + item.color_remove"
+        "'background-color:' + data.color_remove"
       ],
       "x": [
-        "item.remove"
+        "data.remove"
       ]
     },
     {
@@ -93,14 +93,14 @@ Mikado.register({
       "i": {
         "t": "b",
         "x": [
-          "item.score"
+          "data.score"
         ]
       },
       "s": [
-        "'background-color:' + item.color_score"
+        "'background-color:' + data.color_score"
       ]
     }
   ],
   "n": "row",
-  "v": "0.0.2"
+  "v": "0.0.4"
 });

@@ -4,8 +4,8 @@ export let suite = {};
 export const test = {};
 export const root = document.getElementById("root");
 const result = document.getElementById("result").appendChild(document.createTextNode(""));
-const items = generate(100);
-const queue = [];
+export const items = generate(100);
+export const queue = [];
 let clone;
 
 queue.push({
@@ -204,8 +204,8 @@ window.onload = function(){
         for(let i = 0, item; i < queue.length; i++){
 
             item = queue[i];
-            item.fn = suite[lib];
-            item.test = suite[lib];
+            item.fn || (item.fn = suite[lib]);
+            item.test || (item.test = suite[lib]);
         }
 
         setTimeout(perform, 200);
@@ -322,7 +322,7 @@ function perform(warmup){
 
         if(window === window.top){
 
-            result.nodeValue = str_results += test.name.padEnd(10) + String((1000 / duration * test.loop) | 0).padStart(8) + " op/s, Memory:\t"  + (memory ? ((memory / test.loop) | 0) : "-") + "\n";
+            result.nodeValue = str_results += test.name.padEnd(12) + String((1000 / duration * test.loop) | 0).padStart(8) + " op/s, Memory:\t"  + (memory ? ((memory / test.loop) | 0) : "-") + "\n";
         }
         else{
 
@@ -338,7 +338,7 @@ function perform(warmup){
     //root.textContent = "";
 }
 
-function shuffle(items){
+export function shuffle(items){
 
     for(let i = items.length - 1, j, x; i > 0; i--) {
 
@@ -351,7 +351,7 @@ function shuffle(items){
     return items;
 }
 
-function update(items, index){
+export function update(items, index){
 
     for(let i = 0, length = items.length; i < length; i++){
 
@@ -370,4 +370,9 @@ function update(items, index){
     }
 
     return items;
+}
+
+export function set_clone(_clone){
+
+    clone = _clone;
 }

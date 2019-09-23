@@ -5,10 +5,12 @@ export default {
       "t": "input",
       "a": {
         "id": "toggle-all",
-        "type": "checkbox",
-        "change": "toggle-all"
+        "type": "checkbox"
       },
-      "c": "toggle-all"
+      "c": "toggle-all",
+      "e": {
+        "change": "toggle-all"
+      }
     },
     {
       "t": "label",
@@ -25,5 +27,5 @@ export default {
   "c": "main",
   "f": "!this.state.empty",
   "n": "main",
-  "v": "0.1.3"
+  "v": "0.0.5"
 };

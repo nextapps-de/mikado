@@ -1,4 +1,4 @@
-import { store, list } from "./app.js";
+import { list } from "./app.js";
 import { view, update } from "./controller.js";
 import { $, $$, keycode } from "./helper.js";
 
@@ -14,9 +14,9 @@ const KEYS = {
 
 list.route("clear-completed", function(){
 
-    for(let i = 0; i < store.length; i++){
+    for(let i = 0; i < list.length; i++){
 
-        if(store[i]["completed"]){
+        if(list.store[i]["completed"]){
 
             list.remove(list.node(i--));
         }
@@ -30,14 +30,14 @@ list.route("clear-completed", function(){
     const state = target.checked;
     const toggles = $$(".toggle");
 
-    for(let i = 0; i < store.length; i++){
+    for(let i = 0; i < list.length; i++){
 
-        store[i]["completed"] = state;
+        list.store[i]["completed"] = state;
         toggles[i].checked = state;
     }
 
     update();
-    list.render(store, view).export();
+    list.render(list.store, view).export();
 
 }).route("enter-edit-mode", function(target, event, self){
 
@@ -68,14 +68,14 @@ list.route("clear-completed", function(){
 
         if(self.value){
 
-            store[list.index(target)]["title"] = self.value;
+            list.data(target)["title"] = self.value;
         }
         else{
 
             list.remove(target);
         }
 
-        list.render(store, view).export();
+        list.refresh(list.index(target), view).export();
     }
     else if(event === KEYS.ESC) {
 
@@ -86,7 +86,7 @@ list.route("clear-completed", function(){
 
     const index = list.index(target);
 
-    store[index]["completed"] = !!self.checked;
+    list.store[index]["completed"] = !!self.checked;
     list.refresh(index, view).export();
     update();
 

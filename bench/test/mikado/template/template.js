@@ -2,13 +2,13 @@ Mikado.register({
   "t": "section",
   "a": {
     "data-id": [
-      "item.id"
+      "data.id"
     ],
     "data-date": [
-      "item.date"
+      "data.date"
     ],
     "data-index": [
-      "item.index"
+      "data.index"
     ]
   },
   "i": {
@@ -16,24 +16,24 @@ Mikado.register({
       {
         "c": "title",
         "x": [
-          "item.title"
+          "data.title"
         ]
       },
       {
         "c": "content",
         "x": [
-          "item.content"
+          "data.content"
         ]
       },
       {
         "c": "footer",
         "x": [
-          "item.footer"
+          "data.footer"
         ]
       }
     ],
     "c": [
-      "item.class"
+      "data.class"
     ],
     "s": "padding-right: 10px;"
   },

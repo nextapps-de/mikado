@@ -1,9 +1,9 @@
 {
   "private": true,
   "dependencies": {
-    "mikado": "^0.3.0"
+    "mikado": "^0.4.0"
   },
   "devDependencies": {
-    "mikado-compile": "^0.0.4"
+    "mikado-compile": "^0.0.5"
   }
 }

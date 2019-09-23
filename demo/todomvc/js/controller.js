@@ -1,4 +1,4 @@
-import { store, state, main, footer, list } from "./app.js";
+import { state, main, footer, list } from "./app.js";
 import { $, $$ } from "./helper.js";
 
 export default function(route, target){
@@ -21,16 +21,16 @@ export default function(route, target){
     state.filter = route;
 
     // render todos:
-    list.render(store, view, update);
+    list.render(list.store, view, update);
 }
 
 export const view = {
 
-  is_visible: function(item){
+  is_visible: function(data){
 
       return state.filter === "all" ||
-            (state.filter === "completed" && item.completed) ||
-            (state.filter === "active" && !item.completed)
+            (state.filter === "completed" && data.completed) ||
+            (state.filter === "active" && !data.completed)
   }
 };
 
@@ -40,9 +40,9 @@ function filter_by(filter){
 
     return filter === "all" ?
 
-        store
+        list.store
     :
-        store.filter(function(item){
+        list.store.filter(function(item){
 
             return item["completed"] === (filter === "completed");
         });
@@ -51,8 +51,8 @@ function filter_by(filter){
 export function update(){
 
     state.left = filter_by("active").length;
-    state.completed = store.length - state.left;
-    state.empty = !store.length;
+    state.completed = list.length - state.left;
+    state.empty = !list.length;
 
     main.render({});
     footer.render({});

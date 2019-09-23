@@ -17,7 +17,7 @@ if(SUPPORT_STORAGE){
 
             for(let i = 0; i < this.length; i++){
 
-                data[i] = this.dom[i]["_item"];
+                data[i] = this.dom[i]["_data"];
             }
         }
 
@@ -54,7 +54,7 @@ if(SUPPORT_STORAGE){
             //
             //     for(let i = 0; i < this.length; i++){
             //
-            //         this.dom[i]["_item"] = data[i];
+            //         this.dom[i]["_data"] = data[i];
             //     }
             // }
         }

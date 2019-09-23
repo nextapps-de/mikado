@@ -7,7 +7,6 @@ import tpl_footer from "./../template/footer/footer.es6.js";
 import tpl_list from "./../template/list/list.es6.js";
 import { $ } from "./helper.js";
 
-export const store = [];
 export const state = {};
 
 Mikado.once($("#root-app"), tpl_app);
@@ -26,9 +25,9 @@ export const footer = Mikado.new(tpl_footer, {
 
 export const list = Mikado.new(tpl_list, {
     "state": state,
-    "store": store,
+    "store": true,
     "loose": false
 })
 .mount($(".todo-list"))
-.import()
-.render();
+.import();
+//.render();

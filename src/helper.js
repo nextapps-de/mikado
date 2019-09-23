@@ -65,8 +65,8 @@ if(SUPPORT_HELPERS){
 
             if(SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)){
 
-                const tmp = this.store ? this.store[index] : a["_item"];
-                this.update(a, this.store ? this.store[pos] : b["_item"], view, pos);
+                const tmp = this.store ? this.store[index] : a["_data"];
+                this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
                 this.update(b, tmp, view, index);
             }
             else{
@@ -293,10 +293,10 @@ if(SUPPORT_HELPERS){
 
             if(tmp_a !== tmp_b){
 
-                if(SUPPORT_STORAGE && this.reuse && (this.storage || this.loose)){
+                if(SUPPORT_STORAGE && this.reuse && (this.store || this.loose)){
 
-                    const tmp = this.store ? this.store[tmp_a] : a["_item"];
-                    this.update(a, this.store ? this.store[tmp_b] : b["_item"], view, tmp_b);
+                    const tmp = this.store ? this.store[tmp_a] : a["_data"];
+                    this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
                     this.update(b, tmp, view, tmp_a);
                 }
                 else{

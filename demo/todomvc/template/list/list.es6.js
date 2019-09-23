@@ -9,33 +9,37 @@ export default {
         {
           "t": "input",
           "a": {
-            "type": "checkbox",
-            "change": "update-state:root"
+            "type": "checkbox"
           },
           "c": [
-            " view.is_visible(item) ? 'toggle' : '' "
+            " view.is_visible(data) ? 'toggle' : '' "
           ],
-          "j": "self.checked=!!item.completed"
+          "j": "self.checked=!!data.completed",
+          "e": {
+            "change": "update-state:root"
+          }
         },
         {
           "t": "label",
           "a": {
             "for": [
-              "'item-' +  item.id "
-            ],
-            "dblclick": "enter-edit-mode:root"
+              "'item-' +  data.id "
+            ]
           },
           "c": "title",
+          "e": {
+            "dblclick": "enter-edit-mode:root"
+          },
           "x": [
-            " item.title "
+            " data.title "
           ]
         },
         {
           "t": "button",
-          "a": {
+          "c": "destroy",
+          "e": {
             "click": "destroy:root"
-          },
-          "c": "destroy"
+          }
         }
       ],
       "c": "view"
@@ -44,21 +48,23 @@ export default {
       "t": "input",
       "a": {
         "id": [
-          "'item-' +  item.id "
+          "'item-' +  data.id "
         ],
         "value": [
-          " item.title "
-        ],
+          " data.title "
+        ]
+      },
+      "c": "edit",
+      "e": {
         "keyup": "edit:root",
         "blur": "edit:root"
-      },
-      "c": "edit"
+      }
     }
   ],
   "c": [
-    " item.completed ? 'completed' : '' "
+    " data.completed ? 'completed' : '' "
   ],
-  "f": "view.is_visible(item)",
+  "f": "view.is_visible(data)",
   "n": "list",
-  "v": "0.1.3"
+  "v": "0.0.5"
 };

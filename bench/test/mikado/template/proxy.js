@@ -1,14 +1,17 @@
-export default {
+Mikado.register({
   "t": "section",
   "a": {
     "data-id": [
-      "data.id"
+      "data.id",
+      1
     ],
     "data-date": [
-      "data.date"
+      "data.date",
+      1
     ],
     "data-index": [
-      "data.index"
+      "data.index",
+      1
     ]
   },
   "i": {
@@ -16,27 +19,31 @@ export default {
       {
         "c": "title",
         "x": [
-          "data.title"
+          "data.title",
+          1
         ]
       },
       {
         "c": "content",
         "x": [
-          "data.content"
+          "data.content",
+          1
         ]
       },
       {
         "c": "footer",
         "x": [
-          "data.footer"
+          "data.footer",
+          1
         ]
       }
     ],
     "c": [
-      "data.class"
+      "data.class",
+      1
     ],
     "s": "padding-right: 10px;"
   },
-  "n": "template",
+  "n": "proxy",
   "v": "0.0.4"
-};
+});
