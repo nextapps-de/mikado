@@ -3,20 +3,20 @@
     <title>Mikado</title>
 </head>
 <body>
-    <div id="root"></div>
-</body>
-<script src="../dist/mikado.light.js"></script>
+<div id="root"></div>
+<script src="../../dist/mikado.light.js"></script>
 <script src="template.js"></script>
 <script src="data.js"></script>
-<script type="module">
+<script>
 
     (function(){
 
         const root = document.getElementById("root");
-        const mikado = new Mikado(null, "template");
+        const mikado = new Mikado("template");
 
         mikado.mount(root).render(window.data);
     }());
 
 </script>
+</body>
 </html>

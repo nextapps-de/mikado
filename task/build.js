@@ -70,7 +70,7 @@ let parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: options["RELEASE"] === "pre" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
+    compilation_level: options["RELEASE"] === "pre" || options["RELEASE"] === "debug" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS", //"SIMPLE"
     use_types_for_optimization: true,
     //new_type_inf: true,
     jscomp_warning: "newCheckTypes",
@@ -109,7 +109,7 @@ let parameter = (function(opt){
     //formatting: "PRETTY_PRINT"
 });
 
-if(options["RELEASE"] === "pre"){
+if(options["RELEASE"] === "pre" || options["RELEASE"] === "debug"){
     parameter += ' --formatting=PRETTY_PRINT';
 }
 

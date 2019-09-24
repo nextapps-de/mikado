@@ -3,25 +3,24 @@
     <title>Mikado</title>
 </head>
 <body>
-    <div id="root"></div>
-</body>
-<script src="../src/config.js"></script>
+<div id="root"></div>
+<script src="../../src/config.js"></script>
 <script type="module">
 
-    import Mikado from "../src/mikado.js";
+    import Mikado from "../../src/mikado.js";
     import template from "./template.es6.js";
     import items from "./data.es6.js";
 
-    (function(){
+    const root = document.getElementById("root");
+    const mikado = new Mikado(template);
 
-        const root = document.getElementById("root");
-        const mikado = new Mikado(null, template);
+    mikado.route("test", function(node){
 
-        mikado.mount(root).render(items).route("test", function(node){
+        console.log("click", node);
+    });
 
-            console.log("click", node);
-        });
-    }());
+    mikado.mount(root).render(items);
 
 </script>
+</body>
 </html>

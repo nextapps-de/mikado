@@ -47,6 +47,7 @@ Demo:
 #### Preview 0.4.x
 `beta` new attribute ___<a href="#bind">bind</a>___ for input elements (reactive input elements).<br>
 `beta` supports using of ___<a href="#template">native templates</a>___ as an alternative to compile and parse JSON.<br>
+`new` webpack loader to bundle templates, styles and mikado.
 
 #### Get Latest:
 
@@ -1741,7 +1742,7 @@ In this example the template "tweet" loops the render through an array of tweets
 <a name="bind" id="bind"></a>
 ## Bind Input Elements
 
-_WIP (v0.4.0)_
+_WIP (v0.4.x)_
 
 The attribute ___bind___ provides you a 2-way-binding of input elements with your data store.
 
@@ -1837,7 +1838,7 @@ Just use plain property notation within curly brackets.
 <a name="template" id="template"></a>
 ## Using Native Templates
 
-_WIP (v0.4.0)_
+_WIP (v0.4.x)_
 
 Native templates do not need to compile and parsed through JSON. That made templates usable just in place.
 
