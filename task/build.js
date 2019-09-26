@@ -141,7 +141,7 @@ files.forEach(function(file){
 
     let src = String(fs.readFileSync("src/" + file));
 
-    if(options["RELEASE"] !== "pre"){
+    if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
 
         for(let key in prename){
 

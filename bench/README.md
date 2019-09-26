@@ -47,6 +47,9 @@ The data is unknown, the library do not know if data was added, removed, updated
 
 Regardless the function is doing, every test has to run through the same logic.
 
+#### Test Requirement
+Each library should use at least its own features to change DOM. A test implementation should not include something like `node.nodeValue = "..."` or `node.className = "..."`.
+
 ## About precision
 It is not possible to provide stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment a user have on the application.
 

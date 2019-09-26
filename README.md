@@ -45,9 +45,32 @@ Demo:
 4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
 #### Preview 0.4.x
-`beta` new attribute ___<a href="#bind">bind</a>___ for input elements (reactive input elements).<br>
-`beta` supports using of ___<a href="#template">native templates</a>___ as an alternative to compile and parse JSON.<br>
-`new` webpack loader to bundle templates, styles and mikado.
+`new` webpack loader to bundle templates.
+
+#### Milestones
+There are some features in draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
+
+<table>
+    <tr>
+        <td>1000&nbsp;Github&nbsp;Stars</td>
+        <td>Supports using of <a href="#template">native templates</a> as an alternative to compile and parse JSON.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>2500&nbsp;Github&nbsp;Stars</td>
+        <td>New attribute <a href="#bind">bind</a> for input elements (reactive 2-way binding of input elements).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>5000&nbsp;Github&nbsp;Stars</td>
+        <td>Express middleware / standalone webserver for high performance bi-directional server-side rendering (SSR).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>10k&nbsp;Github&nbsp;Stars</td>
+        <td>A reboot of <a href="https://github.com/nextapps-de/xone">Xone</a> which fully based on Mikado. Xone is a full-stack mobile application SDK which seamlessly runs in browser and also supports Cordova and NativeScript from the same codebase.</td>
+    </tr>
+</table>
 
 #### Get Latest:
 
@@ -119,7 +142,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#store">Data Binding</a>
+            <a href="#store">Data Binding (Proxy)</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -174,7 +197,7 @@ __Feature Comparison__
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>4.3 kb</td>
+        <td>4.6 kb</td>
         <td>2.0 kb</td>
     </tr>
 </table>
@@ -1739,24 +1762,6 @@ In this example the template "tweet" loops the render through an array of tweets
 </main>
 ```
 
-<a name="bind" id="bind"></a>
-## Bind Input Elements
-
-_WIP (v0.4.x)_
-
-The attribute ___bind___ provides you a 2-way-binding of input elements with your data store.
-
-```html
-<main>
-    <input type="text" bind="{{ data.name }}">
-    <input type="checkbox" bind="{{ data.status }}">
-    <input type="radio" value="female" bind="{{ data.gender }}">
-    <input type="radio" value="male" bind="{{ data.gender }}">
-</main>
-```
-
-When data is changed, the input elements will automatically update, as well as other turn around, when the input elements gets new data the store will automatically update.
-
 <a name="proxy" id="proxy"></a>
 ## Reactive Proxy (Observer)
 
@@ -1838,7 +1843,7 @@ Just use plain property notation within curly brackets.
 <a name="template" id="template"></a>
 ## Using Native Templates
 
-_WIP (v0.4.x)_
+_WIP (release when reaching 1000 Github stars)_
 
 Native templates do not need to compile and parsed through JSON. That made templates usable just in place.
 
@@ -1856,6 +1861,24 @@ Native templates do not need to compile and parsed through JSON. That made templ
     </table>
 </template>
 ```
+
+<a name="bind" id="bind"></a>
+## Bind Input Elements
+
+_WIP (release when reaching 2500 Github stars)_
+
+The attribute ___bind___ provides you a 2-way-binding of input elements with your data store.
+
+```html
+<main>
+    <input type="text" bind="{{ data.name }}">
+    <input type="checkbox" bind="{{ data.status }}">
+    <input type="radio" value="female" bind="{{ data.gender }}">
+    <input type="radio" value="male" bind="{{ data.gender }}">
+</main>
+```
+
+When data is changed, the input elements will automatically update, as well as other turn around, when the input elements gets new data the store will automatically update.
 
 ## Best Practices
 
