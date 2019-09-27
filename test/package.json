@@ -7,7 +7,7 @@
     "test:develop": "mocha --timeout=3000 --exit",
     "test:browser": "nyc instrument ./dist/mikado.pre.js ./dist/ && nyc --reporter=html --reporter=text --cache true mocha-headless-chrome -f index.html?coverage -c .nyc_output/coverage.json",
     "test:es5": "mocha-phantomjs index.html",
-    "test": "npm run test:develop && npm run test:production && npm run test:light && npm run test:browser && npm run test:coverage",
+    "test": "npm run test:es5 && npm run test:browser",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "server": "node server.js"
   },

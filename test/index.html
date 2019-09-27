@@ -24,6 +24,13 @@
         var param = window.location.search.substr(1);
         if(param === "coverage"){
             document.write('<script type="text/javascript" src="dist/dist/mikado.pre.js"><\/script>');
+            Object.assign = null;
+            Object.values = null;
+            window["requestAnimationFrame"] = null;
+            window["cancelAnimationFrame"] = null;
+            window["Promise"] = null;
+            window["Proxy"] = null;
+            document.write('<script type="text/javascript" src="dist/dist/mikado.pre.js"><\/script>');
         }
         else if(param === "es5" || param === "light" || param === "min"){
             document.write('<script type="text/javascript" src="../dist/mikado.' + param + '.js"><\/script>');

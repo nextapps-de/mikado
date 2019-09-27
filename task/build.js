@@ -70,7 +70,7 @@ let parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: options["RELEASE"] === "pre" || options["RELEASE"] === "debug" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS", //"SIMPLE"
+    compilation_level: options["RELEASE"] === "pre" ? "SIMPLE" : (options["RELEASE"] === "debug" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS"), //"SIMPLE"
     use_types_for_optimization: true,
     //new_type_inf: true,
     jscomp_warning: "newCheckTypes",

@@ -25,6 +25,20 @@ if(USE_POLYFILL){
         return obj;
     });
 
+    Object.values || (Object.values = function(obj){
+
+        const keys = Object.keys(obj);
+        const length = keys.length;
+        const values = new Array(length);
+
+        for(let x = 0; x < length; x++){
+
+            values[x] = obj[keys[x]];
+        }
+
+        return values;
+    });
+
     if(SUPPORT_ASYNC){
 
         window["requestAnimationFrame"] || (window["requestAnimationFrame"] = window.setTimeout);

@@ -1,5 +1,11 @@
 export function setText(target, text){
 
+    if(target.nodeType !== 3){
+
+        target["_html"] = null;
+        target = target.firstChild || target.appendChild(document.createTextNode(target["_text"] = text));
+    }
+
     if(target["_text"] !== text){
 
         target.nodeValue = text;
@@ -11,6 +17,14 @@ export function setText(target, text){
 
 export function getText(target){
 
+    if(target.nodeType !== 3){
+
+        if(!(target = target.firstChild)){
+
+            return "";
+        }
+    }
+
     return (
 
         typeof target["_text"] === "undefined" ?
@@ -20,8 +34,6 @@ export function getText(target){
             target["_text"]
     );
 }
-
-// TODO: when rendering on a modified template all states hast to reset to its default template values
 
 export function setHTML(target, html){
 
@@ -46,15 +58,77 @@ export function getHTML(target){
     );
 }
 
-// OK: when rendering on a modified template all states hast to reset to its default template values
+const regex_cache = {};
 
-export function setClass(target, class_name){
+function regex(classname){
 
-    if(target["_class"] !== class_name){
+    return regex_cache[classname] || (regex_cache[classname] = new RegExp("(?:^|\\s)" + classname + "(?!\\S)", "g"));
+}
 
-        target.className = class_name;
-        target["_class"] = class_name;
-        target["_class_cache"] = null; // TODO: Xone compatibility
+/*
+function createClassCache(node){
+
+    const class_list = node.classList;
+    const cache = {};
+    const length = class_list.length;
+
+    for(let a = 0; a < length; a++){
+
+        cache[class_list[a]] = 1;
+    }
+
+    node["_class_cache"] = cache;
+    node["_class_list"] = class_list;
+
+    return cache;
+}
+*/
+
+export function addClass(target, classname){
+
+    if(!hasClass(target, classname)){
+
+        target.className += " " + classname;
+        target["_class"] += " " + classname;
+    }
+
+    // if(!(target["_class_cache"] || createClassCache(target))[classname]){
+    //
+    //     target["_class_cache"][classname] = 1;
+    //     target["_class_list"].add(classname);
+    //     target["_class"] = void 0;
+    // }
+
+    return this;
+}
+
+export function removeClass(target, classname){
+
+    const new_class = (target["_class"] || (target["_class"] = target.className)).replace(regex(classname) , "");
+
+    if(target["_class"] !== new_class){
+
+        target.className = new_class;
+        target["_class"] = new_class;
+    }
+
+    // if((target["_class_cache"] || createClassCache(target))[classname]){
+    //
+    //     target["_class_cache"][classname] = 0;
+    //     target["_class_list"].remove(classname);
+    //     target["_class"] = void 0;
+    // }
+
+    return this;
+}
+
+export function setClass(target, classname){
+
+    if(target["_class"] !== classname){
+
+        target.className = classname;
+        target["_class"] = classname;
+        //target["_class_cache"] = null;
     }
 
     return this;
@@ -74,16 +148,27 @@ export function getClass(target){
 
 export function hasClass(target, classname){
 
-    if(typeof target["_class"] === "undefined"){
-
-        target["_class"] = target.className;
-    }
-
-    return ("#" + target["_class"].replace(/ /g, "#") + "#").indexOf("#" + classname + "#") !== -1;
+    return !!((target["_class"] || (target["_class"] = target.className)).match(regex(classname)));
+    //return !!(target["_class_cache"] || createClassCache(target))[classname];
 }
 
-// Ok: when rendering on a modified template all states hast to reset to its default template values
+export function toggleClass(target, classname){
 
+    if(hasClass(target, classname)){
+
+        removeClass(target, classname);
+    }
+    else{
+
+        addClass(target, classname);
+    }
+
+    // (target["_class_cache"] || createClassCache(target))[classname] = !target["_class_cache"][classname];
+    // target["_class_list"].toggle(classname);
+    // target["_class"] = null;
+}
+
+/*
 export function setStyle(target, style, value){
 
     const style_cache = target["_style_cache"] || (target["_style_cache"] = {});
@@ -111,23 +196,7 @@ export function getStyle(target, style){
             style_cache[style]
     );
 }
-
-/*
-export function setStyle(target, style, value){
-
-    const key = "_style_" + style;
-
-    if(target[key] !== value){
-
-        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-        target[key] = value;
-    }
-
-    return this;
-}
 */
-
-// OK: when rendering on a modified template all states hast to reset to its default template values
 
 export function setCSS(target, style){
 
@@ -135,7 +204,7 @@ export function setCSS(target, style){
 
         (target["_style"] || (target["_style"] = target.style)).cssText = style;
         target["_css"] = style;
-        target["_style_cache"] = null; // TODO: Xone Compatibility
+        //target["_style_cache"] = null;
     }
 
     return this;
@@ -152,9 +221,6 @@ export function getCSS(target){
             target["_css"]
     );
 }
-
-// https://jsperf.com/data-dataet/43
-// NOTE: when rendering on a modified template all states hast to reset to its default template values
 
 export function setAttribute(target, attr, value){
 
@@ -185,26 +251,18 @@ export function getAttribute(target, attr){
 
 export function hasAttribute(target, attr){
 
-    const key = "_attr_" + attr;
-
-    if(typeof target[key] === "undefined"){
-
-        target[key] = target.getAttribute(attr);
-    }
-
-    return !!target[key] ;
+    return typeof getAttribute(target, attr) === "string";
 }
 
 export function removeAttribute(target, attr){
 
     const key = "_attr_" + attr;
 
-    if(target[key]){
+    if(target[key] !== null){
 
-        delete target[key];
+        target[key] = null;
+        target.removeAttribute(attr);
     }
-
-    target.removeAttribute(attr);
 
     return this;
 }

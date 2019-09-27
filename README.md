@@ -44,33 +44,10 @@ Demo:
 3. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
-#### Preview 0.4.x
-`new` webpack loader to bundle templates.
-
-#### Milestones
-There are some features in draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
-
-<table>
-    <tr>
-        <td>1000&nbsp;Github&nbsp;Stars</td>
-        <td>Supports using of <a href="#template">native templates</a> as an alternative to compile and parse JSON.</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>2500&nbsp;Github&nbsp;Stars</td>
-        <td>New attribute <a href="#bind">bind</a> for input elements (reactive 2-way binding of input elements).</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>5000&nbsp;Github&nbsp;Stars</td>
-        <td>Express middleware / standalone webserver for high performance bi-directional server-side rendering (SSR).</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>10k&nbsp;Github&nbsp;Stars</td>
-        <td>A reboot of <a href="https://github.com/nextapps-de/xone">Xone</a> which fully based on Mikado. Xone is a full-stack mobile application SDK which seamlessly runs in browser and also supports Cordova and NativeScript from the same codebase.</td>
-    </tr>
-</table>
+#### Comming Soon 0.4.x
+`new` webpack loader to bundle templates<br>
+`change` file endings for templates will be changed from ".html" into ___.shtml___<br>
+`change` template names will inherit from foldername and filename (instead of just filenames)<br>
 
 #### Get Latest:
 
@@ -100,15 +77,15 @@ There are some features in draft and it points out that those features requires 
     </tr>
 </table>
 
-To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.0.8/`, or also a commit hash.
+> __Recommended:__ To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.3.1/`, or also a commit hash.
 
-__Node.js__
+#### Node.js
 
 ```npm
 npm install mikado
 ```
 
-__Feature Comparison__
+#### Feature Comparison
 <table>
     <tr></tr>
     <tr>
@@ -134,7 +111,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#event">Event Binding</a>
+            <a href="#store">Internal Data Storage</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -142,7 +119,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#store">Data Binding (Proxy)</a>
+            <a href="#event">Event Binding/Routes</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -150,7 +127,15 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#export">Persistent Storage</a>
+            <a href="#proxy">Data Binding (Proxy)</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#async">Asynchronous Render</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -190,7 +175,7 @@ __Feature Comparison__
     <tr></tr>
     <tr>
         <td>
-            <a href="#includes">Includes/Partials</a>
+            <a href="#includes">Includes/Partials/Loops</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -211,7 +196,7 @@ Run the benchmark:<br>
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
 
-Values represents operations per second, each benchmark task has to process an data array of 100 items. Higher values are better except file size (minified, gzip) and memory (allocation during the whole test).
+Values represents operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except file size (minified/gzip) and memory (sum of allocation during the whole test).
 
 <table>
     <tr></tr>
@@ -408,8 +393,6 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.swap">view.__swap__(node|index, node|index)</a>
 - ~~view.__shuffle__()~~
 
-<!-- <a href="#view.pager">view.__pager__(data, \<options\>, \<callback\>)</a> -->
-
 Instance properties:
 - ~~view.__dom__~~
 - <a href="#view.length">view.__length__</a>
@@ -418,7 +401,7 @@ Instance properties:
 - ~~view.__config__~~
 - <a href="#view.id">view.__template__</a>
 
-Global helpers (not included in mikado.light.js):
+Global helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.setText">Mikado.__setText__(node, text)</a>
 - <a href="#Mikado.getText">Mikado.__getText__(node)</a>
 - <a href="#Mikado.setHTML">Mikado.__setHTML__(node, html)</a>
@@ -498,10 +481,18 @@ Global helpers (not included in mikado.light.js):
     </tr>
     <tr></tr>
     <tr>
+        <td><b>prefetch</b></td>
+        <td>Prefetch/prebuilt a template on page load. Disable to save memory an speed up page start.</td>
+        <td>true</td>
+    </tr>
+    <!--
+    <tr></tr>
+    <tr>
         <td><b>once</b></td>
         <td>Performs the render of a template just one time. This only applies on <a href="static">static views</a>. The render ist starting immediately (do not call .render again!). When finishing it fully cleans up (removes view, data and also the template definition). This is useful for static views, which should persist in the app.</td>
         <td>false</td>
     </tr>
+    -->
 </table>
 
 <a name="started" id="started"></a>
@@ -541,12 +532,12 @@ npm install mikado-compile
 
 Compile the template through the command line by:
 ```cmd
-mikado compile template/template.html
+npx mikado compile template/template.html
 ```
 
-> __Notation:__ mikado _{{input}} {{destination}}_
+> __Notation:__ npx mikado compile _{{input}} {{destination}}_
 
-Instead of `mikado compile` you can also use `npx mikado compile` alternatively. When a destination was not set, the input folder will be used instead.
+Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
 
 After compilation you will have 4 different files:
 1. __template.js__ the template compiled in ES5 compatible Javascript
@@ -831,19 +822,21 @@ There are 2 click listeners. The attribute value represents the name of the rout
 
 Define routes:
 ```js
-view.route("show-user", function(node){
+view.route("show-user", function(node, event){
 
     alert(node.textContent);
 
-}).route("delete-user", function(node){
+}).route("delete-user", function(node, event, self){
 
-    alert(node.dataet.id);
+    alert(node.dataset.id); // delegated to "root"
+    console.log("The element who fires the event: ", self);
 })
 ```
 
 Routes are stored globally, so you can share routes through all Mikado instances.
 
 <b>List of all native supported events:</b>
+- tap (synthetic touch-enabled "click" listener)
 - change, input, select, toggle
 - click, dblclick
 - keydown, keyup, keypress
@@ -866,11 +859,6 @@ Routes are stored globally, so you can share routes through all Mikado instances
     <tr>
         <td><b>tap</b></td>
         <td>The tap event is a synthetic click event for touch-enabled devices. It also fully prevents the 300ms click delay. The tap event automatically falls back to a native click listener when running on non-touchable device.</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><b>swipe</b></td>
-        <td>* This gesture is currently in progress.</td>
     </tr>
 </table>
 
@@ -1032,7 +1020,7 @@ view.clear();
 ```
 
 <a name="view.replace"></a>
-Replace an data/node:
+Replace a data/node:
 ```js
 view.replace(old, new);
 ```
@@ -1058,7 +1046,7 @@ var node = view.node(index);
 ```
 
 <a name="view.data"></a>
-Get an data from the store by index:
+Get a data from the store by index:
 ```js
 var data = view.data(index);
 ```
@@ -1110,34 +1098,34 @@ var name = view.template;
 Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To prevent re-syncing Mikado provides you several helper functions to manipulate the dom and also keep them in sync. Using the helper function also grants you a maximum performance.
 
 <a name="view.move"></a>
-Move an data/node to a specific index:
+Move a data/node to a specific index:
 ```js
 view.move(node, 15);  // 15 from start
 view.move(node, -15); // 15 from end
 ```
 
 <a name="view.first"></a><a name="view.last"></a>
-Move an data/node to the top or bottom:
+Move a data/node to the top or bottom:
 ```js
 view.first(node);
 view.last(node);
 ```
 
 <a name="view.up"></a><a name="view.down"></a>
-Move an data/node by 1 index:
+Move a data/node by 1 index:
 ```js
 view.up(node);
 view.down(node);
 ```
 
-Shift an data/node by a specific offset:
+Shift a data/node by a specific offset:
 ```js
 view.up(node, 3);
 view.down(node, 3);
 ```
 
 <a name="view.before"></a><a name="view.after"></a>
-Move an data/node before or after another data/node:
+Move a data/node before or after another data/node:
 ```js
 view.before(node_a, node_b);
 view.after(node_a, node_b);
@@ -1215,6 +1203,7 @@ Basically you have 2 options in this situation:
 1. do not manually change dom properties or states (instead change all through rendering templates)
 2. using the <a href="#cache-helpers">caching helpers</a> which Mikado provides you exactly to this purpose.
 
+<!--
 Do not worry, there exist an rescue method to force re-sync:
 ```js
 view.sync(); // re-sync dom nodes
@@ -1222,6 +1211,7 @@ view.sync(); // re-sync dom nodes
 ```js
 view.sync(true); // re-sync dom nodes and properties
 ```
+-->
 
 Please keep in mind that manual changes to the DOM has its limits:
 
@@ -1576,10 +1566,10 @@ npm install mikado-server
 Start the compiler server:
 
 ```cmd
-mikado server
+npx mikado server
 ```
 
-Instead of `mikado server` you can also use `npx mikado server` alternatively.
+Instead of `npx mikado server` you can also use `npx mikado-server` alternatively.
 
 The service is listening on localhost. The API has this specification:
 
@@ -1840,6 +1830,35 @@ var data = {
 
 Just use plain property notation within curly brackets.
 
+## Milestones
+There are some features in draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
+<table>
+    <tr>
+        <td>500&nbsp;Github&nbsp;Stars</td>
+        <td>Providing pseudo attributes <b>else</b> and <b>elseif</b> within templates to chain conditionals.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>1000&nbsp;Github&nbsp;Stars</td>
+        <td>Supports using of <a href="#template">native templates</a> as an alternative to compile and parse JSON.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>2500&nbsp;Github&nbsp;Stars</td>
+        <td>New attribute <a href="#bind">bind</a> for input elements (reactive 2-way binding of input elements).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>5000&nbsp;Github&nbsp;Stars</td>
+        <td>Express middleware / standalone webserver for high performance bi-directional server-side rendering (SSR).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>10k&nbsp;Github&nbsp;Stars</td>
+        <td>A reboot of <a href="https://github.com/nextapps-de/xone">Xone</a> on top of Mikado. Xone is a full-stack mobile application SDK which seamlessly runs in browser and also supports Cordova and NativeScript from the same codebase.</td>
+    </tr>
+</table>
+
 <a name="template" id="template"></a>
 ## Using Native Templates
 
@@ -1893,7 +1912,7 @@ view.mount(root_b).render(data);
 view.mount(root_c).render(data);
 ```
 
-This is bad:
+This is okay, but instead of this:
 ```js
 view.mount(root);
 view.init(tpl_a).render(data);
@@ -1901,7 +1920,7 @@ view.init(tpl_b).render(data);
 view.init(tpl_c).render(data);
 ```
 
-Instead doing this:
+Doing this:
 ```js
 var view_a = new Mikado(tpl_a);
 var view_b = new Mikado(tpl_b);
@@ -1912,7 +1931,7 @@ view_b.mount(root_b).render(data);
 view_c.mount(root_a).render(data);
 ```
 
-Ideally every template should have initialized by one (and only one) Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
+Ideally every template should have initialized by one Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
 
 ## Motivation
 

@@ -8,14 +8,17 @@ import {
     getText,
     hasAttribute,
     hasClass,
+    toggleClass,
+    removeClass,
+    addClass,
     removeAttribute,
     setAttribute,
     setClass,
     setCSS,
     setHTML,
-    setText,
-    setStyle,
-    getStyle
+    setText
+    //setStyle,
+    //getStyle
 } from "./cache.js";
 
 if(SUPPORT_CACHE && SUPPORT_HELPERS){
@@ -35,9 +38,15 @@ if(SUPPORT_CACHE && SUPPORT_HELPERS){
     /** @export */
     Mikado.hasClass = hasClass;
     /** @export */
-    Mikado.setStyle = setStyle;
+    Mikado.toggleClass = toggleClass;
     /** @export */
-    Mikado.getStyle = getStyle;
+    Mikado.removeClass = removeClass;
+    /** @export */
+    Mikado.addClass = addClass;
+    /** @export */
+    //Mikado.setStyle = setStyle;
+    /** @export */
+    //Mikado.getStyle = getStyle;
     /** @export */
     Mikado.setCSS = setCSS;
     /** @export */

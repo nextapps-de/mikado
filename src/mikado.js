@@ -25,7 +25,8 @@ const defaults = {
     "cache": true,
     "async": false,
     "reuse": true,
-    "proxy": false
+    "prefetch": true
+    //"proxy": false
 };
 
 /**
@@ -39,10 +40,6 @@ let state = {};
  */
 
 const templates = {};
-
-/**
- * @type {Object<string, Template>}
- */
 
 const parsed = {};
 
@@ -256,8 +253,8 @@ Mikado.prototype.init = function(template, options){
 
     if(SUPPORT_STORAGE){
 
-        const observe = SUPPORT_REACTIVE && options["proxy"];
-        const store = typeof observe === "object" ? observe : options["store"] || observe;
+        //const observe = SUPPORT_REACTIVE && options["proxy"];
+        const store = /*typeof observe === "object" ? observe :*/ options["store"] /*|| observe*/;
 
         if(store){
 
@@ -275,7 +272,7 @@ Mikado.prototype.init = function(template, options){
 
             if(SUPPORT_REACTIVE){
 
-                this.proxy = observe && {};
+                this.proxy = /*observe &&*/ null;
             }
         }
         else{
@@ -296,11 +293,10 @@ Mikado.prototype.init = function(template, options){
         this.template = template["n"];
         this.vpath = null;
         this.update_path = null;
-        this.static = true;
+        this.static = template["d"];
         if(SUPPORT_TEMPLATE_EXTENSION) this.include = null;
-        //this.factory = null;
-        this.factory = /*parsed[this.template] || (parsed[this.template] =*/ this.parse(template)/*)*/;
-
+        // NOTE: init on page load VS. init on .create()
+        this.factory = options["prefetch"] && this.parse(template);
         this.check();
     }
 
@@ -354,12 +350,10 @@ Mikado.prototype.create = function(data, view, index){
 
     let factory = this.factory;
 
-    /*
     if(!factory){
 
-        this.factory = factory = this.parse(this.template);
+        this.factory = factory = this.parse(templates[this.template]);
     }
-    */
 
     this.static || this.update_path(factory["_path"], factory["_cache"], data, index, view);
 
@@ -636,13 +630,25 @@ Mikado.prototype.destroy = function(unload){
         this.unload();
     }
 
+    parsed[this.template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
+
     this.dom = null;
     this.root = null;
-    //this.template = null;
+    this.template = null;
     this.vpath = null;
     this.update_path = null;
     this.factory = null;
     this.length = 0;
+
+    if(SUPPORT_TEMPLATE_EXTENSION){
+
+        this.include = null;
+    }
+
+    if(SUPPORT_STORAGE){
+
+        this.store = null;
+    }
 };
 
 if(SUPPORT_ASYNC){
@@ -935,6 +941,20 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
     //profiler_start("parse");
 
+    // TODO: there are two versions of the same factory: cached and non-cached
+    const cache = parsed[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
+
+    if(cache){
+
+        this.update_path = cache.update_path;
+        this.static = cache.static;
+        this.include = cache.include;
+        this.proxy = cache.proxy;
+        this.vpath = cache.vpath;
+
+        return cache.node;
+    }
+
     const node = document.createElement(tpl["t"] || "div");
 
     if(!index){
@@ -943,9 +963,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         path = "&";
         tmp_fn = "";
         this.vpath = [];
-        if(SUPPORT_REACTIVE && this.proxy) this.proxy = {};
         node["_path"] = dom_path = [];
-        node["_cache"] = {};
+        if(SUPPORT_CACHE) node["_cache"] = {};
         root_node = node;
     }
 
@@ -977,6 +996,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         if(typeof class_name === "object"){
 
+            // NOTE: classList is faster but has to reset old state when "reuse" is enabled and helpers were used
+
             let observable = class_name[1];
             class_name = class_name[0];
 
@@ -990,10 +1011,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 ):
                     ";self.className=" + class_name;
 
-            if(SUPPORT_REACTIVE && this.proxy && observable){
+            if(SUPPORT_REACTIVE && observable){
 
+                this.proxy || (this.proxy = {});
                 this.proxy[class_name] || (this.proxy[class_name] = []);
-                this.proxy[class_name].push(["class", path_length]);
+                this.proxy[class_name].push(["_class", path_length]);
             }
 
             this.vpath[path_length] = path;
@@ -1039,6 +1061,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof value === "object"){
 
+                // NOTE: did not reset old state when attributes were manually changed
+
                 let observable = value[1];
                 value = value[0];
 
@@ -1052,10 +1076,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                     ):
                         ";self.setAttribute('" + key + "'," + value + ")";
 
-                if(SUPPORT_REACTIVE && this.proxy && observable){
+                if(SUPPORT_REACTIVE && observable){
 
+                    this.proxy || (this.proxy = {});
                     this.proxy[value] || (this.proxy[value] = []);
-                    this.proxy[value].push(["attr", path_length, key]);
+                    this.proxy[value].push(["_attr", path_length, key]);
                 }
 
                 has_dynamic_values = true;
@@ -1095,16 +1120,19 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 ):
                     ";self.style.cssText=" + style;
 
-            if(SUPPORT_REACTIVE && this.proxy && observable){
+            if(SUPPORT_REACTIVE && observable){
 
+                this.proxy || (this.proxy = {});
                 this.proxy[style] || (this.proxy[style] = []);
-                this.proxy[style].push(["css", path_length]);
+                this.proxy[style].push(["_css", path_length]);
             }
 
             this.vpath[path_length] = path;
             dom_path[path_length] = node;
             has_update++;
         }
+        // NOTE: Faster but will not reset old state when "reuse" is enabled and helpers were used:
+        /*
         else{
 
             const keys = Object.keys(style);
@@ -1130,10 +1158,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                         ):
                             ";self.style.setProperty('" + key + "'," + value + ")";
 
-                    if(SUPPORT_REACTIVE && this.proxy && observable){
+                    if(SUPPORT_REACTIVE && observable){
 
+                        this.proxy || (this.proxy = {});
                         this.proxy[value] || (this.proxy[value] = []);
-                        this.proxy[value].push(["style", path_length, key]);
+                        this.proxy[value].push(["_style", path_length, key]);
                     }
 
                     has_dynamic_values = true;
@@ -1151,6 +1180,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 dom_path[path_length] = node;
             }
         }
+        */
     }
 
     if(!child){
@@ -1212,10 +1242,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                     ):
                         ";self.nodeValue=" + text;
 
-                if(SUPPORT_REACTIVE && this.proxy && observable){
+                if(SUPPORT_REACTIVE && observable){
 
+                    this.proxy || (this.proxy = {});
                     this.proxy[text] || (this.proxy[text] = []);
-                    this.proxy[text].push(["text", path_length]);
+                    this.proxy[text].push(["_text", path_length]);
                 }
 
                 this.vpath[path_length] = path;
@@ -1242,10 +1273,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                     ):
                         ";self.innerHTML=" + html;
 
-                if(SUPPORT_REACTIVE && this.proxy && observable){
+                if(SUPPORT_REACTIVE && observable){
 
+                    this.proxy || (this.proxy = {});
                     this.proxy[html] || (this.proxy[html] = []);
-                    this.proxy[html].push(["html", path_length]);
+                    this.proxy[html].push(["_html", path_length]);
                 }
 
                 this.vpath[path_length] = path;
@@ -1325,16 +1357,29 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         tmp_fn += "}else " + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=true";
     }
 
-    if(!index && !this.static){
+    if(!index){
 
-        // console.log('"use strict";var self,v' + tmp_fn);
-        // console.log(dom_path);
-        // console.log(this.vpath);
+        if(!this.static){
 
-        if(tmp_fn) this.update_path = Function("p", "s", "data", "index", "view", (
+            // console.log('"use strict";var self,v' + tmp_fn);
+            // console.log(dom_path);
+            // console.log(this.vpath);
 
-            '"use strict";var self,v' + tmp_fn
-        ));
+            if(tmp_fn) this.update_path = Function("p", "s", "data", "index", "view", (
+
+                '"use strict";var self,v' + tmp_fn
+            ));
+        }
+
+        parsed[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = {
+
+            update_path: this.update_path,
+            static: this.static,
+            include: this.include,
+            proxy: this.proxy,
+            vpath: this.vpath,
+            node: node
+        };
     }
 
     //profiler_end("parse");

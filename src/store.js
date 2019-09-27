@@ -37,14 +37,14 @@ if(SUPPORT_STORAGE){
 
             data = JSON.parse(data);
 
-            if(this.extern){
-
-                this.store.push.apply(this.store, data);
-            }
-            else{
+            // if(this.extern){
+            //
+            //     this.store.push.apply(this.store, data);
+            // }
+            // else{
 
                 this.store = data;
-            }
+            //}
 
             // if(this.store){
             //

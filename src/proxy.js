@@ -1,37 +1,42 @@
 const proxy_setter = {
 
-    "text": function(target, text){
+    "_text": function(target, text){
 
         target.nodeValue = text;
     },
-    "html": function(target, html){
+    "_html": function(target, html){
 
         target.innerHTML = html;
     },
-    "class": function(target, class_name){
+    "_class": function(target, class_name){
 
         target.className = class_name;
     },
-    "css": function(target, css){
+    "_css": function(target, css){
 
         (target["_style"] || (target["_style"] = target.style)).cssText = css;
     },
-    "style": function(target, value, style){
+    /*
+    "_style": function(target, value, style){
 
         (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
     },
-    "attr": function(target, value, attr){
+    */
+    "_attr": function(target, value, attr){
 
         target.setAttribute(attr, value);
     }
 };
+
+// Handler holds multiple dynamic expressions which references to the same data field
+// {"title": [["text", node, key]]}
 
 export default function create_proxy(obj, path, handler){
 
     return new Proxy(obj, /** @type {!ProxyHandler} */ ({
 
         path: path,
-        handler: handler, // {"title": [["text", node, key]]}
+        handler: handler,
         set: proxy_set
     }));
 }

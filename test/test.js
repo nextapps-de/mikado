@@ -665,17 +665,18 @@ describe("Cache Helpers", function(){
         // cache will create during second run!
         mikado.render(data);
 
-        var tmp = root_1.children[0].children[0].className;
-        Mikado.setClass(root_1.children[0].children[0], "changed");
-        expect(Mikado.hasClass(root_1.children[0].children[0], tmp.split(" ")[0])).to.equal(false);
-        expect(Mikado.hasClass(root_1.children[0].children[0], "changed")).to.equal(true);
+        var target = root_1.children[0].children[0];
+        var tmp = target.className;
+        Mikado.setClass(target, "changed");
+        expect(Mikado.hasClass(target, tmp.split(" ")[0])).to.equal(false);
+        expect(Mikado.hasClass(target, "changed")).to.equal(true);
         mikado.render(data);
 
-        expect(root_1.children[0].children[0].className).to.equal(tmp);
+        expect(target.className).to.equal(tmp);
         validate(mikado.dom[0], data[0]);
 
-        expect(Mikado.getClass(root_1.children[0].children[0])).to.equal(tmp);
-        expect(Mikado.hasClass(root_1.children[0].children[0], tmp.split(" ")[0])).to.equal(true);
+        expect(Mikado.getClass(target)).to.equal(tmp);
+        expect(Mikado.hasClass(target, tmp.split(" ")[0])).to.equal(true);
     });
 });
 
@@ -1158,7 +1159,7 @@ describe("Proxy", function(){
     it("Should have been made data observable (internal store)", function(){
 
         var items = data.slice(0);
-        var mikado = new Mikado(root_1, "proxy", { proxy: true, loose: false });
+        var mikado = new Mikado(root_1, "proxy", { store: true, loose: false });
         mikado.render(items);
 
         mikado.store[0].id = "foo";
@@ -1171,7 +1172,7 @@ describe("Proxy", function(){
     it("Should have been made data observable (internal store + loose)", function(){
 
         var items = data.slice(0);
-        var mikado = new Mikado(root_1, "proxy", { proxy: true, loose: true });
+        var mikado = new Mikado(root_1, "proxy", { store: true, loose: true });
         mikado.render(items);
 
         mikado.data(0).id = "foo";
@@ -1184,7 +1185,7 @@ describe("Proxy", function(){
     it("Should have been made data observable (external store)", function(){
 
         var items = data.slice(0);
-        var mikado = new Mikado(root_1, "proxy", { proxy: items, loose: false });
+        var mikado = new Mikado(root_1, "proxy", { store: items, loose: false });
         mikado.render(items);
 
         items[0].id = "foo";
@@ -1203,7 +1204,7 @@ describe("Proxy", function(){
     it("Should have been made data observable (external store + loose)", function(){
 
         var items = data.slice(0);
-        var mikado = new Mikado(root_1, "proxy", { proxy: items, loose: true });
+        var mikado = new Mikado(root_1, "proxy", { store: items, loose: true });
         mikado.render(items);
 
         items[0].id = "foo";
@@ -1258,19 +1259,21 @@ describe("Import/Export", function(){
 
 function validate(node, data){
 
-    expect(node.outerHTML).to.equal(factory(data));
-}
+    var dataset = node.dataset;
+    expect(dataset.id).to.equal(data.id);
+    expect(dataset.date).to.equal(data.date);
+    expect(dataset.index).to.equal(String(data.index));
 
-function factory(data){
+    var wrapper = node.firstElementChild;
+    expect(wrapper.className).to.equal(data.class.replace(/,/g, ""));
+    expect(wrapper.style.paddingRight).to.equal("10px");
 
-    return (
+    var title = wrapper.firstElementChild;
+    expect(title.textContent).to.equal(data.title);
 
-        '<section root="" data-id="' + data.id + '" data-date="' + data.date + '" data-index="' + data.index + '">' +
-            '<div click="attach" class="' + data.class + '" style="padding-right: 10px;">' +
-                '<div class="title" click="delegate:root">' + data.title + '</div>' +
-                '<div class="content">' + data.content + '</div>' +
-                '<div class="footer">' + data.footer + '</div>' +
-            '</div>' +
-        '</section>'
-    );
+    var content = title.nextElementSibling;
+    expect(content.textContent).to.equal(data.content);
+
+    var footer = content.nextElementSibling;
+    expect(footer.textContent).to.equal(data.footer);
 }
