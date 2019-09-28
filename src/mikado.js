@@ -309,6 +309,14 @@ Mikado.prototype.init = function(template, options){
     return this;
 };
 
+/**
+ * @param {Element} root
+ * @param {Template|Object} template
+ * @param {Array<Object>|Object=} data
+ * @param {Object=} view
+ * @param {Function=} callback
+ */
+
 Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
     Mikado.new(root, template).render(data, view, callback).destroy(true);
@@ -562,31 +570,42 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
             this.length = count;
             count = nodes.length;
 
-            let tpl_pool, size;
+            //let tpl_pool, size;
 
             if(this.pool){
 
-                tpl_pool = pool[this.template];
+                const tpl_pool = pool[this.template];
 
-                if(tpl_pool){
+                if(!tpl_pool || !tpl_pool.length){
 
-                    size = pool.length;
+                    pool[this.template] = nodes;
                 }
                 else{
 
-                    tpl_pool = pool[this.template] = new Array(count);
-                    size = 0;
+                    tpl_pool.push.apply(tpl_pool, nodes);
                 }
+
+                // tpl_pool = pool[this.template];
+                //
+                // if(tpl_pool){
+                //
+                //     size = pool.length;
+                // }
+                // else{
+                //
+                //     tpl_pool = pool[this.template] = new Array(count);
+                //     size = 0;
+                // }
             }
 
             for(let x = 0, tmp; x < count; x++){
 
                 tmp = this.root.removeChild(nodes[x]);
 
-                if(tpl_pool){
-
-                    tpl_pool[size++] = tmp;
-                }
+                // if(tpl_pool){
+                //
+                //     tpl_pool[size++] = tmp;
+                // }
             }
         }
     }
@@ -647,8 +666,16 @@ Mikado.prototype.clear = function(resize){
 
     if(this.pool && this.length){
 
-        const tpl_pool = pool[this.template] || (pool[this.template] = []); // new Array(this.length)
-        tpl_pool.push.apply(tpl_pool, this.dom);
+        const tpl_pool = pool[this.template];
+
+        if(!tpl_pool || !tpl_pool.length){
+
+            pool[this.template] = this.dom;
+        }
+        else{
+
+            tpl_pool.push.apply(tpl_pool, this.dom);
+        }
     }
 
     // if(SUPPORT_CACHE && this.pool.length){
@@ -689,13 +716,6 @@ Mikado.prototype.destroy = function(unload){
     if(unload){
 
         this.unload();
-    }
-
-    parsed[this.template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
-
-    if(this.pool){
-
-        pool[this.template] = null;
     }
 
     this.dom = null;
@@ -1116,7 +1136,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         if(SUPPORT_EVENTS && events){
 
             const tmp = Object.keys(events);
-            keys = keys ? keys.push.apply(keys, tmp) : tmp;
+            keys ? keys.push.apply(keys, tmp) : keys = tmp;
         }
 
         for(let i = 0; i < keys.length; i++){
@@ -1550,6 +1570,8 @@ Mikado.prototype.unload = function(template){
     if(template){
 
         templates[template/*["n"]*/] = null;
+        parsed[template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
+        pool[template] = null;
     }
 };
 
