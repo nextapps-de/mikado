@@ -1,3 +1,8 @@
+## 0.4.2
+`new` introduce an shared object pool and a new option flag ___pool___ to enable it<br>
+`improve` using ___pool___ significantly improves memory allocation (cuts down by a factor of 10)<br>
+`add` add a method ___unregister___ (accordingly to "register") which points to the same method as ___unload___ (accordingly to "load")<br>
+
 ## 0.4.1
 `change` removing the redundant option ___proxy___ (it will apply automatically)<br>
 `improve` re-assigning templates is now close as fast as re-mounting<br>

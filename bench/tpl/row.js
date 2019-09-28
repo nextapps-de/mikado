@@ -55,15 +55,6 @@ Mikado.register({
     {
       "t": "td",
       "s": [
-        "'background-color:' + data.color_append"
-      ],
-      "x": [
-        "data.append"
-      ]
-    },
-    {
-      "t": "td",
-      "s": [
         "'background-color:' + data.color_repaint"
       ],
       "x": [
@@ -73,10 +64,28 @@ Mikado.register({
     {
       "t": "td",
       "s": [
+        "'background-color:' + data.color_append"
+      ],
+      "x": [
+        "data.append"
+      ]
+    },
+    {
+      "t": "td",
+      "s": [
         "'background-color:' + data.color_reduce"
       ],
       "x": [
         "data.reduce"
+      ]
+    },
+    {
+      "t": "td",
+      "s": [
+        "'background-color:' + data.color_toggle"
+      ],
+      "x": [
+        "data.toggle"
       ]
     },
     {

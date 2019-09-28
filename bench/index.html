@@ -35,10 +35,11 @@
             <th>Create</th>
             <th>Update</th>
             <th>Partial</th>
-            <th>Append</th>
             <th>Repaint</th>
+            <th>Append</th>
             <th>Reduce</th>
-            <th>Remove</th>
+            <th>Toggle</th>
+            <th>Clear</th>
             <th>Score</th>
         </tr>
     </thead>
@@ -76,8 +77,9 @@
 
         const test = [
             "size", "memory", "create",
-            "update", "partial", "append",
-            "repaint", "reduce", "remove"
+            "update", "partial", "repaint",
+            "append", "reduce", "toggle",
+            "remove"
         ];
 
         let current = new Array(lib.length);

@@ -3,9 +3,11 @@ import Mikado from "./mikado.js";
 /** @export */
 Mikado.register;
 /** @export */
-Mikado.unload;
+Mikado.unregister;
 /** @export */
 Mikado.load;
+/** @export */
+Mikado.unload;
 /** @export */
 Mikado.new;
 /** @export */

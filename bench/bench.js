@@ -12,22 +12,16 @@ queue.push({
     name: "create",
     warmup: true,
     loop: 5000,
-    init: function(){
-        //root.textContent = "";
-    },
+    init: null,
     test: null,
     start: function(){
-        //root.textContent = "";
         clone = shuffle(items).slice(0);
     },
     fn: null,
     end: function(){
         this.fn([]);
-        //root.textContent = "";
     },
-    complete: function(){
-        //root.textContent = "";
-    }
+    complete: null
 });
 
 queue.push({
@@ -35,7 +29,6 @@ queue.push({
     warmup: true,
     loop: 20000,
     init: function(){
-        //root.textContent = "";
         this.fn(items.slice(0));
     },
     test: null,
@@ -46,7 +39,6 @@ queue.push({
     end: null,
     complete: function(){
         this.fn([]);
-        //root.textContent = "";
     }
 });
 
@@ -55,7 +47,6 @@ queue.push({
     warmup: true,
     loop: 20000,
     init: function(){
-        //root.textContent = "";
         this.fn(items.slice(0));
     },
     test: null,
@@ -68,7 +59,23 @@ queue.push({
     end: null,
     complete: function(){
         this.fn([]);
-        //root.textContent = "";
+    }
+});
+
+queue.push({
+    name: "repaint",
+    warmup: true,
+    loop: 50000,
+    init: function(){
+        this.fn(shuffle(items).slice(0));
+    },
+    test: null,
+    start: function(){
+        clone = items.slice(0);
+    },
+    fn: null,
+    complete: function(){
+        this.fn([]);
     }
 });
 
@@ -79,36 +86,14 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        //root.textContent = "";
+        this.fn(shuffle(items).slice(0, 50));
         clone = items.slice(0);
-        this.fn(clone);
-        clone = clone.concat(shuffle(items)).slice(0);
     },
     fn: null,
     end: function(){
         this.fn([]);
-        //root.textContent = "";
     },
     complete: null
-});
-
-queue.push({
-    name: "repaint",
-    warmup: true,
-    loop: 50000,
-    init: function(){
-        //root.textContent = "";
-        this.fn(items.slice(0));
-    },
-    test: null,
-    start: function(){
-        clone = items.slice(0);
-    },
-    fn: null,
-    complete: function(){
-        this.fn([]);
-        //root.textContent = "";
-    }
 });
 
 queue.push({
@@ -118,14 +103,31 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        //root.textContent = "";
-        this.fn(items.slice(0));
+        this.fn(shuffle(items).slice(0));
         clone = items.slice(0, 50);
     },
     fn: null,
     complete: function(){
         this.fn([]);
-        //root.textContent = "";
+    }
+});
+
+let toggle = 0;
+
+queue.push({
+    name: "toggle",
+    warmup: true,
+    loop: 1,
+    init: function(){
+        this.fn(shuffle(items).slice(0));
+    },
+    test: null,
+    start: function(){
+        clone = (toggle = !toggle) ? items.slice(0, 50) : items.slice(0);
+    },
+    fn: null,
+    complete: function(){
+        this.fn([]);
     }
 });
 
@@ -136,14 +138,12 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        //root.textContent = "";
         this.fn(items.slice(0));
         clone = [];
     },
     fn: null,
     complete: function(){
         this.fn([]);
-        //root.textContent = "";
     }
 });
 
@@ -285,6 +285,7 @@ function perform(warmup){
     }
 
     let loops = warmup ? test.loop / 10 : test.loop;
+    //const results = new Array(loops | 0);
 
     if(test.init) test.init();
 
@@ -305,7 +306,9 @@ function perform(warmup){
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
         test.fn(clone);
-        duration += perf.now() - start;
+        tmp = perf.now() - start;
+        //results[i] = 1000 / tmp;
+        duration += tmp;
         tmp = perf.memory.usedJSHeapSize - mem_start;
         if(tmp > 0) memory += tmp;
 
@@ -316,17 +319,17 @@ function perform(warmup){
 
     if(warmup){
 
-        test.loop = 1000 / duration * (test.loop / 10) * 3;
+        test.loop = Math.floor(1000 / duration * (test.loop / 10) * 3);
     }
     else{
 
         if(window === window.top){
 
-            result.nodeValue = str_results += test.name.padEnd(12) + String((1000 / duration * test.loop) | 0).padStart(8) + " op/s, Memory:\t"  + (memory ? ((memory / test.loop) | 0) : "-") + "\n";
+            result.nodeValue = str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * test.loop)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / test.loop) : "-") + "\n";
         }
         else{
 
-            window.top.postMessage(test.name + "," + ((1000 / duration * test.loop) | 0) + "," + ((memory / test.loop) | 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
+            window.top.postMessage(test.name + "," + Math.floor(1000 / duration * test.loop) + "," + Math.floor(memory / test.loop), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
     }
 
@@ -336,6 +339,37 @@ function perform(warmup){
     }
 
     //root.textContent = "";
+}
+
+function median(arr){
+
+    const length = arr.sort().length;
+    const half = length / 2;
+
+    return (
+
+        length % 2 ?
+
+            arr[half | 0]
+        :
+            (arr[half - 1] + arr[half]) / 2
+    );
+}
+
+function normalize(arr){
+
+    arr.sort();
+    arr = arr.slice((arr.length / 4) | 0, (arr.length / 2) | 0);
+
+    const length = arr.length;
+    let sum = 0;
+
+    for(let i = 0; i < length; i++){
+
+        sum += arr[i];
+    }
+
+    return sum / length;
 }
 
 export function shuffle(items){
