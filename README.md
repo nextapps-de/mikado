@@ -192,7 +192,7 @@ npm install mikado
 </table>
 
 <a name="benchmark"></a>
-## Benchmark (Stress Test)
+## Benchmark Ranking (Stress Test)
 
 Run the benchmark:<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
@@ -210,11 +210,11 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=center><sup>KB</sup></td>
         <td align=center><sup>RAM</sup></td>
         <td align=center><sup>Create</sup></td>
+        <td align=center><sup>Replace</sup></td>
         <td align=center><sup>Update</sup></td>
-        <td align=center><sup>Partial</sup></td>
         <td align=center><sup>Repaint</sup></td>
         <td align=center><sup>Append</sup></td>
-        <td align=center><sup>Reduce</sup></td>
+        <td align=center><sup>Remove</sup></td>
         <td align=center><sup>Toggle</sup></td>
         <td align=center><sup>Clear</sup></td>
         <td align=center><sup>Score</sup></td>
@@ -222,126 +222,126 @@ Values represents operations per second, each benchmark task has to process a da
     <tr>
         <td>1</td>
         <td>mikado</td>
-        <td align=right><sup>2</sup></td>
-        <td align=right><sup>16487</sup></td>
-        <td align=right><sup>5468</sup></td>
-        <td align=right><sup>7158</sup></td>
-        <td align=right><sup>12829</sup></td>
-        <td align=right><sup>251559</sup></td>
-        <td align=right><sup>14486</sup></td>
-        <td align=right><sup>24436</sup></td>
-        <td align=right><sup>6284</sup></td>
-        <td align=right><sup>25229</sup></td>
+        <td align=right><sub>2</sub></td>
+        <td align=right><sub>16487</sub></td>
+        <td align=right><sub>5468</sub></td>
+        <td align=right><sub>7158</sub></td>
+        <td align=right><sub>12829</sub></td>
+        <td align=right><sub>251559</sub></td>
+        <td align=right><sub>14486</sub></td>
+        <td align=right><sub>24436</sub></td>
+        <td align=right><sub>6284</sub></td>
+        <td align=right><sub>25229</sub></td>
         <td align=right><b>956</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>2</td>
         <td>domc</td>
-        <td align=right><sup>4.46</sup></td>
-        <td align=right><sup>108992</sup></td>
-        <td align=right><sup>947</sup></td>
-        <td align=right><sup>6121</sup></td>
-        <td align=right><sup>10953</sup></td>
-        <td align=right><sup>91689</sup></td>
-        <td align=right><sup>974</sup></td>
-        <td align=right><sup>23280</sup></td>
-        <td align=right><sup>3763</sup></td>
-        <td align=right><sup>25113</sup></td>
+        <td align=right><sub>4.46</sub></td>
+        <td align=right><sub>108992</sub></td>
+        <td align=right><sub>947</sub></td>
+        <td align=right><sub>6121</sub></td>
+        <td align=right><sub>10953</sub></td>
+        <td align=right><sub>91689</sub></td>
+        <td align=right><sub>974</sub></td>
+        <td align=right><sub>23280</sub></td>
+        <td align=right><sub>3763</sub></td>
+        <td align=right><sub>25113</sub></td>
         <td align=right><b>517</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>3</td>
         <td>sinuous</td>
-        <td align=right><sup>7.48</sup></td>
-        <td align=right><sup>264323</sup></td>
-        <td align=right><sup>612</sup></td>
-        <td align=right><sup>9214</sup></td>
-        <td align=right><sup>11303</sup></td>
-        <td align=right><sup>308677</sup></td>
-        <td align=right><sup>635</sup></td>
-        <td align=right><sup>16679</sup></td>
-        <td align=right><sup>2432</sup></td>
-        <td align=right><sup>14226</sup></td>
+        <td align=right><sub>7.48</sub></td>
+        <td align=right><sub>264323</sub></td>
+        <td align=right><sub>612</sub></td>
+        <td align=right><sub>9214</sub></td>
+        <td align=right><sub>11303</sub></td>
+        <td align=right><sub>308677</sub></td>
+        <td align=right><sub>635</sub></td>
+        <td align=right><sub>16679</sub></td>
+        <td align=right><sub>2432</sub></td>
+        <td align=right><sub>14226</sub></td>
         <td align=right><b>498</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>4</td>
         <td>surplus</td>
-        <td align=right><sup>15.79</sup></td>
-        <td align=right><sup>189611</sup></td>
-        <td align=right><sup>845</sup></td>
-        <td align=right><sup>5683</sup></td>
-        <td align=right><sup>6944</sup></td>
-        <td align=right><sup>56654</sup></td>
-        <td align=right><sup>742</sup></td>
-        <td align=right><sup>14186</sup></td>
-        <td align=right><sup>3153</sup></td>
-        <td align=right><sup>23477</sup></td>
+        <td align=right><sub>15.79</sub></td>
+        <td align=right><sub>189611</sub></td>
+        <td align=right><sub>845</sub></td>
+        <td align=right><sub>5683</sub></td>
+        <td align=right><sub>6944</sub></td>
+        <td align=right><sub>56654</sub></td>
+        <td align=right><sub>742</sub></td>
+        <td align=right><sub>14186</sub></td>
+        <td align=right><sub>3153</sub></td>
+        <td align=right><sub>23477</sub></td>
         <td align=right><b>374</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>5</td>
         <td>redom</td>
-        <td align=right><sup>2.88</sup></td>
-        <td align=right><sup>363451</sup></td>
-        <td align=right><sup>402</sup></td>
-        <td align=right><sup>2576</sup></td>
-        <td align=right><sup>5402</sup></td>
-        <td align=right><sup>61482</sup></td>
-        <td align=right><sup>401</sup></td>
-        <td align=right><sup>19031</sup></td>
-        <td align=right><sup>1321</sup></td>
-        <td align=right><sup>12104</sup></td>
+        <td align=right><sub>2.88</sub></td>
+        <td align=right><sub>363451</sub></td>
+        <td align=right><sub>402</sub></td>
+        <td align=right><sub>2576</sub></td>
+        <td align=right><sub>5402</sub></td>
+        <td align=right><sub>61482</sub></td>
+        <td align=right><sub>401</sub></td>
+        <td align=right><sub>19031</sub></td>
+        <td align=right><sub>1321</sub></td>
+        <td align=right><sub>12104</sub></td>
         <td align=right><b>319</b></td>
     </tr>
     <tr></tr>
     <tr>
         <td>6</td>
         <td>inferno</td>
-        <td align=right><sup>8.4</sup></td>
-        <td align=right><sup>238827</sup></td>
-        <td align=right><sup>739</sup></td>
-        <td align=right><sup>2684</sup></td>
-        <td align=right><sup>3537</sup></td>
-        <td align=right><sup>5778</sup></td>
-        <td align=right><sup>553</sup></td>
-        <td align=right><sup>7028</sup></td>
-        <td align=right><sup>2270</sup></td>
-        <td align=right><sup>14066</sup></td>
+        <td align=right><sub>8.4</sub></td>
+        <td align=right><sub>238827</sub></td>
+        <td align=right><sub>739</sub></td>
+        <td align=right><sub>2684</sub></td>
+        <td align=right><sub>3537</sub></td>
+        <td align=right><sub>5778</sub></td>
+        <td align=right><sub>553</sub></td>
+        <td align=right><sub>7028</sub></td>
+        <td align=right><sub>2270</sub></td>
+        <td align=right><sub>14066</sub></td>
         <td align=right><b>225</b></td>
     </tr>
     <tr>
         <td>7</td>
         <td>innerHTML</td>
-        <td align=right><sup></sup></td>
-        <td align=right><sup>476345</sup></td>
-        <td align=right><sup>1043</sup></td>
-        <td align=right><sup>996</sup></td>
-        <td align=right><sup>902</sup></td>
-        <td align=right><sup>901</sup></td>
-        <td align=right><sup>458</sup></td>
-        <td align=right><sup>1654</sup></td>
-        <td align=right><sup>1192</sup></td>
-        <td align=right><sup>26178</sup></td>
+        <td align=right><sub></sub></td>
+        <td align=right><sub>476345</sub></td>
+        <td align=right><sub>1043</sub></td>
+        <td align=right><sub>996</sub></td>
+        <td align=right><sub>902</sub></td>
+        <td align=right><sub>901</sub></td>
+        <td align=right><sub>458</sub></td>
+        <td align=right><sub>1654</sub></td>
+        <td align=right><sub>1192</sub></td>
+        <td align=right><sub>26178</sub></td>
         <td align=right><b>188</b></td>
     </tr>
     <tr>
         <td>8</td>
         <td>jquery</td>
-        <td align=right><sup>31.26</sup></td>
-        <td align=right><sup>642049</sup></td>
-        <td align=right><sup>727</sup></td>
-        <td align=right><sup>647</sup></td>
-        <td align=right><sup>598</sup></td>
-        <td align=right><sup>601</sup></td>
-        <td align=right><sup>329</sup></td>
-        <td align=right><sup>957</sup></td>
-        <td align=right><sup>802</sup></td>
-        <td align=right><sup>4994</sup></td>
+        <td align=right><sub>31.26</sub></td>
+        <td align=right><sub>642049</sub></td>
+        <td align=right><sub>727</sub></td>
+        <td align=right><sub>647</sub></td>
+        <td align=right><sub>598</sub></td>
+        <td align=right><sub>601</sub></td>
+        <td align=right><sub>329</sub></td>
+        <td align=right><sub>957</sub></td>
+        <td align=right><sub>802</sub></td>
+        <td align=right><sub>4994</sub></td>
         <td align=right><b>72</b></td>
     </tr>
 </table>
@@ -1955,18 +1955,18 @@ Ideally every template should have initialized by one Mikado instance and should
 <a name="concept"></a>
 ## Concept of Shared Pools
 
-The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable and also saves memory and skip redundant re-calculations.
+The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
 <br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Pool (Concept)" width="61.8%">
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@caf1797191d471c5a1b8df958dd2c366abd8bdc3/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
 
 #### Factory Pool
 
-The factory pool shares partials or same templates definitions. When two templates including or loops through the same partial it will create a new instance which both of them will use. That saves memory, skips redundant re-calculations and also improves runtime execution, because different jobs can now run through the same process (less functional spread).
+The factory pool shares partials or same template definitions. When partials or templates are used more than once they will point to the same instance. That will save memory, skip redundant re-calculations and also improve runtime execution, because different jobs can now run through the same process (less reference spread).
 
 #### Template Pool
 
-The template pool is a feature accordingly to the option <a href="#reuse">reuse</a> and extends the strategy of re-using. Templates has to be created by the factory just <u>once</u> and will be re-used along the whole runtime. That's drastically improves everything to a complete new level. The memory allocation cuts down to a minimum (approx. reduce by a factor of 10). Creation and also removing templates are a lot faster. The garbage collector has almost nothing to do.
+The template pool is a feature accordingly to the option <a href="#reuse">reuse</a> and extends the strategy of re-using. Templates has to be created by the factory just <u>once</u> and stay available for re-using along the whole runtime. That's drastically improves everything to a complete new level. The memory allocation cuts down to a minimum (approx. reduce by a factor of 10). The creation/instantiation of new templates gets an amazing boost. When removing instances the garbage collector has almost nothing to do.
 
 ## Motivation
 

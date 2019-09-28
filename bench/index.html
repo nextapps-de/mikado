@@ -33,11 +33,11 @@
             <th>Size</th>
             <th>Memory</th>
             <th>Create</th>
+            <th>Replace</th>
             <th>Update</th>
-            <th>Partial</th>
             <th>Repaint</th>
             <th>Append</th>
-            <th>Reduce</th>
+            <th>Remove</th>
             <th>Toggle</th>
             <th>Clear</th>
             <th>Score</th>
@@ -51,6 +51,7 @@
     <li><a href="test/domc/">domc</a></li>
     <li><a href="test/inferno/">inferno</a></li>
     <li><a href="test/mikado/">mikado</a></li>
+    <li><a href="test/mikado-shared/">mikado (shared pool)</a></li>
     <li><a href="test/redom/">redom</a></li>
     <li><a href="test/sinuous/">sinuous</a></li>
     <li><a href="test/surplus/">surplus</a></li>
@@ -70,7 +71,7 @@
         const mikado = Mikado.new(result, "row");
 
         const lib = shuffle([
-            "mikado", "domc", "inferno",
+            "mikado", "mikado-shared", "domc", "inferno",
             "redom", "sinuous", "surplus",
             "innerHTML", "jquery"
         ]);
@@ -88,6 +89,7 @@
         let size = {
 
             "mikado": 2.0,
+            "mikado-shared": 2.0,
             "domc": 4.46,
             "inferno": 8.4,
             "redom": 2.88,
@@ -100,6 +102,7 @@
         let memory = {
 
             "mikado": 167336,
+            "mikado-shared": 16487,
             "domc": 207488,
             "inferno": 265192,
             "redom": 246936,

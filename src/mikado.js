@@ -243,9 +243,13 @@ Mikado.prototype.init = function(template, options){
         Mikado.register(template);
     }
 
+    this.reuse = options["reuse"];
+    this.state = options["state"] || state;
+
     if(SUPPORT_CACHE){
 
         this.cache = options["cache"];
+        this.pool = this.reuse && options["pool"];
     }
 
     if(SUPPORT_ASYNC){
@@ -253,10 +257,6 @@ Mikado.prototype.init = function(template, options){
         this.async = options["async"];
         this.timer = 0;
     }
-
-    this.reuse = options["reuse"];
-    this.state = options["state"] || state;
-    this.pool = this.reuse && options["pool"];
 
     if(SUPPORT_STORAGE){
 
@@ -364,7 +364,7 @@ Mikado.prototype.create = function(data, view, index){
 
     let tmp;
 
-    if(this.pool && (tmp = pool[this.template]) && tmp.length){
+    if(SUPPORT_CACHE && this.pool && (tmp = pool[this.template]) && tmp.length){
 
         tmp = tmp.pop();
         this.static || this.update_path(tmp["_path"] || this.create_path(tmp), tmp["_cache"], data, index, view);
@@ -554,7 +554,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 
             for(; x < count; x++){
 
-                this.add(data[x], view/*, this.root*/);
+                this.add(data[x], view);
             }
         }
 
@@ -570,42 +570,23 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
             this.length = count;
             count = nodes.length;
 
-            //let tpl_pool, size;
-
-            if(this.pool){
+            if(SUPPORT_CACHE && this.pool){
 
                 const tpl_pool = pool[this.template];
 
-                if(!tpl_pool || !tpl_pool.length){
+                pool[this.template] = (
 
-                    pool[this.template] = nodes;
-                }
-                else{
+                    tpl_pool && tpl_pool.length ?
 
-                    tpl_pool.push.apply(tpl_pool, nodes);
-                }
-
-                // tpl_pool = pool[this.template];
-                //
-                // if(tpl_pool){
-                //
-                //     size = pool.length;
-                // }
-                // else{
-                //
-                //     tpl_pool = pool[this.template] = new Array(count);
-                //     size = 0;
-                // }
+                        tpl_pool.concat(nodes)
+                    :
+                        nodes
+                );
             }
 
             for(let x = 0, tmp; x < count; x++){
 
                 tmp = this.root.removeChild(nodes[x]);
-
-                // if(tpl_pool){
-                //
-                //     tpl_pool[size++] = tmp;
-                // }
             }
         }
     }
@@ -664,18 +645,18 @@ Mikado.prototype.clear = function(resize){
 
     //profiler_start("clear");
 
-    if(this.pool && this.length){
+    if(SUPPORT_CACHE && this.pool && this.length){
 
         const tpl_pool = pool[this.template];
 
-        if(!tpl_pool || !tpl_pool.length){
+        pool[this.template] = (
 
-            pool[this.template] = this.dom;
-        }
-        else{
+            tpl_pool && tpl_pool.length ?
 
-            tpl_pool.push.apply(tpl_pool, this.dom);
-        }
+                tpl_pool.concat(this.dom)
+            :
+                this.dom
+        );
     }
 
     // if(SUPPORT_CACHE && this.pool.length){
@@ -793,7 +774,7 @@ Mikado.prototype.remove = function(node){
         this.store.splice(index, 1);
     }
 
-    if(this.pool){
+    if(SUPPORT_CACHE && this.pool){
 
         const tpl_pool = pool[this.template] || (pool[this.template] = []);
         tpl_pool[tpl_pool.length] = node;
@@ -1136,7 +1117,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         if(SUPPORT_EVENTS && events){
 
             const tmp = Object.keys(events);
-            keys ? keys.push.apply(keys, tmp) : keys = tmp;
+            keys = keys ? keys.concat(tmp) : tmp;
         }
 
         for(let i = 0; i < keys.length; i++){
@@ -1571,7 +1552,7 @@ Mikado.prototype.unload = function(template){
 
         templates[template/*["n"]*/] = null;
         parsed[template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
-        pool[template] = null;
+        if(SUPPORT_CACHE) pool[template] = null;
     }
 };
 
