@@ -232,7 +232,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>24436</sub></td>
         <td align=right><sub>32755</sub></td>
         <td align=right><sub>25229</sub></td>
-        <td align=right><b>957</b></td>
+        <td align=right><b>7538</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -248,7 +248,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>23280</sub></td>
         <td align=right><sub>3763</sub></td>
         <td align=right><sub>25113</sub></td>
-        <td align=right><b>463</b></td>
+        <td align=right><b>1605</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -264,7 +264,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16679</sub></td>
         <td align=right><sub>2432</sub></td>
         <td align=right><sub>14226</sub></td>
-        <td align=right><b>462</b></td>
+        <td align=right><b>1592</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -280,7 +280,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>14186</sub></td>
         <td align=right><sub>3153</sub></td>
         <td align=right><sub>23477</sub></td>
-        <td align=right><b>330</b></td>
+        <td align=right><b>1106</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -296,7 +296,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>19031</sub></td>
         <td align=right><sub>1321</sub></td>
         <td align=right><sub>12104</sub></td>
-        <td align=right><b>300</b></td>
+        <td align=right><b>944</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -312,7 +312,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7028</sub></td>
         <td align=right><sub>2270</sub></td>
         <td align=right><sub>14066</sub></td>
-        <td align=right><b>194</b></td>
+        <td align=right><b>729</b></td>
     </tr>
     <tr>
         <td>7</td>
@@ -327,7 +327,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1654</sub></td>
         <td align=right><sub>1192</sub></td>
         <td align=right><sub>26178</sub></td>
-        <td align=right><b>171</b></td>
+        <td align=right><b>558</b></td>
     </tr>
     <tr>
         <td>8</td>
@@ -342,13 +342,16 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>957</sub></td>
         <td align=right><sub>802</sub></td>
         <td align=right><sub>4994</sub></td>
-        <td align=right><b>62</b></td>
+        <td align=right><b>303</b></td>
     </tr>
 </table>
 
+<code>Score = Sum<sub>test</sub>(ops / median) * 100</code>
+<!--
 <code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
-
 The maximum possible score is 1000, that requires a library to be best in each category.<br>
+-->
+
 Read more about this test <a href="bench/#readme">here</a>.
 
 <a name="api"></a>

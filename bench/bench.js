@@ -99,7 +99,7 @@ queue.push({
 queue.push({
     name: "reduce",
     warmup: true,
-    loop: 1,
+    loop: 3000,
     init: null,
     test: null,
     start: function(){
@@ -117,7 +117,7 @@ let toggle = 0;
 queue.push({
     name: "toggle",
     warmup: true,
-    loop: 1,
+    loop: 3000,
     init: function(){
         this.fn(shuffle(items).slice(0));
     },
@@ -134,7 +134,7 @@ queue.push({
 queue.push({
     name: "remove",
     warmup: true,
-    loop: 1,
+    loop: 5000,
     init: null,
     test: null,
     start: function(){
@@ -343,7 +343,12 @@ function perform(warmup){
 
 function median(arr){
 
-    const length = arr.sort().length;
+    arr.sort(function(a, b){
+
+        return a - b;
+    });
+
+    const length = arr.length;
     const half = length / 2;
 
     return (

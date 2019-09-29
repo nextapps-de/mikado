@@ -46,16 +46,16 @@
     <tbody id="result"></tbody>
 </table>
 <br>
+To measure memory you have to run in Chrome browser.<br><br>
 <b>Single Tests:</b>
 <ul>
     <li><a href="test/domc/">domc</a></li>
     <li><a href="test/inferno/">inferno</a></li>
     <li><a href="test/mikado/">mikado</a></li>
-    <li><a href="test/mikado-shared/">mikado (shared pool)</a></li>
     <li><a href="test/redom/">redom</a></li>
     <li><a href="test/sinuous/">sinuous</a></li>
     <li><a href="test/surplus/">surplus</a></li>
-    <li><a href="test/innerhtml/">innerHTML (native Javascript)</a></li>
+    <li><a href="test/innerhtml/">innerHTML (native)</a></li>
     <li><a href="test/jquery/">jquery</a></li>
 </ul>
 <br>
@@ -71,7 +71,7 @@
         const mikado = Mikado.new(result, "row");
 
         const lib = shuffle([
-            "mikado", "mikado-shared", "domc", "inferno",
+            "mikado", "domc", "inferno",
             "redom", "sinuous", "surplus",
             "innerHTML", "jquery"
         ]);
@@ -89,7 +89,6 @@
         let size = {
 
             "mikado": 2.0,
-            "mikado-shared": 2.0,
             "domc": 4.46,
             "inferno": 8.4,
             "redom": 2.88,
@@ -101,15 +100,14 @@
 
         let memory = {
 
-            "mikado": 167336,
-            "mikado-shared": 16487,
-            "domc": 207488,
-            "inferno": 265192,
-            "redom": 246936,
-            "sinuous": 410960,
-            "surplus": 406992,
-            "innerHTML": 166288,
-            "jquery": 819032
+            "mikado": 16487,
+            "domc": 108992,
+            "inferno": 238827,
+            "redom": 363451,
+            "sinuous": 264323,
+            "surplus": 189611,
+            "innerHTML": 476345,
+            "jquery": 642049
         };
 
         for(let x = 0; x < lib.length; x++){
@@ -140,16 +138,27 @@
         function get_score(){
 
             let max = new Array(test.length);
+            let val = new Array(test.length);
 
             for(let y = 0; y < test.length; y++){
 
                 max[y] = 0;
+                val[y] = [];
 
                 for(let x = 0; x < lib.length; x++){
 
+                    if(current[x][test[y]]){
+
+                        val[y].push(current[x][test[y]]);
+                    }
+                    else if(test[y] === "memory"){
+
+                        val[y].push(memory[lib[x]]);
+                    }
+
                     if((test[y] === "size") || (test[y] === "memory")){
 
-                        if((test[y] === "memory") && (current[x][test[y]] === 0)){
+                        if((test[y] === "memory") && !current[x][test[y]]){
 
                             current[x][test[y]] = memory[lib[x]];
                         }
@@ -170,6 +179,7 @@
             }
 
             let score = new Array(lib.length);
+            let max_score = 0;
 
             for(let x = 0; x < lib.length; x++){
 
@@ -181,19 +191,24 @@
 
                         if(current[x][test[y]]){
 
-                            score[x] += max[y] / current[x][test[y]];
+                            score[x] += median(val[y]) / current[x][test[y]];
                             current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
                         }
                     }
                     else{
 
-                        score[x] += current[x][test[y]] / max[y];
+                        score[x] += current[x][test[y]] / median(val[y]);
                         current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
                 }
 
                 current[x]["score"] = (score[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
-                current[x]["color_score"] = color(current[x]["score"], 1000);
+                if(max_score < current[x]["score"]) max_score = current[x]["score"];
+            }
+
+            for(let x = 0; x < lib.length; x++){
+
+                current[x]["color_score"] = color(current[x]["score"], max_score);
             }
         }
 
@@ -242,6 +257,26 @@
             }
 
             return items;
+        }
+
+        function median(arr){
+
+            arr.sort(function(a, b){
+
+                return a - b;
+            });
+
+            const length = arr.length;
+            const half = length / 2;
+
+            return (
+
+                length % 2 ?
+
+                    arr[half | 0]
+                :
+                    (arr[half - 1] + arr[half]) / 2
+            );
         }
 
         setTimeout(runner, 200);
