@@ -27,10 +27,12 @@ if(SUPPORT_EVENTS){
 
                 if(id){
 
-                    if(id.indexOf(":") !== -1){
+                    const tmp = id.indexOf(':');
 
-                        const cmp = id.split(":");
-                        const root = cmp[1];
+                    if(tmp !== -1){
+
+                        const handler = id.substring(0, tmp);
+                        const root = id.substring(tmp + 1);
 
                         id = 0;
                         target = target.parentElement;
@@ -39,7 +41,7 @@ if(SUPPORT_EVENTS){
 
                             if(target.hasAttribute(root)){
 
-                                id = cmp[0];
+                                id = handler;
                                 break;
                             }
 

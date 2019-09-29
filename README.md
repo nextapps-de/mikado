@@ -226,13 +226,13 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16487</sub></td>
         <td align=right><sub>5468</sub></td>
         <td align=right><sub>7158</sub></td>
-        <td align=right><sub>12829</sub></td>
-        <td align=right><sub>251559</sub></td>
+        <td align=right><sub>13596</sub></td>
+        <td align=right><sub>255488</sub></td>
         <td align=right><sub>14486</sub></td>
         <td align=right><sub>24436</sub></td>
-        <td align=right><sub>6284</sub></td>
+        <td align=right><sub>32755</sub></td>
         <td align=right><sub>25229</sub></td>
-        <td align=right><b>956</b></td>
+        <td align=right><b>957</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -248,7 +248,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>23280</sub></td>
         <td align=right><sub>3763</sub></td>
         <td align=right><sub>25113</sub></td>
-        <td align=right><b>517</b></td>
+        <td align=right><b>463</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -264,7 +264,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16679</sub></td>
         <td align=right><sub>2432</sub></td>
         <td align=right><sub>14226</sub></td>
-        <td align=right><b>498</b></td>
+        <td align=right><b>462</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -280,7 +280,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>14186</sub></td>
         <td align=right><sub>3153</sub></td>
         <td align=right><sub>23477</sub></td>
-        <td align=right><b>374</b></td>
+        <td align=right><b>330</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -296,7 +296,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>19031</sub></td>
         <td align=right><sub>1321</sub></td>
         <td align=right><sub>12104</sub></td>
-        <td align=right><b>319</b></td>
+        <td align=right><b>300</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -312,7 +312,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7028</sub></td>
         <td align=right><sub>2270</sub></td>
         <td align=right><sub>14066</sub></td>
-        <td align=right><b>225</b></td>
+        <td align=right><b>194</b></td>
     </tr>
     <tr>
         <td>7</td>
@@ -327,7 +327,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1654</sub></td>
         <td align=right><sub>1192</sub></td>
         <td align=right><sub>26178</sub></td>
-        <td align=right><b>188</b></td>
+        <td align=right><b>171</b></td>
     </tr>
     <tr>
         <td>8</td>
@@ -342,7 +342,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>957</sub></td>
         <td align=right><sub>802</sub></td>
         <td align=right><sub>4994</sub></td>
-        <td align=right><b>72</b></td>
+        <td align=right><b>62</b></td>
     </tr>
 </table>
 
@@ -1958,7 +1958,7 @@ Ideally every template should have initialized by one Mikado instance and should
 The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
 <br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@caf1797191d471c5a1b8df958dd2c366abd8bdc3/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
 
 #### Factory Pool
 

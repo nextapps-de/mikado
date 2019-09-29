@@ -574,6 +574,8 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 
                 const tpl_pool = pool[this.template];
 
+                reverse(nodes);
+
                 pool[this.template] = (
 
                     tpl_pool && tpl_pool.length ?
@@ -648,6 +650,8 @@ Mikado.prototype.clear = function(resize){
     if(SUPPORT_CACHE && this.pool && this.length){
 
         const tpl_pool = pool[this.template];
+
+        reverse(this.dom);
 
         pool[this.template] = (
 
@@ -1558,3 +1562,18 @@ Mikado.prototype.unload = function(template){
 
 Mikado.unregister = Mikado["unregister"] =
 Mikado.unload = Mikado["unload"] = Mikado.prototype.unload;
+
+function reverse(arr){
+
+    const length = arr.length;
+    const half = (length / 2) | 0;
+
+    for(let i = 0, tmp; i < half; i++){
+
+        tmp = arr[i];
+        arr[i] = arr[length - i - 1];
+        arr[length - i - 1] = tmp;
+    }
+
+    return arr;
+}
