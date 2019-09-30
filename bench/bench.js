@@ -270,21 +270,32 @@ let str_results = "";
 const perf = window.performance;
       perf.memory || (perf.memory = { usedJSHeapSize: 0 });
 
-function perform(warmup){
+let current = 0;
+let warmup = 0;
 
-    const test = warmup || queue.shift();
+function perform(){
+
+    const test = queue[current];
     let duration = 0, memory = 0;
 
     if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
-    if(test.warmup){
+    if(warmup < 10){
 
-        test.warmup = false;
-        queue.unshift(test);
-        return perform(test);
+        if(!warmup){
+
+            test.loop = 1;
+        }
+
+        warmup++;
+    }
+    else{
+
+        warmup = 0;
+        test.loop *= 3;
     }
 
-    let loops = warmup ? test.loop / 10 : test.loop;
+    let loops = test.loop;
     //const results = new Array(loops | 0);
 
     if(test.init) test.init();
@@ -319,18 +330,20 @@ function perform(warmup){
 
     if(warmup){
 
-        test.loop = Math.floor(1000 / duration * (test.loop / 10) * 3);
+        test.loop = Math.floor(100 / duration * loops);
     }
     else{
 
         if(window === window.top){
 
-            result.nodeValue = str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * test.loop)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / test.loop) : "-") + "\n";
+            result.nodeValue = str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n";
         }
         else{
 
-            window.top.postMessage(test.name + "," + Math.floor(1000 / duration * test.loop) + "," + Math.floor(memory / test.loop), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
+            window.top.postMessage(test.name + "," + Math.floor(1000 / duration * loops) + "," + Math.floor(memory / loops), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
+
+        current++;
     }
 
     if(queue.length){
@@ -341,6 +354,7 @@ function perform(warmup){
     //root.textContent = "";
 }
 
+/*
 function median(arr){
 
     arr.sort(function(a, b){
@@ -363,7 +377,11 @@ function median(arr){
 
 function normalize(arr){
 
-    arr.sort();
+    arr.sort(function(a, b){
+
+        return a - b;
+    });
+
     arr = arr.slice((arr.length / 4) | 0, (arr.length / 2) | 0);
 
     const length = arr.length;
@@ -376,6 +394,7 @@ function normalize(arr){
 
     return sum / length;
 }
+*/
 
 export function shuffle(items){
 

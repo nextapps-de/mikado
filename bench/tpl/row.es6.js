@@ -108,6 +108,18 @@ export default {
       "s": [
         "'background-color:' + data.color_score"
       ]
+    },
+    {
+      "t": "td",
+      "i": {
+        "t": "b",
+        "x": [
+          "data.index"
+        ]
+      },
+      "s": [
+        "'background-color:' + data.color_index"
+      ]
     }
   ],
   "n": "row",

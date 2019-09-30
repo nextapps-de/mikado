@@ -1,3 +1,7 @@
+## 0.4.3
+`add` method ___purge___ to cleanup shared pools<br>
+`add` supports multiple ___remove___ by a given range as 2nd parameter<br>
+
 ## 0.4.2
 `new` introduce an shared object pool and a new option flag ___pool___ to enable it<br>
 `improve` using ___pool___ significantly improves memory allocation (cuts down by a factor of 10)<br>

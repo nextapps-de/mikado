@@ -115,7 +115,15 @@ npm install mikado
     <tr></tr>
     <tr>
         <td>
-            <a href="#store">Internal Data Storage</a>
+            <a href="#pool">Shared Pools</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#store">Manage Data Store</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -131,7 +139,7 @@ npm install mikado
     <tr></tr>
     <tr>
         <td>
-            <a href="#proxy">Data Binding (Proxy)</a>
+            <a href="#proxy">Data Proxy (Observe)</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -186,8 +194,8 @@ npm install mikado
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>4.6 kb</td>
-        <td>2.0 kb</td>
+        <td>4.9 kb</td>
+        <td>2.3 kb</td>
     </tr>
 </table>
 
@@ -205,7 +213,6 @@ Values represents operations per second, each benchmark task has to process a da
 <table>
     <tr></tr>
     <tr>
-        <td><sup>Rank</sup></td>
         <td><sup>Library</sup></td>
         <td align=center><sup>KB</sup></td>
         <td align=center><sup>RAM</sup></td>
@@ -218,11 +225,11 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=center><sup>Toggle</sup></td>
         <td align=center><sup>Clear</sup></td>
         <td align=center><sup>Score</sup></td>
+        <td align=center><sup>Index</sup></td>
     </tr>
     <tr>
-        <td>1</td>
         <td>mikado</td>
-        <td align=right><sub>2</sub></td>
+        <td align=right><sub>2.3</sub></td>
         <td align=right><sub>16487</sub></td>
         <td align=right><sub>5468</sub></td>
         <td align=right><sub>7158</sub></td>
@@ -232,11 +239,11 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>24436</sub></td>
         <td align=right><sub>32755</sub></td>
         <td align=right><sub>25229</sub></td>
-        <td align=right><b>7538</b></td>
+        <td align=right><b>7490</b></td>
+        <td align=right><b>957</b></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>2</td>
         <td>domc</td>
         <td align=right><sub>4.46</sub></td>
         <td align=right><sub>108992</sub></td>
@@ -249,10 +256,10 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>3763</sub></td>
         <td align=right><sub>25113</sub></td>
         <td align=right><b>1605</b></td>
+        <td align=right><b>470</b></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>3</td>
         <td>sinuous</td>
         <td align=right><sub>7.48</sub></td>
         <td align=right><sub>264323</sub></td>
@@ -265,10 +272,10 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2432</sub></td>
         <td align=right><sub>14226</sub></td>
         <td align=right><b>1592</b></td>
+        <td align=right><b>466</b></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>4</td>
         <td>surplus</td>
         <td align=right><sub>15.79</sub></td>
         <td align=right><sub>189611</sub></td>
@@ -281,10 +288,10 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>3153</sub></td>
         <td align=right><sub>23477</sub></td>
         <td align=right><b>1106</b></td>
+        <td align=right><b>332</b></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>5</td>
         <td>redom</td>
         <td align=right><sub>2.88</sub></td>
         <td align=right><sub>363451</sub></td>
@@ -297,10 +304,10 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1321</sub></td>
         <td align=right><sub>12104</sub></td>
         <td align=right><b>944</b></td>
+        <td align=right><b>310</b></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>6</td>
         <td>inferno</td>
         <td align=right><sub>8.4</sub></td>
         <td align=right><sub>238827</sub></td>
@@ -313,9 +320,9 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2270</sub></td>
         <td align=right><sub>14066</sub></td>
         <td align=right><b>729</b></td>
+        <td align=right><b>198</b></td>
     </tr>
     <tr>
-        <td>7</td>
         <td>innerHTML</td>
         <td align=right><sub></sub></td>
         <td align=right><sub>476345</sub></td>
@@ -328,9 +335,9 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1192</sub></td>
         <td align=right><sub>26178</sub></td>
         <td align=right><b>558</b></td>
+        <td align=right><b>171</b></td>
     </tr>
     <tr>
-        <td>8</td>
         <td>jquery</td>
         <td align=right><sub>31.26</sub></td>
         <td align=right><sub>642049</sub></td>
@@ -343,16 +350,17 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>802</sub></td>
         <td align=right><sub>4994</sub></td>
         <td align=right><b>303</b></td>
+        <td align=right><b>63</b></td>
     </tr>
 </table>
 
-<code>Score = Sum<sub>test</sub>(ops / median) * 100</code>
-<!--
-<code>Score = Sum<sub>test</sub>(self_ops / max_ops) / test_count * 1000</code>
-The maximum possible score is 1000, that requires a library to be best in each category.<br>
--->
+<code>Score = Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code><br>
+A score of 1000 represents the statistical midfield.
 
-Read more about this test <a href="bench/#readme">here</a>.
+<code>Index = Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code><br>
+The maximum possible index is 1000, that requires a library to be best in each category.
+
+Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md">here</a>.
 
 <a name="api"></a>
 ## API Overview
@@ -1006,10 +1014,12 @@ Append multiple data to the end:
 view.append(data);
 ```
 
+<!--
 Append multiple data before an index:
 ```js
 view.append(data, 0); // append to beginning
 ```
+-->
 
 <a name="view.remove"></a>
 Remove a specific data/node:
@@ -1017,22 +1027,25 @@ Remove a specific data/node:
 view.remove(node);
 ```
 
-Remove first 20 data:
+Remove a specific template node by its index:
 ```js
 view.remove(20);
 ```
 
-Remove last 20 data:
+Remove a range of nodes starting from a specific node/index:
 ```js
-view.remove(-20);
+view.remove(20, 10);
 ```
-
-Remove next 20 data of a given node (including):
 ```js
 view.remove(node, 20);
 ```
 
-Remove previous 20 data of a given node (including):
+Remove last 20 node items (supports reverse index):
+```js
+view.remove(-20, 20);
+```
+
+Remove previous 20 node items starting of a given node/index (including):
 ```js
 view.remove(node, -20);
 ```
@@ -2043,7 +2056,7 @@ view.destroy(/* unload? */ true);
 The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
 <br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@0640e818c528c8e2c179f6cddf8987959e82df9e/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@4c3553643e55970a45394c89bb55124bba16b0a1/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
 
 #### Factory Pool
 

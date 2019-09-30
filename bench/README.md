@@ -3,14 +3,14 @@
 Run the benchmark:<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
 
-This stress test is based on a __real life use case__, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
+This stress test focuses a real life use case, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
 
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
 https://krausest.github.io/js-framework-benchmark/current.html
 
 #### Local Installation
 
-Go to the folder ___bench___ and install dependencies:
+Go to the folder _bench/_ and install dependencies:
 ```cmd
 npm install
 ```
@@ -22,7 +22,15 @@ npm run server
 
 Go to the URL which displays in the console, e.g. _http://localhost_. The tests will start automatically. Results may differ through various browsers and OS.
 
-The maximum possible score is 1000, that requires a library to be best in each category.
+#### Score
+The score is calculated in relation to the median value of each test. That will keeping the benchmark factor between each library effectively but also vary relationally when new libraries were added.
+
+<code>Score = Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code>
+
+#### Index
+The score index is a close to "static" representation where each score references to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
+
+<code>Index = Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code>
 
 ## How this benchmark work
 
@@ -47,10 +55,21 @@ The data is unknown, the library do not know if data was added, removed, updated
 
 Regardless the function is doing, every test has to run through the same logic.
 
-#### Test Requirement
-Each library should use at least its own features to change DOM. A test implementation should not include something like `node.nodeValue = "..."` or `node.className = "..."`.
+#### About requirements for tested libraries
+Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand.
 
-## About precision
+#### About the test environment
+
+This test also covers runtime optimizations of each library which is very important to produce good benchmark results. The goal is to get closest to a real environment.
+
+That's basically the main difference to other tests<!-- like <a href="https://krausest.github.io/js-framework-benchmark/current.html">this</a>-->. Other benchmarks may re-loading the whole page/application after every single test loop. This would be a good step away from a real environment and also cannot cover one of the biggest strength of Mikado which is based on several runtime optimizations.
+
+#### About median values
+Using the median value is very common to normalize the spread in results in a statistically manner. But using the median for benchmarking, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One of the most factors which is often overseen is the run of the garbage collector, which costs a significantly amount of time. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
+
+This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time (btw that also comes closest to a real environment).
+
+#### About benchmark precision
 It is not possible to provide stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment a user have on the application.
 
-That all just become more important when doing micro-benchmarking. But this test do not perform micro-benchmarking. The workload is big enough to produce good stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce close to linear results. So it is statistically proofed. There is absolutely no need for using benchmark.js especially for this workload.
+That all just become more important when doing micro-benchmarking. But this test do not perform micro-benchmarking. The workload is big enough to produce good stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce close to linear results. So it is statistically proofed. There is absolutely no need for using benchmark.js especially for this workload (using it will change nothing).

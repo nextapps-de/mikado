@@ -41,6 +41,7 @@
             <th>Toggle</th>
             <th>Clear</th>
             <th>Score</th>
+            <th>Index</th>
         </tr>
     </thead>
     <tbody id="result"></tbody>
@@ -88,7 +89,7 @@ To measure memory you have to run in Chrome browser.<br><br>
 
         let size = {
 
-            "mikado": 2.0,
+            "mikado": 2.3,
             "domc": 4.46,
             "inferno": 8.4,
             "redom": 2.88,
@@ -114,13 +115,14 @@ To measure memory you have to run in Chrome browser.<br><br>
 
             current[x] = {
 
-                name: lib[x],
-                size: size[lib[x]],
-                memory: 0,
-                score: ""
+                "name": lib[x],
+                "size": size[lib[x]],
+                "memory": 0,
+                "score": "",
+                "index": ""
             };
 
-            for(let y = 2; y < test.length + 1; y++){
+            for(let y = 2; y < test.length; y++){
 
                 current[x][test[y]] = "";
                 current[x]["color_" + test[y]] = "transparent";
@@ -179,11 +181,13 @@ To measure memory you have to run in Chrome browser.<br><br>
             }
 
             let score = new Array(lib.length);
-            let max_score = 0;
+            let index = new Array(lib.length);
+            let max_score = 0, max_index = 0;
 
             for(let x = 0; x < lib.length; x++){
 
                 score[x] = 0;
+                index[x] = 0;
 
                 for(let y = 0; y < test.length; y++){
 
@@ -192,23 +196,28 @@ To measure memory you have to run in Chrome browser.<br><br>
                         if(current[x][test[y]]){
 
                             score[x] += median(val[y]) / current[x][test[y]];
+                            index[x] += max[y] / current[x][test[y]];
                             current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
                         }
                     }
                     else{
 
                         score[x] += current[x][test[y]] / median(val[y]);
+                        index[x] += current[x][test[y]] / max[y];
                         current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
                 }
 
                 current[x]["score"] = (score[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
+                current[x]["index"] = (index[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
                 if(max_score < current[x]["score"]) max_score = current[x]["score"];
+                if(max_index < current[x]["index"]) max_index = current[x]["index"];
             }
 
             for(let x = 0; x < lib.length; x++){
 
                 current[x]["color_score"] = color(current[x]["score"], max_score);
+                current[x]["color_index"] = color(current[x]["index"], max_index);
             }
         }
 
