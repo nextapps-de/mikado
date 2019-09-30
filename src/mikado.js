@@ -126,13 +126,70 @@ Mikado.prototype.mount = function(target){
     return this;
 };
 
-Mikado.prototype.sync = function(){
+Mikado.prototype.sync = function(clear_cache){
 
     this.root["_dom"] = this.dom = collection_to_array(this.root.children);
     this.length = this.dom.length;
 
+    if(SUPPORT_CACHE && clear_cache && this.cache){
+
+        for(let i = 0; i < this.length; i++){
+
+            if(SUPPORT_HELPERS){
+
+                const path = this.dom[i]["_path"];
+
+                for(let x = 0, tmp; x < path.length; x++){
+
+                    tmp = path[x];
+                    tmp["_class"] = tmp["_html"] = tmp["_text"] = tmp["_css"] = tmp["_attr_"] = null;
+                }
+            }
+            else{
+
+                this.dom[i]["_cache"] = null;
+            }
+        }
+    }
+
     return this;
 };
+
+if(SUPPORT_HELPERS){
+
+    /**
+     * @param {Template|string=} template
+     */
+
+    Mikado.purge = function(template){
+
+        if(template){
+
+            if(typeof template === "object"){
+
+                template = template["n"];
+            }
+
+            parsed[template + "_cache"] =
+            parsed[template] =
+            pool[template] = null;
+        }
+        else{
+
+            const keys = Object.keys(parsed);
+
+            for(let i = 0, tpl; i < keys.length; i++){
+
+                tpl = keys[i];
+                parsed[tpl + "_cache"] =
+                parsed[tpl] =
+                pool[tpl] = null;
+            }
+        }
+
+        return Mikado;
+    };
+}
 
 Mikado.prototype.index = function(node){
 
@@ -147,6 +204,11 @@ Mikado.prototype.node = function(index){
 if(SUPPORT_STORAGE){
 
     Mikado.prototype.data = function(index){
+
+        if(typeof index === "object"){
+
+            return this.loose ? index["_data"] : this.store[index["_idx"]];
+        }
 
         return this.loose ? this.dom[index]["_data"] : this.store[index];
     };
@@ -735,11 +797,12 @@ if(SUPPORT_ASYNC){
 }
 
 /**
- * @param {*=} data
- * @param {*=} view
+ * @param {Object|Array<Object>=} data
+ * @param {Object|number=} view
+ * @param {number=} position
  */
 
-Mikado.prototype.append = function(data, view){
+Mikado.prototype.append = function(data, view, position){
 
     //profiler_start("append");
 
@@ -755,7 +818,13 @@ Mikado.prototype.append = function(data, view){
     return this;
 };
 
-Mikado.prototype.remove = function(node){
+/**
+ * @param {!Element|number} node
+ * @param {number=} count
+ * @returns {Mikado}
+ */
+
+Mikado.prototype.remove = function(node, count){
 
     //profiler_start("remove");
 
@@ -764,6 +833,12 @@ Mikado.prototype.remove = function(node){
     if(typeof node === "number"){
 
         index = node;
+
+        if(index < 0){
+
+            index = this.length + index - 1;
+        }
+
         node = this.dom[index];
     }
     else{
@@ -771,23 +846,49 @@ Mikado.prototype.remove = function(node){
         index = node["_idx"];
     }
 
-    this.dom.splice(index, 1);
+    const nodes = this.dom.splice(index, count || 1);
 
     if(SUPPORT_STORAGE && this.store && !this.extern){
 
-        this.store.splice(index, 1);
+        this.store.splice(index, count || 1);
     }
 
-    if(SUPPORT_CACHE && this.pool){
+    const use_pool = SUPPORT_CACHE && this.pool;
+    let tpl_pool;
 
-        const tpl_pool = pool[this.template] || (pool[this.template] = []);
+    if(use_pool){
+
+        tpl_pool = pool[this.template] || (pool[this.template] = []);
+    }
+
+    if(count && --count){
+
+        this.length -= count;
+        let tmp;
+
+        while(count > 0){
+
+            tmp = nodes[count--];
+
+            if(use_pool){
+
+                // stack in reversed order:
+                tpl_pool[tpl_pool.length] = tmp;
+            }
+
+            this.root.removeChild(tmp);
+        }
+    }
+
+    if(use_pool){
+
         tpl_pool[tpl_pool.length] = node;
     }
 
     this.root.removeChild(node);
     this.length--;
 
-    // TODO: remove index from node
+    // TODO: remove _idx from node?
     for(let i = index; i < this.length; i++){
 
         this.dom[i]["_idx"] = i;
@@ -1550,13 +1651,28 @@ if(SUPPORT_TRANSPORT){
 
 Mikado.prototype.unload = function(template){
 
-    template || (template = this.template);
+    if(!template){
+
+        template = this.template;
+    }
+    else{
+
+        if(typeof template === "object"){
+
+            template = template["n"];
+        }
+    }
 
     if(template){
 
-        templates[template/*["n"]*/] = null;
-        parsed[template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
-        if(SUPPORT_CACHE) pool[template] = null;
+        templates[template] = null;
+        parsed[template] = null;
+
+        if(SUPPORT_CACHE){
+
+            parsed[template + "_cache"] = null;
+            pool[template] = null;
+        }
     }
 };
 

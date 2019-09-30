@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.4.22
+ * Mikado.js v0.4.3
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -642,11 +642,41 @@ Mikado$$module$tmp$mikado.prototype.mount = function(target) {
   }
   return this;
 };
-Mikado$$module$tmp$mikado.prototype.sync = function() {
+Mikado$$module$tmp$mikado.prototype.sync = function(clear_cache) {
   this.root["_dom"] = this.dom = collection_to_array$$module$tmp$mikado(this.root.children);
   this.length = this.dom.length;
+  if (SUPPORT_CACHE && clear_cache && this.cache) {
+    for (var i = 0; i < this.length; i++) {
+      if (SUPPORT_HELPERS) {
+        var path = this.dom[i]["_path"];
+        for (var x = 0, tmp = undefined; x < path.length; x++) {
+          tmp = path[x];
+          tmp["_class"] = tmp["_html"] = tmp["_text"] = tmp["_css"] = tmp["_attr_"] = null;
+        }
+      } else {
+        this.dom[i]["_cache"] = null;
+      }
+    }
+  }
   return this;
 };
+if (SUPPORT_HELPERS) {
+  Mikado$$module$tmp$mikado.purge = function(template) {
+    if (template) {
+      if (typeof template === "object") {
+        template = template["n"];
+      }
+      parsed$$module$tmp$mikado[template + "_cache"] = parsed$$module$tmp$mikado[template] = pool$$module$tmp$mikado[template] = null;
+    } else {
+      var keys = Object.keys(parsed$$module$tmp$mikado);
+      for (var i = 0, tpl = undefined; i < keys.length; i++) {
+        tpl = keys[i];
+        parsed$$module$tmp$mikado[tpl + "_cache"] = parsed$$module$tmp$mikado[tpl] = pool$$module$tmp$mikado[tpl] = null;
+      }
+    }
+    return Mikado$$module$tmp$mikado;
+  };
+}
 Mikado$$module$tmp$mikado.prototype.index = function(node) {
   return node["_idx"];
 };
@@ -655,6 +685,9 @@ Mikado$$module$tmp$mikado.prototype.node = function(index) {
 };
 if (SUPPORT_STORAGE) {
   Mikado$$module$tmp$mikado.prototype.data = function(index) {
+    if (typeof index === "object") {
+      return this.loose ? index["_data"] : this.store[index["_idx"]];
+    }
     return this.loose ? this.dom[index]["_data"] : this.store[index];
   };
   if (SUPPORT_HELPERS) {
@@ -969,27 +1002,45 @@ if (SUPPORT_ASYNC) {
     }
   };
 }
-Mikado$$module$tmp$mikado.prototype.append = function(data, view) {
+Mikado$$module$tmp$mikado.prototype.append = function(data, view, position) {
   var count = data.length;
   for (var x = 0; x < count; x++) {
     this.add(data[x], view);
   }
   return this;
 };
-Mikado$$module$tmp$mikado.prototype.remove = function(node) {
+Mikado$$module$tmp$mikado.prototype.remove = function(node, count) {
   var index;
   if (typeof node === "number") {
     index = node;
+    if (index < 0) {
+      index = this.length + index - 1;
+    }
     node = this.dom[index];
   } else {
     index = node["_idx"];
   }
-  this.dom.splice(index, 1);
+  var nodes = this.dom.splice(index, count || 1);
   if (SUPPORT_STORAGE && this.store && !this.extern) {
-    this.store.splice(index, 1);
+    this.store.splice(index, count || 1);
   }
-  if (SUPPORT_CACHE && this.pool) {
-    var tpl_pool = pool$$module$tmp$mikado[this.template] || (pool$$module$tmp$mikado[this.template] = []);
+  var use_pool = SUPPORT_CACHE && this.pool;
+  var tpl_pool;
+  if (use_pool) {
+    tpl_pool = pool$$module$tmp$mikado[this.template] || (pool$$module$tmp$mikado[this.template] = []);
+  }
+  if (count && --count) {
+    this.length -= count;
+    var tmp;
+    while (count > 0) {
+      tmp = nodes[count--];
+      if (use_pool) {
+        tpl_pool[tpl_pool.length] = tmp;
+      }
+      this.root.removeChild(tmp);
+    }
+  }
+  if (use_pool) {
     tpl_pool[tpl_pool.length] = node;
   }
   this.root.removeChild(node);
@@ -1354,11 +1405,18 @@ if (SUPPORT_TRANSPORT) {
   Mikado$$module$tmp$mikado.load = Mikado$$module$tmp$mikado.load = Mikado$$module$tmp$mikado.prototype.load;
 }
 Mikado$$module$tmp$mikado.prototype.unload = function(template) {
-  template || (template = this.template);
+  if (!template) {
+    template = this.template;
+  } else {
+    if (typeof template === "object") {
+      template = template["n"];
+    }
+  }
   if (template) {
     templates$$module$tmp$mikado[template] = null;
-    parsed$$module$tmp$mikado[template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
+    parsed$$module$tmp$mikado[template] = null;
     if (SUPPORT_CACHE) {
+      parsed$$module$tmp$mikado[template + "_cache"] = null;
       pool$$module$tmp$mikado[template] = null;
     }
   }

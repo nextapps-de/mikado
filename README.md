@@ -364,10 +364,11 @@ Global methods:
 - <a href="#mikado.new">Mikado.__new__(\<root\>, template, \<options\>)</a> : view
 - <a href="#mikado.once">Mikado.__once__(root, template, \<data\>, \<payload\>, \<callback\>)</a>
 - <a href="#mikado.register">Mikado.__register__(template)</a>
-- <a href="#mikado.unload">Mikado.__unload__(template)</a>
+- <a href="#mikado.unload">Mikado.__unregister__(template)</a>
 
 Global methods (not included in mikado.light.js):
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
+- <a href="#mikado.unload">Mikado.__unload__(template)</a>
 
 Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
@@ -381,7 +382,7 @@ Instance methods:
 - <a href="#view.replace">view.__replace__(node, data, \<payload\>)</a>
 - <a href="#view.remove">view.__remove__(node)</a>
 - <a href="#view.clear">view.__clear__(\<resize\>)</a>
-- <a href="#view.data">view.__data__(index)</a>
+- <a href="#view.data">view.__data__(index|node)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
 - <a href="#view.find">view.__find__(data)</a>
@@ -390,7 +391,8 @@ Instance methods:
 - ~~view.__parse__(template)~~
 - <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
 - <a href="#view.unload">view.__unload__()</a>
-- <a href="#view.sync">view.__sync__()</a>
+- <a href="#view.sync">view.__sync__(\<uncache?\>)</a>
+- <a href="#view.purge">view.__purge__(\<template\>)</a>
 
 Instance methods (not included in mikado.light.js):
 - <a href="#view.import">view.__import__()</a>
@@ -1059,6 +1061,22 @@ Re-Sync DOM:
 view.sync();
 ```
 
+Re-Sync DOM + Release Cache:
+```js
+view.sync(true);
+```
+
+<a name="view.purge"></a>
+Purge all shared pools (factory pool and template pool):
+```js
+view.purge();
+```
+
+Purge shared pools from a specific template:
+```js
+view.purge(template);
+```
+
 ### Useful Helpers
 
 <a name="view.node"></a>
@@ -1071,6 +1089,11 @@ var node = view.node(index);
 Get a data from the store by index:
 ```js
 var data = view.data(index);
+```
+
+Get a data from the store by node:
+```js
+var data = view.data(node);
 ```
 
 <a name="view.index"></a>
@@ -1955,13 +1978,72 @@ view_c.mount(root_a).render(data);
 
 Ideally every template should have initialized by one Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast but re-assigning templates is not as fast.
 
+#### Memory Optimizations
+
+IT might be useful to understand the memory allocation of several settings.
+
+The absolute lowest memory footprint (when idle):
+```js
+var view = new Mikado(template, { 
+    store: false,
+    cache: false, 
+    pool: false,
+    prefetch: false
+});
+```
+
+The most memory efficient memory allocation (during runtime):
+```js
+var view = new Mikado(template, { 
+    cache: true, 
+    pool: true
+});
+```
+
+Mikado provides you some helpers to apply manually to get the most out of both. Stick with the second example above (enable ___cache___ and ___pool___).
+
+Clear shared pools of the current template:
+```js
+view.purge();
+```
+
+Clear shared pools of all templates:
+```js
+Mikado.purge();
+```
+
+Clear shared pools of a specific template:
+```js
+Mikado.purge(template);
+```
+
+Clear cache:
+```js
+view.sync(/* uncache? */ true);
+```
+
+Destroy a view:
+```js
+view.destroy();
+```
+
+Unload/unregister a template definition:
+```js
+view.unload();
+```
+
+Destroy a view + unload:
+```js
+view.destroy(/* unload? */ true);
+```
+
 <a name="concept"></a>
 ## Concept of Shared Pools
 
 The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
 <br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@0640e818c528c8e2c179f6cddf8987959e82df9e/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
 
 #### Factory Pool
 
@@ -1974,41 +2056,10 @@ The template pool is a feature accordingly to the option <a href="#reuse">reuse<
 ## Motivation
 
 This library was build by reversed engineering with these primary goals as its base:
-1. providing a clean, simple and __non-cryptic__ tool for developers who focus on living standards and common styles
+1. providing a clean, simple and non-cryptic tool for developers who focus on living standards and common styles
 2. designer-readable templates based on pure html (most famous and compatible markup in the web)
 3. providing the best overall performance
 4. can be flexibly integrated into every stack
-
-<!--
-This library was __not__ build for:
-- replacing Angular, React or Co.
-- mimic to be Angular, React or Co.
-- fit to any of your favourite templating frameworks you are already using
-
-__Why is it smart?__
-
-Everyone has a different idea about the term "smart". Mikado is not a React and Angular, but these are whales and the opposite of smart. Mikado is just 2kB in the smallest version and offers a multitude of possibilities for this size, the best performance, the smallest memory consumption and an intuitive experience for developers (including tooling), which fully masters Mikado in less than 30 minutes. That's what meant to be "smart".
-
-## About Data Binding
-
-Instead of bind nodes/vnodes to a data Mikado bind/references data to nodes. The <a href="#options.loose">loose</a> option lets you control how is data handled when its corresponding node was removed from the dom. You might think there is a drawback in missing diffing, but lets take an example:
-
-```html
-<data>A</data>
-<data>B</data>
-<data>C</data>
-```
-
-Assume that the data content stay unchanged and just the order should changes to:
-
-```html
-<data>C</data>
-<data>A</data>
-<data>B</data>
-```
-
-Some libs may try to swap nodes to its new place. But that has a noticeable bigger impact to the dom of a factor of 5 and higher (!) in comparison when existing nodes wil just re-rendered with the new data (for which the option <a href="#options.reuse">reuse</a> is for). The decoupled event delegation of Mikado allows you to keep listeners referenced to the right node. Surely that's not the same, but I never had a situation where this was an issue. Just keep in mind to use template notations for any value which should change dynamically (e.g. the attribute "checked") and you are save. Since Mikado was reversed engineered and the goal "keeping real nodes" was not on the table, it shouldn't be a mandatory criteria for you. If so, then you are lucky that you can use one of the dozen other templating libs out there.
--->
 
 <a name="builds" id="builds"></a>
 ## Custom Builds
