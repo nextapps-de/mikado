@@ -59,6 +59,12 @@ const SUPPORT_TEMPLATE_EXTENSION = true;
 const SUPPORT_REACTIVE = true;
 
 /**
+ * @define {boolean}
+ */
+
+const SUPPORT_COMPILE = true;
+
+/**
  * @define {string}
  */
 

@@ -1,7 +1,9 @@
 {
     "\\[\"new\"\\]": ".new",
     "\\[\"register\"\\]": ".register",
+    "\\[\"unregister\"\\]": ".unregister",
     "\\[\"load\"\\]": ".load",
     "\\[\"unload\"\\]": ".unload",
-    "\\[\"once\"\\]": ".once"
+    "\\[\"once\"\\]": ".once",
+    "\\[\"compile\"\\]": ".compile"
 }

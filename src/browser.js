@@ -1,5 +1,6 @@
 import Mikado from "./mikado.js";
 import "./export.js";
+import compile from "./compile.js";
 import {
     getAttribute,
     getClass,
@@ -21,44 +22,40 @@ import {
     //getStyle
 } from "./cache.js";
 
+if(SUPPORT_COMPILE){
+
+    Mikado["compile"] = compile;
+}
+
 if(SUPPORT_CACHE && SUPPORT_HELPERS){
 
-    /** @export */
-    Mikado.setText = setText;
-    /** @export */
-    Mikado.getText = getText;
-    /** @export */
-    Mikado.setHTML = setHTML;
-    /** @export */
-    Mikado.getHTML = getHTML;
-    /** @export */
-    Mikado.setClass = setClass;
-    /** @export */
-    Mikado.getClass = getClass;
-    /** @export */
-    Mikado.hasClass = hasClass;
-    /** @export */
-    Mikado.toggleClass = toggleClass;
-    /** @export */
-    Mikado.removeClass = removeClass;
-    /** @export */
-    Mikado.addClass = addClass;
-    /** @export */
-    //Mikado.setStyle = setStyle;
-    /** @export */
-    //Mikado.getStyle = getStyle;
-    /** @export */
-    Mikado.setCSS = setCSS;
-    /** @export */
-    Mikado.getCSS = getCSS;
-    /** @export */
-    Mikado.setAttribute = setAttribute;
-    /** @export */
-    Mikado.getAttribute = getAttribute;
-    /** @export */
-    Mikado.hasAttribute = hasAttribute;
-    /** @export */
-    Mikado.removeAttribute = removeAttribute;
+    Mikado["setText"] = setText;
+    Mikado["getText"] = getText;
+    Mikado["setHTML"] = setHTML;
+    Mikado["getHTML"] = getHTML;
+    Mikado["setClass"] = setClass;
+    Mikado["getClass"] = getClass;
+    Mikado["hasClass"] = hasClass;
+    Mikado["toggleClass"] = toggleClass;
+    Mikado["removeClass"] = removeClass;
+    Mikado["addClass"] = addClass;
+    //Mikado["setStyle"] = setStyle;
+    //Mikado["getStyle"] = getStyle;
+    Mikado["setCSS"] = setCSS;
+    Mikado["getCSS"] = getCSS;
+    Mikado["setAttribute"] = setAttribute;
+    Mikado["getAttribute"] = getAttribute;
+    Mikado["hasAttribute"] = hasAttribute;
+    Mikado["removeAttribute"] = removeAttribute;
+
+    /*
+    Mikado.register;
+    Mikado.unregister;
+    Mikado.load;
+    Mikado.unload;
+    Mikado.new;
+    Mikado.once;
+    */
 }
 
 (function(){

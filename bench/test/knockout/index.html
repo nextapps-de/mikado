@@ -23,17 +23,34 @@
 
     function Model(){
 
-        this.data = ko.observableArray();
+        this.data = ko.observableArray([]);
     }
 
     const app = new Model();
 
-    ko.applyBindings(app, root);
+    ko.applyBindings(app);
 
     suite["knockout"] = function(items){
 
-        app.data.splice(0);
-        app.data.push.apply(app.data, items);
+        const length = items.length;
+        const size = app.data().length;
+
+        for(let i = 0; i < length; i++){
+
+            if(i < size){
+
+                app.data.splice(i, 1, items[i]);
+            }
+            else{
+
+                app.data.push(items[i]);
+            }
+        }
+
+        if(length < size){
+
+            app.data.splice(length);
+        }
     };
 
 </script>

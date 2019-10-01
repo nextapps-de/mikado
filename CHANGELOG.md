@@ -1,3 +1,7 @@
+## 0.5.0
+`add` supports native HTML5 templates via runtime compiler<br>
+`add` supports template definitions as string<br>
+
 ## 0.4.3
 `add` method ___purge___ to cleanup shared pools<br>
 `add` supports multiple ___remove___ by a given range as 2nd parameter<br>

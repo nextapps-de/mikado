@@ -20,15 +20,26 @@ const { requestAnimationFrame, cancelAnimationFrame } = window;
 
 const defaults = {
 
-    "store": true,
-    "loose": true,
-    "cache": true,
-    "async": false,
     "reuse": true,
-    "pool": true,
     "prefetch": true
-    //"proxy": false
 };
+
+if(SUPPORT_STORAGE){
+
+    defaults["store"]= true;
+    defaults["loose"]= true;
+}
+
+if(SUPPORT_ASYNC){
+
+    defaults["async"] = false;
+}
+
+if(SUPPORT_CACHE){
+
+    defaults["cache"] = true;
+    defaults["pool"] = true;
+}
 
 /**
  * @dict
@@ -41,13 +52,18 @@ let state = {};
  */
 
 const templates = {};
-const parsed = {};
+
+/**
+ * @type {Object<string, *>}
+ */
+
+let parsed = {};
 
 /**
  * @type {Object<string, Array<Element>>}
  */
 
-const pool = {};
+let pool = {};
 
 /**
  * @param {Element|Template} root
@@ -176,6 +192,10 @@ if(SUPPORT_HELPERS){
         }
         else{
 
+            parsed = {};
+            pool = {};
+
+            /*
             const keys = Object.keys(parsed);
 
             for(let i = 0, tpl; i < keys.length; i++){
@@ -185,6 +205,7 @@ if(SUPPORT_HELPERS){
                 parsed[tpl] =
                 pool[tpl] = null;
             }
+            */
         }
 
         return Mikado;
@@ -636,7 +657,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 
                 const tpl_pool = pool[this.template];
 
-                reverse(nodes);
+                if(this.cache) reverse(nodes);
 
                 pool[this.template] = (
 
@@ -648,9 +669,9 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 );
             }
 
-            for(let x = 0, tmp; x < count; x++){
+            for(let x = 0; x < count; x++){
 
-                tmp = this.root.removeChild(nodes[x]);
+                this.root.removeChild(nodes[x]);
             }
         }
     }
@@ -713,7 +734,7 @@ Mikado.prototype.clear = function(resize){
 
         const tpl_pool = pool[this.template];
 
-        reverse(this.dom);
+        if(this.cache) reverse(this.dom);
 
         pool[this.template] = (
 
@@ -838,12 +859,26 @@ Mikado.prototype.remove = function(node, count){
 
             index = this.length + index - 1;
         }
-
-        node = this.dom[index];
     }
     else{
 
         index = node["_idx"];
+    }
+
+    if(count < 0){
+
+        if(count < 1){
+
+            index -= count + 1;
+
+            if(index < 0){
+
+                index = 0;
+            }
+        }
+
+        count *= -1;
+        node = this.dom[index];
     }
 
     const nodes = this.dom.splice(index, count || 1);
@@ -872,7 +907,7 @@ Mikado.prototype.remove = function(node, count){
 
             if(use_pool){
 
-                // stack in reversed order:
+                // stack in reversed order (just meaningful when cache is enabled):
                 tpl_pool[tpl_pool.length] = tmp;
             }
 

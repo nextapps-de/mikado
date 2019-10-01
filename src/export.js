@@ -1,18 +1,6 @@
 import Mikado from "./mikado.js";
 
 /** @export */
-Mikado.register;
-/** @export */
-Mikado.unregister;
-/** @export */
-Mikado.load;
-/** @export */
-Mikado.unload;
-/** @export */
-Mikado.new;
-/** @export */
-Mikado.once;
-/** @export */
 Mikado.prototype.load;
 /** @export */
 Mikado.prototype.update;

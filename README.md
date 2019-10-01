@@ -16,12 +16,12 @@
 <a href="#api">API</a> &ensp;&bull;&ensp; 
 <a href="#concept">Concept</a> &ensp;&bull;&ensp; 
 <a href="#builds">Custom Builds</a> &ensp;&bull;&ensp; 
-<a href="https://github.com/nextapps-de/mikado-compile">Template Compiler</a> &ensp;&bull;&ensp;
+<a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
 <a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;
 <a href="CHANGELOG.md">Changelog</a>
 
-Migrate to 0.4.x? Read <a href="CHANGELOG.md">Changelog</a>.
+Migrate to >= 0.4.x? Read <a href="CHANGELOG.md">Changelog</a>.
 
 Services:
 - Mikado Runtime (Render Templates)<br>`npm install mikado`
@@ -41,10 +41,11 @@ Demo:
 
 1. <a href="demo/basic/demo.html">Basic Example (Classic Javascript)</a>
 2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
-3. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
-4. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
+3. <a href="demo/basic/compiler.html">Runtime Compiler</a>
+4. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
+5. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
-#### Comming Soon 0.4.x
+#### Comming Soon 0.5.x
 `new` webpack loader to bundle templates<br>
 `change` file endings for templates are customizable (e.g use ___.shtml___)<br>
 
@@ -119,6 +120,14 @@ npm install mikado
         </td>
         <td>✓</td>
         <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#compiler">Runtime Compiler</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
     </tr>
     <tr></tr>
     <tr>
@@ -439,6 +448,7 @@ Global methods:
 - <a href="#mikado.unload">Mikado.__unregister__(template)</a>
 
 Global methods (not included in mikado.light.js):
+- <a href="#mikado.compile">Mikado.__compile__(\<template | string\>)</a>
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
 - <a href="#mikado.unload">Mikado.__unload__(template)</a>
 
@@ -454,7 +464,7 @@ Instance methods:
 - <a href="#view.replace">view.__replace__(node, data, \<payload\>)</a>
 - <a href="#view.remove">view.__remove__(node)</a>
 - <a href="#view.clear">view.__clear__(\<resize\>)</a>
-- <a href="#view.data">view.__data__(index|node)</a>
+- <a href="#view.data">view.__data__(index | node)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
 - <a href="#view.find">view.__find__(data)</a>
@@ -473,14 +483,15 @@ Instance methods (not included in mikado.light.js):
 - ~~view.__sort__(field, \<direction | handler\>)~~
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
-- <a href="#view.move">view.__move__(node|index, index)</a>
-- <a href="#view.up">view.__up__(node|index)</a>
-- <a href="#view.down">view.__down__(node|index)</a>
-- <a href="#view.first">view.__first__(node|index)</a>
-- <a href="#view.last">view.__last__(node|index)</a>
-- <a href="#view.before">view.__before__(node|index, node|index)</a>
-- <a href="#view.after">view.__after__(node|index, node|index)</a>
-- <a href="#view.swap">view.__swap__(node|index, node|index)</a>
+- <a href="#view.move">view.__move__(node | index, index)</a>
+- <a href="#view.shift">view.__shift__(node | index, index)</a>
+- <a href="#view.up">view.__up__(node | index)</a>
+- <a href="#view.down">view.__down__(node | index)</a>
+- <a href="#view.first">view.__first__(node | index)</a>
+- <a href="#view.last">view.__last__(node | index)</a>
+- <a href="#view.before">view.__before__(node | index, node | index)</a>
+- <a href="#view.after">view.__after__(node | index, node | index)</a>
+- <a href="#view.swap">view.__swap__(node | index, node | index)</a>
 - ~~view.__shuffle__()~~
 
 Instance properties:
@@ -592,14 +603,59 @@ Global helpers (optional, not included in mikado.light.js):
 </table>
 
 <a name="started" id="started"></a>
-## Basic Example
+## Basic Example (Part 1)
 
-Install Mikado via NPM or include one of the distributed builds:
+Install Mikado via NPM:
 ```npm
 npm install mikado
 ```
 
+You can also classically include one of the distributed builds as a script tag or use the sources as ES6 modules.
+
 > To make the command line interface available you have to install via NPM.
+
+<a name="compiler"></a>
+#### Compare Compiler Methods
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Method</td>
+        <td>Memory</td>
+        <td>Performance&nbsp;(op/s)</td>
+        <td>Note</td>
+    </tr>
+    <tr>
+        <td><a href="#mikado-compile">Mikado Compiler (CLI)</a></td>
+        <td>best</td>
+        <td align="right">6,156,704</td>
+        <td>bundle templates easily out of the box</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-service">Compiler Service (Server)</a></td>
+        <td>best</td>
+        <td align="right">(server-side)</td>
+        <td>bundle not required, best caching/re-using capabilities, live updates</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-html5">HTML5 Templates (Runtime)</a></td>
+        <td>good</td>
+        <td align="right">53,715</td>
+        <td>bundle templates requires additional tooling (like webpack)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-string">Template String (Runtime)</a></td>
+        <td>medium</td>
+        <td align="right">15,062</td>
+        <td>bundle templates easily out of the box</td>
+    </tr>
+</table>
+
+<a name="mikado-compile"></a>
+### 1. Variant: Using Dedicated Compiler (Recommended)
 
 Define a HTML-like template and use double curly brackets to mark dynamic expressions which should be calculated during runtime:
 ```html
@@ -615,7 +671,7 @@ Define a HTML-like template and use double curly brackets to mark dynamic expres
 </table>
 ```
 
-Save this template e.g. to _template/template.html_.
+Save this template e.g. to _user/list.html_
 
 > The preserved keyword ___data___ is a reference to a passed data. You can access the whole nested object.
 
@@ -628,7 +684,7 @@ npm install mikado-compile
 
 Compile the template through the command line by:
 ```cmd
-npx mikado compile template/template.html
+npx mikado compile user/list.html
 ```
 
 > __Notation:__ npx mikado compile _{{input}} {{destination}}_
@@ -640,6 +696,69 @@ After compilation you will have 4 different files:
 2. __template.es6.js__ the template compiled as an ES6 module
 3. __template.json__ the template compiled in JSON-compatible notation (<a href="#load">to load via http request</a>)
 4. __template.html__ the HTML-like template (reference, do not delete it)
+
+<a name="compiler-html5"></a>
+### 2. Variant: Using HTML5 Templates
+
+Define in HTML:
+```html
+<template id="user-list">
+    <table>
+        <tr>
+            <td>User:</td>
+            <td>{{data.user}}</td>
+        </tr>
+        <tr>
+            <td>Tweets:</td>
+            <td>{{data.tweets.length}}</td>
+        </tr>
+    </table>
+</template>
+```
+
+Use runtime compiler:
+```js
+var tpl = Mikado.compile("user-list");
+```
+```js
+var tpl = Mikado.compile(document.getElementById("user-list"));
+```
+
+Create mikado view:
+```js
+var view = Mikado.new(tpl);
+```
+
+<a name="compiler-string"></a>
+### 3. Variant: Using Template String
+
+Define HTML as string:
+```js
+const template = ( 
+    `<table>
+        <tr>
+            <td>User:</td>
+            <td>{{data.user}}</td>
+        </tr>
+        <tr>
+            <td>Tweets:</td>
+            <td>{{data.tweets.length}}</td>
+        </tr>
+    </table>`
+);
+```
+
+Use runtime compiler:
+```js
+var tpl = Mikado.compile(template);
+```
+
+Create mikado view:
+```js
+var view = Mikado.new(tpl);
+```
+
+## Basic Example (Part 2)
 
 Assume there is an array of data to render (or just one data):
 ```js
@@ -658,7 +777,7 @@ var data = [{
 Load library and initialize template (ES5):
 ```html
 <script src="mikado.min.js"></script>
-<script src="template/template.js"></script>
+<script src="user/list.js"></script>
 <script>
     var view = Mikado.new("template");
 </script>
@@ -670,7 +789,7 @@ Load library and initialize template (ES6):
 ```html
 <script type="module">
     import Mikado from "./mikado.js";
-    import template from "./template/template.es6.js";
+    import template from "./user/list.es6.js";
     var view = Mikado.new(template);
 </script>
 ```
@@ -1676,6 +1795,7 @@ When destroying a template, template definitions will still remain in the global
 
 When unloading templates explicitly the template will also removes completely. The next time the same template is going to be re-used it has to be re-loaded and re-parsed again. In larger applications it might be useful to unload views to free memory when they was closed by the user.
 
+<a name="compiler-service"></a>
 ## Compiler Service / Live Templates
 
 Mikado provides you a webserver to serve templates via a simple RESTful API. This allows you to send views live from a server. Also this can be used for live reloading templates in a local development environment.
@@ -1981,28 +2101,6 @@ There are some features in draft and it points out that those features requires 
     </tr>
 </table>
 
-<a name="template" id="template"></a>
-## Using Native Templates
-
-_WIP (release when reaching 1000 Github stars)_
-
-Native templates do not need to compile and parsed through JSON. That made templates usable just in place.
-
-```html
-<template id="my-list">
-    <table>
-        <tr>
-            <td>User:</td>
-            <td>{{data.user}}</td>
-        </tr>
-        <tr>
-            <td>Tweets:</td>
-            <td>{{data.tweets.length}}</td>
-        </tr>
-    </table>
-</template>
-```
-
 <a name="bind" id="bind"></a>
 ## Bind Input Elements
 
@@ -2223,6 +2321,12 @@ The destination folder of the build is: _/dist/_
         <td>SUPPORT_REACTIVE</td>
         <td>true, false</td>
         <td>Use reactive data binding</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_COMPILE</td>
+        <td>true, false</td>
+        <td>Use runtime template compiler</td>
     </tr>
     <tr>
         <td><br><b>Compiler Flags</b></td>
