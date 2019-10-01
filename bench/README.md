@@ -60,7 +60,7 @@ Each library should provide at least its own features to change DOM. A test impl
 
 #### About the test environment
 
-This test also covers runtime optimizations of each library which is very important to produce good benchmark results. The goal is to get closest to a real environment.
+This test also covers runtime optimizations of each library which is very important to produce meaningful benchmark results. The goal is to get closest to a real environment.
 
 That's basically the main difference to other tests<!-- like <a href="https://krausest.github.io/js-framework-benchmark/current.html">this</a>-->. Other benchmarks may re-loading the whole page/application after every single test loop. This would be a good step away from a real environment and also cannot cover one of the biggest strength of Mikado which is based on several runtime optimizations.
 

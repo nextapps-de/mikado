@@ -33,7 +33,7 @@ export default {
       }
     ],
     "c": [
-      "data.class"
+      "data.classname"
     ],
     "s": "padding-right: 10px;"
   },

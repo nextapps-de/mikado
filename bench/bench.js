@@ -11,7 +11,8 @@ let clone;
 queue.push({
     name: "create",
     warmup: true,
-    loop: 5000,
+    loop: 1,
+    slowdown: 1,
     init: null,
     test: null,
     start: function(){
@@ -27,7 +28,8 @@ queue.push({
 queue.push({
     name: "update",
     warmup: true,
-    loop: 20000,
+    loop: 1,
+    slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
     },
@@ -45,7 +47,8 @@ queue.push({
 queue.push({
     name: "partial",
     warmup: true,
-    loop: 20000,
+    loop: 1,
+    slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
     },
@@ -65,7 +68,8 @@ queue.push({
 queue.push({
     name: "repaint",
     warmup: true,
-    loop: 50000,
+    loop: 1,
+    slowdown: 1,
     init: function(){
         this.fn(shuffle(items).slice(0));
     },
@@ -82,7 +86,8 @@ queue.push({
 queue.push({
     name: "append",
     warmup: true,
-    loop: 3000,
+    loop: 1,
+    slowdown: 1,
     init: null,
     test: null,
     start: function(){
@@ -99,7 +104,8 @@ queue.push({
 queue.push({
     name: "reduce",
     warmup: true,
-    loop: 3000,
+    loop: 1,
+    slowdown: 5,
     init: null,
     test: null,
     start: function(){
@@ -117,7 +123,8 @@ let toggle = 0;
 queue.push({
     name: "toggle",
     warmup: true,
-    loop: 3000,
+    loop: 1,
+    slowdown: 1,
     init: function(){
         this.fn(shuffle(items).slice(0));
     },
@@ -134,7 +141,8 @@ queue.push({
 queue.push({
     name: "remove",
     warmup: true,
-    loop: 5000,
+    loop: 1,
+    slowdown: 5,
     init: null,
     test: null,
     start: function(){
@@ -242,7 +250,7 @@ function validate(item){
     if(dataset.index !== String(item.index)) return msg("dataset.index");
 
     const wrapper = section.firstElementChild;
-    if(wrapper.className !== item.class) return msg("wrapper.className");
+    if(wrapper.className !== item.classname) return msg("wrapper.className");
     if(wrapper.style.paddingRight !== "10px") return msg("wrapper.style");
 
     const title = wrapper.firstElementChild;
@@ -280,7 +288,7 @@ function perform(){
 
     if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
-    if(warmup < 10){
+    if(warmup < 3){
 
         if(!warmup){
 
@@ -292,10 +300,10 @@ function perform(){
     else{
 
         warmup = 0;
-        test.loop *= 3;
+        test.loop *= 30 / test.slowdown;
     }
 
-    let loops = test.loop;
+    const loops = test.loop;
     //const results = new Array(loops | 0);
 
     if(test.init) test.init();
@@ -310,6 +318,9 @@ function perform(){
     }
     */
 
+    //tmp = perf.now() - start;
+    //results[i] = 1000 / tmp;
+
     for(let i = 0, start, mem_start, tmp; i < loops; i++){
 
         if(test.start) test.start(i);
@@ -317,9 +328,7 @@ function perform(){
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
         test.fn(clone);
-        tmp = perf.now() - start;
-        //results[i] = 1000 / tmp;
-        duration += tmp;
+        duration += perf.now() - start;
         tmp = perf.memory.usedJSHeapSize - mem_start;
         if(tmp > 0) memory += tmp;
 
@@ -330,7 +339,7 @@ function perform(){
 
     if(warmup){
 
-        test.loop = Math.floor(100 / duration * loops);
+        test.loop = Math.floor(100 / test.slowdown / duration * loops);
     }
     else{
 
@@ -346,9 +355,13 @@ function perform(){
         current++;
     }
 
-    if(queue.length){
+    if(current < queue.length){
 
-        setTimeout(perform, 200);
+        setTimeout(perform, warmup ? 50 : 500);
+    }
+    else{
+
+        current = 0;
     }
 
     //root.textContent = "";
@@ -417,7 +430,7 @@ export function update(items, index){
             items[i]["date"] = items[(Math.random() * length) | 0]["date"];
         }
         else if((i + index) % 10 === 0){
-            items[i]["class"] = items[(Math.random() * length) | 0]["class"];
+            items[i]["classname"] = items[(Math.random() * length) | 0]["classname"];
         }
         else if((i + index) % 5 === 0){
             items[i]["content"] = items[(Math.random() * length) | 0]["content"];

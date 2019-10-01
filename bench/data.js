@@ -75,7 +75,7 @@ export function generate(count){
             "id": (random_string(4) + "-" + random_string(8) + "-" + random_string(4)).toUpperCase(),
             "date": date,
             "index": i,
-            "class": colors[random(len_colors)],
+            "classname": colors[random(len_colors)],
             "title": titles[random(len_titles)],
             "content": content[random(len_content)],
             "footer": footer[random(len_footer)],

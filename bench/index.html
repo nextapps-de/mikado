@@ -58,6 +58,10 @@ To measure memory you have to run in Chrome browser.<br><br>
     <li><a href="test/surplus/">surplus</a></li>
     <li><a href="test/innerhtml/">innerHTML (native)</a></li>
     <li><a href="test/jquery/">jquery</a></li>
+    <li><a href="test/mithril/">mithril</a></li>
+    <li><a href="test/knockout/">knockout</a></li>
+    <li><a href="test/lit-html/">lit-html</a></li>
+    <li><a href="test/ractive/">ractive</a></li>
 </ul>
 <br>
 <iframe id="iframe" hidden></iframe>
@@ -69,12 +73,13 @@ To measure memory you have to run in Chrome browser.<br><br>
 
         const iframe = document.getElementById("iframe");
         const result = document.getElementById("result");
-        const mikado = Mikado.new(result, "row");
+        const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
 
         const lib = shuffle([
             "mikado", "domc", "inferno",
             "redom", "sinuous", "surplus",
-            "innerHTML", "jquery"
+            "innerHTML", "jquery", "mithril",
+            "knockout", "lit-html", "ractive"
         ]);
 
         const test = [
@@ -96,7 +101,11 @@ To measure memory you have to run in Chrome browser.<br><br>
             "sinuous": 7.48,
             "surplus": 15.79,
             "innerHTML": 0,
-            "jquery": 31.26
+            "jquery": 31.26,
+            "mithril": 9.64,
+            "knockout": 24.8,
+            "lit-html": 17.31,
+            "ractive": 68.2
         };
 
         let memory = {
@@ -122,7 +131,7 @@ To measure memory you have to run in Chrome browser.<br><br>
                 "index": ""
             };
 
-            for(let y = 2; y < test.length; y++){
+            for(let y = 2; y < test.length + 1; y++){
 
                 current[x][test[y]] = "";
                 current[x]["color_" + test[y]] = "transparent";
@@ -134,6 +143,8 @@ To measure memory you have to run in Chrome browser.<br><br>
         function runner(){
 
             index++;
+            current[index][test[2]] = "run...";
+            mikado.update(mikado.node(index), current[index]);
             iframe.src = "test/" + lib[index].toLowerCase() + "/";
         }
 
@@ -195,14 +206,14 @@ To measure memory you have to run in Chrome browser.<br><br>
 
                         if(current[x][test[y]]){
 
-                            score[x] += median(val[y]) / current[x][test[y]];
+                            score[x] += average(val[y]) / current[x][test[y]];
                             index[x] += max[y] / current[x][test[y]];
                             current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
                         }
                     }
                     else{
 
-                        score[x] += current[x][test[y]] / median(val[y]);
+                        score[x] += current[x][test[y]] / average(val[y]);
                         index[x] += current[x][test[y]] / max[y];
                         current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
@@ -244,13 +255,18 @@ To measure memory you have to run in Chrome browser.<br><br>
 
                     if(index < lib.length - 1){
 
-                        setTimeout(runner, 200);
+                        setTimeout(runner, 500);
                     }
                     else{
 
                         get_score();
                         mikado.render(current);
                     }
+                }
+                else{
+
+                    current[index][test[test.indexOf(parts[0]) + 1]] = "run...";
+                    mikado.update(mikado.node(index), current[index]);
                 }
             }
         };
@@ -288,7 +304,20 @@ To measure memory you have to run in Chrome browser.<br><br>
             );
         }
 
-        setTimeout(runner, 200);
+        function average(arr){
+
+            const length = arr.length;
+            let sum = 0;
+
+            for(let i = 0; i < length; i++){
+
+                sum += arr[i];
+            }
+
+            return sum / length;
+        }
+
+        setTimeout(runner, 500);
     }());
 
 </script>
