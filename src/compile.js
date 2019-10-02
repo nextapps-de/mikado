@@ -54,17 +54,17 @@ export default function compile(node, recursive){
                 const tmp = document.createElement("div");
                 tmp.innerHTML = node;
                 node = /** @type {Element} */ (tmp.firstElementChild);
-                template["name"] = node.id || ("tpl_" + counter++);
+                template["n"] = node.id || ("tpl_" + counter++);
             }
             else{
 
-                template["name"] = node;
+                template["n"] = node;
                 node = document.getElementById(node);
             }
         }
         else{
 
-            template["name"] = node.id || ("tpl_" + counter++);
+            template["n"] = node.id || ("tpl_" + counter++);
         }
 
         node = /** @type {HTMLTemplateElement} */ (node);
@@ -72,6 +72,10 @@ export default function compile(node, recursive){
         if(node.content){
 
             node =  /** @type {Element} */ (node.content.firstElementChild);
+        }
+        else if(node.tagName === "TEMPLATE"){
+
+            node =  /** @type {Element} */ (node.firstElementChild);
         }
     }
 
@@ -84,7 +88,7 @@ export default function compile(node, recursive){
 
             // <include>{{ template }}</include>
 
-            template["include"] = node.firstChild.nodeValue;
+            template["+"] = node.firstChild.nodeValue;
 
             return;
         }
@@ -94,7 +98,7 @@ export default function compile(node, recursive){
 
             if(attributes["from"]){
 
-                template["include"] = node.attributes["from"].nodeValue;
+                template["+"] = node.attributes["from"].nodeValue;
             }
             else{
 
@@ -105,32 +109,37 @@ export default function compile(node, recursive){
 
     if(tagName !== "DIV"){
 
-        template["tag"] = tagName;
+        template["t"] = tagName.toLowerCase();
     }
 
     if(node.nodeType !== 3){
 
-        let value = node.firstChild.nodeValue.replace(/\s+/g, ' ');
+        let value = node.firstChild.nodeValue;
 
-        if(value.trim()){
+        if(value){
 
-            const pos = value.indexOf("{{@");
+            value.replace(/\s+/g, ' ');
 
-            if(pos !== -1){
+            if(value.trim()){
 
-                const pos_end = value.indexOf("}}", pos);
+                const pos = value.indexOf("{{@");
 
-                template["js"] = value.substring(pos + 3, pos_end);
-                value = value.substring(0, pos) + value.substring(pos_end + 2)
-            }
+                if(pos !== -1){
 
-            if(value.indexOf("{{#") !== -1){
+                    const pos_end = value.indexOf("}}", pos);
 
-                handle_value(template, "html", value.replace(/{{#/g, "{{"));
-            }
-            else{
+                    template["j"] = value.substring(pos + 3, pos_end);
+                    value = value.substring(0, pos) + value.substring(pos_end + 2)
+                }
 
-                handle_value(template, "text", value);
+                if(value.indexOf("{{#") !== -1){
+
+                    handle_value(template, "h", value.replace(/{{#/g, "{{"));
+                }
+                else{
+
+                    handle_value(template, "x", value);
+                }
             }
         }
     }
@@ -144,7 +153,7 @@ export default function compile(node, recursive){
 
             if(attr_name === "class"){
 
-                handle_value(template, "class", node.className);
+                handle_value(template, "c", node.className);
             }
             else{
 
@@ -152,39 +161,39 @@ export default function compile(node, recursive){
 
                 if(attr_name === "style"){
 
-                    handle_value(template, "style", attr_value);
+                    handle_value(template, "s", attr_value);
                 }
                 else if(attr_name === "if"){
 
-                    handle_value(template, "if", attr_value);
+                    handle_value(template, "f", attr_value);
                 }
                 else if(attr_name === "include"){
 
-                    if(attributes.for){
+                    if(attributes["for"]){
 
-                        handle_value(template, "ref", attr_value);
+                        handle_value(template, "@", attr_value);
                     }
                     else{
 
-                        handle_value(template, "include", attr_value);
+                        handle_value(template, "+", attr_value);
                     }
                 }
                 else if(attr_name === "for" && (tagName !== "label")){
 
-                    if(!attributes.include){
+                    if(!attributes["include"]){
 
-                        handle_value(template, "ref", compile(node.children[0], 1));
+                        handle_value(template, "@", compile(node.children[0], 1));
                     }
 
-                    handle_value(template, "foreach", attr_value);
+                    handle_value(template, "r", attr_value);
                 }
                 else if(attr_name === "max"){
 
-                    handle_value(template, "max", attr_value);
+                    handle_value(template, "m", attr_value);
                 }
                 else if(attr_name === "js"){
 
-                    handle_value(template, "js", attr_value);
+                    handle_value(template, "j", attr_value);
                 }
                 else {
 
@@ -204,11 +213,11 @@ export default function compile(node, recursive){
 
                     if(event_types[attr_name]){
 
-                        handle_value(template["event"] || (template["event"] = {}), attr_name, attr_value);
+                        handle_value(template["e"] || (template["e"] = {}), attr_name, attr_value);
                     }
                     else{
 
-                        handle_value(template["attr"] || (template["attr"] = {}), attr_name, attr_value);
+                        handle_value(template["a"] || (template["a"] = {}), attr_name, attr_value);
                     }
                 }
             }
@@ -221,22 +230,22 @@ export default function compile(node, recursive){
 
         if(children.length > 1){
 
-            template["child"] = new Array(children.length);
+            template["i"] = new Array(children.length);
 
             for(let i = 0; i < children.length; i++){
 
-                template["child"][i] = compile(children[i], 1);
+                template["i"][i] = compile(children[i], 1);
             }
         }
         else{
 
-            template["child"] = compile(children[0], 1);
+            template["i"] = compile(children[0], 1);
         }
     }
 
     if(!recursive){
 
-        template["static"] = is_static;
+        template["d"] = is_static;
     }
 
     return template;

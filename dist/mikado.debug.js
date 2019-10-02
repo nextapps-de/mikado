@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.5.0
+ * Mikado.js v0.5.1
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1522,49 +1522,56 @@ function compile$$module$tmp$compile(node, recursive) {
         var tmp = document.createElement("div");
         tmp.innerHTML = node;
         node = tmp.firstElementChild;
-        template["name"] = node.id || "tpl_" + counter$$module$tmp$compile++;
+        template["n"] = node.id || "tpl_" + counter$$module$tmp$compile++;
       } else {
-        template["name"] = node;
+        template["n"] = node;
         node = document.getElementById(node);
       }
     } else {
-      template["name"] = node.id || "tpl_" + counter$$module$tmp$compile++;
+      template["n"] = node.id || "tpl_" + counter$$module$tmp$compile++;
     }
     node = node;
     if (node.content) {
       node = node.content.firstElementChild;
+    } else {
+      if (node.tagName === "TEMPLATE") {
+        node = node.firstElementChild;
+      }
     }
   }
   var tagName = node.tagName;
   var attributes = node.attributes;
   if (tagName === "include") {
     if (node.firstChild) {
-      template["include"] = node.firstChild.nodeValue;
+      template["+"] = node.firstChild.nodeValue;
       return;
     } else {
       if (attributes["from"]) {
-        template["include"] = node.attributes["from"].nodeValue;
+        template["+"] = node.attributes["from"].nodeValue;
       } else {
         return;
       }
     }
   }
   if (tagName !== "DIV") {
-    template["tag"] = tagName;
+    template["t"] = tagName.toLowerCase();
   }
   if (node.nodeType !== 3) {
-    var value = node.firstChild.nodeValue.replace(/\s+/g, " ");
-    if (value.trim()) {
-      var pos = value.indexOf("{{@");
-      if (pos !== -1) {
-        var pos_end = value.indexOf("}}", pos);
-        template["js"] = value.substring(pos + 3, pos_end);
-        value = value.substring(0, pos) + value.substring(pos_end + 2);
-      }
-      if (value.indexOf("{{#") !== -1) {
-        handle_value$$module$tmp$compile(template, "html", value.replace(/{{#/g, "{{"));
-      } else {
-        handle_value$$module$tmp$compile(template, "text", value);
+    var value = node.firstChild.nodeValue;
+    if (value) {
+      value.replace(/\s+/g, " ");
+      if (value.trim()) {
+        var pos = value.indexOf("{{@");
+        if (pos !== -1) {
+          var pos_end = value.indexOf("}}", pos);
+          template["j"] = value.substring(pos + 3, pos_end);
+          value = value.substring(0, pos) + value.substring(pos_end + 2);
+        }
+        if (value.indexOf("{{#") !== -1) {
+          handle_value$$module$tmp$compile(template, "h", value.replace(/{{#/g, "{{"));
+        } else {
+          handle_value$$module$tmp$compile(template, "x", value);
+        }
       }
     }
   }
@@ -1573,33 +1580,33 @@ function compile$$module$tmp$compile(node, recursive) {
       var attr = attributes[i];
       var attr_name = attr.nodeName;
       if (attr_name === "class") {
-        handle_value$$module$tmp$compile(template, "class", node.className);
+        handle_value$$module$tmp$compile(template, "c", node.className);
       } else {
         var attr_value = node.getAttribute(attr_name);
         if (attr_name === "style") {
-          handle_value$$module$tmp$compile(template, "style", attr_value);
+          handle_value$$module$tmp$compile(template, "s", attr_value);
         } else {
           if (attr_name === "if") {
-            handle_value$$module$tmp$compile(template, "if", attr_value);
+            handle_value$$module$tmp$compile(template, "f", attr_value);
           } else {
             if (attr_name === "include") {
-              if (attributes.for) {
-                handle_value$$module$tmp$compile(template, "ref", attr_value);
+              if (attributes["for"]) {
+                handle_value$$module$tmp$compile(template, "@", attr_value);
               } else {
-                handle_value$$module$tmp$compile(template, "include", attr_value);
+                handle_value$$module$tmp$compile(template, "+", attr_value);
               }
             } else {
               if (attr_name === "for" && tagName !== "label") {
-                if (!attributes.include) {
-                  handle_value$$module$tmp$compile(template, "ref", compile$$module$tmp$compile(node.children[0], 1));
+                if (!attributes["include"]) {
+                  handle_value$$module$tmp$compile(template, "@", compile$$module$tmp$compile(node.children[0], 1));
                 }
-                handle_value$$module$tmp$compile(template, "foreach", attr_value);
+                handle_value$$module$tmp$compile(template, "r", attr_value);
               } else {
                 if (attr_name === "max") {
-                  handle_value$$module$tmp$compile(template, "max", attr_value);
+                  handle_value$$module$tmp$compile(template, "m", attr_value);
                 } else {
                   if (attr_name === "js") {
-                    handle_value$$module$tmp$compile(template, "js", attr_value);
+                    handle_value$$module$tmp$compile(template, "j", attr_value);
                   } else {
                     if (attr_name === "bind") {
                       var parts = attr_value.split(":");
@@ -1613,9 +1620,9 @@ function compile$$module$tmp$compile(node, recursive) {
                       attr_name = attr_name.substring(2);
                     }
                     if (event_types$$module$tmp$compile[attr_name]) {
-                      handle_value$$module$tmp$compile(template["event"] || (template["event"] = {}), attr_name, attr_value);
+                      handle_value$$module$tmp$compile(template["e"] || (template["e"] = {}), attr_name, attr_value);
                     } else {
-                      handle_value$$module$tmp$compile(template["attr"] || (template["attr"] = {}), attr_name, attr_value);
+                      handle_value$$module$tmp$compile(template["a"] || (template["a"] = {}), attr_name, attr_value);
                     }
                   }
                 }
@@ -1629,16 +1636,16 @@ function compile$$module$tmp$compile(node, recursive) {
   var children = node.children;
   if (children.length) {
     if (children.length > 1) {
-      template["child"] = new Array(children.length);
+      template["i"] = new Array(children.length);
       for (var i$13 = 0; i$13 < children.length; i$13++) {
-        template["child"][i$13] = compile$$module$tmp$compile(children[i$13], 1);
+        template["i"][i$13] = compile$$module$tmp$compile(children[i$13], 1);
       }
     } else {
-      template["child"] = compile$$module$tmp$compile(children[0], 1);
+      template["i"] = compile$$module$tmp$compile(children[0], 1);
     }
   }
   if (!recursive) {
-    template["static"] = is_static$$module$tmp$compile;
+    template["d"] = is_static$$module$tmp$compile;
   }
   return template;
 }

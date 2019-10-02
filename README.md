@@ -622,37 +622,61 @@ You can also classically include one of the distributed builds as a script tag o
     <tr>
         <td>Method</td>
         <td>Memory</td>
-        <td>Performance&nbsp;(op/s)</td>
-        <td>Note</td>
+        <td>Performance</td>
+        <td>Notes</td>
     </tr>
     <tr>
         <td><a href="#mikado-compile">Mikado Compiler (CLI)</a></td>
         <td>best</td>
-        <td align="right">6,156,704</td>
-        <td>bundle templates easily out of the box</td>
+        <td align="right">6,156,704&nbsp;op/s</td>
+        <td>
+            <ul>
+                <li>good for production</li>
+                <li>bundle templates easily out of the box</li>
+            </ul>
+        </td>
     </tr>
     <tr></tr>
     <tr>
         <td><a href="#compiler-service">Compiler Service (Server)</a></td>
         <td>best</td>
         <td align="right">(server-side)</td>
-        <td>bundle not required, best caching/re-using capabilities, live updates</td>
+        <td>
+            <ul>
+                <li>good for production</li>
+                <li>bundle not required</li>
+                <li>best caching/re-using capabilities</li>
+                <li>live updates</li>
+            </ul>
+        </td>
     </tr>
     <tr></tr>
     <tr>
         <td><a href="#compiler-html5">HTML5 Templates (Runtime)</a></td>
         <td>good</td>
-        <td align="right">53,715</td>
-        <td>bundle templates requires additional tooling (like webpack)</td>
+        <td align="right">53,715 op/s</td>
+        <td>
+            <ul>
+                <li>good for development</li>
+                <li>bundle templates requires additional tooling (like webpack)</li>
+            </ul>
+        </td>
     </tr>
     <tr></tr>
     <tr>
         <td><a href="#compiler-string">Template String (Runtime)</a></td>
         <td>medium</td>
-        <td align="right">15,062</td>
-        <td>bundle templates easily out of the box</td>
+        <td align="right">15,062 op/s</td>
+        <td>
+            <ul>
+                <li>good for development</li>
+                <li>bundle templates easily out of the box</li>
+            </ul>
+        </td>
     </tr>
 </table>
+
+__Note:__ These benchmark results are just representing the duration of compiling. Choosing a specific compiler method has no impact on the render performance.
 
 <a name="mikado-compile"></a>
 ### 1. Variant: Using Dedicated Compiler (Recommended)
@@ -2076,13 +2100,8 @@ Just use plain property notation within curly brackets.
 There are some features in draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
 <table>
     <tr>
-        <td>500&nbsp;Github&nbsp;Stars</td>
-        <td>Providing pseudo attributes <b>else</b> and <b>elseif</b> within templates to chain conditionals.</td>
-    </tr>
-    <tr></tr>
-    <tr>
         <td>1000&nbsp;Github&nbsp;Stars</td>
-        <td>Supports using of <a href="#template">native templates</a> as an alternative to compile and parse JSON.</td>
+        <td>Providing pseudo attributes <b>else</b> and <b>elseif</b> within templates to chain conditionals.</td>
     </tr>
     <tr></tr>
     <tr>

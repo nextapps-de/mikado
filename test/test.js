@@ -680,6 +680,35 @@ describe("Cache Helpers", function(){
     });
 });
 
+describe("Runtime Compiler", function(){
+
+    it("Should have been compiled properly (native template)", function(){
+
+        var template = Mikado.compile("template-test");
+        var mikado = new Mikado(root_1, template);
+        mikado.render(data);
+
+        validate(mikado.dom[0], data[0]);
+    });
+
+    it("Should have been compiled properly (template string)", function(){
+
+        var template = Mikado.compile(
+            '<section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}" root>' +
+                '<div class="{{data.class.replace(/,/g, \'\')}}" style="padding-right: 10px;" click="attach">' +
+                    '<div class="title" click="delegate:root">{{data.title}}</div>' +
+                    '<div class="content">{{data.content}}</div>' +
+                    '<div class="footer">{{data.footer}}</div>' +
+                '</div>' +
+            '</section>'
+        );
+        var mikado = new Mikado(root_1, template);
+        mikado.render(data);
+
+        validate(mikado.dom[0], data[0]);
+    });
+});
+
 describe("DOM Helpers", function(){
 
     it("Should have been find properly", function(){
@@ -1263,13 +1292,16 @@ function validate(node, data){
     expect(dataset.id).to.equal(data.id);
     expect(dataset.date).to.equal(data.date);
     expect(dataset.index).to.equal(String(data.index));
+    expect(node.hasAttribute("root")).to.equal(true);
 
     var wrapper = node.firstElementChild;
     expect(wrapper.className).to.equal(data.class.replace(/,/g, ""));
     expect(wrapper.style.paddingRight).to.equal("10px");
+    expect(wrapper.getAttribute("click")).to.equal("attach");
 
     var title = wrapper.firstElementChild;
     expect(title.textContent).to.equal(data.title);
+    expect(title.getAttribute("click")).to.equal("delegate:root");
 
     var content = title.nextElementSibling;
     expect(content.textContent).to.equal(data.content);

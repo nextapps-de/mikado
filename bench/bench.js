@@ -10,8 +10,6 @@ let clone;
 
 queue.push({
     name: "create",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: null,
     test: null,
@@ -27,8 +25,6 @@ queue.push({
 
 queue.push({
     name: "update",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
@@ -46,8 +42,6 @@ queue.push({
 
 queue.push({
     name: "partial",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
@@ -67,8 +61,6 @@ queue.push({
 
 queue.push({
     name: "repaint",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: function(){
         this.fn(shuffle(items).slice(0));
@@ -78,6 +70,7 @@ queue.push({
         clone = items.slice(0);
     },
     fn: null,
+    end: null,
     complete: function(){
         this.fn([]);
     }
@@ -85,8 +78,6 @@ queue.push({
 
 queue.push({
     name: "append",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: null,
     test: null,
@@ -103,8 +94,6 @@ queue.push({
 
 queue.push({
     name: "reduce",
-    warmup: true,
-    loop: 1,
     slowdown: 5,
     init: null,
     test: null,
@@ -113,6 +102,7 @@ queue.push({
         clone = items.slice(0, 50);
     },
     fn: null,
+    end: null,
     complete: function(){
         this.fn([]);
     }
@@ -122,8 +112,6 @@ let toggle = 0;
 
 queue.push({
     name: "toggle",
-    warmup: true,
-    loop: 1,
     slowdown: 1,
     init: function(){
         this.fn(shuffle(items).slice(0));
@@ -133,6 +121,7 @@ queue.push({
         clone = (toggle = !toggle) ? items.slice(0, 50) : items.slice(0);
     },
     fn: null,
+    end: null,
     complete: function(){
         this.fn([]);
     }
@@ -140,8 +129,6 @@ queue.push({
 
 queue.push({
     name: "remove",
-    warmup: true,
-    loop: 1,
     slowdown: 5,
     init: null,
     test: null,
@@ -150,6 +137,7 @@ queue.push({
         clone = [];
     },
     fn: null,
+    end: null,
     complete: function(){
         this.fn([]);
     }
@@ -174,7 +162,6 @@ export function defer(){
 
 queue.push({
     name: "click",
-    warmup: true,
     defer: function(){
         defer_start = perf.now();
         root.firstElementChild.firstElementChild.firstElementChild.dispatchEvent(new MouseEvent("click", {
@@ -183,7 +170,6 @@ queue.push({
             cancelable: true
         }));
     },
-    loop: 200000,
     init: function(){
         //root.textContent = "";
         defer_duration = 0;
@@ -216,7 +202,7 @@ window.onload = function(){
             item.test || (item.test = suite[lib]);
         }
 
-        setTimeout(perform, 200);
+        setTimeout(perform, 500);
     }
 };
 
@@ -288,11 +274,13 @@ function perform(){
 
     if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
+    let time;
+
     if(warmup < 3){
 
         if(!warmup){
 
-            test.loop = 1;
+            time = 300 / test.slowdown;
         }
 
         warmup++;
@@ -300,10 +288,10 @@ function perform(){
     else{
 
         warmup = 0;
-        test.loop *= 30 / test.slowdown;
+        time = 3000 / test.slowdown;
     }
 
-    const loops = test.loop;
+    //const loops = test.loop;
     //const results = new Array(loops | 0);
 
     if(test.init) test.init();
@@ -321,9 +309,11 @@ function perform(){
     //tmp = perf.now() - start;
     //results[i] = 1000 / tmp;
 
-    for(let i = 0, start, mem_start, tmp; i < loops; i++){
+    let loops = 0;
 
-        if(test.start) test.start(i);
+    for(let start, mem_start, tmp; duration < time; loops++){
+
+        if(test.start) test.start(loops);
 
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
@@ -332,16 +322,12 @@ function perform(){
         tmp = perf.memory.usedJSHeapSize - mem_start;
         if(tmp > 0) memory += tmp;
 
-        if(test.end) test.end(i);
+        if(test.end) test.end(loops);
     }
 
     if(test.complete) test.complete();
 
-    if(warmup){
-
-        test.loop = Math.floor(100 / test.slowdown / duration * loops);
-    }
-    else{
+    if(!warmup){
 
         if(window === window.top){
 

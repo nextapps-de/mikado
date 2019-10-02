@@ -18,6 +18,15 @@
     <div id="root-1" hidden></div>
     <div id="root-2" hidden></div>
     <div id="root-3" hidden></div>
+    <template id="template-test">
+        <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}" root>
+            <div class="{{data.class.replace(/,/g, '')}}" style="padding-right: 10px;" click="attach">
+                <div class="title" click="delegate:root">{{data.title}}</div>
+                <div class="content">{{data.content}}</div>
+                <div class="footer">{{data.footer}}</div>
+            </div>
+        </section>
+    </template>
     <script src="node_modules/mocha/mocha.js"></script>
     <script src="node_modules/chai/chai.js"></script>
     <script>
