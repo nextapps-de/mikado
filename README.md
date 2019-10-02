@@ -203,7 +203,7 @@ npm install mikado
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>4.9 kb</td>
+        <td>6.2 kb</td>
         <td>2.3 kb</td>
     </tr>
 </table>
@@ -248,7 +248,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>29227</sub></td>
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
-        <td align=right><b>8602</b></td>
+        <td align=right><b>8117</b></td>
         <td align=right><b>965</b></td>
     </tr>
     <tr></tr>
@@ -264,8 +264,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16485</sub></td>
         <td align=right><sub>2252</sub></td>
         <td align=right><sub>16855</sub></td>
-        <td align=right><b>1968</b></td>
-        <td align=right><b>468</b></td>
+        <td align=right><b>1887</b></td>
+        <td align=right><b>492</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -280,8 +280,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>22665</sub></td>
         <td align=right><sub>3624</sub></td>
         <td align=right><sub>24978</sub></td>
-        <td align=right><b>2237</b></td>
-        <td align=right><b>455</b></td>
+        <td align=right><b>2043</b></td>
+        <td align=right><b>475</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -296,24 +296,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>12961</sub></td>
         <td align=right><sub>3323</sub></td>
         <td align=right><sub>23702</sub></td>
-        <td align=right><b>1442</b></td>
-        <td align=right><b>323</b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>redom</td>
-        <td align=right><sub>2.88</sub></td>
-        <td align=right><sub>287875</sub></td>
-        <td align=right><sub>385</sub></td>
-        <td align=right><sub>2191</sub></td>
-        <td align=right><sub>3075</sub></td>
-        <td align=right><sub>4236</sub></td>
-        <td align=right><sub>744</sub></td>
-        <td align=right><sub>6245</sub></td>
-        <td align=right><sub>1295</sub></td>
-        <td align=right><sub>10632</sub></td>
-        <td align=right><b>1236</b></td>
-        <td align=right><b>212</b></td>
+        <td align=right><b>1436</b></td>
+        <td align=right><b>347</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -328,8 +312,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7120</sub></td>
         <td align=right><sub>2286</sub></td>
         <td align=right><sub>14339</sub></td>
-        <td align=right><b>1218</b></td>
-        <td align=right><b>204</b></td>
+        <td align=right><b>1154</b></td>
+        <td align=right><b>229</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -344,8 +328,40 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8505</sub></td>
         <td align=right><sub>1449</sub></td>
         <td align=right><sub>4626</sub></td>
-        <td align=right><b>880</b></td>
-        <td align=right><b>202</b></td>
+        <td align=right><b>879</b></td>
+        <td align=right><b>225</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>redom</td>
+        <td align=right><sub>2.88</sub></td>
+        <td align=right><sub>287875</sub></td>
+        <td align=right><sub>385</sub></td>
+        <td align=right><sub>2191</sub></td>
+        <td align=right><sub>3075</sub></td>
+        <td align=right><sub>4236</sub></td>
+        <td align=right><sub>744</sub></td>
+        <td align=right><sub>6245</sub></td>
+        <td align=right><sub>1295</sub></td>
+        <td align=right><sub>10632</sub></td>
+        <td align=right><b>875</b></td>
+        <td align=right><b>221</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mithril</td>
+        <td align=right><sub>9.64</sub></td>
+        <td align=right><sub>250668</sub></td>
+        <td align=right><sub>641</sub></td>
+        <td align=right><sub>2204</sub></td>
+        <td align=right><sub>2704</sub></td>
+        <td align=right><sub>4788</sub></td>
+        <td align=right><sub>1153</sub></td>
+        <td align=right><sub>6300</sub></td>
+        <td align=right><sub>1972</sub></td>
+        <td align=right><sub>11810</sub></td>
+        <td align=right><b>864</b></td>
+        <td align=right><b>193</b></td>
     </tr>
     <tr>
         <td>innerHTML</td>
@@ -363,22 +379,6 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><b>173</b></td>
     </tr>
     <tr>
-        <td>mithril</td>
-        <td align=right><sub>9.64</sub></td>
-        <td align=right><sub>250668</sub></td>
-        <td align=right><sub>641</sub></td>
-        <td align=right><sub>2204</sub></td>
-        <td align=right><sub>2704</sub></td>
-        <td align=right><sub>4788</sub></td>
-        <td align=right><sub>1153</sub></td>
-        <td align=right><sub>6300</sub></td>
-        <td align=right><sub>1972</sub></td>
-        <td align=right><sub>11810</sub></td>
-        <td align=right><b>911</b></td>
-        <td align=right><b>168</b></td>
-    </tr>
-    <tr></tr>
-    <tr>
         <td>jquery</td>
         <td align=right><sub>31.26</sub></td>
         <td align=right><sub>519162</sub></td>
@@ -390,8 +390,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1045</sub></td>
         <td align=right><sub>766</sub></td>
         <td align=right><sub>5007</sub></td>
-        <td align=right><b>401</b></td>
-        <td align=right><b>66</b></td>
+        <td align=right><b>419</b></td>
+        <td align=right><b>86</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -406,8 +406,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2697</sub></td>
         <td align=right><sub>570</sub></td>
         <td align=right><sub>1480</sub></td>
-        <td align=right><b>250</b></td>
-        <td align=right><b>58</b></td>
+        <td align=right><b>275</b></td>
+        <td align=right><b>73</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -422,15 +422,15 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>211</sub></td>
         <td align=right><sub>94</sub></td>
         <td align=right><sub>953</sub></td>
-        <td align=right><b>113</b></td>
-        <td align=right><b>18</b></td>
+        <td align=right><b>126</b></td>
+        <td align=right><b>39</b></td>
     </tr>
 </table>
 
-<code>Score = Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code><br>
+<code>Score = SQRT(median_kb / test_kb) + Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code><br>
 A score of 1000 represents the statistical midfield.
 
-<code>Index = Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code><br>
+<code>Index = SQRT(min_kb / test_kb) + Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code><br>
 The maximum possible index is 1000, that requires a library to be best in each category.
 
 Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md">here</a>.

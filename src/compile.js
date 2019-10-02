@@ -96,9 +96,11 @@ export default function compile(node, recursive){
 
             // <include from="..."/>
 
-            if(attributes["from"]){
+            const tmp = node.getAttribute("from");
 
-                template["+"] = node.attributes["from"].nodeValue;
+            if(tmp){
+
+                template["+"] = tmp;
             }
             else{
 
@@ -148,8 +150,7 @@ export default function compile(node, recursive){
 
         for(let i = 0; i < attributes.length; i++){
 
-            const attr = attributes[i];
-            let attr_name = attr.nodeName;
+            let attr_name = attributes[i].nodeName;
 
             if(attr_name === "class"){
 
@@ -169,7 +170,7 @@ export default function compile(node, recursive){
                 }
                 else if(attr_name === "include"){
 
-                    if(attributes["for"]){
+                    if(node.hasAttribute("for")){
 
                         handle_value(template, "@", attr_value);
                     }
@@ -180,7 +181,7 @@ export default function compile(node, recursive){
                 }
                 else if(attr_name === "for" && (tagName !== "label")){
 
-                    if(!attributes["include"]){
+                    if(!node.hasAttribute("include")){
 
                         handle_value(template, "@", compile(node.children[0], 1));
                     }
