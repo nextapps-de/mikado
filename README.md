@@ -2,7 +2,7 @@
 <img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado.js" width="61.8%">
 
 <h1></h1>
-<h3>Web's fastest templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Web's fastest templating engine. Mikado takes templating performance to a whole new level.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
@@ -233,8 +233,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=center><sup>Remove</sup></td>
         <td align=center><sup>Toggle</sup></td>
         <td align=center><sup>Clear</sup></td>
-        <td align=center><sup>Score</sup></td>
         <td align=center><sup>Index</sup></td>
+        <td align=center><sup>Score</sup></td>
     </tr>
     <tr>
         <td>mikado</td>
@@ -248,24 +248,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>29227</sub></td>
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
-        <td align=right><b>8117</b></td>
         <td align=right><b>965</b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>sinuous</td>
-        <td align=right><sub>7.48</sub></td>
-        <td align=right><sub>232137</sub></td>
-        <td align=right><sub>618</sub></td>
-        <td align=right><sub>8949</sub></td>
-        <td align=right><sub>11343</sub></td>
-        <td align=right><sub>315760</sub></td>
-        <td align=right><sub>1202</sub></td>
-        <td align=right><sub>16485</sub></td>
-        <td align=right><sub>2252</sub></td>
-        <td align=right><sub>16855</sub></td>
-        <td align=right><b>1887</b></td>
-        <td align=right><b>492</b></td>
+        <td align=right><b>8117</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -280,8 +264,24 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>22665</sub></td>
         <td align=right><sub>3624</sub></td>
         <td align=right><sub>24978</sub></td>
-        <td align=right><b>2043</b></td>
         <td align=right><b>475</b></td>
+        <td align=right><b>2043</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>sinuous</td>
+        <td align=right><sub>7.48</sub></td>
+        <td align=right><sub>232137</sub></td>
+        <td align=right><sub>618</sub></td>
+        <td align=right><sub>8949</sub></td>
+        <td align=right><sub>11343</sub></td>
+        <td align=right><sub>315760</sub></td>
+        <td align=right><sub>1202</sub></td>
+        <td align=right><sub>16485</sub></td>
+        <td align=right><sub>2252</sub></td>
+        <td align=right><sub>16855</sub></td>
+        <td align=right><b>492</b></td>
+        <td align=right><b>1887</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -296,8 +296,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>12961</sub></td>
         <td align=right><sub>3323</sub></td>
         <td align=right><sub>23702</sub></td>
-        <td align=right><b>1436</b></td>
         <td align=right><b>347</b></td>
+        <td align=right><b>1436</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -312,8 +312,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7120</sub></td>
         <td align=right><sub>2286</sub></td>
         <td align=right><sub>14339</sub></td>
-        <td align=right><b>1154</b></td>
         <td align=right><b>229</b></td>
+        <td align=right><b>1154</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -328,8 +328,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8505</sub></td>
         <td align=right><sub>1449</sub></td>
         <td align=right><sub>4626</sub></td>
-        <td align=right><b>879</b></td>
         <td align=right><b>225</b></td>
+        <td align=right><b>879</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -344,8 +344,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6245</sub></td>
         <td align=right><sub>1295</sub></td>
         <td align=right><sub>10632</sub></td>
-        <td align=right><b>875</b></td>
         <td align=right><b>221</b></td>
+        <td align=right><b>875</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -360,8 +360,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6300</sub></td>
         <td align=right><sub>1972</sub></td>
         <td align=right><sub>11810</sub></td>
-        <td align=right><b>864</b></td>
         <td align=right><b>193</b></td>
+        <td align=right><b>864</b></td>
     </tr>
     <tr>
         <td>innerHTML</td>
@@ -375,8 +375,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1715</sub></td>
         <td align=right><sub>1210</sub></td>
         <td align=right><sub>26053</sub></td>
-        <td align=right><b>671</b></td>
         <td align=right><b>173</b></td>
+        <td align=right><b>671</b></td>
     </tr>
     <tr>
         <td>jquery</td>
@@ -390,8 +390,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1045</sub></td>
         <td align=right><sub>766</sub></td>
         <td align=right><sub>5007</sub></td>
-        <td align=right><b>419</b></td>
         <td align=right><b>86</b></td>
+        <td align=right><b>419</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -406,8 +406,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2697</sub></td>
         <td align=right><sub>570</sub></td>
         <td align=right><sub>1480</sub></td>
-        <td align=right><b>275</b></td>
         <td align=right><b>73</b></td>
+        <td align=right><b>275</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -422,8 +422,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>211</sub></td>
         <td align=right><sub>94</sub></td>
         <td align=right><sub>953</sub></td>
-        <td align=right><b>126</b></td>
         <td align=right><b>39</b></td>
+        <td align=right><b>126</b></td>
     </tr>
 </table>
 
@@ -456,7 +456,6 @@ Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
 - <a href="#view.render">view.__render__(\<data\>, \<payload\>, \<callback\>)</a>
-- <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
 - <a href="#view.create">view.__create__(data)</a>
 - <a href="#view.add">view.__add__(data, \<payload\>)</a>
 - <a href="#view.update">view.__update__(node, data, \<payload\>)</a>
@@ -467,20 +466,22 @@ Instance methods:
 - <a href="#view.data">view.__data__(index | node)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
+- <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
+- <a href="#view.unload">view.__unload__()</a>
+- <a href="#view.sync">view.__sync__()</a>
+
+Instance methods (not included in mikado.light.js):
+- <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
+- <a href="#view.sync">view.__sync__(\<uncache?\>)</a>
+- <a href="#view.purge">view.__purge__(\<template\>)</a>
 - <a href="#view.find">view.__find__(data)</a>
 - <a href="#view.search">view.__search__(data)</a>
 - <a href="#view.where">view.__where__(payload)</a>
-- ~~view.__parse__(template)~~
-- <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
-- <a href="#view.unload">view.__unload__()</a>
-- <a href="#view.sync">view.__sync__(\<uncache?\>)</a>
-- <a href="#view.purge">view.__purge__(\<template\>)</a>
-
-Instance methods (not included in mikado.light.js):
 - <a href="#view.import">view.__import__()</a>
 - <a href="#view.export">view.__export__()</a>
 - <a href="#view.load">view.__load__(url, \<callback\>)</a>
-- ~~view.__sort__(field, \<direction | handler\>)~~
+
+DOM manipulation helpers (optional, not included in mikado.light.js):
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
 - <a href="#view.move">view.__move__(node | index, index)</a>
@@ -492,7 +493,8 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.before">view.__before__(node | index, node | index)</a>
 - <a href="#view.after">view.__after__(node | index, node | index)</a>
 - <a href="#view.swap">view.__swap__(node | index, node | index)</a>
-- ~~view.__shuffle__()~~
+<!-- - ~~view.__sort__(field, \<direction | handler\>)~~ -->
+<!-- - ~~view.__shuffle__()~~ -->
 
 Instance properties:
 - ~~view.__dom__~~
@@ -500,7 +502,7 @@ Instance properties:
 - <a href="#view.store">view.__store__</a>
 - <a href="#view.state">view.__state__</a>
 - ~~view.__config__~~
-- <a href="#view.id">view.__template__</a>
+- ~~view.__template__~~
 
 Global helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.setText">Mikado.__setText__(node, text)</a>
@@ -512,8 +514,8 @@ Global helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.hasClass">Mikado.__hasClass__(node, class)</a>
 - <a href="#Mikado.removeClass">Mikado.__removeClass__(node, class)</a>
 - <a href="#Mikado.toggleClass">Mikado.__toggleClass__(node, class)</a>
-- <a href="#Mikado.setStyle">Mikado.__setStyle__(node, property, value)</a>
-- <a href="#Mikado.getStyle">Mikado.__getStyle__(node, property)</a>
+- ~~Mikado.__setStyle__(node, property, value)~~
+- ~~Mikado.__getStyle__(node, property~~
 - <a href="#Mikado.setCSS">Mikado.__setCSS__(node, css)</a>
 - <a href="#Mikado.getCSS">Mikado.__getCSS__(node)</a>
 - <a href="#Mikado.setAttribute">Mikado.__setAttribute__(node, attr, value)</a>
@@ -2369,3 +2371,5 @@ The destination folder of the build is: _/dist/_
 
 Copyright 2019 Nextapps GmbH<br>
 Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache 2.0 License</a><br>
+
+<!-- Web's fastest templating engine. Super-lightweight, outstanding performance, no dependencies. -->

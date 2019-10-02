@@ -399,7 +399,7 @@ export function shuffle(items){
 
     for(let i = items.length - 1, j, x; i > 0; i--) {
 
-        j = (Math.random() * (i + 1)) | 0;
+        j = (Math.random() * i) | 0;
         x = items[i];
         items[i] = items[j];
         items[j] = x;
