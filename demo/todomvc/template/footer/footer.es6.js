@@ -83,6 +83,7 @@ export default {
   ],
   "c": "footer",
   "f": "!this.state.empty",
+  "d": false,
   "n": "footer",
-  "v": "0.0.5"
+  "v": "0.0.6"
 };

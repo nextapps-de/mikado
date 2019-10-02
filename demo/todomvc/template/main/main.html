@@ -1,5 +1,5 @@
 <section class="main" if="!this.state.empty">
-    <input id="toggle-all" class="toggle-all" type="checkbox" change="toggle-all">
+    <input id="toggle-all" class="toggle-all" type="checkbox" change="toggle-all" js="self.checked = !this.state.left">
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list"></ul>
 </section>

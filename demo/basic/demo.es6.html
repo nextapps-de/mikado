@@ -14,11 +14,12 @@
     const root = document.getElementById("root");
     const mikado = new Mikado(template);
 
-    mikado.route("test", function(node){
-
-        console.log("click", node);
+    // register route for the click event
+    mikado.route("test", function(target, event, self){
+        console.log("click", target);
     });
 
+    // mount and render data
     mikado.mount(root).render(items);
 
 </script>

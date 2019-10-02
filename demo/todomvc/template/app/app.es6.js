@@ -70,6 +70,7 @@ export default {
       "c": "info"
     }
   ],
+  "d": true,
   "n": "app",
-  "v": "0.0.5"
+  "v": "0.0.6"
 };

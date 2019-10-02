@@ -65,6 +65,7 @@ export default {
     " data.completed ? 'completed' : '' "
   ],
   "f": "view.is_visible(data)",
+  "d": false,
   "n": "list",
-  "v": "0.0.5"
+  "v": "0.0.6"
 };

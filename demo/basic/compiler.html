@@ -13,7 +13,7 @@
         </div>
     </section>
 </template>
-<script src="../../dist/mikado.min.js"></script>
+<script src="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js"></script>
 <script src="data.js"></script>
 <script>
 
@@ -23,6 +23,12 @@
         const template = Mikado.compile("my-template");
         const mikado = new Mikado(template);
 
+        // register route for the click event
+        mikado.route("test", function(target, event, self){
+            console.log("click", target);
+        });
+
+        // mount and render data
         mikado.mount(root).render(window.data);
     }());
 

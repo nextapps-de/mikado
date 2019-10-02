@@ -427,10 +427,10 @@ Values represents operations per second, each benchmark task has to process a da
     </tr>
 </table>
 
-<code>Score = SQRT(median_kb / test_kb) + Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code><br>
+<code>Score = (SQRT(median_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / median_ops)) / test_count * 1000</code><br>
 A score of 1000 represents the statistical midfield.
 
-<code>Index = SQRT(min_kb / test_kb) + Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code><br>
+<code>Index = (SQRT(min_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / max_ops)) / test_count * 1000</code><br>
 The maximum possible index is 1000, that requires a library to be best in each category.
 
 Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md">here</a>.

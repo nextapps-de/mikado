@@ -18,7 +18,7 @@ list.route("clear-completed", function(){
 
         if(list.store[i]["completed"]){
 
-            list.remove(list.node(i--));
+            list.remove(i--);
         }
     }
 
@@ -28,23 +28,21 @@ list.route("clear-completed", function(){
 }).route("toggle-all", function(target){
 
     const state = target.checked;
-    const toggles = $$(".toggle");
 
     for(let i = 0; i < list.length; i++){
 
         list.store[i]["completed"] = state;
-        toggles[i].checked = state;
     }
 
     update();
-    list.render(list.store, view).export();
+    list.refresh(view).export();
 
 }).route("enter-edit-mode", function(target, event, self){
 
     const input = $("input.edit", target);
 
-    list.setClass(target, "editing");
-    input.value = self.textContent;
+    Mikado.setClass(target, "editing");
+    input.value = Mikado.getText(self);
     input.focus();
 
 }).route("destroy", function(target){
@@ -58,7 +56,7 @@ list.route("clear-completed", function(){
 
 }).route("cancel-edit", function(target, event, self){
 
-    list.setClass(self, "");
+    Mikado.setClass(self, "");
 
 }).route("edit", function(target, event, self){
 
@@ -75,11 +73,11 @@ list.route("clear-completed", function(){
             list.remove(target);
         }
 
-        list.refresh(list.index(target), view).export();
+        list.refresh(target, view).export();
     }
     else if(event === KEYS.ESC) {
 
-        list.setClass(target, "");
+        Mikado.setClass(target, "");
     }
 
 }).route("update-state", function(target, event, self){

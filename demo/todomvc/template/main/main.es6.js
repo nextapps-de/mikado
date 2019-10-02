@@ -8,6 +8,7 @@ export default {
         "type": "checkbox"
       },
       "c": "toggle-all",
+      "j": "self.checked=!this.state.left",
       "e": {
         "change": "toggle-all"
       }
@@ -26,6 +27,7 @@ export default {
   ],
   "c": "main",
   "f": "!this.state.empty",
+  "d": true,
   "n": "main",
-  "v": "0.0.5"
+  "v": "0.0.6"
 };

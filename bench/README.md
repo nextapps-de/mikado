@@ -25,12 +25,12 @@ Go to the URL which displays in the console, e.g. _http://localhost_. The tests 
 #### Score
 The score is calculated in relation to the median value of each test. That will keeping the benchmark factor between each library effectively but also vary relationally when new libraries were added.
 
-<code>Score = SQRT(median_kb / test_kb) + Sum<sub>test</sub>(test_ops / median_ops) / test_count * 1000</code>
+<code>Score = (SQRT(median_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / median_ops)) / test_count * 1000</code>
 
 #### Index
 The score index is a close to "static" representation where each score references to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
 
-<code>Index = SQRT(min_kb / test_kb) + Sum<sub>test</sub>(test_ops / max_ops) / test_count * 1000</code>
+<code>Index = (SQRT(min_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / max_ops)) / test_count * 1000</code>
 
 ## How this benchmark work
 
@@ -56,7 +56,7 @@ The data is unknown, the library do not know if data was added, removed, updated
 Regardless the function is doing, every test has to run through the same logic.
 
 #### About requirements for tested libraries
-Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand.
+Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand. Also asynchronous/scheduled rendering is not allowed.
 
 #### About the test environment
 

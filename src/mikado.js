@@ -476,13 +476,14 @@ if(SUPPORT_STORAGE){
 
     Mikado.prototype.refresh = function(index, view){
 
+        if(typeof index["_idx"] === "number"){
+
+            index = index["_idx"];
+        }
+
         if(typeof index === "number"){
 
             return this.update(this.dom[index], null, view, index);
-        }
-        else {
-
-            view = index;
         }
 
         const count = this.store ? this.store.length : this.length;
@@ -495,7 +496,7 @@ if(SUPPORT_STORAGE){
 
         for(let x = 0; x < count; x++){
 
-            this.update(this.dom[x], null, view, x);
+            this.update(this.dom[x], null, index /*view*/, x);
         }
 
         return this;
@@ -859,6 +860,8 @@ Mikado.prototype.remove = function(node, count){
 
             index = this.length + index - 1;
         }
+
+        node = this.dom[index];
     }
     else{
 

@@ -1,5 +1,4 @@
-import { state, main, footer, list } from "./app.js";
-import { $, $$ } from "./helper.js";
+import { main, footer, list } from "./app.js";
 
 export default function(route, target){
 
@@ -17,24 +16,31 @@ export default function(route, target){
         route = "all";
     }
 
-    // update state:
-    state.filter = route;
-
-    // render todos:
+    list.state.filter = route;
     list.render(list.store, view, update);
 }
 
 export const view = {
 
-  is_visible: function(data){
+  "is_visible": function(data){
 
-      return state.filter === "all" ||
-            (state.filter === "completed" && data.completed) ||
-            (state.filter === "active" && !data.completed)
+      const filter = list.state.filter;
+
+      return filter === "all" ||
+            (filter === "completed" && data.completed) ||
+            (filter === "active" && !data.completed)
   }
 };
 
-// private helpers:
+export function update(){
+
+    list.state.left = filter_by("active").length;
+    list.state.completed = list.length - list.state.left;
+    list.state.empty = !list.length;
+
+    main.render();
+    footer.render();
+}
 
 function filter_by(filter){
 
@@ -46,16 +52,4 @@ function filter_by(filter){
 
             return item["completed"] === (filter === "completed");
         });
-}
-
-export function update(){
-
-    state.left = filter_by("active").length;
-    state.completed = list.length - state.left;
-    state.empty = !list.length;
-
-    main.render({});
-    footer.render({});
-
-    $("#toggle-all").checked = !state.left;
 }
