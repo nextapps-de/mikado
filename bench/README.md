@@ -61,7 +61,7 @@ Regardless the function is doing, every test has to run through the same logic.
 #### About requirements for tested libraries
 Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand. Also asynchronous/scheduled rendering is not allowed.
 
-The keyed test requires a strict non-reusing paradigm. When a new unreferenced list of new items comes fresh from the outside, the library does not reusing nodes (regardless if the item contents are equal).
+The keyed test requires a largely non-reusing paradigm. When a new item comes from the outside, the library does not reusing nodes.
 
 #### About the test environment
 

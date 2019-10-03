@@ -124,6 +124,14 @@ npm install mikado
     <tr></tr>
     <tr>
         <td>
+            <a href="#reuse">Keyed/Non-Keyed</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
             <a href="#compiler">Runtime Compiler</a>
         </td>
         <td>✓</td>
@@ -436,7 +444,7 @@ A score of 1000 represents the statistical midfield.
 <code>Index = (SQRT(min_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / max_ops)) / test_count * 1000</code><br>
 The maximum possible index is 1000, that requires a library to be best in each category.
 
-Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a> also you can take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmarks</a>.
+Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a> or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.
 
 <a name="api"></a>
 ## API Overview
@@ -1095,6 +1103,17 @@ Routes are stored globally, so you can share routes through all Mikado instances
         <td>The tap event is a synthetic click event for touch-enabled devices. It also fully prevents the 300ms click delay. The tap event automatically falls back to a native click listener when running on non-touchable device.</td>
     </tr>
 </table>
+
+<a name="reuse"></a>
+## About Non-/Keyed, Non-/Reusing
+
+Mikado combines the best of each world and support all paradigm out of the box. Just pass the right <a href="#options">options</a> when initialize.
+
+> Mikado is one of the very few libraries which provides you a 100% non-reusing paradigm.
+
+Assume a list of new items comes fresh from an external source. Generally keyed libraries will fail in restoring the original state of a component when a data item of the new fetched list has the same key. Mikado is able to restoring 100% of the original state in any situation.
+
+__Notice:__ An original state does not include an event listener which was directly bound to an element. The original state is the state before you apply anything manually (or by external).
 
 ## Create, Initialize, Destroy Views
 

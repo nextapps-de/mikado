@@ -35,27 +35,23 @@
         }
     }
 
-    //let list;
-
     function inferno_create(items){
 
         const length = items.length;
         const list = new Array(length);
 
-        for(let i = 0; i < length; i++){
+        for(let i = 0, tmp; i < length; i++){
 
-            list[i] = createElement(Item, items[i]);
+            tmp = items[i];
+            tmp.key = tmp.id;
+
+            list[i] = createElement(Item, tmp);
         }
 
         return list;
     }
 
     suite["inferno"] = function(items){
-
-        if(items.length){
-
-            render(null, root);
-        }
 
         render(createElement('div', null, inferno_create(items)), root);
     };

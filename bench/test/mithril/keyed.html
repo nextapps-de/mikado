@@ -22,7 +22,7 @@
 
             view: function() {
                 return data.map(function(item){
-                    return m("section", {"data-id": item.id, "data-date": item.date, "data-index": item.index},
+                    return m("section", {key: item.id, "data-id": item.id, "data-date": item.date, "data-index": item.index},
                         m("div", {"class": item.classname, "style": "padding-right: 10px;"}, [
                             m("div.title", item.title),
                             m("div.content", item.content),
@@ -35,12 +35,6 @@
     }
 
     suite["mithril"] = function(items){
-
-        if(is_mounted && items.length){
-
-            data = [];
-            m.redraw.sync();
-        }
 
         data = items;
 

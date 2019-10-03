@@ -224,8 +224,8 @@ function check(fn){
     if(keyed){
 
         root.firstElementChild.firstElementChild.firstElementChild._test = true;
-        fn(items.slice(0, 1)); // this would be the ultimate non-using test
-        //fn(items.slice(1, 2)); // give libs a chance to keep some tricks?
+        //fn(items.slice(0, 1)); // this would be the ultimate non-using test
+        fn(items.slice(1, 2)); // give libs a chance to keep some tricks?
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib runs not in keyed mode.");
             return false;

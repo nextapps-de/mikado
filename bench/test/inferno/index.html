@@ -35,16 +35,17 @@
         }
     }
 
-    //let list;
-
     function inferno_create_or_update(items){
 
-        const list = new Array(items.length);
+        const length = items.length;
+        const list = new Array(length);
 
-        for(let i = 0; i < items.length; i++){
+        for(let i = 0, tmp; i < length; i++){
 
-            //if(list[i]) list[i].props = items[i];
-            list[i] = createElement(Item, items[i]);
+            tmp = items[i];
+            tmp.key = tmp.id;
+
+            list[i] = createElement(Item, tmp);
         }
 
         return list;
