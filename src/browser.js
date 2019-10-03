@@ -27,7 +27,7 @@ if(SUPPORT_COMPILE){
     Mikado["compile"] = compile;
 }
 
-if(SUPPORT_CACHE && SUPPORT_HELPERS){
+if(SUPPORT_CACHE && SUPPORT_CACHE_HELPERS){
 
     Mikado["setText"] = setText;
     Mikado["getText"] = getText;

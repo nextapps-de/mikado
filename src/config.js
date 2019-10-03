@@ -29,10 +29,16 @@ const SUPPORT_EVENTS = true;
 const SUPPORT_STORAGE = true;
 
 /**
- * @define {boolean}
+ * @define {boolean|string}
  */
 
 const SUPPORT_HELPERS = true;
+
+/**
+ * @define {boolean}
+ */
+
+const SUPPORT_CACHE_HELPERS = true;
 
 /**
  * @define {boolean}

@@ -2,141 +2,147 @@ import Mikado from "./mikado.js";
 
 if(SUPPORT_HELPERS){
 
-    // absolute position
-    Mikado.prototype.move = function(a, position){
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("move") !== -1){
 
-        let index;
+        // absolute position
+        Mikado.prototype.move = function(a, position){
 
-        if(typeof a === "number"){
+            let index;
 
-            index = a;
-            a = this.dom[a];
-        }
-        else{
+            if(typeof a === "number"){
 
-            index = a["_idx"];
-        }
-
-        if(position < 0){
-
-            position = this.length + position - 1;
-        }
-
-        if(index !== position){
-
-            this.shift(a, position - index);
-        }
-
-        return this;
-    };
-
-    // relative position
-    Mikado.prototype.shift = function(a, offset, view){
-
-        if(!offset){
-
-            return this;
-        }
-
-        let index;
-
-        if(typeof a === "number"){
-
-            index = a;
-            a = this.dom[a];
-        }
-        else{
-
-            index = a["_idx"];
-        }
-
-        const up = offset < 0;
-
-        if((up && index) || (!up && (index < this.length - 1))){
-
-            const pos = up ?
-
-                Math.max(index + offset, 0)
-            :
-                Math.min(index + offset, this.length - 1);
-
-            const b = this.dom[pos];
-            const multi_update = (up && (index - pos > 1)) || (!up && (pos - index > 1));
-
-            if(SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)){
-
-                const tmp = this.store ? this.store[index] : a["_data"];
-                this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
-                this.update(b, tmp, view, index);
+                index = a;
+                a = this.dom[a];
             }
             else{
 
-                if(up){
+                index = a["_idx"];
+            }
 
-                    this.root.insertBefore(a, b);
+            if(position < 0){
+
+                position = this.length + position - 1;
+            }
+
+            if(index !== position){
+
+                this.shift(a, position - index);
+            }
+
+            return this;
+        };
+    }
+
+    if(SUPPORT_HELPERS !== "swap"){
+
+        // relative position
+        Mikado.prototype.shift = function(a, offset, view){
+
+            if(!offset){
+
+                return this;
+            }
+
+            let index;
+
+            if(typeof a === "number"){
+
+                index = a;
+                a = this.dom[a];
+            }
+            else{
+
+                index = a["_idx"];
+            }
+
+            const up = offset < 0;
+
+            if((up && index) || (!up && (index < this.length - 1))){
+
+                const pos = up ?
+
+                    Math.max(index + offset, 0)
+                :
+                    Math.min(index + offset, this.length - 1);
+
+                const b = this.dom[pos];
+                const multi_update = (up && (index - pos > 1)) || (!up && (pos - index > 1));
+
+                if(SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)){
+
+                    const tmp = this.store ? this.store[index] : a["_data"];
+                    this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
+                    this.update(b, tmp, view, index);
                 }
                 else{
 
-                    if(pos === this.length - 1){
+                    if(up){
 
-                        this.root.appendChild(a);
+                        this.root.insertBefore(a, b);
                     }
                     else{
 
-                        this.root.insertBefore(a, this.dom[pos + 1]);
+                        if(pos === this.length - 1){
+
+                            this.root.appendChild(a);
+                        }
+                        else{
+
+                            this.root.insertBefore(a, this.dom[pos + 1]);
+                        }
                     }
                 }
-            }
 
-            if(multi_update){
+                if(multi_update){
 
-                const tmp = this.dom[index];
-                const tmp_store = SUPPORT_STORAGE && this.store && this.store[index];
-                let current;
+                    const tmp = this.dom[index];
+                    const tmp_store = SUPPORT_STORAGE && this.store && this.store[index];
+                    let current;
 
-                if(up) {
+                    if(up){
 
-                    for(let i = index; i > pos; i--){
+                        for(let i = index; i > pos; i--){
 
-                        current = this.dom[i] = this.dom[i - 1];
-                        current["_idx"] = i;
+                            current = this.dom[i] = this.dom[i - 1];
+                            current["_idx"] = i;
 
-                        if(SUPPORT_STORAGE && this.store){
+                            if(SUPPORT_STORAGE && this.store){
 
-                            this.store[i] = this.store[i - 1];
+                                this.store[i] = this.store[i - 1];
+                            }
                         }
+                    }
+                    else{
+
+                        for(let i = index; i < pos; i++){
+
+                            current = this.dom[i] = this.dom[i + 1];
+                            current["_idx"] = i;
+
+                            if(SUPPORT_STORAGE && this.store){
+
+                                this.store[i] = this.store[i + 1];
+                            }
+                        }
+                    }
+
+                    current = this.dom[pos] = tmp;
+                    current["_idx"] = pos;
+
+                    if(SUPPORT_STORAGE && this.store){
+
+                        this.store[pos] = tmp_store;
                     }
                 }
                 else{
 
-                    for(let i = index; i < pos; i++){
-
-                        current = this.dom[i] = this.dom[i + 1];
-                        current["_idx"] = i;
-
-                        if(SUPPORT_STORAGE && this.store){
-
-                            this.store[i] = this.store[i + 1];
-                        }
-                    }
-                }
-
-                current = this.dom[pos] = tmp;
-                current["_idx"] = pos;
-
-                if(SUPPORT_STORAGE && this.store){
-
-                    this.store[pos] = tmp_store;
+                    update(this.dom, SUPPORT_STORAGE && this.store, a, b, pos, index);
                 }
             }
-            else{
 
-                update(this.dom, SUPPORT_STORAGE && this.store, a, b, pos, index);
-            }
-        }
-
-        return this;
-    };
+            return this;
+        };
+    }
 
     function update(dom, store, a, b, index_b, index_a){
 
@@ -155,189 +161,210 @@ if(SUPPORT_HELPERS){
         }
     }
 
-    Mikado.prototype.up = function(a, offset){
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("up") !== -1){
 
-        if(!offset || (offset > 0)){
+        Mikado.prototype.up = function(a, offset){
 
-            this.shift(a, -(offset || 1));
-        }
+            if(!offset || (offset > 0)){
 
-        return this;
-    };
+                this.shift(a, -(offset || 1));
+            }
 
-    Mikado.prototype.down = function(a, offset){
+            return this;
+        };
+    }
 
-        if(!offset || (offset > 0)){
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("down") !== -1){
 
-            this.shift(a, offset || 1);
-        }
+        Mikado.prototype.down = function(a, offset){
 
-        return this;
-    };
+            if(!offset || (offset > 0)){
 
-    Mikado.prototype.first = function(a){
+                this.shift(a, offset || 1);
+            }
 
-        return this.shift(a, -this.length);
-    };
+            return this;
+        };
+    }
 
-    Mikado.prototype.last = function(a){
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("first") !== -1){
 
-        return this.shift(a, this.length);
-    };
+        Mikado.prototype.first = function(a){
 
-    Mikado.prototype.before = function(tmp_a, tmp_b){
+            return this.shift(a, -this.length);
+        };
+    }
 
-        if(typeof tmp_a !== "number"){
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("last") !== -1){
 
-            tmp_a = tmp_a["_idx"];
-        }
+        Mikado.prototype.last = function(a){
 
-        if(typeof tmp_b !== "number"){
+            return this.shift(a, this.length);
+        };
+    }
 
-            tmp_b = tmp_b["_idx"];
-        }
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("before") !== -1){
 
-        if(tmp_b !== tmp_a + 1){
+        Mikado.prototype.before = function(tmp_a, tmp_b){
 
-            if(tmp_b < 0){
+            if(typeof tmp_a !== "number"){
 
-                tmp_b = this.length + tmp_b;
+                tmp_a = tmp_a["_idx"];
+            }
+
+            if(typeof tmp_b !== "number"){
+
+                tmp_b = tmp_b["_idx"];
+            }
+
+            if(tmp_b !== tmp_a + 1){
+
+                if(tmp_b < 0){
+
+                    tmp_b = this.length + tmp_b;
+
+                    if(tmp_a < 0){
+
+                        tmp_b--;
+                    }
+                }
 
                 if(tmp_a < 0){
 
-                    tmp_b--;
+                    tmp_a = this.length + tmp_a - 1;
                 }
+
+                this.shift(tmp_a, tmp_b - tmp_a - 1);
             }
 
-            if(tmp_a < 0){
+            return this;
+        };
+    }
 
-                tmp_a = this.length + tmp_a - 1;
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("after") !== -1){
+
+        Mikado.prototype.after = function(tmp_a, tmp_b){
+
+            if(typeof tmp_a !== "number"){
+
+                tmp_a = tmp_a["_idx"];
             }
 
-            this.shift(tmp_a, tmp_b - tmp_a - 1);
-        }
+            if(typeof tmp_b !== "number"){
 
-        return this;
-    };
+                tmp_b = tmp_b["_idx"];
+            }
 
-    Mikado.prototype.after = function(tmp_a, tmp_b){
+            if(tmp_b !== tmp_a - 1){
 
-        if(typeof tmp_a !== "number"){
+                if(tmp_b < 0){
 
-            tmp_a = tmp_a["_idx"];
-        }
+                    tmp_b = this.length + tmp_b - 2;
 
-        if(typeof tmp_b !== "number"){
+                    if(tmp_a < 0){
 
-            tmp_b = tmp_b["_idx"];
-        }
-
-        if(tmp_b !== tmp_a - 1){
-
-            if(tmp_b < 0){
-
-                tmp_b = this.length + tmp_b - 2;
+                        tmp_b++;
+                    }
+                }
 
                 if(tmp_a < 0){
 
-                    tmp_b++;
+                    tmp_a = this.length + tmp_a - 1;
                 }
+
+                this.shift(tmp_a, tmp_b - tmp_a + 1);
             }
 
-            if(tmp_a < 0){
+            return this;
+        };
+    }
 
-                tmp_a = this.length + tmp_a - 1;
-            }
+    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("swap") !== -1){
 
-            this.shift(tmp_a, tmp_b - tmp_a + 1);
-        }
+        /**
+         * @param a
+         * @param b
+         * @param {Object=} view
+         * @returns {Mikado}
+         */
 
-        return this;
-    };
+        Mikado.prototype.swap = function(a, b, view){
 
-    /**
-     * @param a
-     * @param b
-     * @param {Object=} view
-     * @returns {Mikado}
-     */
+            //profiler_start("swap");
 
-    Mikado.prototype.swap = function(a, b, view){
+            if(a !== b){
 
-        //profiler_start("swap");
+                let tmp_a;
+                let tmp_b;
 
-        if(a !== b){
+                if(typeof a === "number"){
 
-            let tmp_a;
-            let tmp_b;
-
-            if(typeof a === "number"){
-
-                tmp_a = a;
-                a = this.dom[a];
-            }
-            else{
-
-                tmp_a = a["_idx"];
-            }
-
-            if(typeof b === "number"){
-
-                tmp_b = b;
-                b = this.dom[b];
-            }
-            else{
-
-                tmp_b = b["_idx"];
-            }
-
-            if(tmp_a !== tmp_b){
-
-                if(SUPPORT_STORAGE && this.reuse && (this.store || this.loose)){
-
-                    const tmp = this.store ? this.store[tmp_a] : a["_data"];
-                    this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
-                    this.update(b, tmp, view, tmp_a);
+                    tmp_a = a;
+                    a = this.dom[a];
                 }
                 else{
 
-                    this.root.insertBefore(a, b);
-                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                    tmp_a = a["_idx"];
+                }
 
-                    // 2. Strategy Swap
-                    /*
-                    b.replaceWith(a);
-                    this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                    */
+                if(typeof b === "number"){
 
-                    // 3. Strategy Swap
-                    /*
-                    if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
-                    else{
-                        this.root.insertBefore(b, a);
-                        if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
-                        else this.root.appendChild(a);
+                    tmp_b = b;
+                    b = this.dom[b];
+                }
+                else{
+
+                    tmp_b = b["_idx"];
+                }
+
+                if(tmp_a !== tmp_b){
+
+                    if(SUPPORT_STORAGE && this.reuse && (this.store || this.loose)){
+
+                        const tmp = this.store ? this.store[tmp_a] : a["_data"];
+                        this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
+                        this.update(b, tmp, view, tmp_a);
                     }
-                    */
+                    else{
 
-                    a["_idx"] = tmp_b;
-                    b["_idx"] = tmp_a;
+                        this.root.insertBefore(a, b);
+                        this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
 
-                    this.dom[tmp_a] = b;
-                    this.dom[tmp_b] = a;
+                        // 2. Strategy Swap
+                        /*
+                        b.replaceWith(a);
+                        this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                        */
 
-                    if(SUPPORT_STORAGE && this.store){
+                        // 3. Strategy Swap
+                        /*
+                        if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
+                        else{
+                            this.root.insertBefore(b, a);
+                            if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
+                            else this.root.appendChild(a);
+                        }
+                        */
 
-                        const tmp = this.store[tmp_b];
-                        this.store[tmp_b] = this.store[tmp_a];
-                        this.store[tmp_a] = tmp;
+                        a["_idx"] = tmp_b;
+                        b["_idx"] = tmp_a;
+
+                        this.dom[tmp_a] = b;
+                        this.dom[tmp_b] = a;
+
+                        if(SUPPORT_STORAGE && this.store){
+
+                            const tmp = this.store[tmp_b];
+                            this.store[tmp_b] = this.store[tmp_a];
+                            this.store[tmp_a] = tmp;
+                        }
                     }
                 }
             }
-        }
 
-        //profiler_end("swap");
+            //profiler_end("swap");
 
-        return this;
-    };
+            return this;
+        };
+    }
 }

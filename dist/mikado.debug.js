@@ -12,6 +12,7 @@ var SUPPORT_CACHE = true;
 var SUPPORT_EVENTS = true;
 var SUPPORT_STORAGE = true;
 var SUPPORT_HELPERS = true;
+var SUPPORT_CACHE_HELPERS = true;
 var SUPPORT_ASYNC = true;
 var SUPPORT_TRANSPORT = true;
 var SUPPORT_TEMPLATE_EXTENSION = true;
@@ -200,186 +201,205 @@ if (SUPPORT_HELPERS) {
       store[index_a] = tmp;
     }
   };
-  Mikado$$module$tmp$mikado.prototype.move = function(a, position) {
-    var index;
-    if (typeof a === "number") {
-      index = a;
-      a = this.dom[a];
-    } else {
-      index = a["_idx"];
-    }
-    if (position < 0) {
-      position = this.length + position - 1;
-    }
-    if (index !== position) {
-      this.shift(a, position - index);
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.shift = function(a, offset, view) {
-    if (!offset) {
-      return this;
-    }
-    var index;
-    if (typeof a === "number") {
-      index = a;
-      a = this.dom[a];
-    } else {
-      index = a["_idx"];
-    }
-    var up = offset < 0;
-    if (up && index || !up && index < this.length - 1) {
-      var pos = up ? Math.max(index + offset, 0) : Math.min(index + offset, this.length - 1);
-      var b = this.dom[pos];
-      var multi_update = up && index - pos > 1 || !up && pos - index > 1;
-      if (SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)) {
-        var tmp = this.store ? this.store[index] : a["_data"];
-        this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
-        this.update(b, tmp, view, index);
-      } else {
-        if (up) {
-          this.root.insertBefore(a, b);
-        } else {
-          if (pos === this.length - 1) {
-            this.root.appendChild(a);
-          } else {
-            this.root.insertBefore(a, this.dom[pos + 1]);
-          }
-        }
-      }
-      if (multi_update) {
-        var tmp$1 = this.dom[index];
-        var tmp_store = SUPPORT_STORAGE && this.store && this.store[index];
-        var current;
-        if (up) {
-          for (var i = index; i > pos; i--) {
-            current = this.dom[i] = this.dom[i - 1];
-            current["_idx"] = i;
-            if (SUPPORT_STORAGE && this.store) {
-              this.store[i] = this.store[i - 1];
-            }
-          }
-        } else {
-          for (var i$2 = index; i$2 < pos; i$2++) {
-            current = this.dom[i$2] = this.dom[i$2 + 1];
-            current["_idx"] = i$2;
-            if (SUPPORT_STORAGE && this.store) {
-              this.store[i$2] = this.store[i$2 + 1];
-            }
-          }
-        }
-        current = this.dom[pos] = tmp$1;
-        current["_idx"] = pos;
-        if (SUPPORT_STORAGE && this.store) {
-          this.store[pos] = tmp_store;
-        }
-      } else {
-        update(this.dom, SUPPORT_STORAGE && this.store, a, b, pos, index);
-      }
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.up = function(a, offset) {
-    if (!offset || offset > 0) {
-      this.shift(a, -(offset || 1));
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.down = function(a, offset) {
-    if (!offset || offset > 0) {
-      this.shift(a, offset || 1);
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.first = function(a) {
-    return this.shift(a, -this.length);
-  };
-  Mikado$$module$tmp$mikado.prototype.last = function(a) {
-    return this.shift(a, this.length);
-  };
-  Mikado$$module$tmp$mikado.prototype.before = function(tmp_a, tmp_b) {
-    if (typeof tmp_a !== "number") {
-      tmp_a = tmp_a["_idx"];
-    }
-    if (typeof tmp_b !== "number") {
-      tmp_b = tmp_b["_idx"];
-    }
-    if (tmp_b !== tmp_a + 1) {
-      if (tmp_b < 0) {
-        tmp_b = this.length + tmp_b;
-        if (tmp_a < 0) {
-          tmp_b--;
-        }
-      }
-      if (tmp_a < 0) {
-        tmp_a = this.length + tmp_a - 1;
-      }
-      this.shift(tmp_a, tmp_b - tmp_a - 1);
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.after = function(tmp_a, tmp_b) {
-    if (typeof tmp_a !== "number") {
-      tmp_a = tmp_a["_idx"];
-    }
-    if (typeof tmp_b !== "number") {
-      tmp_b = tmp_b["_idx"];
-    }
-    if (tmp_b !== tmp_a - 1) {
-      if (tmp_b < 0) {
-        tmp_b = this.length + tmp_b - 2;
-        if (tmp_a < 0) {
-          tmp_b++;
-        }
-      }
-      if (tmp_a < 0) {
-        tmp_a = this.length + tmp_a - 1;
-      }
-      this.shift(tmp_a, tmp_b - tmp_a + 1);
-    }
-    return this;
-  };
-  Mikado$$module$tmp$mikado.prototype.swap = function(a, b, view) {
-    if (a !== b) {
-      var tmp_a;
-      var tmp_b;
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("move") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.move = function(a, position) {
+      var index;
       if (typeof a === "number") {
-        tmp_a = a;
+        index = a;
         a = this.dom[a];
       } else {
-        tmp_a = a["_idx"];
+        index = a["_idx"];
       }
-      if (typeof b === "number") {
-        tmp_b = b;
-        b = this.dom[b];
+      if (position < 0) {
+        position = this.length + position - 1;
+      }
+      if (index !== position) {
+        this.shift(a, position - index);
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS) {
+    Mikado$$module$tmp$mikado.prototype.shift = function(a, offset, view) {
+      if (!offset) {
+        return this;
+      }
+      var index;
+      if (typeof a === "number") {
+        index = a;
+        a = this.dom[a];
       } else {
-        tmp_b = b["_idx"];
+        index = a["_idx"];
       }
-      if (tmp_a !== tmp_b) {
-        if (SUPPORT_STORAGE && this.reuse && (this.store || this.loose)) {
-          var tmp = this.store ? this.store[tmp_a] : a["_data"];
-          this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
-          this.update(b, tmp, view, tmp_a);
+      var up = offset < 0;
+      if (up && index || !up && index < this.length - 1) {
+        var pos = up ? Math.max(index + offset, 0) : Math.min(index + offset, this.length - 1);
+        var b = this.dom[pos];
+        var multi_update = up && index - pos > 1 || !up && pos - index > 1;
+        if (SUPPORT_STORAGE && !multi_update && this.reuse && (this.store || this.loose)) {
+          var tmp = this.store ? this.store[index] : a["_data"];
+          this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
+          this.update(b, tmp, view, index);
         } else {
-          this.root.insertBefore(a, b);
-          this.root.insertBefore(b, tmp_a + 1 === tmp_b ? a : this.dom[tmp_a + 1]);
-          a["_idx"] = tmp_b;
-          b["_idx"] = tmp_a;
-          this.dom[tmp_a] = b;
-          this.dom[tmp_b] = a;
+          if (up) {
+            this.root.insertBefore(a, b);
+          } else {
+            if (pos === this.length - 1) {
+              this.root.appendChild(a);
+            } else {
+              this.root.insertBefore(a, this.dom[pos + 1]);
+            }
+          }
+        }
+        if (multi_update) {
+          var tmp$1 = this.dom[index];
+          var tmp_store = SUPPORT_STORAGE && this.store && this.store[index];
+          var current;
+          if (up) {
+            for (var i = index; i > pos; i--) {
+              current = this.dom[i] = this.dom[i - 1];
+              current["_idx"] = i;
+              if (SUPPORT_STORAGE && this.store) {
+                this.store[i] = this.store[i - 1];
+              }
+            }
+          } else {
+            for (var i$2 = index; i$2 < pos; i$2++) {
+              current = this.dom[i$2] = this.dom[i$2 + 1];
+              current["_idx"] = i$2;
+              if (SUPPORT_STORAGE && this.store) {
+                this.store[i$2] = this.store[i$2 + 1];
+              }
+            }
+          }
+          current = this.dom[pos] = tmp$1;
+          current["_idx"] = pos;
           if (SUPPORT_STORAGE && this.store) {
-            var tmp$3 = this.store[tmp_b];
-            this.store[tmp_b] = this.store[tmp_a];
-            this.store[tmp_a] = tmp$3;
+            this.store[pos] = tmp_store;
+          }
+        } else {
+          update(this.dom, SUPPORT_STORAGE && this.store, a, b, pos, index);
+        }
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("up") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.up = function(a, offset) {
+      if (!offset || offset > 0) {
+        this.shift(a, -(offset || 1));
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("down") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.down = function(a, offset) {
+      if (!offset || offset > 0) {
+        this.shift(a, offset || 1);
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("first") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.first = function(a) {
+      return this.shift(a, -this.length);
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("last") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.last = function(a) {
+      return this.shift(a, this.length);
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("before") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.before = function(tmp_a, tmp_b) {
+      if (typeof tmp_a !== "number") {
+        tmp_a = tmp_a["_idx"];
+      }
+      if (typeof tmp_b !== "number") {
+        tmp_b = tmp_b["_idx"];
+      }
+      if (tmp_b !== tmp_a + 1) {
+        if (tmp_b < 0) {
+          tmp_b = this.length + tmp_b;
+          if (tmp_a < 0) {
+            tmp_b--;
+          }
+        }
+        if (tmp_a < 0) {
+          tmp_a = this.length + tmp_a - 1;
+        }
+        this.shift(tmp_a, tmp_b - tmp_a - 1);
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("after") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.after = function(tmp_a, tmp_b) {
+      if (typeof tmp_a !== "number") {
+        tmp_a = tmp_a["_idx"];
+      }
+      if (typeof tmp_b !== "number") {
+        tmp_b = tmp_b["_idx"];
+      }
+      if (tmp_b !== tmp_a - 1) {
+        if (tmp_b < 0) {
+          tmp_b = this.length + tmp_b - 2;
+          if (tmp_a < 0) {
+            tmp_b++;
+          }
+        }
+        if (tmp_a < 0) {
+          tmp_a = this.length + tmp_a - 1;
+        }
+        this.shift(tmp_a, tmp_b - tmp_a + 1);
+      }
+      return this;
+    };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("swap") !== -1) {
+    Mikado$$module$tmp$mikado.prototype.swap = function(a, b, view) {
+      if (a !== b) {
+        var tmp_a;
+        var tmp_b;
+        if (typeof a === "number") {
+          tmp_a = a;
+          a = this.dom[a];
+        } else {
+          tmp_a = a["_idx"];
+        }
+        if (typeof b === "number") {
+          tmp_b = b;
+          b = this.dom[b];
+        } else {
+          tmp_b = b["_idx"];
+        }
+        if (tmp_a !== tmp_b) {
+          if (SUPPORT_STORAGE && this.reuse && (this.store || this.loose)) {
+            var tmp = this.store ? this.store[tmp_a] : a["_data"];
+            this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
+            this.update(b, tmp, view, tmp_a);
+          } else {
+            this.root.insertBefore(a, b);
+            this.root.insertBefore(b, tmp_a + 1 === tmp_b ? a : this.dom[tmp_a + 1]);
+            a["_idx"] = tmp_b;
+            b["_idx"] = tmp_a;
+            this.dom[tmp_a] = b;
+            this.dom[tmp_b] = a;
+            if (SUPPORT_STORAGE && this.store) {
+              var tmp$3 = this.store[tmp_b];
+              this.store[tmp_b] = this.store[tmp_a];
+              this.store[tmp_a] = tmp$3;
+            }
           }
         }
       }
-    }
-    return this;
-  };
+      return this;
+    };
+  }
 }
 var module$tmp$helper = {};
 function setText$$module$tmp$cache(target, text) {
+  text += "";
   if (target.nodeType !== 3) {
     target["_html"] = null;
     target = target.firstChild || target.appendChild(document.createTextNode(target["_text"] = text));
@@ -391,14 +411,14 @@ function setText$$module$tmp$cache(target, text) {
   return this;
 }
 function getText$$module$tmp$cache(target) {
-  if (target.nodeType !== 3) {
-    if (!(target = target.firstChild)) {
-      return "";
-    }
+  if (target.nodeType !== 3 && !(target = target.firstChild)) {
+    return "";
   }
-  return typeof target["_text"] === "undefined" ? target["_text"] = target.nodeValue : target["_text"];
+  var tmp = target["_text"];
+  return tmp || tmp === "" ? tmp : target["_text"] = target.nodeValue;
 }
 function setHTML$$module$tmp$cache(target, html) {
+  html += "";
   if (target["_html"] !== html) {
     target.innerHTML = html;
     target["_html"] = html;
@@ -406,11 +426,12 @@ function setHTML$$module$tmp$cache(target, html) {
   return this;
 }
 function getHTML$$module$tmp$cache(target) {
-  return typeof target["_html"] === "undefined" ? target["_html"] = target.innerHTML : target["_html"];
+  var tmp = target["_html"];
+  return tmp || tmp === "" ? tmp : target["_html"] = target.innerHTML;
 }
 var regex_cache$$module$tmp$cache = {};
 function regex$$module$tmp$cache(classname) {
-  return regex_cache$$module$tmp$cache[classname] || (regex_cache$$module$tmp$cache[classname] = new RegExp("(?:^|\\s)" + classname + "(?!\\S)", "g"));
+  return regex_cache$$module$tmp$cache[classname] = new RegExp("(?:^|\\s)" + classname + "(?!\\S)", "g");
 }
 function addClass$$module$tmp$cache(target, classname) {
   if (!hasClass$$module$tmp$cache(target, classname)) {
@@ -420,7 +441,7 @@ function addClass$$module$tmp$cache(target, classname) {
   return this;
 }
 function removeClass$$module$tmp$cache(target, classname) {
-  var new_class = (target["_class"] || (target["_class"] = target.className)).replace(regex$$module$tmp$cache(classname), "");
+  var new_class = (target["_class"] || (target["_class"] = target.className)).replace(regex_cache$$module$tmp$cache[classname] || regex$$module$tmp$cache(classname), "");
   if (target["_class"] !== new_class) {
     target.className = new_class;
     target["_class"] = new_class;
@@ -435,10 +456,11 @@ function setClass$$module$tmp$cache(target, classname) {
   return this;
 }
 function getClass$$module$tmp$cache(target) {
-  return typeof target["_class"] === "undefined" ? target["_class"] = target.className : target["_class"];
+  var tmp = target["_class"];
+  return tmp || tmp === "" ? tmp : target["_class"] = target.className;
 }
 function hasClass$$module$tmp$cache(target, classname) {
-  return !!(target["_class"] || (target["_class"] = target.className)).match(regex$$module$tmp$cache(classname));
+  return !!(target["_class"] || (target["_class"] = target.className)).match(regex_cache$$module$tmp$cache[classname] || regex$$module$tmp$cache(classname));
 }
 function toggleClass$$module$tmp$cache(target, classname) {
   if (hasClass$$module$tmp$cache(target, classname)) {
@@ -446,6 +468,7 @@ function toggleClass$$module$tmp$cache(target, classname) {
   } else {
     addClass$$module$tmp$cache(target, classname);
   }
+  return this;
 }
 function setCSS$$module$tmp$cache(target, style) {
   if (target["_css"] !== style) {
@@ -455,7 +478,8 @@ function setCSS$$module$tmp$cache(target, style) {
   return this;
 }
 function getCSS$$module$tmp$cache(target) {
-  return typeof target["_css"] === "undefined" ? target["_css"] = (target["_style"] || (target["_style"] = target.style)).cssText : target["_css"];
+  var tmp = target["_css"];
+  return tmp || tmp === "" ? tmp : target["_css"] = (target["_style"] || (target["_style"] = target.style)).getAttribute("style");
 }
 function setAttribute$$module$tmp$cache(target, attr, value) {
   var key = "_attr_" + attr;
@@ -467,10 +491,12 @@ function setAttribute$$module$tmp$cache(target, attr, value) {
 }
 function getAttribute$$module$tmp$cache(target, attr) {
   var key = "_attr_" + attr;
-  return typeof target[key] === "undefined" ? target[key] = target.getAttribute(attr) : target[key];
+  var tmp = target[key];
+  return tmp || tmp === "" ? tmp : target[key] = target.getAttribute(attr);
 }
 function hasAttribute$$module$tmp$cache(target, attr) {
-  return typeof getAttribute$$module$tmp$cache(target, attr) === "string";
+  var tmp = getAttribute$$module$tmp$cache(target, attr);
+  return tmp || tmp === "";
 }
 function removeAttribute$$module$tmp$cache(target, attr) {
   var key = "_attr_" + attr;
@@ -614,8 +640,8 @@ if (SUPPORT_CACHE) {
 }
 var state$$module$tmp$mikado = {};
 var templates$$module$tmp$mikado = {};
-var parsed$$module$tmp$mikado = {};
-var pool$$module$tmp$mikado = {};
+var factory_pool$$module$tmp$mikado = {};
+var template_pool$$module$tmp$mikado = {};
 function Mikado$$module$tmp$mikado(root, template, options) {
   if (!root.nodeType) {
     options = template;
@@ -659,7 +685,7 @@ Mikado$$module$tmp$mikado.prototype.sync = function(clear_cache) {
   this.length = this.dom.length;
   if (SUPPORT_CACHE && clear_cache && this.cache) {
     for (var i = 0; i < this.length; i++) {
-      if (SUPPORT_HELPERS) {
+      if (SUPPORT_CACHE_HELPERS) {
         var path = this.dom[i]["_path"];
         for (var x = 0, tmp = undefined; x < path.length; x++) {
           tmp = path[x];
@@ -672,16 +698,16 @@ Mikado$$module$tmp$mikado.prototype.sync = function(clear_cache) {
   }
   return this;
 };
-if (SUPPORT_HELPERS) {
+if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("purge") !== -1) {
   Mikado$$module$tmp$mikado.purge = function(template) {
     if (template) {
       if (typeof template === "object") {
         template = template["n"];
       }
-      parsed$$module$tmp$mikado[template + "_cache"] = parsed$$module$tmp$mikado[template] = pool$$module$tmp$mikado[template] = null;
+      factory_pool$$module$tmp$mikado[template + "_cache"] = factory_pool$$module$tmp$mikado[template] = template_pool$$module$tmp$mikado[template] = null;
     } else {
-      parsed$$module$tmp$mikado = {};
-      pool$$module$tmp$mikado = {};
+      factory_pool$$module$tmp$mikado = {};
+      template_pool$$module$tmp$mikado = {};
     }
     return Mikado$$module$tmp$mikado;
   };
@@ -699,7 +725,7 @@ if (SUPPORT_STORAGE) {
     }
     return this.loose ? this.dom[index]["_data"] : this.store[index];
   };
-  if (SUPPORT_HELPERS) {
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("find") !== -1) {
     Mikado$$module$tmp$mikado.prototype.find = function(data) {
       for (var i = 0; i < this.length; i++) {
         if (this.data(i) === data) {
@@ -707,6 +733,8 @@ if (SUPPORT_STORAGE) {
         }
       }
     };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("search") !== -1) {
     Mikado$$module$tmp$mikado.prototype.search = function(data) {
       var values = Object.values(data).join("^");
       for (var i = 0; i < this.length; i++) {
@@ -715,6 +743,8 @@ if (SUPPORT_STORAGE) {
         }
       }
     };
+  }
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("where") !== -1) {
     Mikado$$module$tmp$mikado.prototype.where = function(payload) {
       var keys = Object.keys(payload);
       var length = keys.length;
@@ -822,7 +852,7 @@ function collection_to_array$$module$tmp$mikado(collection) {
 }
 Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   var tmp;
-  if (SUPPORT_CACHE && this.pool && (tmp = pool$$module$tmp$mikado[this.template]) && tmp.length) {
+  if (SUPPORT_CACHE && this.pool && (tmp = template_pool$$module$tmp$mikado[this.template]) && tmp.length) {
     tmp = tmp.pop();
     this.static || this.update_path(tmp["_path"] || this.create_path(tmp), tmp["_cache"], data, index, view);
   } else {
@@ -837,17 +867,19 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
 };
 if (SUPPORT_STORAGE) {
   Mikado$$module$tmp$mikado.prototype.refresh = function(index, view) {
+    var tmp;
+    if (index && typeof(tmp = index["_idx"]) === "number") {
+      index = tmp;
+    }
     if (typeof index === "number") {
       return this.update(this.dom[index], null, view, index);
-    } else {
-      view = index;
     }
     var count = this.store ? this.store.length : this.length;
     if (this.loose) {
       this.store = null;
     }
     for (var x = 0; x < count; x++) {
-      this.update(this.dom[x], null, view, x);
+      this.update(this.dom[x], null, index, x);
     }
     return this;
   };
@@ -938,11 +970,11 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
         this.length = count;
         count = nodes.length;
         if (SUPPORT_CACHE && this.pool) {
-          var tpl_pool = pool$$module$tmp$mikado[this.template];
+          var pool = template_pool$$module$tmp$mikado[this.template];
           if (this.cache) {
             reverse$$module$tmp$mikado(nodes);
           }
-          pool$$module$tmp$mikado[this.template] = tpl_pool && tpl_pool.length ? tpl_pool.concat(nodes) : nodes;
+          template_pool$$module$tmp$mikado[this.template] = pool && pool.length ? pool.concat(nodes) : nodes;
         }
         for (var x$6 = 0; x$6 < count; x$6++) {
           this.root.removeChild(nodes[x$6]);
@@ -975,11 +1007,11 @@ Mikado$$module$tmp$mikado.prototype.add = function(data, view) {
 };
 Mikado$$module$tmp$mikado.prototype.clear = function(resize) {
   if (SUPPORT_CACHE && this.pool && this.length) {
-    var tpl_pool = pool$$module$tmp$mikado[this.template];
+    var pool = template_pool$$module$tmp$mikado[this.template];
     if (this.cache) {
       reverse$$module$tmp$mikado(this.dom);
     }
-    pool$$module$tmp$mikado[this.template] = tpl_pool && tpl_pool.length ? tpl_pool.concat(this.dom) : this.dom;
+    template_pool$$module$tmp$mikado[this.template] = pool && pool.length ? pool.concat(this.dom) : this.dom;
   }
   this.root["_dom"] = this.dom = resize ? new Array(resize) : [];
   this.root.textContent = "";
@@ -1029,6 +1061,7 @@ Mikado$$module$tmp$mikado.prototype.remove = function(node, count) {
     if (index < 0) {
       index = this.length + index - 1;
     }
+    node = this.dom[index];
   } else {
     index = node["_idx"];
   }
@@ -1047,9 +1080,9 @@ Mikado$$module$tmp$mikado.prototype.remove = function(node, count) {
     this.store.splice(index, count || 1);
   }
   var use_pool = SUPPORT_CACHE && this.pool;
-  var tpl_pool;
+  var pool;
   if (use_pool) {
-    tpl_pool = pool$$module$tmp$mikado[this.template] || (pool$$module$tmp$mikado[this.template] = []);
+    pool = template_pool$$module$tmp$mikado[this.template] || (template_pool$$module$tmp$mikado[this.template] = []);
   }
   if (count && --count) {
     this.length -= count;
@@ -1057,13 +1090,13 @@ Mikado$$module$tmp$mikado.prototype.remove = function(node, count) {
     while (count > 0) {
       tmp = nodes[count--];
       if (use_pool) {
-        tpl_pool[tpl_pool.length] = tmp;
+        pool[pool.length] = tmp;
       }
       this.root.removeChild(tmp);
     }
   }
   if (use_pool) {
-    tpl_pool[tpl_pool.length] = node;
+    pool[pool.length] = node;
   }
   this.root.removeChild(node);
   this.length--;
@@ -1160,7 +1193,7 @@ var tmp_fn$$module$tmp$mikado;
 var last_conditional$$module$tmp$mikado;
 var root_node$$module$tmp$mikado;
 Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path) {
-  var cache = parsed$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
+  var cache = factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
   if (cache) {
     this.update_path = cache.update_path;
     this.static = cache.static;
@@ -1204,7 +1237,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
     if (typeof class_name === "object") {
       var observable = class_name[1];
       class_name = class_name[0];
-      new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_HELPERS ? ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}" : ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}" : ";self.className=" + class_name;
+      new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}" : ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}" : ";self.className=" + class_name;
       if (SUPPORT_REACTIVE && observable) {
         this.proxy || (this.proxy = {});
         this.proxy[class_name] || (this.proxy[class_name] = []);
@@ -1239,7 +1272,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       if (typeof value === "object") {
         var observable$7 = value[1];
         value = value[0];
-        new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_HELPERS ? ";v=" + value + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v)}" : ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}" : ";self.setAttribute('" + key + "'," + value + ")";
+        new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + value + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v)}" : ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}" : ";self.setAttribute('" + key + "'," + value + ")";
         if (SUPPORT_REACTIVE && observable$7) {
           this.proxy || (this.proxy = {});
           this.proxy[value] || (this.proxy[value] = []);
@@ -1263,7 +1296,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       if (style.length) {
         var observable$8 = style[1];
         style = style[0];
-        new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_HELPERS ? ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}" : ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}" : ";self.style.cssText=" + style;
+        new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}" : ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}" : ";self.style.cssText=" + style;
         if (SUPPORT_REACTIVE && observable$8) {
           this.proxy || (this.proxy = {});
           this.proxy[style] || (this.proxy[style] = []);
@@ -1305,7 +1338,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
               new_fn = "";
               path_length++;
             }
-            new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_HELPERS ? ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}" : ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}" : ";self.nodeValue=" + text;
+            new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}" : ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}" : ";self.nodeValue=" + text;
             if (SUPPORT_REACTIVE && observable$9) {
               this.proxy || (this.proxy = {});
               this.proxy[text] || (this.proxy[text] = []);
@@ -1321,7 +1354,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
             if (typeof html === "object") {
               var observable$10 = html[1];
               html = html[0];
-              new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_HELPERS ? ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}" : ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}" : ";self.innerHTML=" + html;
+              new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}" : ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}" : ";self.innerHTML=" + html;
               if (SUPPORT_REACTIVE && observable$10) {
                 this.proxy || (this.proxy = {});
                 this.proxy[html] || (this.proxy[html] = []);
@@ -1380,7 +1413,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         this.update_path = Function("p", "s", "data", "index", "view", '"use strict";var self,v' + tmp_fn$$module$tmp$mikado);
       }
     }
-    parsed$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = {update_path:this.update_path, static:this.static, include:this.include, proxy:this.proxy, vpath:this.vpath, node:node};
+    factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = {update_path:this.update_path, static:this.static, include:this.include, proxy:this.proxy, vpath:this.vpath, node:node};
   }
   return node;
 };
@@ -1436,14 +1469,14 @@ Mikado$$module$tmp$mikado.prototype.unload = function(template) {
   }
   if (template) {
     templates$$module$tmp$mikado[template] = null;
-    parsed$$module$tmp$mikado[template] = null;
+    factory_pool$$module$tmp$mikado[template] = null;
     if (SUPPORT_CACHE) {
-      parsed$$module$tmp$mikado[template + "_cache"] = null;
-      pool$$module$tmp$mikado[template] = null;
+      factory_pool$$module$tmp$mikado[template + "_cache"] = null;
+      template_pool$$module$tmp$mikado[template] = null;
     }
   }
 };
-Mikado$$module$tmp$mikado.unregister = Mikado$$module$tmp$mikado.unregister = Mikado$$module$tmp$mikado.unload = Mikado$$module$tmp$mikado.unload = Mikado$$module$tmp$mikado.prototype.unload;
+Mikado$$module$tmp$mikado.unregister = Mikado$$module$tmp$mikado.prototype.unregister = Mikado$$module$tmp$mikado.unload = Mikado$$module$tmp$mikado.prototype.unload;
 function reverse$$module$tmp$mikado(arr) {
   var length = arr.length;
   var half = length / 2 | 0;
@@ -1546,8 +1579,9 @@ function compile$$module$tmp$compile(node, recursive) {
       template["+"] = node.firstChild.nodeValue;
       return;
     } else {
-      if (attributes["from"]) {
-        template["+"] = node.attributes["from"].nodeValue;
+      var tmp$13 = node.getAttribute("from");
+      if (tmp$13) {
+        template["+"] = tmp$13;
       } else {
         return;
       }
@@ -1577,8 +1611,7 @@ function compile$$module$tmp$compile(node, recursive) {
   }
   if (attributes.length) {
     for (var i = 0; i < attributes.length; i++) {
-      var attr = attributes[i];
-      var attr_name = attr.nodeName;
+      var attr_name = attributes[i].nodeName;
       if (attr_name === "class") {
         handle_value$$module$tmp$compile(template, "c", node.className);
       } else {
@@ -1590,14 +1623,14 @@ function compile$$module$tmp$compile(node, recursive) {
             handle_value$$module$tmp$compile(template, "f", attr_value);
           } else {
             if (attr_name === "include") {
-              if (attributes["for"]) {
+              if (node.hasAttribute("for")) {
                 handle_value$$module$tmp$compile(template, "@", attr_value);
               } else {
                 handle_value$$module$tmp$compile(template, "+", attr_value);
               }
             } else {
               if (attr_name === "for" && tagName !== "label") {
-                if (!attributes["include"]) {
+                if (!node.hasAttribute("include")) {
                   handle_value$$module$tmp$compile(template, "@", compile$$module$tmp$compile(node.children[0], 1));
                 }
                 handle_value$$module$tmp$compile(template, "r", attr_value);
@@ -1637,8 +1670,8 @@ function compile$$module$tmp$compile(node, recursive) {
   if (children.length) {
     if (children.length > 1) {
       template["i"] = new Array(children.length);
-      for (var i$13 = 0; i$13 < children.length; i$13++) {
-        template["i"][i$13] = compile$$module$tmp$compile(children[i$13], 1);
+      for (var i$14 = 0; i$14 < children.length; i$14++) {
+        template["i"][i$14] = compile$$module$tmp$compile(children[i$14], 1);
       }
     } else {
       template["i"] = compile$$module$tmp$compile(children[0], 1);
@@ -1672,7 +1705,7 @@ module$tmp$compile.default = compile$$module$tmp$compile;
 if (SUPPORT_COMPILE) {
   Mikado$$module$tmp$mikado.compile = compile$$module$tmp$compile;
 }
-if (SUPPORT_CACHE && SUPPORT_HELPERS) {
+if (SUPPORT_CACHE && SUPPORT_CACHE_HELPERS) {
   Mikado$$module$tmp$mikado["setText"] = setText$$module$tmp$cache;
   Mikado$$module$tmp$mikado["getText"] = getText$$module$tmp$cache;
   Mikado$$module$tmp$mikado["setHTML"] = setHTML$$module$tmp$cache;

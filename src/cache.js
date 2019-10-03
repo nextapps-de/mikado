@@ -1,5 +1,7 @@
 export function setText(target, text){
 
+    text += "";
+
     if(target.nodeType !== 3){
 
         target["_html"] = null;
@@ -17,25 +19,26 @@ export function setText(target, text){
 
 export function getText(target){
 
-    if(target.nodeType !== 3){
+    if((target.nodeType !== 3) && !(target = target.firstChild)){
 
-        if(!(target = target.firstChild)){
-
-            return "";
-        }
+        return "";
     }
+
+    const tmp = target["_text"];
 
     return (
 
-        typeof target["_text"] === "undefined" ?
+        tmp || (tmp === "") ?
 
-            target["_text"] = target.nodeValue
+            tmp
         :
-            target["_text"]
+            target["_text"] = target.nodeValue
     );
 }
 
 export function setHTML(target, html){
+
+    html += "";
 
     if(target["_html"] !== html){
 
@@ -48,13 +51,15 @@ export function setHTML(target, html){
 
 export function getHTML(target){
 
+    const tmp = target["_html"];
+
     return (
 
-        typeof target["_html"] === "undefined" ?
+        tmp || (tmp === "") ?
 
-            target["_html"] = target.innerHTML
+            tmp
         :
-            target["_html"]
+            target["_html"] = target.innerHTML
     );
 }
 
@@ -62,7 +67,7 @@ const regex_cache = {};
 
 function regex(classname){
 
-    return regex_cache[classname] || (regex_cache[classname] = new RegExp("(?:^|\\s)" + classname + "(?!\\S)", "g"));
+    return regex_cache[classname] = new RegExp("(?:^|\\s)" + classname + "(?!\\S)", "g");
 }
 
 /*
@@ -104,7 +109,7 @@ export function addClass(target, classname){
 
 export function removeClass(target, classname){
 
-    const new_class = (target["_class"] || (target["_class"] = target.className)).replace(regex(classname) , "");
+    const new_class = (target["_class"] || (target["_class"] = target.className)).replace(regex_cache[classname] || regex(classname) , "");
 
     if(target["_class"] !== new_class){
 
@@ -136,19 +141,21 @@ export function setClass(target, classname){
 
 export function getClass(target){
 
+    const tmp = target["_class"];
+
     return (
 
-        typeof target["_class"] === "undefined" ?
+        tmp || (tmp === "") ?
 
-            target["_class"] = target.className
+            tmp
         :
-            target["_class"]
+            target["_class"] = target.className
     );
 }
 
 export function hasClass(target, classname){
 
-    return !!((target["_class"] || (target["_class"] = target.className)).match(regex(classname)));
+    return !!((target["_class"] || (target["_class"] = target.className)).match(regex_cache[classname] || regex(classname)));
     //return !!(target["_class_cache"] || createClassCache(target))[classname];
 }
 
@@ -166,6 +173,8 @@ export function toggleClass(target, classname){
     // (target["_class_cache"] || createClassCache(target))[classname] = !target["_class_cache"][classname];
     // target["_class_list"].toggle(classname);
     // target["_class"] = null;
+
+    return this;
 }
 
 /*
@@ -212,13 +221,15 @@ export function setCSS(target, style){
 
 export function getCSS(target){
 
+    const tmp = target["_css"];
+
     return (
 
-        typeof target["_css"] === "undefined" ?
+        tmp || (tmp === "") ?
 
-            target["_css"] = (target["_style"] || (target["_style"] = target.style)).cssText
+            tmp
         :
-            target["_css"]
+            target["_css"] = (target["_style"] || (target["_style"] = target.style)).getAttribute("style")
     );
 }
 
@@ -238,20 +249,23 @@ export function setAttribute(target, attr, value){
 export function getAttribute(target, attr){
 
     const key = "_attr_" + attr;
+    const tmp = target[key];
 
     return (
 
-        typeof target[key] === "undefined" ?
+        tmp || (tmp === "") ?
 
-            target[key] = target.getAttribute(attr)
+            tmp
         :
-            target[key]
+            target[key] = target.getAttribute(attr)
     );
 }
 
 export function hasAttribute(target, attr){
 
-    return typeof getAttribute(target, attr) === "string";
+    const tmp = getAttribute(target, attr);
+
+    return tmp || (tmp === "");
 }
 
 export function removeAttribute(target, attr){
