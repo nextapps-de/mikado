@@ -116,7 +116,7 @@ npm install mikado
     <tr></tr>
     <tr>
         <td>
-            <a href="#pool">Shared Pools</a>
+            <a href="#concept">Shared Pools</a>
         </td>
         <td>✓</td>
         <td>✓</td>

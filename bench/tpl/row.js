@@ -37,19 +37,19 @@ Mikado.register({
     {
       "t": "td",
       "s": [
-        "'background-color:' + data.color_update"
+        "'background-color:' + data.color_replace"
       ],
       "x": [
-        "data.update"
+        "data.replace"
       ]
     },
     {
       "t": "td",
       "s": [
-        "'background-color:' + data.color_partial"
+        "'background-color:' + data.color_update"
       ],
       "x": [
-        "data.partial"
+        "data.update"
       ]
     },
     {
@@ -73,10 +73,10 @@ Mikado.register({
     {
       "t": "td",
       "s": [
-        "'background-color:' + data.color_reduce"
+        "'background-color:' + data.color_remove"
       ],
       "x": [
-        "data.reduce"
+        "data.remove"
       ]
     },
     {
@@ -91,10 +91,10 @@ Mikado.register({
     {
       "t": "td",
       "s": [
-        "'background-color:' + data.color_remove"
+        "'background-color:' + data.color_clear"
       ],
       "x": [
-        "data.remove"
+        "data.clear"
       ]
     },
     {

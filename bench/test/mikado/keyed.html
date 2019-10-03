@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-0.5.1</h1><hr>
+<h1>Benchmark: mikado-0.5.1 (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <!--
@@ -21,8 +21,8 @@
     const mikado = new Mikado(root, template, {
 
         "store": false,
-        "reuse": true,
-        "pool": true,
+        "reuse": false,
+        "pool": false,
         "cache": true
     });
 

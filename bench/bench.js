@@ -6,6 +6,7 @@ export const root = document.getElementById("root");
 const result = document.getElementById("result").appendChild(document.createTextNode(""));
 export const items = generate(100);
 export const queue = [];
+const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
 let clone;
 
 queue.push({
@@ -24,7 +25,7 @@ queue.push({
 });
 
 queue.push({
-    name: "update",
+    name: "replace",
     slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
@@ -41,7 +42,7 @@ queue.push({
 });
 
 queue.push({
-    name: "partial",
+    name: "update",
     slowdown: 1,
     init: function(){
         this.fn(items.slice(0));
@@ -93,7 +94,7 @@ queue.push({
 });
 
 queue.push({
-    name: "reduce",
+    name: "remove",
     slowdown: 5,
     init: null,
     test: null,
@@ -128,7 +129,7 @@ queue.push({
 });
 
 queue.push({
-    name: "remove",
+    name: "clear",
     slowdown: 5,
     init: null,
     test: null,
@@ -219,6 +220,16 @@ function check(fn){
 
     fn([items[0]]);
     if(!validate(items[0])) return false;
+
+    if(keyed){
+
+        root.firstElementChild.firstElementChild.firstElementChild._test = true;
+        fn([items[0]]);
+        if(root.firstElementChild.firstElementChild.firstElementChild._test){
+            msg("lib runs not in keyed mode.");
+            return false;
+        }
+    }
 
     fn([]);
     return (root.children.length === 0) || (root.firstElementChild.children.length === 0);

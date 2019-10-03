@@ -5,23 +5,34 @@
     const iframe = document.getElementById("iframe");
     const result = document.getElementById("result");
     const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
+    const keyed = window.location.search.substring(1) === "keyed";
 
-    const lib = shuffle([
+    if(keyed){
 
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (Stress Test, Keyed)"
+    }
+
+    const lib = shuffle(keyed ? [
+
+        "mikado", "domc", "inferno",
+        "redom", "sinuous", "surplus",
+        "innerHTML", "jquery", "mithril",
+        "knockout", "lit-html", "ractive"
+    ]:[
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
         "knockout", "lit-html", "ractive"
     ]);
 
-    Mikado.once(document.getElementById("lib"), "lib", lib);
+    Mikado.once(document.getElementById("lib"), "lib", lib, {"keyed": keyed});
 
     const test = [
 
         "size", "memory", "create",
-        "update", "partial", "repaint",
-        "append", "reduce", "toggle",
-        "remove"
+        "replace", "update", "repaint",
+        "append", "remove", "toggle",
+        "clear"
     ];
 
     let current = new Array(lib.length);
@@ -84,7 +95,7 @@
         index++;
         current[index][test[2]] = "run...";
         mikado.update(mikado.node(index), current[index]);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/";
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : "");
     }
 
     function get_score(){
@@ -199,7 +210,7 @@
             current[index]["memory"] += parseInt(parts[2], 10);
             mikado.update(mikado.node(index), current[index]);
 
-            if(parts[0] === "remove"){
+            if(parts[0] === "clear"){
 
                 if(index < lib.length - 1){
 

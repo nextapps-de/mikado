@@ -4,7 +4,7 @@ Mikado.register({
     "t": "a",
     "a": {
       "href": [
-        "'test/' + data + '/'"
+        "'test/' + data+'/'+(view.keyed?'keyed.html':'')"
       ]
     },
     "x": [

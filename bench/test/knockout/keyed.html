@@ -1,0 +1,58 @@
+<html lang="en">
+<head>
+    <title>Knockout</title>
+</head>
+<body>
+<h1>Benchmark: knockout-3.5.0 (keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root" data-bind="foreach: data">
+    <section data-bind="attr: {'data-id': id, 'data-date': date, 'data-index': index}">
+        <div data-bind="class: classname" style="padding-right: 10px;">
+            <div class="title" data-bind="text: title"></div>
+            <div class="content" data-bind="text: content"></div>
+            <div class="footer" data-bind="text: footer"></div>
+        </div>
+    </section>
+</div>
+<script src="https://knockoutjs.com/downloads/knockout-3.5.0.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    function Model(){
+
+        this.data = ko.observableArray([]);
+    }
+
+    const app = new Model();
+
+    ko.applyBindings(app);
+
+    suite["knockout"] = function(items){
+
+        const length = items.length;
+        const size = app.data().length;
+
+        for(let i = 0; i < length; i++){
+
+            if(i < size){
+
+                app.data.splice(i, 1, items[i]);
+            }
+            else{
+
+                app.data.push(items[i]);
+            }
+        }
+
+        if(length < size){
+
+            app.data.splice(length);
+        }
+    };
+
+</script>
+</body>
+</html>

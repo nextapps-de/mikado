@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <title>inferno</title>
+</head>
+<body>
+<h1>Benchmark: inferno-7.3.1 (keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="./dist/inferno.min.js"></script>
+<script src="./dist/inferno-create-element.min.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    const Component = window.Inferno.Component;
+    const render = window.Inferno.render;
+    const createElement = window.Inferno.createElement;
+
+    class Item extends Component {
+        render() {
+
+            return createElement('section', {
+                "data-id": this.props.id,
+                "data-date": this.props.date,
+                "data-index": this.props.index
+            }, createElement('div', {
+                    class: this.props.classname,
+                    style: "padding-right: 10px;"
+                }, createElement('div', {class: "title"}, this.props.title),
+                createElement('div', {class: "content"}, this.props.content),
+                createElement('div', {class: "footer"}, this.props.footer)
+            ));
+        }
+    }
+
+    //let list;
+
+    function inferno_create_or_update(items){
+
+        const list = new Array(items.length);
+
+        for(let i = 0; i < items.length; i++){
+
+            //if(list[i]) list[i].props = items[i];
+            list[i] = createElement(Item, items[i]);
+        }
+
+        return list;
+    }
+
+    suite["inferno"] = function(items){
+
+        render(createElement('div', null, inferno_create_or_update(items)), root);
+    };
+
+</script>
+</body>
+</html>
