@@ -1,7 +1,10 @@
 # Benchmark of Web Templating Engines
 
 Run the benchmark:<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
+
+Run the benchmark (keyed, strict non-reusing):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
 This stress test focuses a real life use case, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
 
@@ -57,6 +60,8 @@ Regardless the function is doing, every test has to run through the same logic.
 
 #### About requirements for tested libraries
 Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand. Also asynchronous/scheduled rendering is not allowed.
+
+The keyed test requires a strict non-reusing paradigm. When a new unreferenced list of new items comes fresh from the outside, the library does not reusing nodes (regardless if the item contents are equal).
 
 #### About the test environment
 

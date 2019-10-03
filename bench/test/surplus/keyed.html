@@ -49,6 +49,11 @@
 
     suite["surplus"] = function(items){
 
+        if(items.length){
+
+            todos([]);
+        }
+
         todos(items);
     };
 

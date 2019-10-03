@@ -212,7 +212,10 @@ npm install mikado
 ## Benchmark Ranking (Stress Test)
 
 Run the benchmark:<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/index.html">https://raw.githack.com/nextapps-de/mikado/master/bench/index.html</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
+
+Run the benchmark (keyed, strict non-reusing):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>

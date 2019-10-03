@@ -36,6 +36,12 @@
 
     suite["mithril"] = function(items){
 
+        if(is_mounted && items.length){
+
+            data = [];
+            m.redraw.sync();
+        }
+
         data = items;
 
         if(is_mounted){

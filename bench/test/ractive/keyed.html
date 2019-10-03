@@ -34,6 +34,12 @@
 
     suite["ractive"] = function(items){
 
+        if(items.length){
+
+            ractive.set("items", []);
+            ractive.update("items");
+        }
+
         ractive.set("items", items);
         ractive.update("items");
     };

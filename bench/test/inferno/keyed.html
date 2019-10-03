@@ -37,13 +37,13 @@
 
     //let list;
 
-    function inferno_create_or_update(items){
+    function inferno_create(items){
 
-        const list = new Array(items.length);
+        const length = items.length;
+        const list = new Array(length);
 
-        for(let i = 0; i < items.length; i++){
+        for(let i = 0; i < length; i++){
 
-            //if(list[i]) list[i].props = items[i];
             list[i] = createElement(Item, items[i]);
         }
 
@@ -52,7 +52,12 @@
 
     suite["inferno"] = function(items){
 
-        render(createElement('div', null, inferno_create_or_update(items)), root);
+        if(items.length){
+
+            render(null, root);
+        }
+
+        render(createElement('div', null, inferno_create(items)), root);
     };
 
 </script>

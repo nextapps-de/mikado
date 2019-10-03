@@ -212,19 +212,20 @@ window.onload = function(){
 
 function check(fn){
 
-    fn([items[0]]);
+    fn(items.slice(0, 1));
     if(!validate(items[0])) return false;
 
-    fn([items[1]]);
+    fn(items.slice(1, 2));
     if(!validate(items[1])) return false;
 
-    fn([items[0]]);
+    fn(items.slice(0, 1));
     if(!validate(items[0])) return false;
 
     if(keyed){
 
         root.firstElementChild.firstElementChild.firstElementChild._test = true;
-        fn([items[0]]);
+        fn(items.slice(0, 1)); // this would be the ultimate non-using test
+        //fn(items.slice(1, 2)); // give libs a chance to keep some tricks?
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib runs not in keyed mode.");
             return false;
@@ -283,7 +284,7 @@ function perform(){
     const test = queue[current];
     let duration = 0, memory = 0;
 
-    if(test.test) check(test.test) || console.warn("Test failed: " + test.name);
+    if((warmup === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
     let time;
 

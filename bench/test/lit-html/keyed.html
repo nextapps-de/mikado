@@ -25,6 +25,11 @@
 
     suite["lit-html"] = function(items){
 
+        if(items.length){
+
+            render(null, root);
+        }
+
         render(template(items), root);
     };
 
