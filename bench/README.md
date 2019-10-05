@@ -1,10 +1,13 @@
 # Benchmark of Web Templating Engines
 
-Run the benchmark:<br>
+Run the benchmark (non-keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
 
-Run the benchmark (keyed, strict non-reusing):<br>
+Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
+
+Run the benchmark (strict non-reusing):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?strict">https://raw.githack.com/nextapps-de/mikado/master/bench/?strict</a><br>
 
 This stress test focuses a real life use case, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
 

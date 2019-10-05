@@ -37,7 +37,7 @@
 
     let size = {
 
-        "mikado": 2.3,
+        "mikado": 2.8,
         "domc": 4.46,
         "inferno": 8.4,
         "redom": 2.88,
