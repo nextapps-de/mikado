@@ -4,18 +4,35 @@ export let suite = {};
 export const test = {};
 export const root = document.getElementById("root");
 const result = document.getElementById("result").appendChild(document.createTextNode(""));
-export const items = generate(100);
+let items = generate(3);
+let pos = -1;
 export const queue = [];
 const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
+const strict = window.location.pathname.indexOf("/strict.html") !== -1;
+const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
 let clone;
+
+function next(){
+
+    if(strict){
+
+        return items = generate(100);
+    }
+
+    if(++pos === factory.length){
+
+        pos = 0;
+    }
+
+    return items = factory[pos];
+}
 
 queue.push({
     name: "create",
-    slowdown: 1,
     init: null,
     test: null,
     start: function(){
-        clone = shuffle(items).slice(0);
+        clone = next(); //shuffle(items).slice(0);
     },
     fn: null,
     end: function(){
@@ -26,13 +43,12 @@ queue.push({
 
 queue.push({
     name: "replace",
-    slowdown: 1,
     init: function(){
-        this.fn(items.slice(0));
+        this.fn(next());
     },
     test: null,
     start: function(){
-        clone = shuffle(items).slice(0);
+        clone = next(); //shuffle(items).slice(0);
     },
     fn: null,
     end: null,
@@ -43,9 +59,8 @@ queue.push({
 
 queue.push({
     name: "update",
-    slowdown: 1,
     init: function(){
-        this.fn(items.slice(0));
+        this.fn(next());
     },
     test: null,
     start: function(index){
@@ -62,9 +77,8 @@ queue.push({
 
 queue.push({
     name: "repaint",
-    slowdown: 1,
     init: function(){
-        this.fn(shuffle(items).slice(0));
+        this.fn(next());
     },
     test: null,
     start: function(){
@@ -79,11 +93,10 @@ queue.push({
 
 queue.push({
     name: "append",
-    slowdown: 1,
     init: null,
     test: null,
     start: function(){
-        this.fn(shuffle(items).slice(0, 50));
+        this.fn(next().slice(0, 50));
         clone = items.slice(0);
     },
     fn: null,
@@ -95,11 +108,10 @@ queue.push({
 
 queue.push({
     name: "remove",
-    slowdown: 5,
     init: null,
     test: null,
     start: function(){
-        this.fn(shuffle(items).slice(0));
+        this.fn(next());
         clone = items.slice(0, 50);
     },
     fn: null,
@@ -113,9 +125,8 @@ let toggle = 0;
 
 queue.push({
     name: "toggle",
-    slowdown: 1,
     init: function(){
-        this.fn(shuffle(items).slice(0));
+        this.fn(next());
     },
     test: null,
     start: function(){
@@ -130,11 +141,10 @@ queue.push({
 
 queue.push({
     name: "clear",
-    slowdown: 5,
     init: null,
     test: null,
     start: function(){
-        this.fn(items.slice(0));
+        this.fn(next());
         clone = [];
     },
     fn: null,
@@ -224,10 +234,19 @@ function check(fn){
     if(keyed){
 
         root.firstElementChild.firstElementChild.firstElementChild._test = true;
-        //fn(items.slice(0, 1)); // this would be the ultimate non-using test
-        fn(items.slice(1, 2)); // give libs a chance to keep some tricks?
+        fn(items.slice(2, 3)); // every keyed lib which fails this test does cheating
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
-            msg("lib runs not in keyed mode.");
+            msg("lib does not run in keyed mode.");
+            return false;
+        }
+    }
+    else if(strict){
+
+        fn([items[0]]);
+        root.firstElementChild.firstElementChild.firstElementChild._test = true;
+        fn([items[0]]);
+        if(root.firstElementChild.firstElementChild.firstElementChild._test){
+            msg("lib does not run in strict mode.");
             return false;
         }
     }
@@ -292,7 +311,7 @@ function perform(){
 
         if(!warmup){
 
-            time = 300 / test.slowdown;
+            time = 300;
         }
 
         warmup++;
@@ -300,7 +319,7 @@ function perform(){
     else{
 
         warmup = 0;
-        time = 3000 / test.slowdown;
+        time = 5000;
     }
 
     //const loops = test.loop;
@@ -321,18 +340,20 @@ function perform(){
     //tmp = perf.now() - start;
     //results[i] = 1000 / tmp;
 
-    let loops = 0;
+    let loops = 0, now = perf.now();
+    const end = now + time;
 
-    for(let start, mem_start, tmp; duration < time; loops++){
+    for(let start, mem_start, mem; now < end; loops++){
 
         if(test.start) test.start(loops);
 
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
         test.fn(clone);
-        duration += perf.now() - start;
-        tmp = perf.memory.usedJSHeapSize - mem_start;
-        if(tmp > 0) memory += tmp;
+        now = perf.now();
+        mem = perf.memory.usedJSHeapSize - mem_start;
+        duration += now - start;
+        if(mem > 0) memory += mem;
 
         if(test.end) test.end(loops);
     }

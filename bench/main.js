@@ -6,26 +6,23 @@
     const result = document.getElementById("result");
     const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
     const keyed = window.location.search.substring(1) === "keyed";
+    const strict = window.location.search.substring(1) === "strict";
 
-    if(keyed){
+    if(keyed || strict){
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (Stress Test, Keyed)"
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (Stress Test, " + (keyed ? "Keyed" : "Non-Reusing") + ")"
     }
 
-    const lib = shuffle(keyed ? [
+    const lib = shuffle([
 
-        "mikado", "domc", "inferno",
-        "redom", "sinuous", "surplus",
-        "innerHTML", "jquery", "mithril",
-        "knockout", "lit-html", "ractive"
-    ]:[
+        //"1", "2", "3", "4", "5", "6",
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
         "knockout", "lit-html", "ractive"
     ]);
 
-    Mikado.once(document.getElementById("lib"), "lib", lib, {"keyed": keyed});
+    Mikado.once(document.getElementById("lib"), "lib", lib, {"mode": keyed ? "keyed.html" : strict ? "strict.html" : ""});
 
     const test = [
 
@@ -52,6 +49,7 @@
         "knockout": 24.8,
         "lit-html": 17.31,
         "ractive": 68.2
+        //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
     };
 
     let memory = {
@@ -95,7 +93,7 @@
         index++;
         current[index][test[2]] = "run...";
         mikado.update(mikado.node(index), current[index]);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : "");
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : (strict ? "strict.html" : ""));
     }
 
     function get_score(){
@@ -219,6 +217,12 @@
                 else{
 
                     get_score();
+
+                    current.sort(function(a, b){
+
+                        return b["score"] - a["score"];
+                    });
+
                     mikado.render(current);
                 }
             }

@@ -196,6 +196,10 @@ export default function compile(node, recursive){
 
                     handle_value(template, "j", attr_value);
                 }
+                else if(attr_name === "key"){
+
+                    handle_value(template, "k", attr_value.replace("data.", ""));
+                }
                 else {
 
                     if(attr_name === "bind"){

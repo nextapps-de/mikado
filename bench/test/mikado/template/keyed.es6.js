@@ -37,7 +37,8 @@ export default {
     ],
     "s": "padding-right: 10px;"
   },
+  "k": "id",
   "d": false,
-  "n": "template",
+  "n": "keyed",
   "v": "0.0.4"
 };

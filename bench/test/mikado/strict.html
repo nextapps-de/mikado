@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-0.6.0 (keyed)</h1><hr>
+<h1>Benchmark: mikado-0.6.0 (strict)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <!--
@@ -16,7 +16,7 @@
     "use strict";
 
     import { suite, root } from "./../../bench.js";
-    import template from "./template/keyed.es6.js";
+    import template from "./template/template.es6.js";
 
     const mikado = new Mikado(root, template, {
 

@@ -1,20 +1,21 @@
 <html lang="en">
 <head>
-    <title>innerHTML</title>
+    <title>jquery</title>
 </head>
 <body>
-<h1>Benchmark: innerHTML (native)</h1><hr>
+<h1>Benchmark: jquery-3.4.1 (strict)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
+<script src="./dist/jquery.min.js"></script>
 <script type="module">
 
     "use strict";
 
     import { suite, root } from "./../../bench.js";
 
-    suite["innerhtml"] = function(items){
+    suite["jquery"] = function(items){
 
-        root.innerHTML = render(items);
+        $(root).html(render(items));
     };
 
     function render(items){
@@ -41,7 +42,7 @@
                 '</div>' +
             '</section>'
         );
-    }
+    };
 
 </script>
 </body>

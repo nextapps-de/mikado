@@ -4,13 +4,14 @@ Mikado.register({
     "t": "a",
     "a": {
       "href": [
-        "'test/' + data+'/'+(view.keyed?'keyed.html':'')"
+        "'test/' + data + '/' + view.mode"
       ]
     },
     "x": [
       "data"
     ]
   },
+  "d": false,
   "n": "lib",
   "v": "0.0.4"
 });

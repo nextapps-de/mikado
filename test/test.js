@@ -179,8 +179,13 @@ describe("Render", function(){
     it("Should have been re-mounted properly", function(){
 
         var mikado = new Mikado("template");
-        mikado.mount(root_1).render(data.slice(0, 9));
-        mikado.mount(root_2).render(data.slice(10, 19));
+        mikado.mount(root_1).render(data.slice(0, 10));
+        mikado.mount(root_2).render(data.slice(10, 20));
+
+        expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
+        expect(root_1.children[9].dataset.id).to.equal(data[9]["id"]);
+        expect(root_2.children[0].dataset.id).to.equal(data[10]["id"]);
+        expect(root_2.children[9].dataset.id).to.equal(data[19]["id"]);
 
         mikado.mount(root_1);
 
@@ -191,6 +196,7 @@ describe("Render", function(){
 
         mikado.mount(root_2);
 
+        expect(mikado.root).to.equal(root_2);
         expect(mikado.dom).to.equal(root_2._dom);
         expect(mikado.dom[0]["_idx"]).to.equal(0);
         expect(mikado.dom[0].dataset.id).to.equal(data[10]["id"]);
@@ -358,7 +364,7 @@ describe("Update", function(){
         data[0]["id"] = data[1]["id"];
         data[1]["id"] = tmp;
 
-        mikado.refresh();
+        mikado.render();
 
         expect(root_1.children[0].dataset.id).to.equal(data[0]["id"]);
         validate(mikado.dom[0], data[0]);
@@ -490,6 +496,8 @@ describe("Store", function(){
         mikado.render();
         expect(store[0]).to.equal(tmp);
         expect(mikado.store.length).to.equal(store.length);
+        validate(mikado.dom[0], data[0]);
+        validate(mikado.dom[0], store[0]);
 
         // clear store
         store.splice(0);

@@ -68,6 +68,12 @@ const SUPPORT_REACTIVE = true;
  * @define {boolean}
  */
 
+const SUPPORT_POOLS = true;
+
+/**
+ * @define {boolean}
+ */
+
 const SUPPORT_COMPILE = true;
 
 /**

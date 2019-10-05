@@ -16,13 +16,13 @@
     "use strict";
 
     import { suite, root } from "./../../bench.js";
-    import template from "./template/template.es6.js";
+    import template from "./template/keyed.es6.js";
 
     const mikado = new Mikado(root, template, {
 
         "store": false,
         "reuse": true,
-        "pool": true,
+        "pool": false,
         "cache": true
     });
 

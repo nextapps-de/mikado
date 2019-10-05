@@ -66,6 +66,12 @@ let factory_pool = {};
 let template_pool = {};
 
 /**
+ * @type {Object<string, Object<string, Element>>}
+ */
+
+let keyed_pool = {};
+
+/**
  * @param {Element|Template} root
  * @param {Template|Object=} template
  * @param {Object=} options
@@ -133,6 +139,12 @@ Mikado.prototype.mount = function(target){
 
     if(this.root !== target){
 
+        if(SUPPORT_POOLS && this.key && this.root){
+
+            this.root["_pool"] = this.keyed;
+            this.keyed = target["_pool"] || {};
+        }
+
         this.root = target;
         this.check();
         this.dom = target["_dom"] || (target["_dom"] = collection_to_array(target.children));
@@ -175,37 +187,37 @@ if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("purge") !== -1){
 
     /**
      * @param {Template|string=} template
+     * @this {Mikado}
      */
 
-    Mikado.purge = function(template){
+    Mikado.purge = Mikado.prototype.purge = function(template){
 
-        if(template){
+        if(template || (template = this.template)){
+
+            //this.key && (this.keyed = {});
 
             if(typeof template === "object"){
 
                 template = template["n"];
             }
 
-            factory_pool[template + "_cache"] =
-            factory_pool[template] =
-            template_pool[template] = null;
+            factory_pool[template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
+
+            if(SUPPORT_POOLS){
+
+                template_pool[template] = [];
+                keyed_pool[template] = {};
+            }
         }
         else{
 
             factory_pool = {};
-            template_pool = {};
 
-            /*
-            const keys = Object.keys(factory_pool);
+            if(SUPPORT_POOLS){
 
-            for(let i = 0, tpl; i < keys.length; i++){
-
-                tpl = keys[i];
-                factory_pool[tpl + "_cache"] =
-                factory_pool[tpl] =
-                template_pool[tpl] = null;
+                template_pool = {};
+                keyed_pool = {};
             }
-            */
         }
 
         return Mikado;
@@ -338,6 +350,10 @@ Mikado.prototype.init = function(template, options){
     if(SUPPORT_CACHE){
 
         this.cache = options["cache"];
+    }
+
+    if(SUPPORT_POOLS){
+
         this.pool = this.reuse && options["pool"];
     }
 
@@ -383,16 +399,37 @@ Mikado.prototype.init = function(template, options){
         }
     }
 
-    if(this.template !== template){
+    if(this.template !== template["n"]){
 
         this.template = template["n"];
+        this.static = template["d"];
         this.vpath = null;
         this.update_path = null;
-        this.static = template["d"];
         if(SUPPORT_TEMPLATE_EXTENSION) this.include = null;
         // NOTE: init on page load VS. init on .create()
         this.factory = options["prefetch"] && this.parse(template);
+
         this.check();
+
+        if(SUPPORT_POOLS){
+
+            this.key = template["k"];
+            this.keyed = this.key && {};
+
+            if(this.key){
+
+                keyed_pool[this.template] || (
+                    keyed_pool[this.template] = {}
+                );
+            }
+
+            if(this.pool){
+
+                template_pool[this.template] || (
+                    template_pool[this.template] = []
+                );
+            }
+        }
     }
 
     return this;
@@ -424,7 +461,17 @@ Mikado.prototype.check = function(){
 
             if(id){
 
-                return this.clear();
+                if(SUPPORT_POOLS){
+
+                    if(this.key){
+
+                        this.keyed = {};
+                    }
+
+                    this.length = 0;
+                }
+
+                this.clear();
             }
         }
     }
@@ -451,12 +498,70 @@ Mikado.prototype.create = function(data, view, index){
 
     //profiler_start("create");
 
-    let tmp;
+    let node, key, pool;
 
-    if(SUPPORT_CACHE && this.pool && (tmp = template_pool[this.template]) && tmp.length){
+    // 1. keyed shared-pool
+    if(SUPPORT_POOLS && this.key && (
+        (node = (pool = keyed_pool[this.template])[(key = data[this.key])]) ||
+        // NOTE: when reusing is off and keyed is on, this optimization cannot render more than one
+        //       data item which has the same key within same template (same view instance)
+        (!this.reuse && (node = this.keyed[key]))
+    )){
+        if(pool){
 
-        tmp = tmp.pop();
-        this.static || this.update_path(tmp["_path"] || this.create_path(tmp), tmp["_cache"], data, index, view);
+            // remove from keyed shared-pool
+            pool[key] = null;
+
+            if(this.pool){
+
+                let pos;
+
+                if((pos = node["_index"]) || (pos === 0)){
+
+                    pool = template_pool[this.template];
+
+                    if(pool.length){
+
+                        // remove reference to queued shared-pool
+                        node["_index"] = null;
+
+                        // remove from queued shared-pool
+                        const last = pool.pop();
+
+                        if(last !== node){
+
+                            // update reference to queued shared-pool
+                            last["_index"] = pos;
+                            pool[pos] = last;
+                        }
+                    }
+                }
+            }
+        }
+
+        this.static || this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
+    }
+    // 2. queued shared-pool
+    else if(SUPPORT_POOLS && this.pool && (node = template_pool[this.template]) && node.length){
+
+        // remove from queued shared-pool
+        node = node.pop();
+
+        if(pool){
+
+            // remove reference to queued shared-pool
+            node["_index"] = null;
+
+            let ref;
+
+            if((ref = node["_key"]) || (ref === 0)){
+
+                // remove from keyed shared-pool
+                pool[ref] = null;
+            }
+        }
+
+        this.static || this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
     }
     else{
 
@@ -469,42 +574,76 @@ Mikado.prototype.create = function(data, view, index){
 
         this.static || this.update_path(factory["_path"], factory["_cache"], data, index, view);
 
-        tmp = factory.cloneNode(true);
-        //tmp["_cache"] = {};
+        node = factory.cloneNode(true);
+    }
+
+    if(SUPPORT_POOLS && this.key){
+
+        // add reference to keyed shared-pool
+        node["_key"] = key;
+
+        // add to keyed live-pool (non-shared)
+        this.keyed[key] = node;
     }
 
     //profiler_end("create");
 
-    return tmp;
+    return node;
 };
 
 if(SUPPORT_STORAGE){
 
     Mikado.prototype.refresh = function(index, view){
 
-        let tmp;
-
-        if(index && (typeof (tmp = index["_idx"]) === "number")){
-
-            index = tmp;
-        }
+        let tmp, data, node;
 
         if(typeof index === "number"){
 
-            return this.update(this.dom[index], null, view, index);
+            node = this.dom[index];
+        }
+        else if(index && (typeof (tmp = index["_idx"]) === "number")){
+
+            node = index;
+            index = tmp;
         }
 
-        const count = this.store ? this.store.length : this.length;
+        if(node){
 
-        // data delegated from import
-        if(this.loose){
-
-            this.store = null;
+            data = this.store ? this.store[index] : node["_data"];
+            this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
+            //return this.update(this.dom[index], null, view, index);
         }
+        else{
 
-        for(let x = 0; x < count; x++){
+            const count = this.store ? this.store.length : this.length;
 
-            this.update(this.dom[x], null, index /*view*/, x);
+            // data delegated from import
+            if(this.loose){
+
+                this.store = null;
+            }
+
+            if(!count && this.length){
+
+                return this.clear();
+            }
+
+            const add_new = !this.length;
+
+            for(let x = 0; x < count; x++){
+
+                if(add_new){
+
+                    this.add(this.store[x], view);
+                }
+                else{
+
+                    node = this.dom[x];
+                    data = this.store ? this.store[x] : node["_data"];
+                    this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, x, view);
+                    //this.update(this.dom[x], null, index /*view*/, x);
+                }
+            }
         }
 
         return this;
@@ -512,7 +651,7 @@ if(SUPPORT_STORAGE){
 }
 
 /**
- * @param {Array<*>|Function=} data
+ * @param {!Array<*>|Function} data
  * @param {Object|Function=} view
  * @param {Function|boolean=} callback
  * @param {boolean=} skip_async
@@ -592,10 +731,15 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
     }
     else{
 
+        if(!data){
+
+            return this.refresh();
+        }
+
         let length = this.length;
         let count;
 
-        if(data) {
+        //if(data) {
 
             count = data.length;
 
@@ -604,45 +748,73 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 data = [data];
                 count = 1;
             }
-        }
-        else if(SUPPORT_STORAGE){
-
-            count = this.store ? this.store.length : length;
-        }
+        // }
+        // else if(SUPPORT_STORAGE){
+        //
+        //     count = this.store ? this.store.length : length;
+        // }
 
         if(!count){
 
             return this.clear();
         }
 
+        let use_replace;
+
         if(!this.reuse){
 
-            // TODO: this.clear() performs faster than this.replace()
-            this.clear(/* resize: */ count);
-            length = 0;
+            use_replace = SUPPORT_POOLS && this.key;
+
+            // let found;
+            //
+            // if(this.key){
+            //
+            //     found = 0;
+            //
+            //     for(let x = 0; x < count; x++){
+            //
+            //         if(this.keyed[data[x][this.key]]){
+            //
+            //             if(++found > (count / 3)){
+            //
+            //                 use_replace = true;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
+
+            if(!use_replace){
+
+                this.clear(/* resize: */ count);
+                length = 0;
+            }
         }
 
         const min = length < count ? length : count;
         let x = 0;
 
         // update
-        if(min){
+        if(x < min){
 
             for(; x < min; x++){
 
-                //if(this.reuse){
-                    this.update(this.dom[x], data && data[x], view, x);
-                // }
-                // else{
-                //     this.replace(this.dom[x], data[x], view, x);
-                // }
+                const node = this.dom[x];
+                const item = data[x];
+
+                if(SUPPORT_POOLS && use_replace && !this.keyed[item[this.key]] /*(node["_key"] !== item[this.key])*/){
+
+                    this.replace(node, item, view, x);
+                }
+                else{
+
+                    this.update(node, item, view, x);
+                }
             }
         }
 
         // add
         if(x < count){
-
-            data || (data = this.store);
 
             for(; x < count; x++){
 
@@ -662,15 +834,20 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
             this.length = count;
             count = nodes.length;
 
-            if(SUPPORT_CACHE && this.pool){
+            let queued_pool_offset;
+
+            if(SUPPORT_POOLS && this.pool){
 
                 const pool = template_pool[this.template];
+                const length = pool.length;
 
-                if(this.cache) reverse(nodes);
+                if(this.cache && (count > 1) && !this.key) reverse(nodes);
+
+                queued_pool_offset = length + 1;
 
                 template_pool[this.template] = (
 
-                    pool && pool.length ?
+                    length ?
 
                         pool.concat(nodes)
                     :
@@ -678,9 +855,28 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 );
             }
 
-            for(let x = 0; x < count; x++){
+            for(let x = 0, tmp; x < count; x++){
 
-                this.root.removeChild(nodes[x]);
+                tmp = nodes[x];
+
+                this.root.removeChild(tmp);
+
+                if(SUPPORT_POOLS && this.key){
+
+                    const key = tmp["_key"];
+
+                    // remove from keyed live-pool
+                    this.keyed[key] = null;
+
+                    // add to keyed shared-pool
+                    keyed_pool[this.template][key] = tmp;
+
+                    if(queued_pool_offset){
+
+                        // update reference to queued shared-pool
+                        tmp["_index"] = queued_pool_offset + x - 1;
+                    }
+                }
             }
         }
     }
@@ -732,27 +928,56 @@ Mikado.prototype.add = function(data, view/*, target*/){
 };
 
 /**
- * @param {boolean=} resize
+ * @param {number=} resize
  */
 
 Mikado.prototype.clear = function(resize){
 
     //profiler_start("clear");
 
-    if(SUPPORT_CACHE && this.pool && this.length){
+    const length = this.length;
 
-        const pool = template_pool[this.template];
+    if(SUPPORT_POOLS && length && (this.pool || this.key)){
 
-        if(this.cache) reverse(this.dom);
+        let pool, size;
 
-        template_pool[this.template] = (
+        if(this.pool){
 
-            pool && pool.length ?
+            pool = template_pool[this.template];
+            size = pool.length;
 
-                pool.concat(this.dom)
-            :
-                this.dom
-        );
+            if(this.cache && (length > 1) && !this.key) reverse(this.dom);
+
+            template_pool[this.template] = (
+
+                size ?
+
+                    pool.concat(this.dom)
+                :
+                    this.dom
+            );
+        }
+
+        if(this.key){
+
+            for(let x = 0; x < length; x++){
+
+                const node = this.dom[x];
+                const key = node["_key"];
+
+                // remove from keyed live-pool
+                this.keyed[key] = null;
+
+                // add to keyed shared-pool
+                keyed_pool[this.template][key] = node;
+
+                if(this.pool){
+
+                    // update reference to queued shared-pool
+                    node["_index"] = size + x;
+                }
+            }
+        }
     }
 
     // if(SUPPORT_CACHE && this.pool.length){
@@ -802,6 +1027,11 @@ Mikado.prototype.destroy = function(unload){
     this.update_path = null;
     this.factory = null;
     this.length = 0;
+
+    if(SUPPORT_POOLS){
+
+        this.keyed = {};
+    }
 
     if(SUPPORT_TEMPLATE_EXTENSION){
 
@@ -899,13 +1129,7 @@ Mikado.prototype.remove = function(node, count){
         this.store.splice(index, count || 1);
     }
 
-    const use_pool = SUPPORT_CACHE && this.pool;
-    let pool;
-
-    if(use_pool){
-
-        pool = template_pool[this.template] || (template_pool[this.template] = []);
-    }
+    const pool = SUPPORT_POOLS && this.pool && template_pool[this.template];
 
     if(count && --count){
 
@@ -916,7 +1140,24 @@ Mikado.prototype.remove = function(node, count){
 
             tmp = nodes[count--];
 
-            if(use_pool){
+            if(SUPPORT_POOLS && this.key){
+
+                const key = tmp["_key"];
+
+                // remove from keyed live-pool
+                this.keyed[key] = null;
+
+                // add to keyed shared-pool
+                keyed_pool[this.template][key] = tmp;
+
+                if(pool){
+
+                    // update reference to queued shared-pool
+                    tmp["_index"] = pool.length;
+                }
+            }
+
+            if(pool){
 
                 // stack in reversed order (just meaningful when cache is enabled):
                 pool[pool.length] = tmp;
@@ -926,7 +1167,24 @@ Mikado.prototype.remove = function(node, count){
         }
     }
 
-    if(use_pool){
+    if(SUPPORT_POOLS && this.key){
+
+        const key = node["_key"];
+
+        // remove from keyed live-pool
+        this.keyed[key] = null;
+
+        // add to keyed shared-pool
+        keyed_pool[this.template][key] = node;
+
+        if(pool){
+
+            // update reference to queued shared-pool
+            node["_index"] = pool.length;
+        }
+    }
+
+    if(pool){
 
         pool[pool.length] = node;
     }
@@ -934,7 +1192,6 @@ Mikado.prototype.remove = function(node, count){
     this.root.removeChild(node);
     this.length--;
 
-    // TODO: remove _idx from node?
     for(let i = index; i < this.length; i++){
 
         this.dom[i]["_idx"] = i;
@@ -948,6 +1205,22 @@ Mikado.prototype.remove = function(node, count){
 Mikado.prototype.replace = function(node, data, view, index){
 
     //profiler_start("replace");
+
+    if(SUPPORT_POOLS && this.key){
+
+        const ref = node["_key"];
+
+        if(data[this.key] === ref){
+
+            return this.update(node, data, view, index);
+        }
+
+        // remove from keyed live-pool
+        this.keyed[ref] = null;
+
+        // add to keyed shared-pool
+        keyed_pool[this.template][ref] = node;
+    }
 
     if(typeof index === "undefined"){
 
@@ -978,6 +1251,20 @@ Mikado.prototype.replace = function(node, data, view, index){
     this.root.replaceChild(tmp, node);
     this.dom[index] = tmp;
 
+    if(SUPPORT_POOLS && this.pool){
+
+        const pool = template_pool[this.template];
+
+        if(this.key){
+
+            // update reference to queued shared-pool
+            node["_index"] = pool.length;
+        }
+
+        // add to queued shared-pool
+        pool[pool.length] = node;
+    }
+
     //profiler_end("replace");
 
     return this;
@@ -986,7 +1273,7 @@ Mikado.prototype.replace = function(node, data, view, index){
 /**
  * @param {Element|number} node
  * @param {*=} data
- * @param {*=} view
+ * @param {Object=} view
  * @param {number=} index
  */
 
@@ -1002,48 +1289,61 @@ Mikado.prototype.update = function(node, data, view, index){
         }
     }
 
-    //if(!this.static){
+    if(typeof node === "number"){
 
-        /*
-        if(typeof node === "number"){
+        index = node;
+        node = this.dom[node];
+    }
+    else if(typeof index === "undefined"){
 
-            index = node;
-            node = this.dom[node];
+        index = node["_idx"];
+    }
+
+    if(SUPPORT_POOLS && this.key){
+
+        const ref = node["_key"];
+        const tmp = data[this.key];
+
+        if(ref !== tmp){
+
+            // remove from keyed live-pool
+            this.keyed[ref] = null;
+
+            // add to keyed live-pool
+            this.keyed[tmp] = node;
+
+            // update reference to keyed shared-pool
+            node["_key"] = tmp;
         }
-        else if(typeof index === "undefined"){
+    }
 
-            index = node["_idx"];
+    if(SUPPORT_STORAGE){
+
+        if(this.store){
+
+            //if(data){
+
+                this.store[index] = data;
+            // }
+            // else{
+            //
+            //     data = this.store[index];
+            // }
         }
-        */
+        else if(this.loose){
 
-        if(SUPPORT_STORAGE){
+            //if(data){
 
-            if(this.store){
-
-                if(data){
-
-                    this.store[index] = data;
-                }
-                else{
-
-                    data = this.store[index];
-                }
-            }
-            else if(this.loose){
-
-                if(data){
-
-                    node["_data"] = data;
-                }
-                else{
-
-                    data = node["_data"];
-                }
-            }
+                node["_data"] = data;
+            // }
+            // else{
+            //
+            //     data = node["_data"];
+            // }
         }
+    }
 
-        this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
-    //}
+    this.update_path(node["_path"] || this.create_path(node), node["_cache"], data, index, view);
 
     //profiler_end("update");
 
@@ -1600,6 +1900,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             }
         }
 
+        // NOTE: cache has a different render path
         factory_pool[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = {
 
             update_path: this.update_path,
@@ -1711,13 +2012,14 @@ Mikado.prototype.unload = function(template){
 
     if(template){
 
-        templates[template] = null;
+        template_pool[template] = [];
+        keyed_pool[template] = {};
+        templates[template] =
         factory_pool[template] = null;
 
         if(SUPPORT_CACHE){
 
             factory_pool[template + "_cache"] = null;
-            template_pool[template] = null;
         }
     }
 };

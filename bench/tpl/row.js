@@ -102,11 +102,11 @@ Mikado.register({
       "i": {
         "t": "b",
         "x": [
-          "data.score"
+          "data.index"
         ]
       },
       "s": [
-        "'background-color:' + data.color_score"
+        "'background-color:' + data.color_index"
       ]
     },
     {
@@ -114,14 +114,15 @@ Mikado.register({
       "i": {
         "t": "b",
         "x": [
-          "data.index"
+          "data.score"
         ]
       },
       "s": [
-        "'background-color:' + data.color_index"
+        "'background-color:' + data.color_score"
       ]
     }
   ],
+  "d": false,
   "n": "row",
   "v": "0.0.4"
 });

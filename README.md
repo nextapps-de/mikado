@@ -219,11 +219,14 @@ npm install mikado
 <a name="benchmark"></a>
 ## Benchmark Ranking (Stress Test)
 
-Run the benchmark:<br>
+Run the benchmark (non-keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
 
-Run the benchmark (keyed, strict non-reusing):<br>
+Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
+
+Run the benchmark (strict non-reusing):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?strict">https://raw.githack.com/nextapps-de/mikado/master/bench/?strict</a><br>
 
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
@@ -250,17 +253,17 @@ Values represents operations per second, each benchmark task has to process a da
     <tr>
         <td>mikado</td>
         <td align=right><sub>2.3</sub></td>
-        <td align=right><sub>16487</sub></td>
-        <td align=right><sub>5496</sub></td>
+        <td align=right><sub>7218</sub></td>
+        <td align=right><sub>18850</sub></td>
         <td align=right><sub>7541</sub></td>
         <td align=right><sub>13596</sub></td>
-        <td align=right><sub>255488</sub></td>
-        <td align=right><sub>14486</sub></td>
+        <td align=right><sub>259102</sub></td>
+        <td align=right><sub>32852</sub></td>
         <td align=right><sub>29227</sub></td>
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
-        <td align=right><b>965</b></td>
-        <td align=right><b>8117</b></td>
+        <td align=right><b>966</b></td>
+        <td align=right><b>14427</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -275,8 +278,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>22665</sub></td>
         <td align=right><sub>3624</sub></td>
         <td align=right><sub>24978</sub></td>
-        <td align=right><b>475</b></td>
-        <td align=right><b>2043</b></td>
+        <td align=right><b>448</b></td>
+        <td align=right><b>1953</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -291,8 +294,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16485</sub></td>
         <td align=right><sub>2252</sub></td>
         <td align=right><sub>16855</sub></td>
-        <td align=right><b>492</b></td>
-        <td align=right><b>1887</b></td>
+        <td align=right><b>476</b></td>
+        <td align=right><b>1828</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -307,8 +310,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>12961</sub></td>
         <td align=right><sub>3323</sub></td>
         <td align=right><sub>23702</sub></td>
-        <td align=right><b>347</b></td>
-        <td align=right><b>1436</b></td>
+        <td align=right><b>324</b></td>
+        <td align=right><b>1358</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -323,8 +326,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7120</sub></td>
         <td align=right><sub>2286</sub></td>
         <td align=right><sub>14339</sub></td>
-        <td align=right><b>229</b></td>
-        <td align=right><b>1154</b></td>
+        <td align=right><b>209</b></td>
+        <td align=right><b>1089</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -339,8 +342,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8505</sub></td>
         <td align=right><sub>1449</sub></td>
         <td align=right><sub>4626</sub></td>
-        <td align=right><b>225</b></td>
-        <td align=right><b>879</b></td>
+        <td align=right><b>214</b></td>
+        <td align=right><b>841</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -355,8 +358,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6245</sub></td>
         <td align=right><sub>1295</sub></td>
         <td align=right><sub>10632</sub></td>
-        <td align=right><b>221</b></td>
-        <td align=right><b>875</b></td>
+        <td align=right><b>210</b></td>
+        <td align=right><b>839</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -371,11 +374,11 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6300</sub></td>
         <td align=right><sub>1972</sub></td>
         <td align=right><sub>11810</sub></td>
-        <td align=right><b>193</b></td>
-        <td align=right><b>864</b></td>
+        <td align=right><b>177</b></td>
+        <td align=right><b>808</b></td>
     </tr>
     <tr>
-        <td>innerHTML</td>
+        <td>innerhtml</td>
         <td align=right><sub></sub></td>
         <td align=right><sub>415128</sub></td>
         <td align=right><sub>1020</sub></td>
@@ -386,8 +389,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1715</sub></td>
         <td align=right><sub>1210</sub></td>
         <td align=right><sub>26053</sub></td>
-        <td align=right><b>173</b></td>
-        <td align=right><b>671</b></td>
+        <td align=right><b>152</b></td>
+        <td align=right><b>592</b></td>
     </tr>
     <tr>
         <td>jquery</td>
@@ -401,8 +404,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1045</sub></td>
         <td align=right><sub>766</sub></td>
         <td align=right><sub>5007</sub></td>
-        <td align=right><b>86</b></td>
-        <td align=right><b>419</b></td>
+        <td align=right><b>72</b></td>
+        <td align=right><b>367</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -417,8 +420,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2697</sub></td>
         <td align=right><sub>570</sub></td>
         <td align=right><sub>1480</sub></td>
-        <td align=right><b>73</b></td>
-        <td align=right><b>275</b></td>
+        <td align=right><b>69</b></td>
+        <td align=right><b>261</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -433,8 +436,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>211</sub></td>
         <td align=right><sub>94</sub></td>
         <td align=right><sub>953</sub></td>
-        <td align=right><b>39</b></td>
-        <td align=right><b>126</b></td>
+        <td align=right><b>37</b></td>
+        <td align=right><b>120</b></td>
     </tr>
 </table>
 
@@ -2260,7 +2263,7 @@ view.destroy(/* unload? */ true);
 The are two kinds of pools under the hood. Both of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
 <br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@4c3553643e55970a45394c89bb55124bba16b0a1/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
 
 #### Factory Pool
 
@@ -2269,6 +2272,14 @@ The factory pool shares partials or same template definitions. When partials or 
 #### Template Pool
 
 The template pool is a feature accordingly to the option <a href="#reuse">reuse</a> and extends the strategy of re-using. Templates has to be created by the factory just <u>once</u> and stay available for re-using along the whole runtime. That's drastically improves everything to a complete new level. The memory allocation cuts down to a minimum (approx. reduce by a factor of 10). The creation/instantiation of new templates gets an amazing boost. When removing instances the garbage collector has almost nothing to do.
+
+#### Keyed Pool
+
+The keyed pool is basically the same concept like template pool, but it has keyed access and works differently than the template pool (which is queued and has indexed access). The keyed pool and the template pool are cross-shared, both of them could access the other. It depends on the mode which is running (keyed, non-keyed).
+
+#### Live Pool
+
+The live pool contains all elements which are actually rendered on screen (in use). That will keep track of not sharing elements which are already in use by another view. When elements were removed, they will move from live pool to the shared pools. When the option ___reuse___ was set to false, the live pool will also share its elements to the next render loop of the same view.
 
 ## Motivation
 

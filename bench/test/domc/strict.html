@@ -3,7 +3,7 @@
     <title>domc</title>
 </head>
 <body>
-<h1>Benchmark: domc-0.0.12 (keyed)</h1><hr>
+<h1>Benchmark: domc-0.0.12 (strict)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root">
     <section v-for="item of items" data-id="{{item.id}}" data-date="{{item.date}}" data-index="{{item.index}}">
@@ -29,7 +29,6 @@
 
     suite["domc"] = function(items){
 
-        // domc is not stable and crashes when using keyed without the following fix:
         if(items.length){
 
             scope.items = [];

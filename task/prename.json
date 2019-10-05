@@ -19,6 +19,9 @@
     "_event_": "_e_",
     "_root_": "_r_",
     "_cache": "$",
+    "_index": "_n",
+    "_key": "_k",
+    "_pool": "_o",
 
     "\\.setAttribute\\(self": "._a(self",
     "this.target": "this._t"
