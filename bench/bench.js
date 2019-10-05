@@ -305,7 +305,7 @@ function perform(){
 
     if((warmup === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
-    const time = 500;
+    const time = 5000;
 
     // if(warmup < 3){
     //

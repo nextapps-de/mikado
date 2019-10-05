@@ -220,7 +220,7 @@ npm install mikado
     <tr>
         <td>File Size (gzip)</td>
         <td>6.8 kb</td>
-        <td>2.8 kb</td>
+        <td>2.5 kb</td>
     </tr>
 </table>
 
@@ -268,23 +268,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
         <td align=right><b>966</b></td>
-        <td align=right><b>14401</b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>domc</td>
-        <td align=right><sub>4.46</sub></td>
-        <td align=right><sub>115023</sub></td>
-        <td align=right><sub>946</sub></td>
-        <td align=right><sub>6206</sub></td>
-        <td align=right><sub>10455</sub></td>
-        <td align=right><sub>93566</sub></td>
-        <td align=right><sub>1942</sub></td>
-        <td align=right><sub>22665</sub></td>
-        <td align=right><sub>3624</sub></td>
-        <td align=right><sub>24978</sub></td>
-        <td align=right><b>455</b></td>
-        <td align=right><b>1954</b></td>
+        <td align=right><b>5182</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -299,8 +283,24 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>16485</sub></td>
         <td align=right><sub>2252</sub></td>
         <td align=right><sub>16855</sub></td>
-        <td align=right><b>482</b></td>
-        <td align=right><b>1828</b></td>
+        <td align=right><b>496</b></td>
+        <td align=right><b>1688</b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>domc</td>
+        <td align=right><sub>4.46</sub></td>
+        <td align=right><sub>115023</sub></td>
+        <td align=right><sub>946</sub></td>
+        <td align=right><sub>6206</sub></td>
+        <td align=right><sub>10455</sub></td>
+        <td align=right><sub>93566</sub></td>
+        <td align=right><sub>1942</sub></td>
+        <td align=right><sub>22665</sub></td>
+        <td align=right><sub>3624</sub></td>
+        <td align=right><sub>24978</sub></td>
+        <td align=right><b>474</b></td>
+        <td align=right><b>1565</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -315,8 +315,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>12961</sub></td>
         <td align=right><sub>3323</sub></td>
         <td align=right><sub>23702</sub></td>
-        <td align=right><b>328</b></td>
-        <td align=right><b>1358</b></td>
+        <td align=right><b>344</b></td>
+        <td align=right><b>1142</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -331,8 +331,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7120</sub></td>
         <td align=right><sub>2286</sub></td>
         <td align=right><sub>14339</sub></td>
-        <td align=right><b>214</b></td>
-        <td align=right><b>1089</b></td>
+        <td align=right><b>231</b></td>
+        <td align=right><b>819</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -347,8 +347,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8505</sub></td>
         <td align=right><sub>1449</sub></td>
         <td align=right><sub>4626</sub></td>
-        <td align=right><b>217</b></td>
-        <td align=right><b>841</b></td>
+        <td align=right><b>230</b></td>
+        <td align=right><b>777</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -363,8 +363,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6245</sub></td>
         <td align=right><sub>1295</sub></td>
         <td align=right><sub>10632</sub></td>
-        <td align=right><b>219</b></td>
-        <td align=right><b>840</b></td>
+        <td align=right><b>233</b></td>
+        <td align=right><b>743</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -379,8 +379,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6300</sub></td>
         <td align=right><sub>1972</sub></td>
         <td align=right><sub>11810</sub></td>
-        <td align=right><b>182</b></td>
-        <td align=right><b>808</b></td>
+        <td align=right><b>196</b></td>
+        <td align=right><b>685</b></td>
     </tr>
     <tr>
         <td>innerhtml</td>
@@ -394,8 +394,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1715</sub></td>
         <td align=right><sub>1210</sub></td>
         <td align=right><sub>26053</sub></td>
-        <td align=right><b>152</b></td>
-        <td align=right><b>592</b></td>
+        <td align=right><b>165</b></td>
+        <td align=right><b>542</b></td>
     </tr>
     <tr>
         <td>jquery</td>
@@ -409,8 +409,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1045</sub></td>
         <td align=right><sub>766</sub></td>
         <td align=right><sub>5007</sub></td>
-        <td align=right><b>75</b></td>
-        <td align=right><b>367</b></td>
+        <td align=right><b>85</b></td>
+        <td align=right><b>344</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -425,8 +425,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2697</sub></td>
         <td align=right><sub>570</sub></td>
         <td align=right><sub>1480</sub></td>
-        <td align=right><b>71</b></td>
-        <td align=right><b>261</b></td>
+        <td align=right><b>77</b></td>
+        <td align=right><b>279</b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -441,8 +441,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>211</sub></td>
         <td align=right><sub>94</sub></td>
         <td align=right><sub>953</sub></td>
-        <td align=right><b>40</b></td>
-        <td align=right><b>120</b></td>
+        <td align=right><b>44</b></td>
+        <td align=right><b>144</b></td>
     </tr>
 </table>
 
@@ -471,6 +471,7 @@ Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
 - <a href="#view.render">view.__render__(\<data\>, \<payload\>, \<callback\>)</a>
+- <a href="#view.render">view.__apply__(node, \<data\>, \<payload\>)</a>
 - <a href="#view.create">view.__create__(data)</a>
 - <a href="#view.add">view.__add__(data, \<payload\>)</a>
 - <a href="#view.update">view.__update__(node, data, \<payload\>)</a>
@@ -1112,6 +1113,9 @@ Routes are stored globally, so you can share routes through all Mikado instances
 ## Keyed/Non-Keyed Modes
 
 > Each template instance can run in its own mode independently.
+
+Compare benchmark of all supported modes here:<br>
+https://raw.githack.com/nextapps-de/mikado/master/bench/?modes
 
 #### 1. Non-Keyed
 

@@ -69,7 +69,7 @@ The file size and memory gets less relevance by applying the square root of thes
     <tr></tr>
     <tr>
         <td>Update</td>
-        <td>Toggles between: 1. shuffle item indexes (contents are all unchanged) and 2. update contents via modulo (every nth item).</td>
+        <td>Toggles between: 1. shuffle item indexes (all contents stay unchanged) and 2. update content fields of every nth item (order of items stay unchanged).</td>
     </tr>
     <tr></tr>
     <tr>
@@ -123,7 +123,7 @@ Regardless the function is doing, every test has to run through the same logic.
 
 #### Random item factory
 
-The items were created by a random factory. To be fair the items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to the same IDs. Also that comes closer to real use cases, because an application normally should no load unlimited data.
+The items were created by a random factory. To be fair the items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to match same IDs. Also that comes closer to real use cases, because an application normally should no load unlimited data.
 
 #### Hidden render target
 
@@ -150,6 +150,6 @@ Using the median value is very common to normalize the spread in results in a st
 This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time (btw that also comes closest to a real environment).
 
 #### About benchmark precision
-It is not possible to provide stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment a user have on the application.
+It is not possible to provide stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment of an user who is using an application.
 
-That all just become more important when doing micro-benchmarking. But this test do not perform micro-benchmarking. The workload is big enough to produce good stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce close to linear results. So it is statistically proofed. There is absolutely no need for using benchmark.js especially for this workload (using it will change nothing).
+That all just become more complex when doing micro-benchmarking. Luckily this workload is by far big enough to produces stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce close to linear results. So it is statistically proofed. There is absolutely no need for using benchmark.js especially for this workload (using it would change nothing).

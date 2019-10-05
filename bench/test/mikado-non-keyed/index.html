@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <title>Mikado</title>
+</head>
+<body>
+<h1>Benchmark: mikado-0.5.1</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<!--
+<script src="node_modules/mikado/src/config.js"></script>
+<script type="module" src="node_modules/mikado/src/browser.js"></script>
+-->
+<script src="./dist/mikado.light.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+    import template from "./template/template.es6.js";
+
+    const mikado = new Mikado(root, template, {
+
+        "store": false,
+        "reuse": true,
+        "pool": true,
+        "cache": true
+    });
+
+    suite["mikado"] = function(items){
+
+        mikado.render(items);
+    };
+
+</script>
+</body>
+</html>

@@ -7,14 +7,18 @@
     const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
     const keyed = window.location.search.substring(1) === "keyed";
     const strict = window.location.search.substring(1) === "strict";
+    const modes = window.location.search.substring(1) === "modes";
 
-    if(keyed || strict){
+    if(keyed || strict || modes){
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (Stress Test, " + (keyed ? "Keyed" : "Non-Reusing") + ")"
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : "Modes") + ")"
     }
 
-    const lib = shuffle([
+    const lib = shuffle(modes ? [
 
+        "mikado-cross-shared", "mikado-exclusive",
+        "mikado-keyed", "mikado-non-keyed"
+    ]:[
         //"1", "2", "3", "4", "5", "6",
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
@@ -37,7 +41,7 @@
 
     let size = {
 
-        "mikado": 2.8,
+        "mikado": 2.5,
         "domc": 4.46,
         "inferno": 8.4,
         "redom": 2.88,
@@ -48,7 +52,12 @@
         "mithril": 9.64,
         "knockout": 24.8,
         "lit-html": 17.31,
-        "ractive": 68.2
+        "ractive": 68.2,
+
+        "mikado-cross-shared": 2.5,
+        "mikado-exclusive": 2.5,
+        "mikado-keyed": 2.5,
+        "mikado-non-keyed": 2.5
         //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
     };
 
