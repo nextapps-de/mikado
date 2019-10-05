@@ -6,9 +6,6 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
-Run the benchmark (strict non-reusing):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?strict">https://raw.githack.com/nextapps-de/mikado/master/bench/?strict</a><br>
-
 This stress test focuses a real life use case, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
 
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
@@ -31,12 +28,75 @@ Go to the URL which displays in the console, e.g. _http://localhost_. The tests 
 #### Score
 The score is calculated in relation to the median value of each test. That will keeping the benchmark factor between each library effectively but also vary relationally when new libraries were added.
 
-<code>Score = (SQRT(median_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / median_ops)) / test_count * 1000</code>
+<code>Score = Sum<sub>test</sub>(lib_ops / median_ops) / test_count * 1000</code>
+
+The file size and memory gets less relevance by applying the square root of these values.
 
 #### Index
 The score index is a close to "static" representation where each score references to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
 
-<code>Index = (SQRT(min_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / max_ops)) / test_count * 1000</code>
+<code>Index = Sum<sub>test</sub>(lib_ops / max_ops) / test_count * 1000</code>
+
+The file size and memory gets less relevance by applying the square root of these values.
+
+## Tests
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Test</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>KB</td>
+        <td>The size of the library. This value has less relevance to the score calculation (uses square root).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>RAM</td>
+        <td>The amount of memory which was allocated through the whole test (memory per cycle). This value also has less relevance to the score calculation (uses square root).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Create</td>
+        <td>The creation of 100 elements from blank.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Replace</td>
+        <td>The replacement of 100 new elements over 100 existing elements.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Update</td>
+        <td>Toggles between: 1. shuffle item indexes (contents are all unchanged) and 2. update contents via modulo (every nth item).</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Repaint</td>
+        <td>Render same items in the same order.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Remove</td>
+        <td>The remove of 50 items from a list of 100.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Append</td>
+        <td>Append 50 new items to a list of 50 existing.</td>
+    </tr>   
+    <tr></tr>
+    <tr>
+        <td>Toggle</td>
+        <td>Toggles between "Remove" and "Append" (test for optimizations like: pagination, folding, resizing).</td>
+    </tr>  
+    <tr></tr>
+    <tr>
+        <td>Clear</td>
+        <td>Remove all items of a list of 100 existing.</td>
+    </tr>  
+</table>
 
 ## How this benchmark work
 
@@ -61,6 +121,18 @@ The data is unknown, the library do not know if data was added, removed, updated
 
 Regardless the function is doing, every test has to run through the same logic.
 
+#### Random item factory
+
+The items were created by a random factory. To be fair the items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to the same IDs. Also that comes closer to real use cases, because an application normally should no load unlimited data.
+
+#### Hidden render target
+
+You may see benchmarks which draws the rendering visible to the users screen. It depends on what is the desired part to benchmark. This benchmark will just cover the raw time of applied re-calculations (creation/updating/removing of elements), the time the browser takes to make them visible is:
+
+1. no part of this test
+2. not relevant, because this time is almost not influenced by the library
+3. introduce unnecessary distortion to the test
+
 #### About requirements for tested libraries
 Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand. Also asynchronous/scheduled rendering is not allowed.
 
@@ -73,7 +145,7 @@ This test also covers runtime optimizations of each library which is very import
 That's basically the main difference to other tests<!-- like <a href="https://krausest.github.io/js-framework-benchmark/current.html">this</a>-->. Other benchmarks may re-loading the whole page/application after every single test loop. This would be a good step away from a real environment and also cannot cover one of the biggest strength of Mikado which is based on several runtime optimizations.
 
 #### About median values
-Using the median value is very common to normalize the spread in results in a statistically manner. But using the median for benchmarking, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One of the most factors which is often overseen is the run of the garbage collector, which costs a significantly amount of time. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
+Using the median value is very common to normalize the spread in results in a statistically manner. But using the median for benchmarking, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One of the most factors which is often overseen is the run of the garbage collector, which costs a significantly amount of time and runs randomly. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
 
 This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time (btw that also comes closest to a real environment).
 

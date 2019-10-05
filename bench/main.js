@@ -154,18 +154,18 @@
 
                     if(current[x][test[y]]){
 
-                        if(test[y] === "size"){
+                        //if(test[y] === "size"){
 
                             score[x] += Math.sqrt(average(val[y]) / current[x][test[y]]);
                             index[x] += Math.sqrt(max[y] / current[x][test[y]]);
                             current[x]["color_" + test[y]] = color(Math.sqrt(max[y]), Math.sqrt(current[x][test[y]]));
-                        }
-                        else{
-
-                            score[x] += average(val[y]) / current[x][test[y]];
-                            index[x] += max[y] / current[x][test[y]];
-                            current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
-                        }
+                        // }
+                        // else{
+                        //
+                        //     score[x] += average(val[y]) / current[x][test[y]];
+                        //     index[x] += max[y] / current[x][test[y]];
+                        //     current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
+                        // }
                     }
                 }
                 else{

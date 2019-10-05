@@ -233,9 +233,6 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
-Run the benchmark (strict non-reusing):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?strict">https://raw.githack.com/nextapps-de/mikado/master/bench/?strict</a><br>
-
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
 
@@ -449,11 +446,7 @@ Values represents operations per second, each benchmark task has to process a da
     </tr>
 </table>
 
-<code>Score = (SQRT(median_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / median_ops)) / test_count * 1000</code><br>
-A score of 1000 represents the statistical midfield.
-
-<code>Index = (SQRT(min_kb / lib_kb) + Sum<sub>test</sub>(lib_ops / max_ops)) / test_count * 1000</code><br>
-The maximum possible index is 1000, that requires a library to be best in each category.
+The file size and memory gets less relevance. A ___score___ of 1000 represents the statistical midfield. The maximum possible ___index___ is 1000, that requires a library to be best in each category.
 
 Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a> or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.
 
@@ -1116,51 +1109,57 @@ Routes are stored globally, so you can share routes through all Mikado instances
 </table>
 
 <a name="keyed"></a>
-## Keyed/Non-Keyed
+## Keyed/Non-Keyed Modes
 
-#### Explicit Keyed
+> Each template instance can run in its own mode independently.
 
-Just add the attribute ___key___ to the ___root element___ of a template:
+#### 1. Non-Keyed
+
+Just provide a template as normal:
 ```html
-<div key="data.id">
+<div>
     <div>User:</div>
-    <div>{{data.user}}</div>
+    <div>{{data.name}}</div>
 </div>
 ```
 
 along with these options:
+
+```js
+var view = Mikado.new(template, {reuse: true, pool: true});
+```
+
+This will switch Mikado into a "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
+
+#### 2. Explicit Keyed
+
+A keyed strategy provides better performance. It just requires an unique identifier on each rendered item (e.g. the ID).
+
+Add the attribute ___key___ to the ___root element___ of a template and assign an unique identifier:
+```html
+<div key="data.id">
+    <div>User:</div>
+    <div>{{data.name}}</div>
+</div>
+```
+
+To make them explicitly keyed also disable reusing:
 
 ```js
 var view = Mikado.new(template, {reuse: false});
 ```
 
-This will switch Mikado into a explicit "keyed" mode.
+This will switch Mikado into a "explicit keyed" mode.
 
-#### Use Non-Keyed
+#### 3. Keyed (Cross-Shared)
 
-A template as normal:
-```html
-<div>
-    <div>User:</div>
-    <div>{{data.user}}</div>
-</div>
-```
-
-along with these options:
-
-```js
-var view = Mikado.new(template, {reuse: true, pool: true});
-```
-
-This will switch Mikado into a "non-keyed" mode.
-
-#### Use Shared-Keyed
+> The shared keyed mode takes the advantages of both worlds and provides you an enhanced pooling of reusable components and also has the best performance as well as memory allocation during runtime.
 
 Add the attribute ___key___ to the ___root element___ of a template:
 ```html
 <div key="data.id">
     <div>User:</div>
-    <div>{{data.user}}</div>
+    <div>{{data.name}}</div>
 </div>
 ```
 
@@ -1170,9 +1169,26 @@ along with these options:
 var view = Mikado.new(template, {reuse: true, pool: true});
 ```
 
-This will switch Mikado into a "shared-keyed" mode.
+This will switch Mikado into a "cross-shared-keyed" mode.
 
-> The shared key mode provides you the best of each world and also has the best performance as well as memory allocation during runtime.
+#### 4. Keyed (Exclusive-Shared)
+
+There is a last mode, which uses an exclusive keyed shared pool. This will give you the absolute maximum performance, but it has a limit you should keep in mind when using this mode. The exclusive keyed mode is unbounded. Just use this mode on templates where the pool of incoming data is supposed to be limited (e.g. in a common scenario: pagination through a limited list of x items). Otherwise you will get no performance gain and also the memory allocation increases constantly (unbounded).
+
+```html
+<div key="data.id">
+    <div>User:</div>
+    <div>{{data.name}}</div>
+</div>
+```
+
+along with these options:
+
+```js
+var view = Mikado.new(template, {pool: false});
+```
+
+This will switch Mikado into a "exclusive-shared-keyed" mode.
 
 <a name="reuse"></a>
 ## Non-/Reusing

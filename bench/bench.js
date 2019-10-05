@@ -305,22 +305,22 @@ function perform(){
 
     if((warmup === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
-    let time;
+    const time = 500;
 
-    if(warmup < 3){
-
-        if(!warmup){
-
-            time = 300;
-        }
-
-        warmup++;
-    }
-    else{
-
-        warmup = 0;
-        time = 5000;
-    }
+    // if(warmup < 3){
+    //
+    //     if(!warmup){
+    //
+    //         time = 300;
+    //     }
+    //
+    //     warmup++;
+    // }
+    // else{
+    //
+    //     warmup = 0;
+    //     time = 5000;
+    // }
 
     //const loops = test.loop;
     //const results = new Array(loops | 0);
