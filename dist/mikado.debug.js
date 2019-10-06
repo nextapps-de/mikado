@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.1
+ * Mikado.js v0.6.11
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1077,16 +1077,7 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
             this.replace(node, item, view, x);
           }
         } else {
-          if (SUPPORT_STORAGE) {
-            if (this.store) {
-              this.store[x] = item;
-            } else {
-              if (this.loose) {
-                node["_data"] = item;
-              }
-            }
-          }
-          this.apply(node, item, view, x);
+          this.update(node, item, view, x);
         }
       }
     }
@@ -1264,11 +1255,11 @@ Mikado$$module$tmp$mikado.prototype.update = function(node, data, view, index) {
       console.warn("The template '" + this.template + "' is a static template and should not be updated.");
     }
   }
-  if (typeof node === "number") {
-    index = node;
-    node = this.dom[node];
-  } else {
-    if (typeof index === "undefined") {
+  if (typeof index === "undefined") {
+    if (typeof node === "number") {
+      index = node;
+      node = this.dom[node];
+    } else {
       index = node["_idx"];
     }
   }

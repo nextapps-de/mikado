@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.6.1",
+  "version": "0.6.11",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -13,7 +13,8 @@
     "Virtual DOM",
     "Template Engine",
     "Mustache",
-    "Handlebars"
+    "Handlebars",
+    "Reactive"
   ],
   "bugs": {
     "url": "https://github.com/nextapps-de/mikado/issues",

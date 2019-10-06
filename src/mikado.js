@@ -856,19 +856,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 }
                 else{
 
-                    if(SUPPORT_STORAGE){
-
-                        if(this.store){
-
-                            this.store[x] = item;
-                        }
-                        else if(this.loose){
-
-                            node["_data"] = item;
-                        }
-                    }
-
-                    this.apply(node, item, view, x);
+                    this.update(node, item, view, x);
                 }
             }
         }
@@ -1219,14 +1207,17 @@ Mikado.prototype.update = function(node, data, view, index){
         }
     }
 
-    if(typeof node === "number"){
+    if(typeof index === "undefined"){
 
-        index = node;
-        node = this.dom[node];
-    }
-    else if(typeof index === "undefined"){
+        if(typeof node === "number"){
 
-        index = node["_idx"];
+            index = node;
+            node = this.dom[node];
+        }
+        else{
+
+            index = node["_idx"];
+        }
     }
 
     if(SUPPORT_POOLS && this.key){
