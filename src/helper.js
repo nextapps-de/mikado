@@ -2,7 +2,7 @@ import Mikado from "./mikado.js";
 
 if(SUPPORT_HELPERS){
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("move") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("move") !== -1)){
 
         // absolute position
         Mikado.prototype.move = function(a, position){
@@ -161,7 +161,7 @@ if(SUPPORT_HELPERS){
         }
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("up") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("up") !== -1)){
 
         Mikado.prototype.up = function(a, offset){
 
@@ -174,7 +174,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("down") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("down") !== -1)){
 
         Mikado.prototype.down = function(a, offset){
 
@@ -187,7 +187,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("first") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("first") !== -1)){
 
         Mikado.prototype.first = function(a){
 
@@ -195,7 +195,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("last") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("last") !== -1)){
 
         Mikado.prototype.last = function(a){
 
@@ -203,7 +203,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("before") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("before") !== -1)){
 
         Mikado.prototype.before = function(tmp_a, tmp_b){
 
@@ -241,7 +241,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("after") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("after") !== -1)){
 
         Mikado.prototype.after = function(tmp_a, tmp_b){
 
@@ -279,7 +279,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS === true || SUPPORT_HELPERS.indexOf("swap") !== -1){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap") !== -1)){
 
         /**
          * @param a

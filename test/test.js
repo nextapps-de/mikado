@@ -255,7 +255,7 @@ describe("Render (Async)", function(){
 
         var mikado = new Mikado(root_1, "template");
 
-        mikado.render(data, function(){
+        mikado.clear().render(data, function(){
 
             expect(mikado.length).to.equal(data.length);
             expect(mikado.dom.length).to.equal(data.length);
@@ -275,7 +275,7 @@ describe("Render (Async)", function(){
 
         var mikado = new Mikado(root_1, "template", { async: true });
 
-        mikado.render(data).then(function(){
+        mikado.clear().render(data).then(function(){
 
             expect(mikado.length).to.equal(data.length);
             expect(mikado.dom.length).to.equal(data.length);
@@ -1197,7 +1197,7 @@ describe("Proxy", function(){
 
         var items = data.slice(0);
         var mikado = new Mikado(root_1, "proxy", { store: true, loose: false });
-        mikado.render(items);
+        mikado.clear().render(items);
 
         mikado.store[0].id = "foo";
         mikado.store[1].id = "bar";
@@ -1210,7 +1210,7 @@ describe("Proxy", function(){
 
         var items = data.slice(0);
         var mikado = new Mikado(root_1, "proxy", { store: true, loose: true });
-        mikado.render(items);
+        mikado.clear().render(items);
 
         mikado.data(0).id = "foo";
         mikado.data(1).id = "bar";
@@ -1223,7 +1223,7 @@ describe("Proxy", function(){
 
         var items = data.slice(0);
         var mikado = new Mikado(root_1, "proxy", { store: items, loose: false });
-        mikado.render(items);
+        mikado.clear().render(items);
 
         items[0].id = "foo";
         items[1].id = "bar";
@@ -1242,7 +1242,7 @@ describe("Proxy", function(){
 
         var items = data.slice(0);
         var mikado = new Mikado(root_1, "proxy", { store: items, loose: true });
-        mikado.render(items);
+        mikado.clear().render(items);
 
         items[0].id = "foo";
         items[1].id = "bar";

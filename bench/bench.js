@@ -233,22 +233,26 @@ function check(fn){
 
     if(keyed){
 
-        root.firstElementChild.firstElementChild.firstElementChild._test = true;
-        fn(items.slice(2, 3)); // every keyed lib which fails this test does cheating
+        const node = root.firstElementChild.firstElementChild.firstElementChild;
+        node._test = true;
+        fn(items.slice(2, 3)); // every keyed lib which fails this test are not explicit keyed
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in keyed mode.");
             return false;
         }
+        node._test = false;
     }
     else if(strict){
 
         fn([items[0]]);
-        root.firstElementChild.firstElementChild.firstElementChild._test = true;
+        const node = root.firstElementChild.firstElementChild.firstElementChild;
+        node._test = true;
         fn([items[0]]);
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in strict mode.");
             return false;
         }
+        node._test = false;
     }
 
     fn([]);

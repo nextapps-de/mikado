@@ -13,6 +13,8 @@ Mikado.prototype.render;
 /** @export */
 Mikado.prototype.refresh;
 /** @export */
+Mikado.prototype.apply;
+/** @export */
 Mikado.prototype.unload;
 /** @export */
 Mikado.prototype.remove;

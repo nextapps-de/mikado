@@ -14,6 +14,11 @@
         document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : "Modes") + ")"
     }
 
+    if(modes){
+
+        document.body.className = "modes";
+    }
+
     const lib = shuffle(modes ? [
 
         "mikado-cross-shared", "mikado-exclusive",
