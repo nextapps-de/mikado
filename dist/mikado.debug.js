@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.11
+ * Mikado.js v0.6.12
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -220,7 +220,7 @@ if (SUPPORT_HELPERS) {
       return this;
     };
   }
-  if (SUPPORT_HELPERS !== "swap") {
+  if (SUPPORT_HELPERS === true || SUPPORT_HELPERS && SUPPORT_HELPERS !== "swap") {
     Mikado$$module$tmp$mikado.prototype.shift = function(a, offset, view) {
       if (!offset) {
         return this;
@@ -242,15 +242,7 @@ if (SUPPORT_HELPERS) {
           this.update(a, this.store ? this.store[pos] : b["_data"], view, pos);
           this.update(b, tmp, view, index);
         } else {
-          if (up) {
-            this.root.insertBefore(a, b);
-          } else {
-            if (pos === this.length - 1) {
-              this.root.appendChild(a);
-            } else {
-              this.root.insertBefore(a, this.dom[pos + 1]);
-            }
-          }
+          this.root.insertBefore(a, up ? b : this.dom[pos + 1] || null);
         }
         if (multi_update) {
           var tmp$1 = this.dom[index];
@@ -916,7 +908,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
       clone = node = this.factory || (this.factory = this.parse(templates$$module$tmp$mikado[this.template]));
     }
   }
-  this.apply(node, data, index, view);
+  this.apply(node, data, view, index);
   if (clone) {
     node = this.factory.cloneNode(true);
   }
@@ -926,7 +918,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   }
   return node;
 };
-Mikado$$module$tmp$mikado.prototype.apply = function(root, data, index, payload) {
+Mikado$$module$tmp$mikado.prototype.apply = function(root, data, payload, index) {
   if (this.static) {
     if (DEBUG) {
       console.warn("The template '" + this.template + "' is a static template and should not be refreshed.");
@@ -958,7 +950,7 @@ if (SUPPORT_STORAGE) {
       }
     }
     if (node) {
-      this.apply(node, null, index, view);
+      this.apply(node, null, view, index);
     } else {
       var length = this.length;
       var count = this.store ? this.store.length : length;
@@ -970,7 +962,7 @@ if (SUPPORT_STORAGE) {
       }
       for (var x = 0; x < count; x++) {
         if (length) {
-          this.apply(this.dom[x], null, x, view);
+          this.apply(this.dom[x], null, view, x);
         } else {
           this.add(this.store[x], view);
         }
@@ -1281,7 +1273,7 @@ Mikado$$module$tmp$mikado.prototype.update = function(node, data, view, index) {
       }
     }
   }
-  return this.apply(node, data, index, view);
+  return this.apply(node, data, view, index);
 };
 Mikado$$module$tmp$mikado.prototype.create_path = function(root) {
   var length = this.vpath.length;

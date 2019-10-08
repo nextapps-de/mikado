@@ -568,7 +568,7 @@ Mikado.prototype.create = function(data, view, index){
         clone = node = this.factory || (this.factory = this.parse(templates[this.template]));
     }
 
-    this.apply(node, data, index, view);
+    this.apply(node, data, view, index);
 
     if(clone){
 
@@ -589,7 +589,7 @@ Mikado.prototype.create = function(data, view, index){
     return node;
 };
 
-Mikado.prototype.apply = function(root, data, index, payload){
+Mikado.prototype.apply = function(root, data, payload, index){
 
     if(this.static){
 
@@ -637,7 +637,7 @@ if(SUPPORT_STORAGE){
 
         if(node){
 
-            this.apply(node, null, index, view);
+            this.apply(node, null, view, index);
         }
         else{
 
@@ -659,7 +659,7 @@ if(SUPPORT_STORAGE){
 
                 if(length){
 
-                    this.apply(this.dom[x], null, x, view);
+                    this.apply(this.dom[x], null, view, x);
                 }
                 else{
 
@@ -1252,7 +1252,7 @@ Mikado.prototype.update = function(node, data, view, index){
 
     //profiler_end("update");
 
-    return this.apply(node, data, index, view);
+    return this.apply(node, data, view, index);
 };
 
 // resolve(nodes, "&") => root
@@ -1784,7 +1784,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         if(SUPPORT_TEMPLATE_EXTENSION) payload.include = this.include;
         if(SUPPORT_REACTIVE) payload.proxy = this.proxy;
 
-        // NOTE: cache has a different render path
+        // NOTE: cache has a different factory
         factory_pool[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = payload;
     }
 
@@ -1807,8 +1807,6 @@ function concat_path(has_update, new_fn, path_length, cache){
         }
     //}
 }
-
-// TODO: when rendering on a modified template all states hast to reset to its default template values
 
 if(SUPPORT_TRANSPORT){
 

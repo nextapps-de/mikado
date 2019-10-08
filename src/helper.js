@@ -33,7 +33,7 @@ if(SUPPORT_HELPERS){
         };
     }
 
-    if(SUPPORT_HELPERS !== "swap"){
+    if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS !== "swap")){
 
         // relative position
         Mikado.prototype.shift = function(a, offset, view){
@@ -76,21 +76,21 @@ if(SUPPORT_HELPERS){
                 }
                 else{
 
-                    if(up){
+                    //if(up){
 
-                        this.root.insertBefore(a, b);
-                    }
-                    else{
+                        //this.root.insertBefore(a, b);
+                    //}
+                    //else{
 
-                        if(pos === this.length - 1){
+                        //if(pos === this.length - 1){
 
-                            this.root.appendChild(a);
-                        }
-                        else{
+                            //this.root.appendChild(a);
+                        //}
+                        //else{
 
-                            this.root.insertBefore(a, this.dom[pos + 1]);
-                        }
-                    }
+                            this.root.insertBefore(a, up ? b : this.dom[pos + 1] || null);
+                        //}
+                    //}
                 }
 
                 if(multi_update){
