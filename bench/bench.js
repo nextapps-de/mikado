@@ -24,7 +24,17 @@ function next(){
         pos = 0;
     }
 
-    return items = factory[pos];
+    return items = enforce(shuffle(factory[pos]));
+}
+
+function enforce(data){
+
+    for(let i = 0; i < data.length; i++){
+
+        data[i] = Object.assign({}, data[i]);
+    }
+
+    return data;
 }
 
 queue.push({
@@ -32,7 +42,7 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        clone = next(); //shuffle(items).slice(0);
+        clone = next();
     },
     fn: null,
     end: function(){
@@ -48,7 +58,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        clone = next(); //shuffle(items).slice(0);
+        clone = next();
     },
     fn: null,
     end: null,
@@ -64,9 +74,42 @@ queue.push({
     },
     test: null,
     start: function(index){
-        clone = index % 5 ?
-            shuffle(items).slice(0) :
-            update(items, index).slice(0);
+        if(index % 5){
+            clone = enforce(update(items, index).slice(0));
+        }
+        else{
+            clone = enforce(shuffle(items).slice(0));
+        }
+    },
+    fn: null,
+    end: null,
+    complete: function(){
+        this.fn([]);
+    }
+});
+
+queue.push({
+    name: "arrange",
+    init: function(){
+        this.fn(next());
+    },
+    test: null,
+    start: function(index){
+        if(index % 4 === 0){ // swap
+            items.splice(1, 0, items.splice(items.length - 2, 1)[0]);
+            items.splice(items.length - 2, 0, items.splice(2, 1)[0]);
+        }
+        if(index % 3 === 0){ // move down
+            items.push(items.shift());
+        }
+        if(index % 2 === 0){ // move up
+            items.unshift(items.pop());
+        }
+        else{ // simple re-order
+            for(let i = 80; i < 90; i++) items.splice(i, 0, items.splice(10, 1)[0]);
+            for(let i = 30; i < 40; i++) items.splice(i, 0, items.splice(60, 1)[0]);
+        }
+        clone = enforce(items.slice(0));
     },
     fn: null,
     end: null,
@@ -82,7 +125,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        clone = items.slice(0);
+        clone = enforce(items.slice(0));
     },
     fn: null,
     end: null,
@@ -97,7 +140,7 @@ queue.push({
     test: null,
     start: function(){
         this.fn(next().slice(0, 50));
-        clone = items.slice(0);
+        clone = enforce(items.slice(0));
     },
     fn: null,
     end: function(){
@@ -112,7 +155,7 @@ queue.push({
     test: null,
     start: function(){
         this.fn(next());
-        clone = items.slice(0, 50);
+        clone = enforce(items.slice(0, 50));
     },
     fn: null,
     end: null,
@@ -130,7 +173,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        clone = (toggle = !toggle) ? items.slice(0, 50) : items.slice(0);
+        clone = enforce((toggle = !toggle) ? items.slice(0, 50) : items.slice(0));
     },
     fn: null,
     end: null,
@@ -222,20 +265,26 @@ window.onload = function(){
 
 function check(fn){
 
-    fn(items.slice(0, 1));
+    fn(enforce(items.slice(0, 1)));
     if(!validate(items[0])) return false;
 
-    fn(items.slice(1, 2));
+    fn(enforce(items.slice(1, 2)));
     if(!validate(items[1])) return false;
 
-    fn(items.slice(0, 1));
+    fn(enforce(items.slice(0, 1)));
     if(!validate(items[0])) return false;
+
+    // checks if libs updates contents on same id
+    const tmp = enforce(items.slice(0, 1));
+    tmp[0]["title"] = "test";
+    fn(tmp);
+    if(!validate(tmp[0])) return false;
 
     if(keyed){
 
         const node = root.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
-        fn(items.slice(2, 3)); // every keyed lib which fails this test are not explicit keyed
+        fn(enforce(items.slice(1, 2))); // every keyed lib which fails this test are not explicit keyed
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in keyed mode.");
             return false;
@@ -244,10 +293,10 @@ function check(fn){
     }
     else if(strict){
 
-        fn([items[0]]);
+        fn(enforce([items[0]]));
         const node = root.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
-        fn([items[0]]);
+        fn(enforce([items[0]]));
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in strict mode.");
             return false;

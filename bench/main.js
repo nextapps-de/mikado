@@ -35,10 +35,10 @@
 
     const test = [
 
-        "size", "memory", "create",
-        "replace", "update", "repaint",
-        "append", "remove", "toggle",
-        "clear"
+        "size", "memory",
+        "create", "replace", "update",
+        "arrange", "repaint", "append",
+        "remove", "toggle", "clear"
     ];
 
     let current = new Array(lib.length);
@@ -170,7 +170,7 @@
 
                         //if(test[y] === "size"){
 
-                            score[x] += Math.sqrt(average(val[y]) / current[x][test[y]]);
+                            score[x] += Math.sqrt(median(val[y]) / current[x][test[y]]);
                             index[x] += Math.sqrt(max[y] / current[x][test[y]]);
                             current[x]["color_" + test[y]] = color(Math.sqrt(max[y]), Math.sqrt(current[x][test[y]]));
                         // }
@@ -184,7 +184,7 @@
                 }
                 else{
 
-                    score[x] += current[x][test[y]] / average(val[y]);
+                    score[x] += current[x][test[y]] / median(val[y]);
                     index[x] += current[x][test[y]] / max[y];
                     current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                 }

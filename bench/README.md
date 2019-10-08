@@ -1,4 +1,8 @@
-# Benchmark of Web Templating Engines
+# Benchmark of Template Rendering
+
+The most important of all rules: Don't trust any benchmark, they may wrong. This is probably (!) the best benchmark comparison of templating rendering performance you will find in the web. Please read <a href="#details">the sections below</a> which explains why.
+
+If you see any improvement, weather it is too less important or not, please open an issue (after you have fully read this page). I want to make sure to provide a real and fair situation in all cases.
 
 Run the benchmark (non-keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
@@ -6,7 +10,10 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
-This stress test focuses a real life use case, where new data is coming from a source and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
+Comming soon: A new test section which measures the change of internal data changes instead of process newly created or external fetched data.
+
+#### Test goal
+This stress test focuses a real life use case, where new data is coming from a source (e.g. from a server or by creation during runtime) and should be rendered through a template. The different to other benchmark implementations is, that the given task is not known before the data was available. It measures the workload of a real use case.
 
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
 https://krausest.github.io/js-framework-benchmark/current.html
@@ -33,14 +40,13 @@ The score is calculated in relation to the median value of each test. That will 
 The file size and memory gets less relevance by applying the square root of these values.
 
 #### Index
-The score index is a close to "static" representation where each score references to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
+The score index is a close very stable non-relational representation where each score references to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
 
 <code>Index = Sum<sub>test</sub>(lib_ops / max_ops) / test_count * 1000</code>
 
 The file size and memory gets less relevance by applying the square root of these values.
 
 ## Tests
-
 <table>
     <tr></tr>
     <tr>
@@ -69,7 +75,12 @@ The file size and memory gets less relevance by applying the square root of thes
     <tr></tr>
     <tr>
         <td>Update</td>
-        <td>Toggles between: 1. shuffle item indexes (all contents stay unchanged) and 2. update content fields of every nth item (order of items stay unchanged).</td>
+        <td>Toggles between:<br>1. shuffle item indexes (all contents stay unchanged)<br>2. update content fields of every nth item (order of items stay unchanged)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Arrange</td>
+        <td>Toggles between:<br>1. Move first items to the end<br>2. move last item to the start<br>3. toggle seconds and fore-last items<br>4. re-arrange (4 ordered groups)</td>
     </tr>
     <tr></tr>
     <tr>
@@ -98,6 +109,7 @@ The file size and memory gets less relevance by applying the square root of thes
     </tr>  
 </table>
 
+<a name="details"></a>
 ## How this benchmark work
 
 Basically each framework provide one public method, which handles and render the incoming data, e.g.:
@@ -117,13 +129,25 @@ suite["sinuous"] = function(items){
 };
 ```
 
-The data is unknown, the library do not know if data was added, removed, updated or stay unchanged before it gets the data. That's the main different to other benchmark implementations, where a programmer can iteratively solve a problem to a known task.
+The data is unknown, the library does not know if data was added, removed, updated or stay unchanged before it gets the data. That's the main different to other benchmark implementations, where a programmer can iteratively solve a problem to a known task.
 
 Regardless the function is doing, every test has to run through the same logic.
 
 #### Random item factory
 
-The items were created by a random factory. To be fair the items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to match same IDs. Also that comes closer to real use cases, because an application normally should no load unlimited data.
+The items were created by a random factory. To be fair the items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to match same IDs. Also that comes closer to real use cases, because an application normally should no load unlimited new data.
+
+Also the items has some fields, which aren't included by the template. That is also important, because in real live this situation is the most common. Most other benchmarks just provide data which is consumed by the template.
+
+#### Mimic data from a server or created during runtime
+
+Since these benchmark try to get close to a real live situation, the items will be cloned before every test to mimic a fresh fetch from the server or the creation of a new items during runtime. Each test has a very specific job, so there are tests, where new data is coming from the outside but content stay unchanged, or IDs still remain (just important for keyed modes).
+
+Many of other tests around, will do not fully clone objects, and those benchmarks will provide really wrong results when they try to compare the performance of incoming data (most of them just compares the process of already existing data).
+
+#### Dedicated sandbox
+
+Each test suite runs in its own dedicated sandbox through an iframe. This is reducing noise from externals to a minimum.
 
 #### Hidden render target
 
@@ -134,22 +158,25 @@ You may see benchmarks which draws the rendering visible to the users screen. It
 3. introduce unnecessary distortion to the test
 
 #### About requirements for tested libraries
-Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand. Also asynchronous/scheduled rendering is not allowed.
+1. Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand.
+This test is benchmarking library performance and not the performance made by an implementation of a developer. That is probably the biggest different to other benchmark tests.
 
-The keyed test requires a largely non-reusing paradigm. When a new item comes from the outside, the library does not reusing nodes.
+2. Also asynchronous/scheduled rendering is not allowed.
+
+3. The keyed test requires a largely non-reusing paradigm. When a new item comes from the outside, the library does not reusing nodes (on different IDs).
 
 #### About the test environment
 
 This test also covers runtime optimizations of each library which is very important to produce meaningful benchmark results. The goal is to get closest to a real environment.
 
-That's basically the main difference to other tests<!-- like <a href="https://krausest.github.io/js-framework-benchmark/current.html">this</a>-->. Other benchmarks may re-loading the whole page/application after every single test loop. This would be a good step away from a real environment and also cannot cover one of the biggest strength of Mikado which is based on several runtime optimizations.
+That's also a difference to other tests. Other benchmarks may re-loading the whole page/application after every single test loop. This would be a good step away from a real environment and also cannot cover one of the biggest strength of Mikado which is based on several runtime optimizations.
 
 #### About median values
-Using the median value is very common to normalize the spread in results in a statistically manner. But using the median for benchmarking, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One of the most factors which is often overseen is the run of the garbage collector, which costs a significantly amount of time and runs randomly. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
+Using the median value is very common to normalize the spread in results in a statistically manner. But using the median as benchmark samples, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One of the most factors which is often overseen is the run of the garbage collector, which costs a significantly amount of time and runs randomly. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
 
-This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time (btw that also comes closest to a real environment).
+This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time including the full run of the garbage collector. That also comes closest to a real environment.
 
 #### About benchmark precision
-It is not possible to provide stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment of an user who is using an application.
+It is not possible to provide absolute stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. Also every synthetic change may lead into wrong results and false interpreting. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment of an user who is using an application.
 
-That all just become more complex when doing micro-benchmarking. Luckily this workload is by far big enough to produces stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce close to linear results. So it is statistically proofed. There is absolutely no need for using benchmark.js especially for this workload (using it would change nothing).
+That all just become more complex when doing micro-benchmarking. Luckily this workload is by far big enough to produces stable results. Tests where shuffled before start, so you can proof by yourself that values of course differ from one run to another, but produce very stable results. Especially the ___index___ row provides you one of the most stable ranking indexes (the more stable a test is the more meaningful it is). There is absolutely no need for using benchmark.js especially for this workload, also it absolutely does not fit into a real live environment. No place for statistical nonsense, this isn't politics.

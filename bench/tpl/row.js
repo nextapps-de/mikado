@@ -55,6 +55,15 @@ Mikado.register({
     {
       "t": "td",
       "s": [
+        "'background-color:' + data.color_arrange"
+      ],
+      "x": [
+        "data.arrange"
+      ]
+    },
+    {
+      "t": "td",
+      "s": [
         "'background-color:' + data.color_repaint"
       ],
       "x": [
