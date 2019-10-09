@@ -353,13 +353,20 @@ Mikado.prototype.init = function(template, options){
 
     this.config = options;
 
-    if(typeof template === "string"){
+    if(!template){
 
-        template = templates[template];
+        template = this.template;
     }
     else{
 
-        Mikado.register(template);
+        if(typeof template === "string"){
+
+            template = templates[template];
+        }
+        else{
+
+            Mikado.register(template);
+        }
     }
 
     this.reuse = options["reuse"];
@@ -883,18 +890,34 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 });
 
 /**
- * @param {*=} data
- * @param {*=} view
+ * @param {!Object|Array<Object>} data
+ * @param {Object|number=} view
+ * @param {number|null=} index
  * @param {Element=} _replace_node
- * @param {number=} _replace_index
  * @returns {Mikado}
  */
 
-Mikado.prototype.add = function(data, view, _replace_node, _replace_index){
+Mikado.prototype.add = function(data, view, index, _replace_node){
 
     //profiler_start("add");
 
-    const length = _replace_node ? _replace_index : this.length;
+    let has_index;
+
+    if(!_replace_node){
+
+        if(typeof view === "number"){
+
+            index = view;
+            view = null;
+            has_index = true;
+        }
+        else if(index || (index === 0)){
+
+            has_index = true;
+        }
+    }
+
+    let length = _replace_node || has_index ? index : this.length;
     const tmp = this.create(data, view, length);
 
     if(SUPPORT_STORAGE) {
@@ -907,7 +930,14 @@ Mikado.prototype.add = function(data, view, _replace_node, _replace_index){
 
         if(this.store){
 
-            this.store[length] = data;
+            if(has_index){
+
+                this.store.splice(length, 0, data);
+            }
+            else{
+
+                this.store[length] = data;
+            }
         }
         else if(this.loose){
 
@@ -916,16 +946,31 @@ Mikado.prototype.add = function(data, view, _replace_node, _replace_index){
     }
 
     tmp["_idx"] = length;
-    this.dom[length] = tmp;
 
-    if(_replace_node){
+    if(has_index){
 
-        this.root.replaceChild(tmp, _replace_node); //node.replaceWith(tmp);
+        this.root.insertBefore(tmp, this.dom[length] || null);
+        this.dom.splice(length, 0, tmp);
+        this.length++;
+
+        for(;++length < this.length;){
+
+            this.dom[length]["_idx"] = length;
+        }
     }
     else{
 
-        this.root.appendChild(tmp);
-        this.length++;
+        if(_replace_node){
+
+            this.root.replaceChild(tmp, _replace_node); //node.replaceWith(tmp);
+        }
+        else{
+
+            this.root.appendChild(tmp);
+            this.length++;
+        }
+
+        this.dom[length] = tmp;
     }
 
     //profiler_end("add");
@@ -991,11 +1036,24 @@ Mikado.prototype.append = function(data, view, position){
 
     //profiler_start("append");
 
+    let has_position;
+
+    if(typeof view === "number"){
+
+        position = view;
+        view = null;
+        has_position = true;
+    }
+    else{
+
+        has_position = position || (position === 0);
+    }
+
     const count = data.length;
 
     for(let x = 0; x < count; x++){
 
-        this.add(data[x], view);
+        this.add(data[x], view, has_position ? position++ : null);
     }
 
     //profiler_end("append");
@@ -1156,7 +1214,7 @@ Mikado.prototype.replace = function(node, data, view, index){
         index = node["_idx"];
     }
 
-    this.add(data, view, node, index);
+    this.add(data, view, index, node);
 
     if(SUPPORT_POOLS && this.key){
 
@@ -1589,7 +1647,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             this.include || (this.include = []);
 
-            tmp_fn += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] > 0 ? "0," : "") + tpl["m"] + ")" : "") + ",index,view)";
+            // TODO use update_path for non-looping includes
+            // TODO mount after creation through this.include[]
+            tmp_fn += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] > 0 ? "0," : "") + tpl["m"] + ")" : "") + ",view)";
 
             const old_fn = tmp_fn;
             tmp_fn = "";

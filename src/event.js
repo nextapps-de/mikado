@@ -83,7 +83,7 @@ if(SUPPORT_EVENTS){
         event.stopPropagation();
     }
 
-    Mikado.prototype.route = function(id, fn){
+    Mikado["route"] = Mikado.prototype.route = function(id, fn){
 
         listener[id] = fn;
         return this;
@@ -136,10 +136,9 @@ if(SUPPORT_EVENTS){
     /**
      * @param event
      * @param {Object|boolean=} options
-     * @returns {Mikado}
      */
 
-    Mikado.prototype.listen = function(event, options){
+    Mikado["listen"] = Mikado.prototype.listen = function(event, options){
 
         if(!events[event]){
 
@@ -164,7 +163,7 @@ if(SUPPORT_EVENTS){
      * @returns {Mikado}
      */
 
-    Mikado.prototype.unlisten = function(event, options){
+    Mikado["unlisten"] = Mikado.prototype.unlisten = function(event, options){
 
         if(events[event]){
 

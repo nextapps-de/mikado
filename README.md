@@ -44,7 +44,7 @@ Demo:
 4. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 5. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
 
-#### Comming Soon 0.5.x
+#### Comming Soon
 `new` webpack loader to bundle templates<br>
 `change` file endings for templates are customizable (e.g use ___.shtml___)<br>
 
@@ -485,14 +485,13 @@ Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
 - <a href="#view.render">view.__render__(\<data\>, \<payload\>, \<callback\>)</a>
-- <a href="#view.render">view.__apply__(node, \<data\>, \<payload\>)</a>
-- <a href="#view.create">view.__create__(data)</a>
-- <a href="#view.add">view.__add__(data, \<payload\>)</a>
-- <a href="#view.update">view.__update__(node, data, \<payload\>)</a>
-- <a href="#view.append">view.__append__(data, \<payload\>)</a>
-- <a href="#view.replace">view.__replace__(node, data, \<payload\>)</a>
-- <a href="#view.remove">view.__remove__(node)</a>
-- <a href="#view.clear">view.__clear__(\<resize\>)</a>
+- <a href="#view.create">view.__create__(data, \<payload\>)</a>
+- <a href="#view.add">view.__add__(data, \<payload\>, <index\>)</a>
+- <a href="#view.append">view.__append__(data, \<payload\>, <index\>)</a>
+- <a href="#view.update">view.__update__(node | index, data, \<payload\>)</a>
+- <a href="#view.replace">view.__replace__(node | index, data, \<payload\>)</a>
+- <a href="#view.remove">view.__remove__(node, <count\>)</a>
+- <a href="#view.clear">view.__clear__()</a>
 - <a href="#view.data">view.__data__(index | node)</a>
 - <a href="#view.node">view.__node__(index)</a>
 - <a href="#view.index">view.__index__(node)</a>
@@ -501,7 +500,7 @@ Instance methods:
 - <a href="#view.sync">view.__sync__()</a>
 
 Instance methods (not included in mikado.light.js):
-- <a href="#view.refresh">view.__refresh__(\<payload\>)</a>
+- <a href="#view.refresh">view.__refresh__(\<node | index\>, \<payload\>)</a>
 - <a href="#view.sync">view.__sync__(\<uncache?\>)</a>
 - <a href="#view.purge">view.__purge__(\<template\>)</a>
 - <a href="#view.find">view.__find__(data)</a>
@@ -1096,8 +1095,8 @@ view.route("show-user", function(node, event){
 
 Routes are stored globally, so you can share routes through all Mikado instances.
 
-<b>List of all native supported events:</b>
-- tap (synthetic touch-enabled "click" listener)
+<b>List of all supported events:</b>
+- tap (synthetic touch-enabled "click" listener, see below)
 - change, input, select, toggle
 - click, dblclick
 - keydown, keyup, keypress
@@ -1122,6 +1121,37 @@ Routes are stored globally, so you can share routes through all Mikado instances
         <td>The tap event is a synthetic click event for touch-enabled devices. It also fully prevents the 300ms click delay. The tap event automatically falls back to a native click listener when running on non-touchable device.</td>
     </tr>
 </table>
+
+<a name="view.listen"></a><a name="view.unlisten"></a>
+#### Explicit Register/Unregister (Global Usage)
+
+You can also use the event delegation along with "routes" outside a template. Just apply the event attribute like you would do in a template.
+
+```html
+<body>
+    <div click="handler">Click Me</div>
+</body>
+```
+
+```js
+Mikado.route("handler", function(target, event){
+    console.log("Clicked");
+});
+```
+
+Then you have to explicit register these event once:
+
+```js
+Mikado.listen("click");
+```
+
+Because the register of events basically happens when creating the template factory under the hood. When no template was created which includes the same type of event, then there exist is no global listener. For that reason you have to explicitly register the listener once.
+
+Same way you could also unregister events:
+
+```js
+Mikado.unlisten("click");
+```
 
 <a name="keyed"></a>
 ## Keyed/Non-Keyed Modes
@@ -1328,7 +1358,7 @@ Add one data item to the end:
 view.add(data);
 ```
 
-Add one data item before an index:
+Add one data item to a specific index (did not replace):
 ```js
 view.add(data, 0); // add to beginning
 ```
@@ -1339,12 +1369,10 @@ Append multiple data items to the end:
 view.append(data);
 ```
 
-<!--
 Append multiple data before an index:
 ```js
 view.append(data, 0); // append to beginning
 ```
--->
 
 <a name="view.remove"></a>
 Remove a specific data item/node:
@@ -1501,10 +1529,17 @@ view.up(node);
 view.down(node);
 ```
 
-Shift a data item/node by a specific offset:
+Move a data item/node by a specific offset (pretty much the same as ___shift___):
 ```js
 view.up(node, 3);
 view.down(node, 3);
+```
+
+<a name="view.shift"></a>
+Shift a data item/node relatively by a specific offset (both directions):
+```js
+view.shift(node, 3);
+view.shift(node, -3);
 ```
 
 <a name="view.before"></a><a name="view.after"></a>
@@ -2191,7 +2226,7 @@ store[0].name = "New Name";
 
 #### Limitations
 
-Proxy actually comes with some limitations on template expressions. Improving those restrictions is already work in progress and will release in v0.5.0.
+Proxy actually comes with some limitations on template expressions. Improving those restrictions is already work in progress and will release soon.
 
 1.&nbsp;Fields from deeply nested data objects are not reactive:
 ```js
