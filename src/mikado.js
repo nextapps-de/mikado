@@ -456,7 +456,26 @@ Mikado.prototype.init = function(template, options){
 
 Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
-    Mikado.new(root, template).render(data, view, callback).destroy(true);
+    const tmp = Mikado.new(root, template);
+
+    if(callback){
+
+        const fn = callback;
+
+        callback = function(){
+
+            tmp.destroy(true);
+            fn();
+        }
+    }
+
+    tmp.render(data, view, callback);
+
+    if(!callback){
+
+        tmp.destroy(true);
+    }
+
     return Mikado;
 };
 

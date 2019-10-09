@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.13
+ * Mikado.js v0.6.14
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -844,7 +844,18 @@ Mikado$$module$tmp$mikado.prototype.init = function(template, options) {
   return this;
 };
 Mikado$$module$tmp$mikado.once = Mikado$$module$tmp$mikado.once = function(root, template, data, view, callback) {
-  Mikado$$module$tmp$mikado.new(root, template).render(data, view, callback).destroy(true);
+  var tmp = Mikado$$module$tmp$mikado.new(root, template);
+  if (callback) {
+    var fn = callback;
+    callback = function() {
+      tmp.destroy(true);
+      fn();
+    };
+  }
+  tmp.render(data, view, callback);
+  if (!callback) {
+    tmp.destroy(true);
+  }
   return Mikado$$module$tmp$mikado;
 };
 Mikado$$module$tmp$mikado.prototype.check = function() {

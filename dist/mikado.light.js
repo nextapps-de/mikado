@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.13 (Light)
+ * Mikado.js v0.6.14 (Light)
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -7,8 +7,8 @@
  */
 (function(){'use strict';var n;var t={reuse:!0,prefetch:!0,pool:!0,cache:!0},w={},y={},z={},B={},C={};function D(a,b,d){a.nodeType||(d=b,b=a,a=null);b||(d=a);a?this.mount(a):(this.g=this.f=null,this.length=0);this.init(b,d)}var F=D.register=function(a,b){b||(b=a,a=b.n);y[a]=b;return D},G=D.new=function(a,b,d){return new D(a,b,d)};
 D.prototype.mount=function(a){if(this.g!==a){this.key&&this.g&&(this.g._o=this.m,this.m=a._o||{});this.g=a;H(this);var b;if(!(b=a._d)){b=a.children;for(var d=b.length,c=Array(d),f=0,e;f<d;f++)e=b[f],e._i=f,c[f]=e;b=a._d=c}this.f=b;this.length=this.f.length}return this};D.prototype.index=function(a){return a._i};D.prototype.node=function(a){return this.f[a]};
-D.prototype.init=function(a,b){this.B=b=b?Object.assign({},this.B||t,b):t;a?"string"===typeof a?a=y[a]:F(a):a=this.b;this.A=b.reuse;this.state=b.state||w;this.cache=b.cache;this.v=this.A&&b.pool;this.b!==a.n&&(this.b=a.n,this.o=a.d,this.u=this.l=null,this.w=b.prefetch&&I(this,a),H(this),this.m=(this.key=a.k)&&{},this.key&&(C[this.b]||(C[this.b]={})),this.v&&(B[this.b]||(B[this.b]=[])));return this};D.once=function(a,b,d,c,f){G(a,b).render(d,c,f).destroy(!0);return D};
-function H(a){if(a.g){var b=a.g._t;b!==a.b&&(a.g._t=a.b,b&&(a.key&&(a.m={}),a.length=0,a.remove(0,a.length)))}}n=D.prototype;
+D.prototype.init=function(a,b){this.B=b=b?Object.assign({},this.B||t,b):t;a?"string"===typeof a?a=y[a]:F(a):a=this.b;this.A=b.reuse;this.state=b.state||w;this.cache=b.cache;this.v=this.A&&b.pool;this.b!==a.n&&(this.b=a.n,this.o=a.d,this.u=this.l=null,this.w=b.prefetch&&I(this,a),H(this),this.m=(this.key=a.k)&&{},this.key&&(C[this.b]||(C[this.b]={})),this.v&&(B[this.b]||(B[this.b]=[])));return this};
+D.once=function(a,b,d,c,f){var e=G(a,b);if(f){var g=f;f=function(){e.destroy(!0);g()}}e.render(d,c,f);f||e.destroy(!0);return D};function H(a){if(a.g){var b=a.g._t;b!==a.b&&(a.g._t=a.b,b&&(a.key&&(a.m={}),a.length=0,a.remove(0,a.length)))}}n=D.prototype;
 n.create=function(a,b,d){var c,f,e;if(this.key&&((c=(e=C[this.b])[f=a[this.key]])||(c=this.m[f]))){if(e&&(e[f]=null,this.v)){var g;if((g=c._n)||0===g)if(e=B[this.b],e.length){c._n=null;var k=e.pop();k!==c&&(k._n=g,e[g]=k)}}}else if(this.v&&(c=B[this.b])&&c.length){if(c=c.pop(),this.key&&(c._n=null,(k=c._k)||0===k))e[k]=null}else var h=c=this.w||(this.w=I(this,y[this.b]));this.apply(c,a,b,d);h&&(c=this.w.cloneNode(!0));this.key&&(c._k=f,this.m[f]=c);return c};
 n.apply=function(a,b,d,c){if(!this.o)return c||0===c||(c=a._i),this.u(a._p||J(this,a),a.$,b,c,d)};
 n.render=function(a,b){if(this.o)this.f[0]||this.add();else{if(!a)return!1;var d=this.length;var c=a.length;"undefined"===typeof c&&(a=[a],c=1);if(!c)return this.remove(0,d);if(!this.A){var f=this.key;f||(this.remove(0,d,c),d=0)}var e=d<c?d:c,g=0;if(g<e)for(;g<e;g++){var k=this.f[g],h=a[g],m=void 0;if(f&&k._k!==(m=h[this.key]))if(m=this.m[m]){var q=m._i;m._i=g;k._i=q;this.f[g]=m;this.f[q]=k;this.g.insertBefore(m,k);this.apply(m,h,b,g)}else this.replace(k,h,b,g);else this.update(k,h,b,g)}if(g<c)for(;g<
