@@ -909,7 +909,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 });
 
 /**
- * @param {!Object|Array<Object>} data
+ * @param {!Object|Array<Object>=} data
  * @param {Object|number=} view
  * @param {number|null=} index
  * @param {Element=} _replace_node

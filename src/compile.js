@@ -89,7 +89,6 @@ export default function compile(node, recursive){
             // <include>{{ template }}</include>
 
             template["+"] = node.firstChild.nodeValue;
-
             return;
         }
         else{
@@ -116,9 +115,9 @@ export default function compile(node, recursive){
 
     if(node.nodeType !== 3){
 
-        let value = node.firstChild.nodeValue;
+        let value = node.firstChild;
 
-        if(value){
+        if(value && (value = value.nodeValue)){
 
             value.replace(/\s+/g, ' ');
 

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.14
+ * Mikado.js v0.6.15
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1775,8 +1775,8 @@ function compile$$module$tmp$compile(node, recursive) {
     template["t"] = tagName.toLowerCase();
   }
   if (node.nodeType !== 3) {
-    var value = node.firstChild.nodeValue;
-    if (value) {
+    var value = node.firstChild;
+    if (value && (value = value.nodeValue)) {
       value.replace(/\s+/g, " ");
       if (value.trim()) {
         var pos = value.indexOf("{{@");
