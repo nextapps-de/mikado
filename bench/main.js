@@ -5,13 +5,14 @@
     const iframe = document.getElementById("iframe");
     const result = document.getElementById("result");
     const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
-    const keyed = window.location.search.substring(1) === "keyed";
-    const strict = window.location.search.substring(1) === "strict";
-    const modes = window.location.search.substring(1) === "modes";
+    const strict = window.location.search.indexOf("strict") !== -1;
+    const modes = window.location.search.indexOf("modes") !== -1;
+    const internal = window.location.search.indexOf("internal") !== -1;
+    const keyed = internal || (window.location.search.indexOf("keyed") !== -1);
 
     if(keyed || strict || modes){
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : "Modes") + ")"
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : "Modes") + (internal ? ", Data-Driven" : "") + ")"
     }
 
     if(modes){
@@ -22,7 +23,7 @@
     const lib = shuffle(modes ? [
 
         "mikado-cross-shared", "mikado-exclusive",
-        "mikado-keyed", "mikado-non-keyed"
+        "mikado-keyed", "mikado-keyed-shared", "mikado-non-keyed"
     ]:[
         //"1", "2", "3", "4", "5", "6",
         "mikado", "domc", "inferno",
@@ -31,7 +32,7 @@
         "knockout", "lit-html", "ractive"
     ]);
 
-    Mikado.once(document.getElementById("lib"), "lib", lib, {"mode": keyed ? "keyed.html" : strict ? "strict.html" : ""});
+    Mikado.once(document.getElementById("lib"), "lib", lib, {"mode": (keyed ? "keyed.html" : strict ? "strict.html" : "") + (internal ? "?internal" : "")});
 
     const test = [
 
@@ -62,6 +63,7 @@
         "mikado-cross-shared": 2.5,
         "mikado-exclusive": 2.5,
         "mikado-keyed": 2.5,
+        "mikado-keyed-shared": 2.5,
         "mikado-non-keyed": 2.5
         //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
     };
@@ -107,7 +109,7 @@
         index++;
         current[index][test[2]] = "run...";
         mikado.update(mikado.node(index), current[index]);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : (strict ? "strict.html" : ""));
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : (strict ? "strict.html" : "")) + (internal ? "?internal" : "");
     }
 
     function get_score(){

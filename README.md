@@ -232,6 +232,9 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
+Run the benchmark (keyed, internal/data-driven):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?internal">https://raw.githack.com/nextapps-de/mikado/master/bench/?internal</a><br>
+
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
 
@@ -260,16 +263,16 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2.5</sub></td>
         <td align=right><sub>38</sub></td>
         <td align=right><sub>18850</sub></td>
-        <td align=right><sub>6783</sub></td>
+        <td align=right><sub>7611</sub></td>
         <td align=right><sub>38162</sub></td>
-        <td align=right><sub>8843</sub></td>
+        <td align=right><sub>12531</sub></td>
         <td align=right><sub>248338</sub></td>
         <td align=right><sub>32852</sub></td>
         <td align=right><sub>26501</sub></td>
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
         <td align=right><b><sub>999</sub></b></td>
-        <td align=right><b><sub>20437</sub></b></td>
+        <td align=right><b><sub>20731</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -285,7 +288,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8159</sub></td>
         <td align=right><sub>1623</sub></td>
         <td align=right><sub>4729</sub></td>
-        <td align=right><b><sub>292</sub></b></td>
+        <td align=right><b><sub>268</sub></b></td>
         <td align=right><b><sub>3572</sub></b></td>
     </tr>
     <tr></tr>
@@ -302,7 +305,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>5929</sub></td>
         <td align=right><sub>2187</sub></td>
         <td align=right><sub>12255</sub></td>
-        <td align=right><b><sub>227</sub></b></td>
+        <td align=right><b><sub>212</sub></b></td>
         <td align=right><b><sub>1601</sub></b></td>
     </tr>
     <tr></tr>
@@ -319,7 +322,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6448</sub></td>
         <td align=right><sub>1921</sub></td>
         <td align=right><sub>10784</sub></td>
-        <td align=right><b><sub>218</sub></b></td>
+        <td align=right><b><sub>207</sub></b></td>
         <td align=right><b><sub>1501</sub></b></td>
     </tr>
     <tr></tr>
@@ -336,7 +339,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6145</sub></td>
         <td align=right><sub>1455</sub></td>
         <td align=right><sub>11965</sub></td>
-        <td align=right><b><sub>256</sub></b></td>
+        <td align=right><b><sub>245</sub></b></td>
         <td align=right><b><sub>1496</sub></b></td>
     </tr>
     <tr></tr>
@@ -353,7 +356,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2005</sub></td>
         <td align=right><sub>1460</sub></td>
         <td align=right><sub>26123</sub></td>
-        <td align=right><b><sub>233</sub></b></td>
+        <td align=right><b><sub>228</sub></b></td>
         <td align=right><b><sub>1103</sub></b></td>
     </tr>
     <tr></tr>
@@ -370,7 +373,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2869</sub></td>
         <td align=right><sub>605</sub></td>
         <td align=right><sub>1693</sub></td>
-        <td align=right><b><sub>104</sub></b></td>
+        <td align=right><b><sub>97</sub></b></td>
         <td align=right><b><sub>977</sub></b></td>
     </tr>
     <tr>
@@ -386,7 +389,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1582</sub></td>
         <td align=right><sub>1128</sub></td>
         <td align=right><sub>26836</sub></td>
-        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>166</sub></b></td>
         <td align=right><b><sub>916</sub></b></td>
     </tr>
     <tr>
@@ -402,7 +405,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1530</sub></td>
         <td align=right><sub>1074</sub></td>
         <td align=right><sub>23952</sub></td>
-        <td align=right><b><sub>176</sub></b></td>
+        <td align=right><b><sub>173</sub></b></td>
         <td align=right><b><sub>832</sub></b></td>
     </tr>
     <tr></tr>
@@ -419,7 +422,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1422</sub></td>
         <td align=right><sub>1043</sub></td>
         <td align=right><sub>16578</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>783</sub></b></td>
     </tr>
     <tr></tr>
@@ -436,7 +439,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1091</sub></td>
         <td align=right><sub>831</sub></td>
         <td align=right><sub>5370</sub></td>
-        <td align=right><b><sub>94</sub></b></td>
+        <td align=right><b><sub>91</sub></b></td>
         <td align=right><b><sub>573</sub></b></td>
     </tr>
     <tr></tr>
@@ -619,18 +622,22 @@ Global helpers (optional, not included in mikado.light.js):
     </tr>
     <tr></tr>
     <tr>
+        <td><b>size</b></td>
+        <td>Sets the maximum size of the shared pool. When not set or false it uses "auto scaling".</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><b>keep</b></td>
+        <td>When enabled, Mikado uses an exclusive shared keyed pool. Requires <b>pool</b> to be false.</td>
+        <td>false</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td><b>prefetch</b></td>
         <td>Prefetch/prebuilt a template on page load. Disable to save memory an speed up page start.</td>
         <td>true</td>
-    </tr>  
-    <!--
-    <tr></tr>
-    <tr>
-        <td><b>once</b></td>
-        <td>Performs the render of a template just one time. This only applies on <a href="static">static views</a>. The render ist starting immediately (do not call .render again!). When finishing it fully cleans up (removes view, data and also the template definition). This is useful for static views, which should persist in the app.</td>
-        <td>false</td>
     </tr>
-    -->
 </table>
 
 <a name="started" id="started"></a>
@@ -1179,7 +1186,7 @@ var view = Mikado.new(template, {reuse: true, pool: true});
 
 This will switch Mikado into a "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
 
-#### 2. Explicit Keyed
+#### 2. Explicit Keyed (Non-Shared))
 
 A keyed strategy provides better performance. It just requires an unique identifier on each rendered item (e.g. the ID).
 
@@ -1197,11 +1204,11 @@ To make them explicitly keyed also disable reusing:
 var view = Mikado.new(template, {reuse: false});
 ```
 
-This will switch Mikado into a "explicit keyed" mode.
+This will switch Mikado into a "explicit keyed" mode (non-shared).
 
-#### 3. Keyed (Cross-Shared)
+#### 3. Cross-Shared Keyed
 
-> The shared keyed mode takes the advantages of both worlds and provides you an enhanced pooling of reusable components and also has the best performance as well as memory allocation during runtime.
+> The shared keyed mode takes the performance benefits of both shared pools and provides you an enhanced pooling of reusable components. This mode provide high performance as well as low memory allocation during runtime.
 
 Add the attribute ___key___ to the ___root element___ of a template:
 ```html
@@ -1219,9 +1226,9 @@ var view = Mikado.new(template, {reuse: true, pool: true});
 
 This will switch Mikado into a "cross-shared-keyed" mode.
 
-#### 4. Keyed (Exclusive-Shared)
+#### 4. Exclusive-Shared Keyed
 
-There is a last mode, which uses an exclusive keyed shared pool. This will give you the absolute maximum performance, but it has a limit you should keep in mind when using this mode. The exclusive keyed mode is unbounded. Just use this mode on templates where the pool of incoming data is supposed to be limited (e.g. in a common scenario: pagination through a limited list of x items). Otherwise you will get no performance gain and also the memory allocation increases constantly (unbounded).
+This is a special mode which uses the shared keyed index exclusively (without pooling). This will give you the absolute maximum performance, but it has a limit you should keep in mind when using this mode. The exclusive keyed mode is unbounded. Just use this mode on templates where the amount of incoming data is supposed to be limited (e.g. in a common scenario: pagination through a set of x items, like a todo list). Otherwise you will get no performance gain and also the memory allocation increases constantly (unbounded).
 
 ```html
 <div key="data.id">
@@ -1233,10 +1240,29 @@ There is a last mode, which uses an exclusive keyed shared pool. This will give 
 along with these options:
 
 ```js
-var view = Mikado.new(template, {pool: false});
+var view = Mikado.new(template, {reuse: true, pool: false, keep: true});
 ```
 
 This will switch Mikado into a "exclusive-shared-keyed" mode.
+
+#### 5. Explicit Keyed (Shared)
+
+You can also use the same strategy from 4. for explicit keyed. But it has the same limits as 4., read above.
+
+```html
+<div key="data.id">
+    <div>User:</div>
+    <div>{{data.name}}</div>
+</div>
+```
+
+along with these options:
+
+```js
+var view = Mikado.new(template, {reuse: false, keep: true});
+```
+
+This will switch Mikado into a "explicit keyed" mode (shared).
 
 <a name="reuse"></a>
 ## Non-/Reusing

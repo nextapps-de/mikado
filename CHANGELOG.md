@@ -1,3 +1,7 @@
+## 0.6.2
+`new` option ___keep___ to force Mikado to run in exclusive keyed-shared mode<br>
+`new` option ___size___ to limit the pool size<br>
+
 ## 0.6.0
 `new` cross-shared pools<br>
 `new` explicit keyed paradigm<br>

@@ -9,6 +9,7 @@ let pos = -1;
 export const queue = [];
 const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
 const strict = window.location.pathname.indexOf("/strict.html") !== -1;
+const internal = keyed && window.location.search.indexOf("internal") !== -1;
 const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
 let clone;
 
@@ -29,7 +30,7 @@ function next(){
 
 function enforce(data){
 
-    for(let i = 0; i < data.length; i++){
+    if(!internal) for(let i = 0; i < data.length; i++){
 
         data[i] = Object.assign({}, data[i]);
     }

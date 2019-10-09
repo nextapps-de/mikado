@@ -1,6 +1,6 @@
 # Benchmark of Template Rendering
 
-The most important of all rules: Don't trust any benchmark, they may wrong. This is probably (!) the best benchmark comparison of templating rendering performance you will find in the web. Please read <a href="#details">the sections below</a> which explains why.
+The most important of all rules: Don't trust any benchmark, they may wrong. This is probably (!) the best benchmark comparison of raw templating rendering performance you will find in the web. Please read <a href="#details">the sections below</a> which explains why.
 
 If you see any improvement, weather it is too less important or not, please open an issue (after you have fully read this page). I want to make sure to provide a real and fair situation in all cases.
 
@@ -9,6 +9,26 @@ Run the benchmark (non-keyed):<br>
 
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
+
+Run the benchmark (keyed, internal/data-driven):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?internal">https://raw.githack.com/nextapps-de/mikado/master/bench/?internal</a><br>
+
+<table>
+    <tr>
+        <td>non-keyed</td>
+        <td>In this mode all existing nodes could be reused.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>keyed</td>
+        <td>In this mode just existing nodes with the same key (ID) could be reused/re-arranged.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>keyed&nbsp;(internal)</td>
+        <td>This mode runs through the same internal pool of data (same references, no new data from external or by creation) and compares the performance of data-driven paradigm when internal state changes.</td>
+    </tr>
+</table>
 
 Comming soon: A new test section which measures the change of internal data changes instead of process newly created or external fetched data.
 
