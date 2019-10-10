@@ -9,7 +9,7 @@ let pos = -1;
 export const queue = [];
 const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
 const strict = window.location.pathname.indexOf("/strict.html") !== -1;
-const internal = keyed && window.location.search.indexOf("internal") !== -1;
+const internal = window.location.search.indexOf("internal") !== -1;
 const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
 let clone;
 
@@ -30,9 +30,14 @@ function next(){
 
 function enforce(data){
 
-    if(!internal) for(let i = 0; i < data.length; i++){
+    if(!internal){
 
-        data[i] = Object.assign({}, data[i]);
+        data = data.slice(0);
+
+        for(let i = 0; i < data.length; i++){
+
+            data[i] = Object.assign({}, data[i]);
+        }
     }
 
     return data;
@@ -76,10 +81,10 @@ queue.push({
     test: null,
     start: function(index){
         if(index % 5){
-            clone = enforce(update(items, index).slice(0));
+            clone = enforce(update(items, index));
         }
         else{
-            clone = enforce(shuffle(items).slice(0));
+            clone = enforce(shuffle(items));
         }
     },
     fn: null,
@@ -110,7 +115,7 @@ queue.push({
             for(let i = 80; i < 90; i++) items.splice(i, 0, items.splice(10, 1)[0]);
             for(let i = 30; i < 40; i++) items.splice(i, 0, items.splice(60, 1)[0]);
         }
-        clone = enforce(items.slice(0));
+        clone = enforce(items);
     },
     fn: null,
     end: null,
@@ -126,7 +131,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        clone = enforce(items.slice(0));
+        clone = enforce(items);
     },
     fn: null,
     end: null,
@@ -141,7 +146,7 @@ queue.push({
     test: null,
     start: function(){
         this.fn(next().slice(0, 50));
-        clone = enforce(items.slice(0));
+        clone = enforce(items);
     },
     fn: null,
     end: function(){
@@ -174,7 +179,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        clone = enforce((toggle = !toggle) ? items.slice(0, 50) : items.slice(0));
+        clone = enforce((toggle = !toggle) ? items.slice(0, 50) : items);
     },
     fn: null,
     end: null,
@@ -266,18 +271,19 @@ window.onload = function(){
 
 function check(fn){
 
-    fn(enforce(items.slice(0, 1)));
+    fn(enforce([items[0]]));
     if(!validate(items[0])) return false;
 
-    fn(enforce(items.slice(1, 2)));
+    fn(enforce([items[1]]));
     if(!validate(items[1])) return false;
 
-    fn(enforce(items.slice(0, 1)));
+    fn(enforce([items[0]]));
     if(!validate(items[0])) return false;
 
     // checks if libs updates contents on same id
-    const tmp = enforce(items.slice(0, 1));
-    tmp[0]["title"] = "test";
+
+    const tmp = enforce([items[0]]);
+    tmp[0].title = "test";
     fn(tmp);
     if(!validate(tmp[0])) return false;
 
@@ -285,7 +291,7 @@ function check(fn){
 
         const node = root.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
-        fn(enforce(items.slice(1, 2))); // every keyed lib which fails this test are not explicit keyed
+        fn(enforce([items[1]])); // every keyed lib which fails this test are not explicit keyed
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in keyed mode.");
             return false;
@@ -399,10 +405,11 @@ function perform(){
 
     for(let start, mem_start, mem; now < end; loops++){
 
-        if(test.start) test.start(loops);
+        if(!internal && test.start) test.start(loops);
 
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
+        if(internal) test.start(loops);
         test.fn(clone);
         now = perf.now();
         mem = perf.memory.usedJSHeapSize - mem_start;

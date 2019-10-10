@@ -8,7 +8,7 @@
     const strict = window.location.search.indexOf("strict") !== -1;
     const modes = window.location.search.indexOf("modes") !== -1;
     const internal = window.location.search.indexOf("internal") !== -1;
-    const keyed = internal || (window.location.search.indexOf("keyed") !== -1);
+    const keyed = window.location.search.indexOf("keyed") !== -1;
 
     if(keyed || strict || modes){
 
