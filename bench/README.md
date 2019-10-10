@@ -10,7 +10,7 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
-Run the benchmark (keyed, internal/data-driven):<br>
+Run the benchmark (internal/data-driven):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?internal">https://raw.githack.com/nextapps-de/mikado/master/bench/?internal</a><br>
 
 <table>
@@ -25,7 +25,7 @@ Run the benchmark (keyed, internal/data-driven):<br>
     </tr>
     <tr></tr>
     <tr>
-        <td>keyed&nbsp;(internal)</td>
+        <td>internal/data-driven</td>
         <td>This mode runs through the same internal pool of data (same references, no new data from external or by creation) and compares the performance of data-driven paradigm when internal state changes.</td>
     </tr>
 </table>

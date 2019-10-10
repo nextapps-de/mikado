@@ -302,6 +302,13 @@ if(SUPPORT_STORAGE){
 
         Mikado.prototype.find = function(data){
 
+            if(SUPPORT_POOLS && this.key){
+
+                const key = typeof data !== "object" ? data : data[this.key];
+
+                return this.live[key];
+            }
+
             for(let i = 0; i < this.length; i++){
 
                 if(this.data(i) === data){
@@ -847,37 +854,26 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
             return this.remove(0, length);
         }
 
-        const use_replace = SUPPORT_POOLS && this.key;
+        const replace_key = SUPPORT_POOLS && this.key;
 
-        //if(use_replace) return this.reconcile(data, view);
+        // if(replace_key && length){
+        //
+        //     return this.reconcile(data, view);
+        // }
 
-        if(!use_replace && !this.reuse){
+        if(!replace_key && !this.reuse){
 
-            // use_replace = SUPPORT_POOLS && this.key;
+            //replace_key = SUPPORT_POOLS && this.key;
 
-            // let found;
-            //
-            // if(this.key){
-            //
-            //     found = 0;
-            //
-            //     for(let x = 0; x < count; x++){
-            //
-            //         if(this.live[data[x][this.key]]){
-            //
-            //             if(++found > (count / 3)){
-            //
-            //                 use_replace = true;
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
-
-            //if(!use_replace){
+            //if(!replace_key){
 
                 this.remove(0, length, count);
                 length = 0;
+            //}
+            // else{
+            //
+            //     return this.reconcile(data, view);
+            // }
         }
 
         let min = length < count ? length : count;
@@ -890,42 +886,13 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
 
                 const node = this.dom[x];
                 const item = data[x];
-                let key;
+                let key, tmp;
 
-                if(SUPPORT_POOLS && use_replace && (node["_key"] !== (key = item[this.key]))){
+                if(replace_key && (node["_key"] !== (key = item[replace_key]))){
 
-                    const tmp = this.live[key];
-
-                    if(tmp){
+                    if((tmp = this.live[key])){
 
                         this.arrange(node, tmp, item, view, x);
-
-                        /*
-                        const idx = tmp["_idx"];
-
-                        tmp["_idx"] = x;
-                        node["_idx"] = idx;
-
-                        this.dom[x] = tmp;
-                        this.dom[idx] = node;
-
-                        if(SUPPORT_STORAGE){
-
-                            if(this.store){
-
-                                this.store[idx] = this.store[x];
-                                this.store[x] = item;
-                            }
-                            else if(this.loose){
-
-                                tmp["_data"] = node["_data"];
-                                node["_data"] = item;
-                            }
-                        }
-
-                        this.root.insertBefore(tmp, node);
-                        this.update(tmp, item, view, x);
-                         */
                     }
                     else{
 
@@ -985,7 +952,7 @@ Mikado.prototype.arrange = function(old_node, new_node, item, view, x){
     }
 
     this.root.insertBefore(new_node, old_node);
-    this.update(new_node, item, view, x);
+    this.apply(new_node, item, view, x);
 };
 
 /**

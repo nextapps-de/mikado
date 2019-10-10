@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.6.2",
+  "version": "0.6.21",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -53,6 +53,6 @@
   "readme": "README.md",
   "dependencies": {},
   "devDependencies": {
-    "google-closure-compiler": "^20191002.0.0-nightly"
+    "google-closure-compiler": "^20191008.0.0-nightly"
   }
 }

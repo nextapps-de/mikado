@@ -45,11 +45,14 @@ function enforce(data){
 
 queue.push({
     name: "create",
-    init: null,
+    init: function(){
+        this.fn([]);
+    },
     test: null,
     start: function(){
         clone = next();
     },
+    prepare: null,
     fn: null,
     end: function(){
         this.fn([]);
@@ -66,6 +69,7 @@ queue.push({
     start: function(){
         clone = next();
     },
+    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -79,7 +83,8 @@ queue.push({
         this.fn(next());
     },
     test: null,
-    start: function(index){
+    start: null,
+    prepare: function(index){
         if(index % 5){
             clone = enforce(update(items, index));
         }
@@ -100,7 +105,8 @@ queue.push({
         this.fn(next());
     },
     test: null,
-    start: function(index){
+    start: null,
+    prepare: function(index){
         if(index % 4 === 0){ // swap
             items.splice(1, 0, items.splice(items.length - 2, 1)[0]);
             items.splice(items.length - 2, 0, items.splice(2, 1)[0]);
@@ -133,6 +139,7 @@ queue.push({
     start: function(){
         clone = enforce(items);
     },
+    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -148,11 +155,12 @@ queue.push({
         this.fn(next().slice(0, 50));
         clone = enforce(items);
     },
+    prepare: null,
     fn: null,
-    end: function(){
+    end: null,
+    complete: function(){
         this.fn([]);
-    },
-    complete: null
+    }
 });
 
 queue.push({
@@ -163,6 +171,7 @@ queue.push({
         this.fn(next());
         clone = enforce(items.slice(0, 50));
     },
+    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -181,6 +190,7 @@ queue.push({
     start: function(){
         clone = enforce((toggle = !toggle) ? items.slice(0, 50) : items);
     },
+    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -196,6 +206,7 @@ queue.push({
         this.fn(next());
         clone = [];
     },
+    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -363,27 +374,9 @@ function perform(){
     const test = queue[current];
     let duration = 0, memory = 0;
 
-    if((warmup === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
+    if((current === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
 
     const time = 5000;
-
-    // if(warmup < 3){
-    //
-    //     if(!warmup){
-    //
-    //         time = 300;
-    //     }
-    //
-    //     warmup++;
-    // }
-    // else{
-    //
-    //     warmup = 0;
-    //     time = 5000;
-    // }
-
-    //const loops = test.loop;
-    //const results = new Array(loops | 0);
 
     if(test.init) test.init();
 
@@ -397,19 +390,17 @@ function perform(){
     }
     */
 
-    //tmp = perf.now() - start;
-    //results[i] = 1000 / tmp;
-
     let loops = 0, now = perf.now();
     const end = now + time;
 
     for(let start, mem_start, mem; now < end; loops++){
 
-        if(!internal && test.start) test.start(loops);
+        if(test.start) test.start(loops);
+        if(!internal && test.prepare) test.prepare(loops);
 
         mem_start = perf.memory.usedJSHeapSize;
         start = perf.now();
-        if(internal) test.start(loops);
+        if(internal && test.prepare) test.prepare(loops);
         test.fn(clone);
         now = perf.now();
         mem = perf.memory.usedJSHeapSize - mem_start;
@@ -418,6 +409,8 @@ function perform(){
 
         if(test.end) test.end(loops);
     }
+
+    //duration = 5000 + (now - end);
 
     if(test.complete) test.complete();
 

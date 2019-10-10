@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.2
+ * Mikado.js v0.6.21
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -737,6 +737,10 @@ if (SUPPORT_STORAGE) {
   };
   if (SUPPORT_HELPERS === true || SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("find") !== -1) {
     Mikado$$module$tmp$mikado.prototype.find = function(data) {
+      if (SUPPORT_POOLS && this.key) {
+        var key = typeof data !== "object" ? data : data[this.key];
+        return this.live[key];
+      }
       for (var i = 0; i < this.length; i++) {
         if (this.data(i) === data) {
           return this.dom[i];
@@ -1046,8 +1050,8 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
     if (!count) {
       return this.remove(0, length);
     }
-    var use_replace = SUPPORT_POOLS && this.key;
-    if (!use_replace && !this.reuse) {
+    var replace_key = SUPPORT_POOLS && this.key;
+    if (!replace_key && !this.reuse) {
       this.remove(0, length, count);
       length = 0;
     }
@@ -1058,9 +1062,9 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
         var node = this.dom[x];
         var item = data[x];
         var key = undefined;
-        if (SUPPORT_POOLS && use_replace && node["_key"] !== (key = item[this.key])) {
-          var tmp = this.live[key];
-          if (tmp) {
+        var tmp = undefined;
+        if (replace_key && node["_key"] !== (key = item[replace_key])) {
+          if (tmp = this.live[key]) {
             this.arrange(node, tmp, item, view, x);
           } else {
             this.replace(node, item, view, x);
@@ -1100,7 +1104,7 @@ Mikado$$module$tmp$mikado.prototype.arrange = function(old_node, new_node, item,
     }
   }
   this.root.insertBefore(new_node, old_node);
-  this.update(new_node, item, view, x);
+  this.apply(new_node, item, view, x);
 };
 Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_node) {
   var has_index;

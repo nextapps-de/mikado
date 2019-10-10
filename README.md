@@ -232,7 +232,7 @@ Run the benchmark (non-keyed):<br>
 Run the benchmark (keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
 
-Run the benchmark (keyed, internal/data-driven):<br>
+Run the benchmark (internal/data-driven):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?internal">https://raw.githack.com/nextapps-de/mikado/master/bench/?internal</a><br>
 
 Sources and readme:<br>
@@ -2566,6 +2566,8 @@ The destination folder of the build is: _/dist/_
         <td>Target language</td>
     </tr>
 </table>
+
+<!-- Crafted for the next decade of high performance applications. -->
 
 ---
 
