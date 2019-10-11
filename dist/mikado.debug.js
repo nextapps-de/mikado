@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.21
+ * Mikado.js v0.6.3
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -799,7 +799,9 @@ Mikado$$module$tmp$mikado.prototype.init = function(template, options) {
     if (!template) {
       template = templates$$module$tmp$mikado[this.template];
     } else {
-      Mikado$$module$tmp$mikado.register(template);
+      if (template["n"]) {
+        Mikado$$module$tmp$mikado.register(template);
+      }
     }
   }
   options = options ? Object.assign({}, this.config || defaults$$module$tmp$mikado, options) : defaults$$module$tmp$mikado;
@@ -1070,6 +1072,9 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
             this.replace(node, item, view, x);
           }
         } else {
+          if (replace_key) {
+            node["_idx"] = x;
+          }
           this.update(node, item, view, x);
         }
       }
@@ -1273,6 +1278,11 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize) {
   for (var x = 0, tmp = undefined; x < count; x++) {
     tmp = nodes[x];
     if (length) {
+      if (SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this.include) {
+        for (var y = 0; y < this.include.length; y++) {
+          this.include[y].clear();
+        }
+      }
       this.root.removeChild(tmp);
     }
     if (key) {
@@ -1356,8 +1366,7 @@ Mikado$$module$tmp$mikado.prototype.create_path = function(root) {
   return new_path;
 };
 function resolve$$module$tmp$mikado(root, path, cache) {
-  var tmp = "";
-  for (var i = 0; i < path.length; i++) {
+  for (var i = 0, length = path.length, tmp = ""; i < length; i++) {
     var current_path = path[i];
     tmp += current_path;
     if (cache[tmp]) {
@@ -1383,18 +1392,20 @@ var tmp_fn$$module$tmp$mikado;
 var last_conditional$$module$tmp$mikado;
 var root_node$$module$tmp$mikado;
 Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path) {
-  var cache = factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
-  if (cache) {
-    this.update_path = cache.update_path;
-    this.static = cache.static;
-    if (SUPPORT_TEMPLATE_EXTENSION) {
-      this.include = cache.include;
+  if (SUPPORT_POOLS && !index) {
+    var cache = factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
+    if (cache) {
+      this.update_path = cache.update_path;
+      this.static = cache.static;
+      if (SUPPORT_TEMPLATE_EXTENSION) {
+        this.include = cache.include;
+      }
+      if (SUPPORT_REACTIVE) {
+        this.proxy = cache.proxy;
+      }
+      this.vpath = cache.vpath;
+      return cache.node;
     }
-    if (SUPPORT_REACTIVE) {
-      this.proxy = cache.proxy;
-    }
-    this.vpath = cache.vpath;
-    return cache.node;
   }
   var node = document.createElement(tpl["t"] || "div");
   if (!index) {
@@ -1502,18 +1513,28 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       }
     }
   }
-  if (!child) {
-    if (SUPPORT_TEMPLATE_EXTENSION && tpl["@"]) {
-      this.include || (this.include = []);
-      tmp_fn$$module$tmp$mikado += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] > 0 ? "0," : "") + tpl["m"] + ")" : "") + ",view)";
-      var old_fn = tmp_fn$$module$tmp$mikado;
-      tmp_fn$$module$tmp$mikado = "";
-      this.include.push(new Mikado$$module$tmp$mikado(node, typeof tpl["@"] === "string" ? templates$$module$tmp$mikado[tpl["@"]] : tpl["@"], Object.assign(this.config, {"store":false, "async":false})));
-      tmp_fn$$module$tmp$mikado = old_fn;
-      this.vpath[path_length] = path;
-      dom_path[path_length] = node;
-      this.static = false;
+  if (SUPPORT_TEMPLATE_EXTENSION && (tpl["@"] || tpl["r"])) {
+    this.include || (this.include = []);
+    var partial = tpl["@"] || tpl["i"];
+    if (!tpl["@"]) {
+      partial["n"] = tpl["@"] = this.template + "@" + this.include.length;
+      delete tpl["i"];
     } else {
+      if (typeof partial === "string") {
+        partial = templates$$module$tmp$mikado[partial];
+      }
+    }
+    child = null;
+    tmp_fn$$module$tmp$mikado += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
+    var old_fn = tmp_fn$$module$tmp$mikado;
+    tmp_fn$$module$tmp$mikado = "";
+    this.include.push(new Mikado$$module$tmp$mikado(node, partial, Object.assign(this.config, {"store":false, "async":false})));
+    tmp_fn$$module$tmp$mikado = old_fn;
+    this.vpath[path_length] = path;
+    dom_path[path_length] = node;
+    this.static = false;
+  } else {
+    if (!child) {
       if (SUPPORT_TEMPLATE_EXTENSION && tpl["+"]) {
         child = templates$$module$tmp$mikado[tpl["+"]];
       } else {
@@ -1576,6 +1597,10 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
   if (has_update) {
     this.static = false;
     concat_path$$module$tmp$mikado(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
+  } else {
+    if (new_fn) {
+      tmp_fn$$module$tmp$mikado += new_fn;
+    }
   }
   if (child) {
     var include;
@@ -1607,14 +1632,16 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         this.update_path = Function("p", "s", "data", "index", "view", '"use strict";var self,v' + tmp_fn$$module$tmp$mikado);
       }
     }
-    var payload = {update_path:this.update_path, static:this.static, vpath:this.vpath, node:node};
-    if (SUPPORT_TEMPLATE_EXTENSION) {
-      payload.include = this.include;
+    if (SUPPORT_POOLS) {
+      var payload = {update_path:this.update_path, static:this.static, vpath:this.vpath, node:node};
+      if (SUPPORT_TEMPLATE_EXTENSION) {
+        payload.include = this.include;
+      }
+      if (SUPPORT_REACTIVE) {
+        payload.proxy = this.proxy;
+      }
+      factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = payload;
     }
-    if (SUPPORT_REACTIVE) {
-      payload.proxy = this.proxy;
-    }
-    factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = payload;
   }
   return node;
 };
@@ -1777,42 +1804,43 @@ function compile$$module$tmp$compile(node, recursive) {
     }
   }
   var tagName = node.tagName;
-  var attributes = node.attributes;
-  if (tagName === "include") {
-    if (node.firstChild) {
-      template["+"] = node.firstChild.nodeValue;
-      return;
-    } else {
-      var tmp$12 = node.getAttribute("from");
-      if (tmp$12) {
-        template["+"] = tmp$12;
+  if (tagName) {
+    if (tagName === "INCLUDE") {
+      var from = node.getAttribute("from");
+      if (from) {
+        template["+"] = from;
       } else {
-        return;
+        template["+"] = strip$$module$tmp$compile(node.firstChild.nodeValue);
+      }
+      return template;
+    } else {
+      if (tagName !== "DIV") {
+        template["t"] = tagName.toLowerCase();
       }
     }
-  }
-  if (tagName !== "DIV") {
-    template["t"] = tagName.toLowerCase();
-  }
-  if (node.nodeType !== 3) {
-    var value = node.firstChild;
+  } else {
+    var value = node;
     if (value && (value = value.nodeValue)) {
-      value.replace(/\s+/g, " ");
-      if (value.trim()) {
+      value = value.replace(/\s+/g, " ");
+      if (value && value.trim()) {
         var pos = value.indexOf("{{@");
         if (pos !== -1) {
           var pos_end = value.indexOf("}}", pos);
           template["j"] = value.substring(pos + 3, pos_end);
           value = value.substring(0, pos) + value.substring(pos_end + 2);
         }
-        if (value.indexOf("{{#") !== -1) {
-          handle_value$$module$tmp$compile(template, "h", value.replace(/{{#/g, "{{"));
-        } else {
-          handle_value$$module$tmp$compile(template, "x", value);
+        if (value && value.trim()) {
+          if (value.indexOf("{{#") !== -1) {
+            handle_value$$module$tmp$compile(template, "h", value.replace(/{{#/g, "{{"));
+          } else {
+            handle_value$$module$tmp$compile(template, "x", value);
+          }
         }
       }
     }
+    return template["j"] || value && value.trim() ? template : null;
   }
+  var attributes = node.attributes;
   if (attributes.length) {
     for (var i = 0; i < attributes.length; i++) {
       var attr_name = attributes[i].nodeName;
@@ -1827,15 +1855,16 @@ function compile$$module$tmp$compile(node, recursive) {
             handle_value$$module$tmp$compile(template, "f", attr_value);
           } else {
             if (attr_name === "include") {
-              if (node.hasAttribute("for")) {
-                handle_value$$module$tmp$compile(template, "@", attr_value);
-              } else {
-                handle_value$$module$tmp$compile(template, "+", attr_value);
+              if (!node.hasAttribute("for")) {
+                var tmp$12 = {};
+                (template["i"] || (template["i"] = [])).push(tmp$12);
+                handle_value$$module$tmp$compile(tmp$12, "+", attr_value);
               }
             } else {
-              if (attr_name === "for" && tagName !== "label") {
-                if (!node.hasAttribute("include")) {
-                  handle_value$$module$tmp$compile(template, "@", compile$$module$tmp$compile(node.children[0], 1));
+              if (attr_name === "for" && tagName !== "LABEL") {
+                var tmp$13 = node.getAttribute("include");
+                if (tmp$13) {
+                  template["@"] = strip$$module$tmp$compile(tmp$13);
                 }
                 handle_value$$module$tmp$compile(template, "r", attr_value);
               } else {
@@ -1843,7 +1872,7 @@ function compile$$module$tmp$compile(node, recursive) {
                   handle_value$$module$tmp$compile(template, "m", attr_value);
                 } else {
                   if (attr_name === "js") {
-                    handle_value$$module$tmp$compile(template, "j", attr_value);
+                    template["j"] = strip$$module$tmp$compile(attr_value);
                   } else {
                     if (attr_name === "key") {
                       handle_value$$module$tmp$compile(template, "k", attr_value.replace("data.", ""));
@@ -1874,15 +1903,29 @@ function compile$$module$tmp$compile(node, recursive) {
       }
     }
   }
-  var children = node.children;
+  var children = node.childNodes;
   if (children.length) {
     if (children.length > 1) {
-      template["i"] = new Array(children.length);
-      for (var i$13 = 0; i$13 < children.length; i$13++) {
-        template["i"][i$13] = compile$$module$tmp$compile(children[i$13], 1);
+      var count = 0;
+      for (var i$14 = 0; i$14 < children.length; i$14++) {
+        var tmp$15 = compile$$module$tmp$compile(children[i$14], 1);
+        if (tmp$15) {
+          (template["i"] || (template["i"] = []))[count++] = tmp$15;
+        }
       }
     } else {
-      template["i"] = compile$$module$tmp$compile(children[0], 1);
+      var tmp$16 = compile$$module$tmp$compile(children[0], 1);
+      if (tmp$16) {
+        if (tmp$16["j"]) {
+          template["j"] = tmp$16["j"];
+        }
+        if (tmp$16["h"]) {
+          template["h"] = tmp$16["h"];
+        }
+        if (tmp$16["x"]) {
+          template["x"] = tmp$16["x"];
+        }
+      }
     }
   }
   if (!recursive) {
@@ -1907,6 +1950,9 @@ function handle_value$$module$tmp$compile(template, key, value) {
   } else {
     template[key] = value;
   }
+}
+function strip$$module$tmp$compile(str) {
+  return str.replace(/{{/g, "").replace(/}}/g, "").trim();
 }
 var module$tmp$compile = {};
 module$tmp$compile.default = compile$$module$tmp$compile;

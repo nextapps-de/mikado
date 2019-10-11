@@ -35,7 +35,7 @@ let is_static;
 let counter = 0;
 
 /**
- * @param {!string|HTMLTemplateElement|Element} node
+ * @param {!string|HTMLTemplateElement|Element|Node} node
  * @param {boolean|number=} recursive
  */
 
@@ -80,48 +80,40 @@ export default function compile(node, recursive){
     }
 
     const tagName = node.tagName;
-    const attributes = node.attributes;
 
-    if(tagName === "include"){
+    if(tagName){
 
-        if(node.firstChild){
+        if(tagName === "INCLUDE"){
 
-            // <include>{{ template }}</include>
+            const from = node.getAttribute("from");
 
-            template["+"] = node.firstChild.nodeValue;
-            return;
-        }
-        else{
+            if(from){
 
-            // <include from="..."/>
-
-            const tmp = node.getAttribute("from");
-
-            if(tmp){
-
-                template["+"] = tmp;
+                // <include from="..."/>
+                template["+"] = from;
             }
             else{
 
-                return;
+                // <include>{{ template }}</include>
+                template["+"] = strip(node.firstChild.nodeValue);
             }
+
+            return template;
+        }
+        else if(tagName !== "DIV"){
+
+            template["t"] = tagName.toLowerCase();
         }
     }
+    else{
 
-    if(tagName !== "DIV"){
-
-        template["t"] = tagName.toLowerCase();
-    }
-
-    if(node.nodeType !== 3){
-
-        let value = node.firstChild;
+        let value = node;
 
         if(value && (value = value.nodeValue)){
 
-            value.replace(/\s+/g, ' ');
+            value = value.replace(/\s+/g, " ");
 
-            if(value.trim()){
+            if(value && value.trim()){
 
                 const pos = value.indexOf("{{@");
 
@@ -130,20 +122,27 @@ export default function compile(node, recursive){
                     const pos_end = value.indexOf("}}", pos);
 
                     template["j"] = value.substring(pos + 3, pos_end);
-                    value = value.substring(0, pos) + value.substring(pos_end + 2)
+                    value = value.substring(0, pos) + value.substring(pos_end + 2);
                 }
 
-                if(value.indexOf("{{#") !== -1){
+                if(value && value.trim()){
 
-                    handle_value(template, "h", value.replace(/{{#/g, "{{"));
-                }
-                else{
+                    if(value.indexOf("{{#") !== -1){
 
-                    handle_value(template, "x", value);
+                        handle_value(template, "h", value.replace(/{{#/g, "{{"));
+                    }
+                    else{
+
+                        handle_value(template, "x", value);
+                    }
                 }
             }
         }
+
+        return template["j"] || (value && value.trim()) ? template : null;
     }
+
+    const attributes = node.attributes;
 
     if(attributes.length){
 
@@ -169,20 +168,21 @@ export default function compile(node, recursive){
                 }
                 else if(attr_name === "include"){
 
-                    if(node.hasAttribute("for")){
+                    if(!node.hasAttribute("for")){
 
-                        handle_value(template, "@", attr_value);
-                    }
-                    else{
+                        const tmp = {};
+                        (template["i"] || (template["i"] = [])).push(tmp);
 
-                        handle_value(template, "+", attr_value);
+                        handle_value(tmp, "+", attr_value);
                     }
                 }
-                else if(attr_name === "for" && (tagName !== "label")){
+                else if(attr_name === "for" && (tagName !== "LABEL")){
 
-                    if(!node.hasAttribute("include")){
+                    const tmp = node.getAttribute("include");
 
-                        handle_value(template, "@", compile(node.children[0], 1));
+                    if(tmp){
+
+                        template["@"] = strip(tmp);
                     }
 
                     handle_value(template, "r", attr_value);
@@ -193,7 +193,7 @@ export default function compile(node, recursive){
                 }
                 else if(attr_name === "js"){
 
-                    handle_value(template, "j", attr_value);
+                    template["j"] = strip(attr_value);
                 }
                 else if(attr_name === "key"){
 
@@ -228,22 +228,34 @@ export default function compile(node, recursive){
         }
     }
 
-    const children = node.children;
+    const children = node.childNodes;
 
     if(children.length){
 
         if(children.length > 1){
 
-            template["i"] = new Array(children.length);
+            let count = 0;
 
             for(let i = 0; i < children.length; i++){
 
-                template["i"][i] = compile(children[i], 1);
+                const tmp = compile(children[i], 1);
+
+                if(tmp){
+
+                    (template["i"] || (template["i"] = []))[count++] = tmp;
+                }
             }
         }
         else{
 
-            template["i"] = compile(children[0], 1);
+            const tmp = compile(children[0], 1);
+
+            if(tmp){
+
+                if(tmp["j"]) template["j"] = tmp["j"];
+                if(tmp["h"]) template["h"] = tmp["h"];
+                if(tmp["x"]) template["x"] = tmp["x"];
+            }
         }
     }
 
@@ -286,4 +298,9 @@ function handle_value(template, key, value){
 
         template[key] = value;
     }
+}
+
+function strip(str){
+
+    return str.replace(/{{/g, "").replace(/}}/g, "").trim();
 }

@@ -1,11 +1,11 @@
 {
   "public": true,
   "name": "mikado",
-  "description": "Web's smartest virtual DOM templating engine.",
+  "description": "Web's fastest templating engine.",
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.6.21",
+  "version": "0.6.3",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
