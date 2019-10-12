@@ -778,11 +778,6 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
         }
     }
 
-    if(SUPPORT_STORAGE && !data){
-
-        return this.refresh();
-    }
-
     if(SUPPORT_ASYNC && !skip_async){
 
         if(view && (typeof view !== "object")){
@@ -837,6 +832,11 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
         this.dom[0] || this.add();
     }
     else{
+
+        if(SUPPORT_STORAGE && !data){
+
+            return this.refresh();
+        }
 
         let length = this.length;
         let count;
@@ -1757,17 +1757,16 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         // TODO use update_path for non-looping includes
         // TODO mount after creation through this.include[]
-        tmp_fn += ";this.include[" + this["include"].length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
+        new_fn += ";this.include[" + this["include"].length + "].mount(self).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
 
         const old_fn = tmp_fn;
         tmp_fn = "";
         this["include"].push(new Mikado(node, partial, Object.assign(this.config, { "store": false, "async": false })));
         tmp_fn = old_fn;
 
-        //has_update++;
-        this.static = false;
+        has_update++;
+        //this.static = false;
     }
-
     else if(!child){
 
         // forward if include is on root (has no childs)

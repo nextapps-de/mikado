@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.4
+ * Mikado.js v0.6.41
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1003,9 +1003,6 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
       }
     }
   }
-  if (SUPPORT_STORAGE && !data) {
-    return this.refresh();
-  }
   if (SUPPORT_ASYNC && !skip_async) {
     if (view && typeof view !== "object") {
       callback = view;
@@ -1039,6 +1036,9 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
   if (this.static) {
     this.dom[0] || this.add();
   } else {
+    if (SUPPORT_STORAGE && !data) {
+      return this.refresh();
+    }
     var length = this.length;
     var count;
     count = data.length;
@@ -1513,12 +1513,12 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       }
     }
     child = null;
-    tmp_fn$$module$tmp$mikado += ";this.include[" + this["include"].length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
+    new_fn += ";this.include[" + this["include"].length + "].mount(self).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
     var old_fn = tmp_fn$$module$tmp$mikado;
     tmp_fn$$module$tmp$mikado = "";
     this["include"].push(new Mikado$$module$tmp$mikado(node, partial, Object.assign(this.config, {"store":false, "async":false})));
     tmp_fn$$module$tmp$mikado = old_fn;
-    this.static = false;
+    has_update++;
   } else {
     if (!child) {
       if (SUPPORT_TEMPLATE_EXTENSION && tpl["+"]) {

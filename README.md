@@ -1329,11 +1329,11 @@ This will switch Mikado into a "exclusive-shared-keyed" mode.
 Generally keyed libraries will fail in restoring the original state of a component when a data item of the new fetched list has the same key. As long you follow some restrictions this may not an issue.
 But whenever you get in situations where you have to force restoring, every keyed lib will fail and you may have to use quick fixes like randomize the ID of the component. Also keyed libs cannot fully integrated into every stack, especially when additional UI libs where used.
 
-Mikado is able to restoring 100% of the original state in any situation. This will help in situations where:
+Mikado is able to restoring 100% of the original state. This helps in situations where:
 
 - external libraries changes components nodes
 - event listeners was bind directly to components nodes
-- external data references to components nodes
+- external data/values was referenced to components nodes
 - components nodes where manually manipulated
 - the process workflow requires redrawing of the original state on new data (required by some MVC)
 - you need integration in a stack without side effects
@@ -1366,7 +1366,7 @@ view.store[3].footer = "new footer";
 view.refresh();
 ```
 
-It is pretty much the same when using non-external stores:
+It is pretty much the same when using stores in loose mode:
 ```js
 view.data(1).title = "new title";
 view.data(2).content = "new content";
@@ -1374,7 +1374,7 @@ view.data(3).footer = "new footer";
 view.refresh();
 ```
 
-Passing an components root node or an index to the refresh method performs faster than passing no parameter.
+Passing a components root node or an index to the refresh method performs faster than passing no parameter.
 
 __Hint:__ You can also use the refresh method when new items was pushed (added to the end) or was removed from the end. You cannot use refresh when new items was inserted/removed/arranged/replaced before the end, this requires ___.render()___.
 
@@ -2221,65 +2221,128 @@ Use the json format to delegate view data from server to the client. Actually ju
 <a name="includes"></a>
 ## Includes
 
-Partials gets its own instance under the hood. This results in high performance and also makes template factories re-usable when sharing same partials across different views.
+Partials gets its own instance under the hood. This gains performance and also makes template factories re-usable when same partials are shared across different views.
 
 > Be aware of circular includes. A partial cannot include itself (or later in its own chain). Especially when your include-chain growths remember this rule.
 
-You can include partials as follows:
+Assume you've created a partial template. Make sure the template is providing one single root as the outer bound.
+
+You have to register all partial templates once __before__ you initialize the templates which will including them:
+```js
+import tpl_header from "./tpl/header.es6.js";
+import tpl_article from "./tpl/article.es6.js";
+import tpl_footer from "./tpl/footer.es6.js";
+
+Mikado.register(tpl_header);
+Mikado.register(tpl_article);
+Mikado.register(tpl_footer);
+```
+
+When using templates in ES5 compatible format, they are automatically registered by default. You can also use the runtime compiler and pass the returned template to the register method.
+
+Now you can include partials with a pseudo element:
 ```html
 <section>
-    <title include="title"></title>
-    <article include="article" as="data.content"></article>
+    <include>{{ header }}</include>
+    <include>{{ article }}</include>
+    <include>{{ footer }}</include>
+</section>
+```
+
+Use the template name (filename) for includes.
+
+> The pseudo element ___\<include\>___ will extract into place and is not a part of the component. You cannot use dynamic expressions within curly brackets, just provide the name of the template.
+
+Equal to:
+```html
+<section>
+    <include from="header"></include>
+    <include from="article"></include>
+    <include from="footer"></include>
+</section>
+```
+
+> You __can't__ use self-closing custom elements accordingly to the HTML5 specs e.g. `<include from="title"/>`.
+
+You can also include to a root node which is part of the component by an attribute:
+```html
+<section>
+    <header include="header"></header>
+    <article include="article"></article>
     <footer include="footer"></footer>
 </section>
 ```
 
-The ___include___ attribute is related to the template name (filename), the ___as___ attribute is the reference which should be passed as the ___data___ to the partial.
-
-Please notice, that each template requires one single root. When the template "template/title" has multiple nodes in the outer bound then wrap this into a new element as root or include as follows:
-```html
-<section>
-    <include>{{ template/title }}</include>
-    <include as="data.content">{{ template/article }}</include>
-    <include>{{ template/footer }}</include>
-</section>
-```
-
-Use pseudo-element:
-```html
-<section>
-    <include from="title"/>
-    <include from="article" as="data.content"/>
-    <include from="footer"/>
-</section>
-```
-
-> The pseudo-element ___\<include\>___ will extract into place. You cannot use dynamic expressions within curly brackets, just provide the name of the template.
-
-In this example the template "template/title" gets the tag \<title\> as the template route.
-
 <a name="loop-partials"></a>
 ### Loop Partials
+
+Assume the template example from above is a tweet (title, article, footer).
 
 ```html
 <section>
     <title>{{ data.title }}</title>
-    <tweets include="tweet" for="data.data" max="5"></tweets>
+    <tweets include="tweet" for="data.tweets" max="5">
+        <!-- tweet -->
+        <!-- tweet -->
+        <!-- tweet -->
+    </tweets>
 </section>
 ```
 
-In this example the template "tweet" loops the render through an array of tweets. The template "tweet" will get the array value from the current index as ___data___.
+This expression will render the template "tweet" through an array of data items/tweets. The template "tweet" is getting the array value ___data.tweets___ as ___data___.
 
 <a name="inline-loops"></a>
 ### Inline Loops
+
+You can also loop through an inline partial. Mikado will extracting and referencing this partial to its own instance under the hood.
 
 ```html
 <main>
     <title>{{ data.title }}</title>
     <tweets for="data.tweets">
-        <section>{{ data.content }}</section>
+        <section>
+            <header include="header"></header>
+            <article include="article"></article>
+            <footer include="footer"></footer>
+        </section>
     </tweets>
 </main>
+```
+
+You can also nest loops:
+```html
+<tweets for="data.tweets">
+    <tweet>
+        <h1>{{ data.title }}</h1>
+        <title>Comments:</title>
+        <div for="data.comments">
+            <comment>
+                <p>{{ data.content }}</p>
+                <title>Replies:</title>
+                <div for="data.replies">
+                    <p>{{ data.content }}</p>
+                </div>
+            </comment>
+        </div>
+    </tweet>
+</tweets>
+```
+
+> Every looped partial has to provide __one single root__ as the outer bound.
+
+This is wrong:
+```html
+<tweets for="data.tweets">
+    <h1>{{ data.title }}</h1>
+    <title>Comments:</title>
+    <div for="data.comments">
+        <p>{{ data.content }}</p>
+        <title>Replies:</title>
+        <div for="data.replies">
+            <p>{{ data.content }}</p>
+        </div>
+    </div>
+</tweets>
 ```
 
 <a name="conditional" id="conditional"></a>
@@ -2287,14 +2350,10 @@ In this example the template "tweet" loops the render through an array of tweets
 
 ```html
 <main if="data.tweet.length">
-    <title>{{ data.title }}</title>
-    <section>{{ data.content }}</section>
-    <footer>{{ data.footer }}</footer>
+    <title>Tweets: {{ data.tweet.length }}</title>
 </main>
-<main if="data.contacts.length">
-    <title>{{ data.title }}</title>
-    <section>{{ data.content }}</section>
-    <footer>{{ data.footer }}</footer>
+<main if="!data.tweet.length">
+    <title>No tweets found.</title>
 </main>
 ```
 
@@ -2316,6 +2375,33 @@ In this example the template "tweet" loops the render through an array of tweets
 </main>
 ```
 
+Think in real code branches, instead of doing this:
+```html
+<main>
+    {{@ var result = (function(){
+        return "some big computation";
+    }()) }}
+    <tweets for="data.tweets">
+        <section if="data.content">{{ result }}</section>
+    </tweets>
+</main>
+```
+
+Doing this:
+```html
+<main>
+    <tweets for="data.tweets">
+        <section if="data.content">
+            {{ (function(){
+                return "some big computation";
+            }()) }}
+        </section>
+    </tweets>
+</main>
+```
+
+Conditional branches will skip expressions when not taken.
+
 <a name="proxy" id="proxy"></a>
 ## Reactive Proxy (Observer)
 
@@ -2335,13 +2421,12 @@ __Template markup__:
 </table>
 ```
 
-> The epxression for an observable property has to start with: "{{="
+> The expression for an observable property has to start with: `{{=`
 
 __Use with internal store:__
 ```js
-var data = [...];
-var view = new Mikado(template, { proxy: true });
-view.render(data);
+var view = new Mikado(template, { store: true });
+view.render([...]);
 ```
 
 When data changes, the corresponding dom element will automatically change:
@@ -2351,13 +2436,28 @@ view.store[0].name = "New Name";
 
 __Use with external store:__
 ```js
-var store = [];
-var view = new Mikado(template, { proxy: store });
+var data = [...];
+var view = new Mikado(template, { store: data });
+view.render(data);
 ```
 
 When data changes, the corresponding dom element will automatically change:
 ```js
-store[0].name = "New Name";
+data[0].name = "New Name";
+```
+```js
+view.store[0].name = "New Name";
+```
+
+__Use with loose store:__
+```js
+var view = new Mikado(template, { store: true, loose: true });
+view.render([...]);
+```
+
+When data changes, the corresponding dom element will automatically change:
+```js
+view.data(0).name = "New Name";
 ```
 
 #### Limitations
@@ -2450,6 +2550,7 @@ Ideally every template should have initialized by one Mikado instance and should
 <a name="memory"></a>
 #### Memory Optimizations
 
+<!--
 IT might be useful to understand the memory allocation of several settings.
 
 The absolute lowest memory footprint (when idle):
@@ -2471,6 +2572,7 @@ var view = new Mikado(template, {
 ```
 
 Mikado provides you some helpers to apply manually to get the most out of both. Stick with the second example above (enable ___cache___ and ___pool___).
+-->
 
 Clear shared pools of the current template:
 ```js
