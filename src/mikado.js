@@ -463,7 +463,7 @@ Mikado.prototype.init = function(template, options){
         this.static = template["d"];
         this.vpath = null;
         this.update_path = null;
-        if(SUPPORT_TEMPLATE_EXTENSION) this.include = null;
+        if(SUPPORT_TEMPLATE_EXTENSION) this["include"] = null;
         this.factory = options["prefetch"] && this.parse(template);
 
         this.check();
@@ -685,6 +685,11 @@ Mikado.prototype.apply = function(root, data, payload, index){
 };
 
 if(SUPPORT_STORAGE){
+
+    /**
+     * @param {number|Element=} index
+     * @param {Object=} view
+     */
 
     Mikado.prototype.refresh = function(index, view){
 
@@ -932,33 +937,39 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
     return this;
 });
 
-Mikado.prototype.arrange = function(old_node, new_node, item, view, x){
 
-    const idx = new_node["_idx"];
+if(SUPPORT_POOLS){
 
-    new_node["_idx"] = x;
-    old_node["_idx"] = idx;
+    Mikado.prototype.arrange = function(old_node, new_node, item, view, x){
 
-    this.dom[x] = new_node;
-    this.dom[idx] = old_node;
+        const idx = new_node["_idx"];
 
-    if(SUPPORT_STORAGE){
+        new_node["_idx"] = x;
+        old_node["_idx"] = idx;
 
-        if(this.store){
+        this.dom[x] = new_node;
+        this.dom[idx] = old_node;
 
-            this.store[idx] = this.store[x];
-            this.store[x] = item;
+        //this.dom.splice(x, 0, this.dom.splice(idx, 1)[0]);
+
+        if(SUPPORT_STORAGE){
+
+            if(this.store){
+
+                this.store[idx] = this.store[x];
+                this.store[x] = item;
+            }
+            else if(this.loose){
+
+                new_node["_data"] = old_node["_data"];
+                old_node["_data"] = item;
+            }
         }
-        else if(this.loose){
 
-            new_node["_data"] = old_node["_data"];
-            old_node["_data"] = item;
-        }
-    }
-
-    this.root.insertBefore(new_node, old_node);
-    this.apply(new_node, item, view, x);
-};
+        this.root.insertBefore(new_node, old_node);
+        this.apply(new_node, item, view, x);
+    };
+}
 
 /**
  * @param {!Object|Array<Object>=} data
@@ -1076,7 +1087,7 @@ Mikado.prototype.destroy = function(unload){
 
     if(SUPPORT_TEMPLATE_EXTENSION){
 
-        this.include = null;
+        this["include"] = null;
     }
 
     if(SUPPORT_STORAGE){
@@ -1265,11 +1276,11 @@ Mikado.prototype.remove = function(index, count, resize){
 
         if(length){
 
-            if(SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this.include){
+            if(SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"]){
 
-                for(let y = 0; y < this.include.length; y++){
+                for(let y = 0; y < this["include"].length; y++){
 
-                    this.include[y].clear();
+                    this["include"][y].clear();
                 }
             }
 
@@ -1302,49 +1313,52 @@ Mikado.prototype.remove = function(index, count, resize){
     return this;
 };
 
-Mikado.prototype.replace = function(node, data, view, index){
+if(SUPPORT_POOLS){
 
-    //profiler_start("replace");
+    Mikado.prototype.replace = function(node, data, view, index){
 
-    if(typeof index === "undefined"){
+        //profiler_start("replace");
 
-        index = node["_idx"];
-    }
+        if(typeof index === "undefined"){
 
-    this.add(data, view, index, node);
-
-    if(SUPPORT_POOLS && this.key){
-
-        const ref = node["_key"];
-
-        // remove from keyed live-pool
-        this.live[ref] = null;
-
-        if(this.key_pool){
-
-            // add to keyed shared-pool
-            this.key_pool[ref] = node;
-        }
-    }
-
-    if(SUPPORT_POOLS && this.tpl_pool){
-
-        const pool = this.tpl_pool;
-
-        if(this.key){
-
-            // update reference to queued shared-pool
-            node["_index"] = pool.length;
+            index = node["_idx"];
         }
 
-        // add to queued shared-pool
-        pool[pool.length] = node;
-    }
+        this.add(data, view, index, node);
 
-    //profiler_end("replace");
+        if(SUPPORT_POOLS && this.key){
 
-    return this;
-};
+            const ref = node["_key"];
+
+            // remove from keyed live-pool
+            this.live[ref] = null;
+
+            if(this.key_pool){
+
+                // add to keyed shared-pool
+                this.key_pool[ref] = node;
+            }
+        }
+
+        if(SUPPORT_POOLS && this.tpl_pool){
+
+            const pool = this.tpl_pool;
+
+            if(this.key){
+
+                // update reference to queued shared-pool
+                node["_index"] = pool.length;
+            }
+
+            // add to queued shared-pool
+            pool[pool.length] = node;
+        }
+
+        //profiler_end("replace");
+
+        return this;
+    };
+}
 
 /**
  * @param {Element|number} node
@@ -1505,7 +1519,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             this.update_path = cache.update_path;
             this.static = cache.static;
-            if(SUPPORT_TEMPLATE_EXTENSION) this.include = cache.include;
+            if(SUPPORT_TEMPLATE_EXTENSION) this["include"] = cache.include;
             if(SUPPORT_REACTIVE) this.proxy = cache.proxy;
             this.vpath = cache.vpath;
 
@@ -1744,13 +1758,13 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     // create partial render tree
     if(SUPPORT_TEMPLATE_EXTENSION && (tpl["@"] || tpl["r"])){
 
-        this.include || (this.include = []);
+        this["include"] || (this["include"] = []);
 
         let partial = tpl["@"] || tpl["i"];
 
         if(!tpl["@"]){
 
-            partial["n"] = tpl["@"] = this.template + "@" + this.include.length;
+            partial["n"] = tpl["@"] = this.template + "@" + this["include"].length;
             delete tpl["i"];
         }
         else if(typeof partial === "string"){
@@ -1762,11 +1776,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         // TODO use update_path for non-looping includes
         // TODO mount after creation through this.include[]
-        tmp_fn += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
+        tmp_fn += ";this.include[" + this["include"].length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
 
         const old_fn = tmp_fn;
         tmp_fn = "";
-        this.include.push(new Mikado(node, partial, Object.assign(this.config, { "store": false, "async": false })));
+        this["include"].push(new Mikado(node, partial, Object.assign(this.config, { "store": false, "async": false })));
         tmp_fn = old_fn;
 
         this.vpath[path_length] = path;
@@ -1961,7 +1975,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 node: node
             };
 
-            if(SUPPORT_TEMPLATE_EXTENSION) payload.include = this.include;
+            if(SUPPORT_TEMPLATE_EXTENSION) payload.include = this["include"];
             if(SUPPORT_REACTIVE) payload.proxy = this.proxy;
 
             // NOTE: cache has a different factory

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.3
+ * Mikado.js v0.6.31
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -836,7 +836,7 @@ Mikado$$module$tmp$mikado.prototype.init = function(template, options) {
     this.vpath = null;
     this.update_path = null;
     if (SUPPORT_TEMPLATE_EXTENSION) {
-      this.include = null;
+      this["include"] = null;
     }
     this.factory = options["prefetch"] && this.parse(template);
     this.check();
@@ -1179,7 +1179,7 @@ Mikado$$module$tmp$mikado.prototype.destroy = function(unload) {
     this.live = {};
   }
   if (SUPPORT_TEMPLATE_EXTENSION) {
-    this.include = null;
+    this["include"] = null;
   }
   if (SUPPORT_STORAGE) {
     this.store = null;
@@ -1278,9 +1278,9 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize) {
   for (var x = 0, tmp = undefined; x < count; x++) {
     tmp = nodes[x];
     if (length) {
-      if (SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this.include) {
-        for (var y = 0; y < this.include.length; y++) {
-          this.include[y].clear();
+      if (SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"]) {
+        for (var y = 0; y < this["include"].length; y++) {
+          this["include"][y].clear();
         }
       }
       this.root.removeChild(tmp);
@@ -1398,7 +1398,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       this.update_path = cache.update_path;
       this.static = cache.static;
       if (SUPPORT_TEMPLATE_EXTENSION) {
-        this.include = cache.include;
+        this["include"] = cache.include;
       }
       if (SUPPORT_REACTIVE) {
         this.proxy = cache.proxy;
@@ -1514,10 +1514,10 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
     }
   }
   if (SUPPORT_TEMPLATE_EXTENSION && (tpl["@"] || tpl["r"])) {
-    this.include || (this.include = []);
+    this["include"] || (this["include"] = []);
     var partial = tpl["@"] || tpl["i"];
     if (!tpl["@"]) {
-      partial["n"] = tpl["@"] = this.template + "@" + this.include.length;
+      partial["n"] = tpl["@"] = this.template + "@" + this["include"].length;
       delete tpl["i"];
     } else {
       if (typeof partial === "string") {
@@ -1525,10 +1525,10 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       }
     }
     child = null;
-    tmp_fn$$module$tmp$mikado += ";this.include[" + this.include.length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
+    tmp_fn$$module$tmp$mikado += ";this.include[" + this["include"].length + "].mount(p[" + path_length + "]).render(" + tpl["r"] + (tpl["m"] ? ".slice(" + (tpl["m"] >= 0 ? "0," + tpl["m"] : tpl["m"]) + ")" : "") + ",view)";
     var old_fn = tmp_fn$$module$tmp$mikado;
     tmp_fn$$module$tmp$mikado = "";
-    this.include.push(new Mikado$$module$tmp$mikado(node, partial, Object.assign(this.config, {"store":false, "async":false})));
+    this["include"].push(new Mikado$$module$tmp$mikado(node, partial, Object.assign(this.config, {"store":false, "async":false})));
     tmp_fn$$module$tmp$mikado = old_fn;
     this.vpath[path_length] = path;
     dom_path[path_length] = node;
@@ -1635,7 +1635,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
     if (SUPPORT_POOLS) {
       var payload = {update_path:this.update_path, static:this.static, vpath:this.vpath, node:node};
       if (SUPPORT_TEMPLATE_EXTENSION) {
-        payload.include = this.include;
+        payload.include = this["include"];
       }
       if (SUPPORT_REACTIVE) {
         payload.proxy = this.proxy;
