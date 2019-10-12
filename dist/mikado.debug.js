@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.31
+ * Mikado.js v0.6.4
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -974,6 +974,9 @@ if (SUPPORT_STORAGE) {
     var count = data ? data.length : length;
     var min = length < count ? length : count;
     var x = 0;
+    if (count < length) {
+      this.remove(count, length - count);
+    }
     if (x < min) {
       for (; x < min; x++) {
         this.apply(this.dom[x], null, view, x);
@@ -982,10 +985,6 @@ if (SUPPORT_STORAGE) {
     if (x < count) {
       for (; x < count; x++) {
         this.add(data[x], view);
-      }
-    } else {
-      if (x < length) {
-        this.remove(count, length - count);
       }
     }
     if (data && this.loose) {
@@ -1004,12 +1003,13 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
       }
     }
   }
+  if (SUPPORT_STORAGE && !data) {
+    return this.refresh();
+  }
   if (SUPPORT_ASYNC && !skip_async) {
-    if (view) {
-      if (typeof view === "function" || typeof view === "boolean") {
-        callback = view;
-        view = null;
-      }
+    if (view && typeof view !== "object") {
+      callback = view;
+      view = null;
     }
     if (this.timer) {
       this.cancel();
@@ -1039,9 +1039,6 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
   if (this.static) {
     this.dom[0] || this.add();
   } else {
-    if (!data) {
-      return SUPPORT_STORAGE && this.refresh();
-    }
     var length = this.length;
     var count;
     count = data.length;
@@ -1091,26 +1088,28 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
   }
   return this;
 };
-Mikado$$module$tmp$mikado.prototype.arrange = function(old_node, new_node, item, view, x) {
-  var idx = new_node["_idx"];
-  new_node["_idx"] = x;
-  old_node["_idx"] = idx;
-  this.dom[x] = new_node;
-  this.dom[idx] = old_node;
-  if (SUPPORT_STORAGE) {
-    if (this.store) {
-      this.store[idx] = this.store[x];
-      this.store[x] = item;
-    } else {
-      if (this.loose) {
-        new_node["_data"] = old_node["_data"];
-        old_node["_data"] = item;
+if (SUPPORT_POOLS) {
+  Mikado$$module$tmp$mikado.prototype.arrange = function(old_node, new_node, item, view, x) {
+    var idx = new_node["_idx"];
+    new_node["_idx"] = x;
+    old_node["_idx"] = idx;
+    this.dom[x] = new_node;
+    this.dom[idx] = old_node;
+    if (SUPPORT_STORAGE) {
+      if (this.store) {
+        this.store[idx] = this.store[x];
+        this.store[x] = item;
+      } else {
+        if (this.loose) {
+          new_node["_data"] = old_node["_data"];
+          old_node["_data"] = item;
+        }
       }
     }
-  }
-  this.root.insertBefore(new_node, old_node);
-  this.apply(new_node, item, view, x);
-};
+    this.root.insertBefore(new_node, old_node);
+    this.apply(new_node, item, view, x);
+  };
+}
 Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_node) {
   var has_index;
   if (!_replace_node) {
@@ -1298,27 +1297,29 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize) {
   }
   return this;
 };
-Mikado$$module$tmp$mikado.prototype.replace = function(node, data, view, index) {
-  if (typeof index === "undefined") {
-    index = node["_idx"];
-  }
-  this.add(data, view, index, node);
-  if (SUPPORT_POOLS && this.key) {
-    var ref = node["_key"];
-    this.live[ref] = null;
-    if (this.key_pool) {
-      this.key_pool[ref] = node;
+if (SUPPORT_POOLS) {
+  Mikado$$module$tmp$mikado.prototype.replace = function(node, data, view, index) {
+    if (typeof index === "undefined") {
+      index = node["_idx"];
     }
-  }
-  if (SUPPORT_POOLS && this.tpl_pool) {
-    var pool = this.tpl_pool;
-    if (this.key) {
-      node["_index"] = pool.length;
+    this.add(data, view, index, node);
+    if (SUPPORT_POOLS && this.key) {
+      var ref = node["_key"];
+      this.live[ref] = null;
+      if (this.key_pool) {
+        this.key_pool[ref] = node;
+      }
     }
-    pool[pool.length] = node;
-  }
-  return this;
-};
+    if (SUPPORT_POOLS && this.tpl_pool) {
+      var pool = this.tpl_pool;
+      if (this.key) {
+        node["_index"] = pool.length;
+      }
+      pool[pool.length] = node;
+    }
+    return this;
+  };
+}
 Mikado$$module$tmp$mikado.prototype.update = function(node, data, view, index) {
   if (DEBUG) {
     if (this.static) {
@@ -1433,10 +1434,12 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
   if (js) {
     new_fn += ";" + js;
     if (new_fn.indexOf("self") > -1) {
-      this.vpath[path_length] = path;
-      dom_path[path_length] = node;
       has_update = 2;
     }
+  }
+  if (SUPPORT_TEMPLATE_EXTENSION && tpl["f"]) {
+    tmp_fn$$module$tmp$mikado += ";if(" + tpl["f"] + "){self.hidden=false";
+    has_update = 2;
   }
   if (class_name) {
     if (typeof class_name === "object") {
@@ -1444,12 +1447,8 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       class_name = class_name[0];
       new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}" : ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}" : ";self.className=" + class_name;
       if (SUPPORT_REACTIVE && observable) {
-        this.proxy || (this.proxy = {});
-        this.proxy[class_name] || (this.proxy[class_name] = []);
-        this.proxy[class_name].push(["_class", path_length]);
+        init_proxy$$module$tmp$mikado(this, class_name, ["_class", path_length]);
       }
-      this.vpath[path_length] = path;
-      dom_path[path_length] = node;
       has_update++;
     } else {
       node.className = class_name;
@@ -1457,7 +1456,6 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
   }
   if (attr || events) {
     var keys;
-    var has_dynamic_values;
     if (attr) {
       keys = Object.keys(attr);
     }
@@ -1479,19 +1477,12 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         value = value[0];
         new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + value + ";if(self['_attr_" + key + "']!==v){self['_attr_" + key + "']=v;self.setAttribute('" + key + "',v)}" : ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}" : ";self.setAttribute('" + key + "'," + value + ")";
         if (SUPPORT_REACTIVE && observable$6) {
-          this.proxy || (this.proxy = {});
-          this.proxy[value] || (this.proxy[value] = []);
-          this.proxy[value].push(["_attr", path_length, key]);
+          init_proxy$$module$tmp$mikado(this, value, ["_attr", path_length, key]);
         }
-        has_dynamic_values = true;
         has_update++;
       } else {
         node.setAttribute(key, value);
       }
-    }
-    if (has_dynamic_values) {
-      this.vpath[path_length] = path;
-      dom_path[path_length] = node;
     }
   }
   if (style) {
@@ -1503,16 +1494,13 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         style = style[0];
         new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}" : ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}" : ";self.style.cssText=" + style;
         if (SUPPORT_REACTIVE && observable$7) {
-          this.proxy || (this.proxy = {});
-          this.proxy[style] || (this.proxy[style] = []);
-          this.proxy[style].push(["_css", path_length]);
+          init_proxy$$module$tmp$mikado(this, style, ["_css", path_length]);
         }
-        this.vpath[path_length] = path;
-        dom_path[path_length] = node;
         has_update++;
       }
     }
   }
+  var text_fn = "";
   if (SUPPORT_TEMPLATE_EXTENSION && (tpl["@"] || tpl["r"])) {
     this["include"] || (this["include"] = []);
     var partial = tpl["@"] || tpl["i"];
@@ -1530,8 +1518,6 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
     tmp_fn$$module$tmp$mikado = "";
     this["include"].push(new Mikado$$module$tmp$mikado(node, partial, Object.assign(this.config, {"store":false, "async":false})));
     tmp_fn$$module$tmp$mikado = old_fn;
-    this.vpath[path_length] = path;
-    dom_path[path_length] = node;
     this.static = false;
   } else {
     if (!child) {
@@ -1539,7 +1525,6 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         child = templates$$module$tmp$mikado[tpl["+"]];
       } else {
         if (text) {
-          path += "|";
           var observable$8;
           var is_object = typeof text === "object";
           if (is_object) {
@@ -1549,34 +1534,29 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
           var text_node = document.createTextNode(text);
           if (is_object) {
             if (has_update) {
-              concat_path$$module$tmp$mikado(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
-              new_fn = "";
               path_length++;
             }
-            new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}" : ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}" : ";self.nodeValue=" + text;
-            if (SUPPORT_REACTIVE && observable$8) {
-              this.proxy || (this.proxy = {});
-              this.proxy[text] || (this.proxy[text] = []);
-              this.proxy[text].push(["_text", path_length]);
-            }
-            this.vpath[path_length] = path;
+            this.vpath[path_length] = path + "|";
             dom_path[path_length] = text_node;
-            has_update++;
+            var text_fn$9 = SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}" : ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}" : ";self.nodeValue=" + text;
+            concat_path$$module$tmp$mikado(has_update, text_fn$9, path_length, SUPPORT_CACHE && this.cache);
+            if (SUPPORT_REACTIVE && observable$8) {
+              init_proxy$$module$tmp$mikado(this, text, ["_text", path_length]);
+            }
+            if (has_update) {
+              path_length--;
+            }
           }
           node.appendChild(text_node);
         } else {
           if (html) {
             if (typeof html === "object") {
-              var observable$9 = html[1];
+              var observable$10 = html[1];
               html = html[0];
               new_fn += SUPPORT_CACHE && this.cache ? SUPPORT_CACHE_HELPERS ? ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}" : ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}" : ";self.innerHTML=" + html;
-              if (SUPPORT_REACTIVE && observable$9) {
-                this.proxy || (this.proxy = {});
-                this.proxy[html] || (this.proxy[html] = []);
-                this.proxy[html].push(["_html", path_length]);
+              if (SUPPORT_REACTIVE && observable$10) {
+                init_proxy$$module$tmp$mikado(this, html, ["_html", path_length]);
               }
-              this.vpath[path_length] = path;
-              dom_path[path_length] = node;
               has_update++;
             } else {
               node.innerHTML = html;
@@ -1586,15 +1566,9 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       }
     }
   }
-  if (SUPPORT_TEMPLATE_EXTENSION && tpl["f"]) {
-    tmp_fn$$module$tmp$mikado += ";if(" + tpl["f"] + "){" + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=false";
-    if (!has_update) {
-      this.vpath[path_length] = path;
-      dom_path[path_length] = node;
-      this.static = false;
-    }
-  }
   if (has_update) {
+    this.vpath[path_length] = path;
+    dom_path[path_length] = node;
     this.static = false;
     concat_path$$module$tmp$mikado(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
   } else {
@@ -1602,19 +1576,20 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       tmp_fn$$module$tmp$mikado += new_fn;
     }
   }
+  tmp_fn$$module$tmp$mikado += text_fn;
   if (child) {
     var include;
     if (child.length) {
-      var tmp$10 = ">";
-      for (var i$11 = 0, current = undefined; i$11 < child.length; i$11++) {
-        if (i$11) {
-          tmp$10 += "+";
+      var tmp$11 = ">";
+      for (var i$12 = 0, current = undefined; i$12 < child.length; i$12++) {
+        if (i$12) {
+          tmp$11 += "+";
         }
-        current = child[i$11];
+        current = child[i$12];
         if (SUPPORT_TEMPLATE_EXTENSION && (include = current["+"])) {
           current = templates$$module$tmp$mikado[include];
         }
-        node.appendChild(this.parse(current, index + i$11 + 1, path + tmp$10, dom_path));
+        node.appendChild(this.parse(current, index + i$12 + 1, path + tmp$11, dom_path));
       }
     } else {
       if (SUPPORT_TEMPLATE_EXTENSION && (include = child["+"])) {
@@ -1645,8 +1620,12 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
   }
   return node;
 };
+function init_proxy$$module$tmp$mikado(self, text, payload) {
+  self.proxy || (self.proxy = {});
+  (self.proxy[text] || (self.proxy[text] = [])).push(payload);
+}
 function concat_path$$module$tmp$mikado(has_update, new_fn, path_length, cache) {
-  if (cache || has_update > 1) {
+  if (SUPPORT_CACHE_HELPERS && cache || has_update > 1) {
     tmp_fn$$module$tmp$mikado += ";self=p[" + path_length + "]" + new_fn;
   } else {
     tmp_fn$$module$tmp$mikado += new_fn.replace(/self/g, "p[" + path_length + "]");
@@ -1856,15 +1835,15 @@ function compile$$module$tmp$compile(node, recursive) {
           } else {
             if (attr_name === "include") {
               if (!node.hasAttribute("for")) {
-                var tmp$12 = {};
-                (template["i"] || (template["i"] = [])).push(tmp$12);
-                handle_value$$module$tmp$compile(tmp$12, "+", attr_value);
+                var tmp$13 = {};
+                (template["i"] || (template["i"] = [])).push(tmp$13);
+                handle_value$$module$tmp$compile(tmp$13, "+", attr_value);
               }
             } else {
               if (attr_name === "for" && tagName !== "LABEL") {
-                var tmp$13 = node.getAttribute("include");
-                if (tmp$13) {
-                  template["@"] = strip$$module$tmp$compile(tmp$13);
+                var tmp$14 = node.getAttribute("include");
+                if (tmp$14) {
+                  template["@"] = strip$$module$tmp$compile(tmp$14);
                 }
                 handle_value$$module$tmp$compile(template, "r", attr_value);
               } else {
@@ -1907,23 +1886,23 @@ function compile$$module$tmp$compile(node, recursive) {
   if (children.length) {
     if (children.length > 1) {
       var count = 0;
-      for (var i$14 = 0; i$14 < children.length; i$14++) {
-        var tmp$15 = compile$$module$tmp$compile(children[i$14], 1);
-        if (tmp$15) {
-          (template["i"] || (template["i"] = []))[count++] = tmp$15;
+      for (var i$15 = 0; i$15 < children.length; i$15++) {
+        var tmp$16 = compile$$module$tmp$compile(children[i$15], 1);
+        if (tmp$16) {
+          (template["i"] || (template["i"] = []))[count++] = tmp$16;
         }
       }
     } else {
-      var tmp$16 = compile$$module$tmp$compile(children[0], 1);
-      if (tmp$16) {
-        if (tmp$16["j"]) {
-          template["j"] = tmp$16["j"];
+      var tmp$17 = compile$$module$tmp$compile(children[0], 1);
+      if (tmp$17) {
+        if (tmp$17["j"]) {
+          template["j"] = tmp$17["j"];
         }
-        if (tmp$16["h"]) {
-          template["h"] = tmp$16["h"];
+        if (tmp$17["h"]) {
+          template["h"] = tmp$17["h"];
         }
-        if (tmp$16["x"]) {
-          template["x"] = tmp$16["x"];
+        if (tmp$17["x"]) {
+          template["x"] = tmp$17["x"];
         }
       }
     }

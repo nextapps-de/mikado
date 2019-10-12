@@ -718,14 +718,17 @@ if(SUPPORT_STORAGE){
             return this.apply(node, null, view, index);
         }
 
-        // TODO replace by .render()
-
         let length = this.length;
         const data = this.store;
         const count = data ? data.length : length;
         const min = length < count ? length : count;
 
         let x = 0;
+
+        if(count < length){
+
+            this.remove(count, length - count);
+        }
 
         if(x < min){
 
@@ -741,10 +744,6 @@ if(SUPPORT_STORAGE){
 
                 this.add(data[x], view);
             }
-        }
-        else if(x < length){
-
-            this.remove(count, length - count);
         }
 
         // data delegated from import
@@ -779,16 +778,17 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
         }
     }
 
+    if(SUPPORT_STORAGE && !data){
+
+        return this.refresh();
+    }
+
     if(SUPPORT_ASYNC && !skip_async){
 
-        if(view){
+        if(view && (typeof view !== "object")){
 
-            if((typeof view === "function") ||
-               (typeof view === "boolean")){
-
-                callback = /** @type {Function|boolean} */ (view);
-                view = null;
-            }
+            callback = /** @type {Function|boolean} */ (view);
+            view = null;
         }
 
         if(this.timer){
@@ -837,11 +837,6 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
         this.dom[0] || this.add();
     }
     else{
-
-        if(!data){
-
-            return SUPPORT_STORAGE && this.refresh();
-        }
 
         let length = this.length;
         let count;
@@ -1558,10 +1553,14 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         if(new_fn.indexOf("self") > -1){
 
-            this.vpath[path_length] = path;
-            dom_path[path_length] = node;
             has_update = 2; // force providing "self"
         }
+    }
+
+    if(SUPPORT_TEMPLATE_EXTENSION && tpl["f"]){
+
+        tmp_fn += ";if(" + tpl["f"] + "){self.hidden=false";
+        has_update = 2;
     }
 
     if(class_name){
@@ -1585,13 +1584,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(SUPPORT_REACTIVE && observable){
 
-                this.proxy || (this.proxy = {});
-                this.proxy[class_name] || (this.proxy[class_name] = []);
-                this.proxy[class_name].push(["_class", path_length]);
+                init_proxy(this, class_name, ["_class", path_length]);
             }
 
-            this.vpath[path_length] = path;
-            dom_path[path_length] = node;
             has_update++;
         }
 
@@ -1604,7 +1599,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     if(attr || events){
 
         let keys;
-        let has_dynamic_values;
 
         if(attr){
 
@@ -1650,24 +1644,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 if(SUPPORT_REACTIVE && observable){
 
-                    this.proxy || (this.proxy = {});
-                    this.proxy[value] || (this.proxy[value] = []);
-                    this.proxy[value].push(["_attr", path_length, key]);
+                    init_proxy(this, value, ["_attr", path_length, key]);
                 }
 
-                has_dynamic_values = true;
                 has_update++;
             }
             else{
 
                 node.setAttribute(key, value);
             }
-        }
-
-        if(has_dynamic_values){
-
-            this.vpath[path_length] = path;
-            dom_path[path_length] = node;
         }
     }
 
@@ -1694,13 +1679,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(SUPPORT_REACTIVE && observable){
 
-                this.proxy || (this.proxy = {});
-                this.proxy[style] || (this.proxy[style] = []);
-                this.proxy[style].push(["_css", path_length]);
+                init_proxy(this, style, ["_css", path_length]);
             }
 
-            this.vpath[path_length] = path;
-            dom_path[path_length] = node;
             has_update++;
         }
         // NOTE: Faster but will not reset old state when "reuse" is enabled and helpers were used:
@@ -1732,9 +1713,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                     if(SUPPORT_REACTIVE && observable){
 
-                        this.proxy || (this.proxy = {});
-                        this.proxy[value] || (this.proxy[value] = []);
-                        this.proxy[value].push(["_style", path_length, key]);
+                        init_proxy(this, value, ["_style", path_length, key]);
                     }
 
                     has_dynamic_values = true;
@@ -1754,6 +1733,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         */
     }
+
+    let text_fn = "";
 
     // create partial render tree
     if(SUPPORT_TEMPLATE_EXTENSION && (tpl["@"] || tpl["r"])){
@@ -1783,8 +1764,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         this["include"].push(new Mikado(node, partial, Object.assign(this.config, { "store": false, "async": false })));
         tmp_fn = old_fn;
 
-        this.vpath[path_length] = path;
-        dom_path[path_length] = node;
+        //has_update++;
         this.static = false;
     }
 
@@ -1796,8 +1776,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             child = templates[tpl["+"]];
         }
         else if(text){
-
-            path += "|";
 
             let observable;
             const is_object = typeof text === "object";
@@ -1815,12 +1793,13 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 // collect text node
                 if(has_update){
 
-                    concat_path(has_update, new_fn, path_length, SUPPORT_CACHE && this.cache);
-                    new_fn = "";
                     path_length++;
                 }
 
-                new_fn += SUPPORT_CACHE && this.cache ? (
+                this.vpath[path_length] = path + "|";
+                dom_path[path_length] = text_node;
+
+                const text_fn = SUPPORT_CACHE && this.cache ? (
 
                     SUPPORT_CACHE_HELPERS ?
 
@@ -1830,16 +1809,21 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                     ):
                         ";self.nodeValue=" + text;
 
+                concat_path(has_update, text_fn, path_length, SUPPORT_CACHE && this.cache);
+
                 if(SUPPORT_REACTIVE && observable){
 
-                    this.proxy || (this.proxy = {});
-                    this.proxy[text] || (this.proxy[text] = []);
-                    this.proxy[text].push(["_text", path_length]);
+                    init_proxy(this, text, ["_text", path_length]);
                 }
 
-                this.vpath[path_length] = path;
-                dom_path[path_length] = text_node;
-                has_update++;
+                if(has_update){
+
+                    path_length--;
+                }
+                // else{
+                //
+                //     path_length++;
+                // }
             }
 
             node.appendChild(text_node);
@@ -1863,13 +1847,9 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 if(SUPPORT_REACTIVE && observable){
 
-                    this.proxy || (this.proxy = {});
-                    this.proxy[html] || (this.proxy[html] = []);
-                    this.proxy[html].push(["_html", path_length]);
+                    init_proxy(this, html, ["_html", path_length]);
                 }
 
-                this.vpath[path_length] = path;
-                dom_path[path_length] = node;
                 has_update++;
             }
             else{
@@ -1879,20 +1859,10 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    if(SUPPORT_TEMPLATE_EXTENSION && tpl["f"]){
-
-        tmp_fn += ";if(" + tpl["f"] + "){" + (has_update > 1 ? "self" : "p[" + path_length + "]") + ".hidden=false";
-
-        if(!has_update){
-
-            this.vpath[path_length] = path;
-            dom_path[path_length] = node;
-            this.static = false;
-        }
-    }
-
     if(has_update){
 
+        this.vpath[path_length] = path;
+        dom_path[path_length] = node;
         this.static = false;
 
         // push path before recursion
@@ -1902,6 +1872,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         tmp_fn += new_fn;
     }
+
+    tmp_fn += text_fn;
 
     if(child){
 
@@ -1988,11 +1960,17 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
     return node;
 };
 
+function init_proxy(self, text, payload){
+
+    self.proxy || (self.proxy = {});
+    (self.proxy[text] || (self.proxy[text] = [])).push(payload);
+}
+
 function concat_path(has_update, new_fn, path_length, cache){
 
     //if(has_update){ // already checked
 
-        if(cache || (has_update > 1)){
+        if((SUPPORT_CACHE_HELPERS && cache) || (has_update > 1)){
 
             tmp_fn += ";self=p[" + path_length + "]" + new_fn;
         }
