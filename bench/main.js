@@ -47,7 +47,7 @@
 
     let size = {
 
-        "mikado": 2.5,
+        "mikado": 2.8,
         "domc": 4.46,
         "inferno": 8.4,
         "redom": 2.88,
@@ -60,11 +60,11 @@
         "lit-html": 17.31,
         "ractive": 68.2,
 
-        "mikado-cross-shared": 2.5,
-        "mikado-exclusive": 2.5,
-        "mikado-keyed": 2.5,
-        "mikado-keyed-shared": 2.5,
-        "mikado-non-keyed": 2.5
+        "mikado-cross-shared": 2.8,
+        "mikado-exclusive": 2.8,
+        "mikado-keyed": 2.8,
+        "mikado-keyed-shared": 2.8,
+        "mikado-non-keyed": 2.8
         //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
     };
 
