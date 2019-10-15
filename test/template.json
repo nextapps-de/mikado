@@ -1,4 +1,4 @@
-export default {
+{
   "t": "section",
   "a": {
     "data-id": [
@@ -9,14 +9,15 @@ export default {
     ],
     "data-index": [
       "data.index"
-    ]
+    ],
+    "root": ""
   },
   "i": {
     "i": [
       {
         "c": "title",
         "e": {
-          "click": "test"
+          "click": "delegate:root"
         },
         "x": [
           "data.title"
@@ -24,6 +25,9 @@ export default {
       },
       {
         "c": "content",
+        "e": {
+          "click": "delegate:foo"
+        },
         "x": [
           "data.content"
         ]
@@ -38,9 +42,12 @@ export default {
     "c": [
       "data.class"
     ],
-    "s": "padding-right: 10px;"
+    "s": "padding-right: 10px;",
+    "e": {
+      "tap": "attach"
+    }
   },
   "d": false,
   "n": "template",
   "v": "0.0.6"
-};
+}

@@ -9,15 +9,14 @@ Mikado.register({
     ],
     "data-index": [
       "data.index"
-    ],
-    "root": ""
+    ]
   },
   "i": {
     "i": [
       {
         "c": "title",
         "e": {
-          "click": "delegate:root"
+          "click": "test"
         },
         "x": [
           "data.title"
@@ -39,11 +38,9 @@ Mikado.register({
     "c": [
       "data.class"
     ],
-    "s": "padding-right: 10px;",
-    "e": {
-      "click": "attach"
-    }
+    "s": "padding-right: 10px;"
   },
+  "d": false,
   "n": "template",
-  "v": "0.0.4"
+  "v": "0.0.6"
 });

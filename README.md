@@ -2330,7 +2330,7 @@ You can also nest loops:
 
 > Every looped partial has to provide __one single root__ as the outer bound.
 
-This is wrong:
+In this example every for-expression is wrong (you will find the right example above):
 ```html
 <tweets for="data.tweets">
     <h1>{{ data.title }}</h1>
@@ -2339,7 +2339,7 @@ This is wrong:
         <p>{{ data.content }}</p>
         <title>Replies:</title>
         <div for="data.replies">
-            <p>{{ data.content }}</p>
+            {{ data.content }}
         </div>
     </div>
 </tweets>
@@ -2381,26 +2381,34 @@ Think in real code branches, instead of doing this:
     {{@ var result = (function(){
         return "some big computation";
     }()) }}
-    <tweets for="data.tweets">
-        <section if="data.content">{{ result }}</section>
-    </tweets>
+    <section if="data.content">{{ result }}</section>
 </main>
 ```
 
 Doing this:
 ```html
 <main>
-    <tweets for="data.tweets">
-        <section if="data.content">
-            {{ (function(){
-                return "some big computation";
-            }()) }}
-        </section>
-    </tweets>
+    <section if="data.content">
+        {{ (function(){
+            return "some big computation";
+        }()) }}
+    </section>
 </main>
 ```
 
-Conditional branches will skip expressions when not taken.
+> Conditional branches will skip its expressions when not taken.
+
+As well as try to assign computations outside a loop:
+```html
+<main>
+    {{@ var result = data.tweets.length && (function(){
+        return "some big computation";
+    }()) }}
+    <tweets for="data.tweets">
+        <section>{{ result }}</section>
+    </tweets>
+</main>
+```
 
 <a name="proxy" id="proxy"></a>
 ## Reactive Proxy (Observer)
