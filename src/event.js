@@ -89,6 +89,8 @@ if(SUPPORT_EVENTS){
         return this;
     };
 
+    // TODO: support pointer events for MSIE
+
     let has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
     let touch_x, touch_y;
     let register_tap;
@@ -142,7 +144,7 @@ if(SUPPORT_EVENTS){
 
         if(!events[event]){
 
-            if(has_touch && (event === "click")){
+            if(has_touch && (event === "tap")){
 
                 register_tap(1);
             }
@@ -167,7 +169,7 @@ if(SUPPORT_EVENTS){
 
         if(events[event]){
 
-            if(has_touch && (event === "click")){
+            if(has_touch && (event === "tap")){
 
                 register_tap(0);
             }

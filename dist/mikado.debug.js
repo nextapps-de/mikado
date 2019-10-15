@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.41
+ * Mikado.js v0.6.42
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -168,7 +168,7 @@ if (SUPPORT_EVENTS) {
   }
   Mikado$$module$tmp$mikado["listen"] = Mikado$$module$tmp$mikado.prototype.listen = function(event, options) {
     if (!events[event]) {
-      if (has_touch && event === "click") {
+      if (has_touch && event === "tap") {
         register_tap(1);
       } else {
         register_event(1, event, handler, options || true);
@@ -179,7 +179,7 @@ if (SUPPORT_EVENTS) {
   };
   Mikado$$module$tmp$mikado["unlisten"] = Mikado$$module$tmp$mikado.prototype.unlisten = function(event, options) {
     if (events[event]) {
-      if (has_touch && event === "click") {
+      if (has_touch && event === "tap") {
         register_tap(0);
       } else {
         register_event(0, event, handler, options || true);

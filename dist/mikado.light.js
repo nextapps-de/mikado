@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.6.41 (Light)
+ * Mikado.js v0.6.42 (Light)
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
