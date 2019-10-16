@@ -20,9 +20,9 @@
     <div id="root-3" hidden></div>
     <template id="template-test">
         <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}" root>
-            <div class="{{data.class.replace(/,/g, '')}}" style="padding-right: 10px;" click="attach">
+            <div class="{{data.class}}" style="padding-right: 10px;" tap="attach">
                 <div class="title" click="delegate:root">{{data.title}}</div>
-                <div class="content">{{data.content}}</div>
+                <div class="content" click="delegate:foo">{{data.content}}</div>
                 <div class="footer">{{data.footer}}</div>
             </div>
         </section>
@@ -32,7 +32,6 @@
     <script>
         var param = window.location.search.substr(1);
         if(param === "coverage"){
-            document.write('<script type="text/javascript" src="dist/dist/mikado.pre.js"><\/script>');
             Object.assign = null;
             Object.values = null;
             window["requestAnimationFrame"] = null;
@@ -50,6 +49,7 @@
     </script>
     <script src="template.js"></script>
     <script src="proxy.js"></script>
+    <script src="keyed.js"></script>
     <script src="data.js"></script>
     <script>
         window.initMochaPhantomJS && initMochaPhantomJS();

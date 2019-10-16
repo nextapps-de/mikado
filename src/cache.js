@@ -155,7 +155,7 @@ export function getClass(target){
 
 export function hasClass(target, classname){
 
-    return !!((target["_class"] || (target["_class"] = target.className)).match(regex_cache[classname] || regex(classname)));
+    return !!(target["_class"] || (target["_class"] = target.className)).match(regex_cache[classname] || regex(classname));
     //return !!(target["_class_cache"] || createClassCache(target))[classname];
 }
 
@@ -229,18 +229,18 @@ export function getCSS(target){
 
             tmp
         :
-            target["_css"] = (target["_style"] || (target["_style"] = target.style)).getAttribute("style")
+            target["_css"] = target/*(target["_style"] || (target["_style"] = target.style))*/.getAttribute("style")
     );
 }
 
 export function setAttribute(target, attr, value){
 
-    const key = "_attr_" + attr;
+    const cache = target["_attr"] || (target["_attr"] = {});
 
-    if(target[key] !== value){
+    if(cache[attr] !== value){
 
         target.setAttribute(attr, value);
-        target[key] = value;
+        cache[attr] = value;
     }
 
     return this;
@@ -248,8 +248,8 @@ export function setAttribute(target, attr, value){
 
 export function getAttribute(target, attr){
 
-    const key = "_attr_" + attr;
-    const tmp = target[key];
+    const cache = target["_attr"] || (target["_attr"] = {});
+    const tmp = cache[attr];
 
     return (
 
@@ -257,7 +257,7 @@ export function getAttribute(target, attr){
 
             tmp
         :
-            target[key] = target.getAttribute(attr)
+            cache[attr] = target.getAttribute(attr)
     );
 }
 
@@ -265,17 +265,17 @@ export function hasAttribute(target, attr){
 
     const tmp = getAttribute(target, attr);
 
-    return tmp || (tmp === "");
+    return !!tmp || (tmp === "");
 }
 
 export function removeAttribute(target, attr){
 
-    const key = "_attr_" + attr;
+    const cache = target["_attr"] || (target["_attr"] = {});
 
-    if(target[key] !== null){
+    if(cache[attr] !== null){
 
-        target[key] = null;
         target.removeAttribute(attr);
+        cache[attr] = null;
     }
 
     return this;

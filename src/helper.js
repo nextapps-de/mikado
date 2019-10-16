@@ -5,18 +5,18 @@ if(SUPPORT_HELPERS){
     if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("move") !== -1)){
 
         // absolute position
-        Mikado.prototype.move = function(a, position){
+        Mikado.prototype.move = function(node, position){
 
             let index;
 
-            if(typeof a === "number"){
+            if(typeof node === "number"){
 
-                index = a;
-                a = this.dom[a];
+                index = node;
+                node = this.dom[index];
             }
             else{
 
-                index = a["_idx"];
+                index = node["_idx"];
             }
 
             if(position < 0){
@@ -26,7 +26,7 @@ if(SUPPORT_HELPERS){
 
             if(index !== position){
 
-                this.shift(a, position - index);
+                this.shift(node, position - index);
             }
 
             return this;
@@ -76,21 +76,7 @@ if(SUPPORT_HELPERS){
                 }
                 else{
 
-                    //if(up){
-
-                        //this.root.insertBefore(a, b);
-                    //}
-                    //else{
-
-                        //if(pos === this.length - 1){
-
-                            //this.root.appendChild(a);
-                        //}
-                        //else{
-
-                            this.root.insertBefore(a, up ? b : this.dom[pos + 1] || null);
-                        //}
-                    //}
+                    this.root.insertBefore(a, up ? b : (this.dom[pos + 1] || null));
                 }
 
                 if(multi_update){
@@ -329,22 +315,6 @@ if(SUPPORT_HELPERS){
 
                         this.root.insertBefore(a, b);
                         this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-
-                        // 2. Strategy Swap
-                        /*
-                        b.replaceWith(a);
-                        this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                        */
-
-                        // 3. Strategy Swap
-                        /*
-                        if((tmp_b + 1) === tmp_a) this.root.insertBefore(a, b);
-                        else{
-                            this.root.insertBefore(b, a);
-                            if((tmp_b + 1) < this.length) this.root.insertBefore(a, this.dom[tmp_b + 1]);
-                            else this.root.appendChild(a);
-                        }
-                        */
 
                         a["_idx"] = tmp_b;
                         b["_idx"] = tmp_a;

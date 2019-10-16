@@ -107,17 +107,11 @@ queue.push({
     test: null,
     start: null,
     prepare: function(index){
-        if(index % 4 === 0){ // swap
+        if(index % 2){ // swap
             items.splice(1, 0, items.splice(items.length - 2, 1)[0]);
             items.splice(items.length - 2, 0, items.splice(2, 1)[0]);
         }
-        if(index % 3 === 0){ // move down
-            items.push(items.shift());
-        }
-        if(index % 2 === 0){ // move up
-            items.unshift(items.pop());
-        }
-        else{ // simple re-order
+        else{ // re-order
             for(let i = 80; i < 90; i++) items.splice(i, 0, items.splice(10, 1)[0]);
             for(let i = 30; i < 40; i++) items.splice(i, 0, items.splice(60, 1)[0]);
         }

@@ -28,7 +28,7 @@
         "e": {
           "click": "delegate:foo"
         },
-        "x": [
+        "h": [
           "data.content"
         ]
       },

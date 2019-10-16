@@ -16,12 +16,6 @@ const proxy_setter = {
 
         (target["_style"] || (target["_style"] = target.style)).cssText = css;
     },
-    /*
-    "_style": function(target, value, style){
-
-        (target["_style"] || (target["_style"] = target.style)).setProperty(style, value);
-    },
-    */
     "_attr": function(target, value, attr){
 
         target.setAttribute(attr, value);
@@ -52,21 +46,25 @@ function proxy_set(target, prop, value){
 
     if(target[prop] !== value){
 
-        const exp = this.handler["data." + prop];
-
-        if(exp){
-
-            for(let i = 0, length = exp.length, tmp; i < length; i++){
-
-                tmp = exp[i];
-                proxy_setter[tmp[0]](this.path[tmp[1]], value, tmp[2] || prop);
-            }
-        }
-
+        proxy_loop(this.handler, this.path, prop, value);
         target[prop] = value;
     }
 
-    return true;
+    //return true;
+}
+
+function proxy_loop(handler, path, prop, value){
+
+    const exp = handler["data." + prop];
+
+    if(exp){
+
+        for(let i = 0, length = exp.length, tmp; i < length; i++){
+
+            tmp = exp[i];
+            proxy_setter[tmp[0]](path[tmp[1]], value, tmp[2] || prop);
+        }
+    }
 }
 
 if(SUPPORT_REACTIVE){
@@ -111,23 +109,11 @@ if(SUPPORT_REACTIVE){
                 },
                 set: function(newVal){
 
-                    if(val === newVal){
+                    if(val !== newVal){
 
-                        return;
+                        proxy_loop(self.handler, self.path, key, newVal);
+                        val = newVal;
                     }
-
-                    const exp = self.handler["data." + key];
-
-                    if(exp){
-
-                        for(let i = 0, length = exp.length, tmp; i < length; i++){
-
-                            tmp = exp[i];
-                            proxy_setter[tmp[0]](self.path[tmp[1]], newVal, tmp[2] || key);
-                        }
-                    }
-
-                    val = newVal;
                 }
             });
         };

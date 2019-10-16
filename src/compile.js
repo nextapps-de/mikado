@@ -229,33 +229,34 @@ export default function compile(node, recursive){
     }
 
     const children = node.childNodes;
+    const length = children.length;
 
-    if(children.length){
+    if(length){
 
-        if(children.length > 1){
+        let count = 0;
 
-            let count = 0;
+        for(let i = 0; i < length; i++){
 
-            for(let i = 0; i < children.length; i++){
+            const tmp = compile(children[i], 1);
 
-                const tmp = compile(children[i], 1);
+            if(tmp){
 
-                if(tmp){
+                if((length === 1) && (children[i].nodeType === 3)){
+
+                    if(tmp["j"]) template["j"] = tmp["j"];
+                    if(tmp["h"]) template["h"] = tmp["h"];
+                    if(tmp["x"]) template["x"] = tmp["x"];
+                }
+                else{
 
                     (template["i"] || (template["i"] = []))[count++] = tmp;
                 }
             }
         }
-        else{
 
-            const tmp = compile(children[0], 1);
+        if(count === 1){
 
-            if(tmp){
-
-                if(tmp["j"]) template["j"] = tmp["j"];
-                if(tmp["h"]) template["h"] = tmp["h"];
-                if(tmp["x"]) template["x"] = tmp["x"];
-            }
+            template["i"] = template["i"][0];
         }
     }
 
@@ -269,10 +270,10 @@ export default function compile(node, recursive){
 
 function handle_value(template, key, value){
 
-    const bind = value.indexOf("{{==") !== -1;
-    const proxy = bind || value.indexOf("{{=") !== -1;
+    if((value.indexOf("{{") !== -1) && (value.indexOf("}}") !== -1)){
 
-    if(value.indexOf("{{") !== -1 && value.indexOf("}}") !== -1){
+        const bind = value.indexOf("{{==") !== -1;
+        const proxy = bind || (value.indexOf("{{=") !== -1);
 
         is_static = false;
 

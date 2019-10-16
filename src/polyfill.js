@@ -6,19 +6,16 @@ if(USE_POLYFILL){
         const size = args.length;
         const obj = args[0];
 
-        if(size > 1){
+        for(let x = 1, current, keys, length; x < size; x++){
 
-            for(let x = 1, current, keys, length; x < size; x++){
+            current = args[x];
+            keys = Object.keys(current);
+            length = keys.length;
 
-                current = args[x];
-                keys = Object.keys(current);
-                length = keys.length;
+            for(let i = 0, key; i < length; i++){
 
-                for(let i = 0, key; i < length; i++){
-
-                    key = keys[i];
-                    obj[key] = current[key];
-                }
+                key = keys[i];
+                obj[key] = current[key];
             }
         }
 

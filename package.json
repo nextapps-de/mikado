@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.6.42",
+  "version": "0.6.5",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -40,7 +40,7 @@
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug",
     "update": "npm install google-closure-compiler@nightly",
-    "test": "npm run build:pre && cd test && npm install && mikado-compile template.html && mikado-compile proxy.html && npm run test"
+    "test": "npm run build:pre && cd test && npm install && mikado-compile template.html && mikado-compile proxy.html && mikado-compile keyed.html && npm run test"
   },
   "files": [
     "dist/",
@@ -53,6 +53,6 @@
   "readme": "README.md",
   "dependencies": {},
   "devDependencies": {
-    "google-closure-compiler": "^20191008.0.0-nightly"
+    "google-closure-compiler": "^20191016.0.0-nightly"
   }
 }

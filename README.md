@@ -302,20 +302,20 @@ Values represents operations per second, each benchmark task has to process a da
 <table>
     <tr></tr>
     <tr>
-        <td><sup>Library</sup></td>
-        <td align=center><sup>KB</sup></td>
-        <td align=center><sup>RAM</sup></td>
-        <td align=center><sup>Create</sup></td>
-        <td align=center><sup>Replace</sup></td>
-        <td align=center><sup>Update</sup></td>
-        <td align=center><sup>Order</sup></td>
-        <td align=center><sup>Repaint</sup></td>
-        <td align=center><sup>Append</sup></td>
-        <td align=center><sup>Remove</sup></td>
-        <td align=center><sup>Toggle</sup></td>
-        <td align=center><sup>Clear</sup></td>
-        <td align=center><sup>Index</sup></td>
-        <td align=center><sup>Score</sup></td>
+        <td><sub>Library</sub></td>
+        <td align=center><sub>KB</sub></td>
+        <td align=center><sub>RAM</sub></td>
+        <td align=center><sub>Create</sub></td>
+        <td align=center><sub>Replace</sub></td>
+        <td align=center><sub>Update</sub></td>
+        <td align=center><sub>Order</sub></td>
+        <td align=center><sub>Repaint</sub></td>
+        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Remove</sub></td>
+        <td align=center><sub>Toggle</sub></td>
+        <td align=center><sub>Clear</sub></td>
+        <td align=center><sub>Index</sub></td>
+        <td align=center><sub>Score</sub></td>
     </tr>
     <tr>
         <td><sub>mikado</sub></td>
@@ -324,14 +324,14 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>18850</sub></td>
         <td align=right><sub>7611</sub></td>
         <td align=right><sub>38162</sub></td>
-        <td align=right><sub>12531</sub></td>
+        <td align=right><sub>27155</sub></td>
         <td align=right><sub>248338</sub></td>
         <td align=right><sub>32852</sub></td>
         <td align=right><sub>26501</sub></td>
         <td align=right><sub>33436</sub></td>
         <td align=right><sub>26448</sub></td>
         <td align=right><b><sub>999</sub></b></td>
-        <td align=right><b><sub>20731</sub></b></td>
+        <td align=right><b><sub>21597</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -347,7 +347,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>8159</sub></td>
         <td align=right><sub>1623</sub></td>
         <td align=right><sub>4729</sub></td>
-        <td align=right><b><sub>268</sub></b></td>
+        <td align=right><b><sub>247</sub></b></td>
         <td align=right><b><sub>3572</sub></b></td>
     </tr>
     <tr></tr>
@@ -364,7 +364,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>5929</sub></td>
         <td align=right><sub>2187</sub></td>
         <td align=right><sub>12255</sub></td>
-        <td align=right><b><sub>212</sub></b></td>
+        <td align=right><b><sub>196</sub></b></td>
         <td align=right><b><sub>1601</sub></b></td>
     </tr>
     <tr></tr>
@@ -381,7 +381,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6448</sub></td>
         <td align=right><sub>1921</sub></td>
         <td align=right><sub>10784</sub></td>
-        <td align=right><b><sub>207</sub></b></td>
+        <td align=right><b><sub>199</sub></b></td>
         <td align=right><b><sub>1501</sub></b></td>
     </tr>
     <tr></tr>
@@ -398,7 +398,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6145</sub></td>
         <td align=right><sub>1455</sub></td>
         <td align=right><sub>11965</sub></td>
-        <td align=right><b><sub>245</sub></b></td>
+        <td align=right><b><sub>239</sub></b></td>
         <td align=right><b><sub>1496</sub></b></td>
     </tr>
     <tr></tr>
@@ -432,7 +432,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2869</sub></td>
         <td align=right><sub>605</sub></td>
         <td align=right><sub>1693</sub></td>
-        <td align=right><b><sub>97</sub></b></td>
+        <td align=right><b><sub>90</sub></b></td>
         <td align=right><b><sub>977</sub></b></td>
     </tr>
     <tr>
@@ -448,7 +448,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1582</sub></td>
         <td align=right><sub>1128</sub></td>
         <td align=right><sub>26836</sub></td>
-        <td align=right><b><sub>166</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>916</sub></b></td>
     </tr>
     <tr>
@@ -464,7 +464,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1530</sub></td>
         <td align=right><sub>1074</sub></td>
         <td align=right><sub>23952</sub></td>
-        <td align=right><b><sub>173</sub></b></td>
+        <td align=right><b><sub>172</sub></b></td>
         <td align=right><b><sub>832</sub></b></td>
     </tr>
     <tr></tr>
@@ -498,7 +498,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1091</sub></td>
         <td align=right><sub>831</sub></td>
         <td align=right><sub>5370</sub></td>
-        <td align=right><b><sub>91</sub></b></td>
+        <td align=right><b><sub>90</sub></b></td>
         <td align=right><b><sub>573</sub></b></td>
     </tr>
     <tr></tr>
@@ -515,7 +515,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>122</sub></td>
         <td align=right><sub>97</sub></td>
         <td align=right><sub>1115</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
+        <td align=right><b><sub>48</sub></b></td>
         <td align=right><b><sub>147</sub></b></td>
     </tr>
 </table>
@@ -564,7 +564,7 @@ Instance methods:
 Instance methods (not included in mikado.light.js):
 - <a href="#view.refresh">view.__refresh__(\<node | index\>, \<payload\>)</a>
 - <a href="#view.sync">view.__sync__(\<uncache?\>)</a>
-- <a href="#view.purge">view.__purge__(\<template\>)</a>
+- <a href="#view.purge">view.__purge__()</a>
 - <a href="#view.find">view.__find__(data)</a>
 - <a href="#view.search">view.__search__(data)</a>
 - <a href="#view.where">view.__where__(payload)</a>
@@ -1569,10 +1569,12 @@ Purge all shared pools (factory pool and template pool):
 view.purge();
 ```
 
+<!--
 Purge shared pools from a specific template:
 ```js
 view.purge(template);
 ```
+-->
 
 <a name="helpers"></a>
 ### Useful Helpers
@@ -2587,6 +2589,7 @@ Clear shared pools of the current template:
 view.purge();
 ```
 
+<!--
 Clear shared pools of all templates:
 ```js
 Mikado.purge();
@@ -2596,6 +2599,7 @@ Clear shared pools of a specific template:
 ```js
 Mikado.purge(template);
 ```
+-->
 
 Clear cache:
 ```js

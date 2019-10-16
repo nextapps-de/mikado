@@ -6,6 +6,10 @@ if(SUPPORT_EVENTS){
     const listener = {};
     const body = document.body;
 
+    const has_touch = "ontouchstart" in window;
+    const has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
+    let tap_fallback;
+
     function handler(event, type){
 
         type || (type = event.type);
@@ -16,14 +20,17 @@ if(SUPPORT_EVENTS){
 
         if(!id){
 
-            while(target){
+            while(target !== body){
 
-                if(target === body){
+                if((type === "click") && tap_fallback){
 
-                    return;
+                    id = target.getAttribute("tap");
                 }
 
-                id = target.getAttribute(type);
+                if(!id){
+
+                    id = target.getAttribute(type);
+                }
 
                 if(id){
 
@@ -46,6 +53,14 @@ if(SUPPORT_EVENTS){
                             }
 
                             target = target.parentElement;
+                        }
+
+                        if(DEBUG){
+
+                            if(!id){
+
+                                console.warn("Event root '" + root + "' was not found for the event: '" + handler + "'.");
+                            }
                         }
                     }
 
@@ -77,7 +92,7 @@ if(SUPPORT_EVENTS){
         }
         else if(DEBUG){
 
-            console.warn("Route: '" + id + "', Event: '" + type + "' is undefined.");
+            console.warn("Missing route '" + id + "' for event '" + type + "'.");
         }
 
         event.stopPropagation();
@@ -89,17 +104,14 @@ if(SUPPORT_EVENTS){
         return this;
     };
 
-    // TODO: support pointer events for MSIE
-
-    let has_touch = ("ontouchstart" in window) || navigator["msMaxTouchPoints"];
     let touch_x, touch_y;
     let register_tap;
 
-    if(has_touch){
+    if(has_touch || has_pointer){
 
         function handler_down(event){
 
-            pointer(event, event.touches);
+            pointer(event, event["touches"]);
         }
 
         function handler_end(event){
@@ -107,12 +119,12 @@ if(SUPPORT_EVENTS){
             let last_x = touch_x;
             let last_y = touch_y;
 
-            pointer(event, event.changedTouches);
+            pointer(event, event["changedTouches"]);
 
             if((Math.abs(touch_x - last_x) < 50) &&
                (Math.abs(touch_y - last_y) < 50)){
 
-                handler.call(this, event, "click");
+                handler.call(this, event, "tap");
             }
         }
 
@@ -120,18 +132,18 @@ if(SUPPORT_EVENTS){
 
             if(touches){
 
-                touches = touches[0];
+                event = touches[0];
             }
 
-            touch_x = touches ? touches["clientX"] : event["pageX"];
-            touch_y = touches ? touches["clientY"] : event["pageY"];
+            touch_x = event["clientX"];
+            touch_y = event["clientY"];
         }
 
         register_tap = function(add_or_remove){
 
-            register_event(add_or_remove, "touchstart", handler_down, false);
+            register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, false);
             //register_event(add_or_remove, "touchmove", handler_move, false);
-            register_event(add_or_remove, "touchend", handler_end, false);
+            register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, false);
         };
     }
 
@@ -144,15 +156,7 @@ if(SUPPORT_EVENTS){
 
         if(!events[event]){
 
-            if(has_touch && (event === "tap")){
-
-                register_tap(1);
-            }
-            else{
-
-                register_event(1, event, handler, options || true);
-            }
-
+            register_event(1, event, handler, options || true);
             events[event] = 1;
         }
 
@@ -169,15 +173,7 @@ if(SUPPORT_EVENTS){
 
         if(events[event]){
 
-            if(has_touch && (event === "tap")){
-
-                register_tap(0);
-            }
-            else{
-
-                register_event(0, event, handler, options || true);
-            }
-
+            register_event(0, event, handler, options || true);
             events[event] = 0;
         }
 
@@ -192,6 +188,20 @@ if(SUPPORT_EVENTS){
      */
 
     function register_event(add_or_remove, type, handler, options){
+
+        if(type === "tap"){
+
+            if(has_touch || has_pointer){
+
+                register_tap(add_or_remove);
+                return;
+            }
+            else{
+
+                tap_fallback = true;
+                type = "click";
+            }
+        }
 
         window[(add_or_remove ? "add": "remove") + "EventListener"](
             type,
