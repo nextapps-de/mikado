@@ -481,14 +481,14 @@ Mikado.prototype.init = function(template, options){
 };
 
 /**
- * @param {!Element} root
- * @param {!Template|Object} template
+ * @param {Element} root
+ * @param {Template|Object} template
  * @param {Array<Object>|Object=} data
  * @param {Object|Function=} view
  * @param {Function=} callback
  */
 
-Mikado["once"] = function(root, template, data, view, callback){
+Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
     const tmp = Mikado.new(root, template);
 
@@ -837,6 +837,12 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
     // else{
 
         if(SUPPORT_STORAGE && !data){
+
+            if(this.static){
+
+                this.dom[0] || this.add();
+                return this;
+            }
 
             return this.refresh();
         }

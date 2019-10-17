@@ -3,7 +3,7 @@ import { generate } from "./data.js";
 export let suite = {};
 export const test = {};
 export const root = document.getElementById("root");
-const result = document.getElementById("result").appendChild(document.createTextNode(""));
+const result = document.getElementById("result").appendChild(document.createTextNode("running..."));
 let items = generate(3);
 let pos = -1;
 export const queue = [];
@@ -410,16 +410,16 @@ function perform(){
 
     if(!warmup){
 
+        current++;
+
         if(window === window.top){
 
-            result.nodeValue = str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n";
+            result.nodeValue = (str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n") + (current < queue.length ? "running..." : "");
         }
         else{
 
             window.top.postMessage(test.name + "," + Math.floor(1000 / duration * loops) + "," + Math.floor(memory / loops), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
-
-        current++;
     }
 
     if(current < queue.length){

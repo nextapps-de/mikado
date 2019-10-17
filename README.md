@@ -1,4 +1,4 @@
-<h1><p><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"></p></h1>
+<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
 <h3>Web's fastest templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed and non-keyed paradigm switchable out of the box. Let's start building the next generation of high performance applications.
@@ -299,6 +299,8 @@ Sources and readme:<br>
 
 Values represents operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except file size (minified/gzip) and memory (sum of allocation during the whole test).
 
+#### Keyed
+
 <table>
     <tr></tr>
     <tr>
@@ -320,203 +322,203 @@ Values represents operations per second, each benchmark task has to process a da
     <tr>
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>38</sub></td>
-        <td align=right><sub>18850</sub></td>
-        <td align=right><sub>7611</sub></td>
-        <td align=right><sub>38162</sub></td>
-        <td align=right><sub>27155</sub></td>
-        <td align=right><sub>248338</sub></td>
-        <td align=right><sub>32852</sub></td>
-        <td align=right><sub>26501</sub></td>
-        <td align=right><sub>33436</sub></td>
-        <td align=right><sub>26448</sub></td>
-        <td align=right><b><sub>999</sub></b></td>
-        <td align=right><b><sub>21597</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>lit-html</sub></td>
-        <td align=right><sub>17.3</sub></td>
-        <td align=right><sub>370</sub></td>
-        <td align=right><sub>437</sub></td>
-        <td align=right><sub>3782</sub></td>
-        <td align=right><sub>19920</sub></td>
-        <td align=right><sub>5954</sub></td>
-        <td align=right><sub>42887</sub></td>
-        <td align=right><sub>904</sub></td>
-        <td align=right><sub>8159</sub></td>
-        <td align=right><sub>1623</sub></td>
-        <td align=right><sub>4729</sub></td>
-        <td align=right><b><sub>247</sub></b></td>
-        <td align=right><b><sub>3572</sub></b></td>
+        <td align=right><sub>31</sub></td>
+        <td align=right><sub>18049</sub></td>
+        <td align=right><sub>7818</sub></td>
+        <td align=right><sub>38784</sub></td>
+        <td align=right><sub>28248</sub></td>
+        <td align=right><sub>231732</sub></td>
+        <td align=right><sub>31932</sub></td>
+        <td align=right><sub>26697</sub></td>
+        <td align=right><sub>29195</sub></td>
+        <td align=right><sub>24488</sub></td>
+        <td align=right><b><sub>991</sub></b></td>
+        <td align=right><b><sub>44951</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>inferno</sub></td>
         <td align=right><sub>8.4</sub></td>
-        <td align=right><sub>325</sub></td>
-        <td align=right><sub>728</sub></td>
-        <td align=right><sub>667</sub></td>
-        <td align=right><sub>4781</sub></td>
-        <td align=right><sub>4777</sub></td>
-        <td align=right><sub>5743</sub></td>
-        <td align=right><sub>1297</sub></td>
-        <td align=right><sub>5929</sub></td>
-        <td align=right><sub>2187</sub></td>
-        <td align=right><sub>12255</sub></td>
-        <td align=right><b><sub>196</sub></b></td>
-        <td align=right><b><sub>1601</sub></b></td>
+        <td align=right><sub>327</sub></td>
+        <td align=right><sub>737</sub></td>
+        <td align=right><sub>685</sub></td>
+        <td align=right><sub>4914</sub></td>
+        <td align=right><sub>4831</sub></td>
+        <td align=right><sub>5717</sub></td>
+        <td align=right><sub>1278</sub></td>
+        <td align=right><sub>5995</sub></td>
+        <td align=right><sub>2219</sub></td>
+        <td align=right><sub>14308</sub></td>
+        <td align=right><b><sub>200</sub></b></td>
+        <td align=right><b><sub>2911</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>mithril</sub></td>
         <td align=right><sub>9.6</sub></td>
-        <td align=right><sub>242</sub></td>
-        <td align=right><sub>627</sub></td>
-        <td align=right><sub>2032</sub></td>
-        <td align=right><sub>4048</sub></td>
-        <td align=right><sub>2622</sub></td>
-        <td align=right><sub>4738</sub></td>
-        <td align=right><sub>1101</sub></td>
-        <td align=right><sub>6448</sub></td>
-        <td align=right><sub>1921</sub></td>
-        <td align=right><sub>10784</sub></td>
-        <td align=right><b><sub>199</sub></b></td>
-        <td align=right><b><sub>1501</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>337</sub></td>
-        <td align=right><sub>431</sub></td>
-        <td align=right><sub>2342</sub></td>
-        <td align=right><sub>4156</sub></td>
-        <td align=right><sub>2774</sub></td>
-        <td align=right><sub>4449</sub></td>
-        <td align=right><sub>793</sub></td>
-        <td align=right><sub>6145</sub></td>
-        <td align=right><sub>1455</sub></td>
-        <td align=right><sub>11965</sub></td>
-        <td align=right><b><sub>239</sub></b></td>
-        <td align=right><b><sub>1496</sub></b></td>
+        <td align=right><sub>230</sub></td>
+        <td align=right><sub>646</sub></td>
+        <td align=right><sub>632</sub></td>
+        <td align=right><sub>3974</sub></td>
+        <td align=right><sub>4144</sub></td>
+        <td align=right><sub>4856</sub></td>
+        <td align=right><sub>1207</sub></td>
+        <td align=right><sub>6599</sub></td>
+        <td align=right><sub>2013</sub></td>
+        <td align=right><sub>12152</sub></td>
+        <td align=right><b><sub>190</sub></b></td>
+        <td align=right><b><sub>2631</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>domc</sub></td>
         <td align=right><sub>4.5</sub></td>
-        <td align=right><sub>393</sub></td>
-        <td align=right><sub>1154</sub></td>
-        <td align=right><sub>1101</sub></td>
-        <td align=right><sub>1115</sub></td>
-        <td align=right><sub>1096</sub></td>
-        <td align=right><sub>1087</sub></td>
-        <td align=right><sub>1129</sub></td>
-        <td align=right><sub>2005</sub></td>
-        <td align=right><sub>1460</sub></td>
-        <td align=right><sub>26123</sub></td>
-        <td align=right><b><sub>228</sub></b></td>
-        <td align=right><b><sub>1103</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>ractive</sub></td>
-        <td align=right><sub>68.2</sub></td>
-        <td align=right><sub>1405</sub></td>
-        <td align=right><sub>165</sub></td>
-        <td align=right><sub>1359</sub></td>
-        <td align=right><sub>5099</sub></td>
-        <td align=right><sub>1940</sub></td>
-        <td align=right><sub>7836</sub></td>
-        <td align=right><sub>334</sub></td>
-        <td align=right><sub>2869</sub></td>
-        <td align=right><sub>605</sub></td>
-        <td align=right><sub>1693</sub></td>
-        <td align=right><b><sub>90</sub></b></td>
-        <td align=right><b><sub>977</sub></b></td>
+        <td align=right><sub>429</sub></td>
+        <td align=right><sub>1107</sub></td>
+        <td align=right><sub>1037</sub></td>
+        <td align=right><sub>1036</sub></td>
+        <td align=right><sub>1040</sub></td>
+        <td align=right><sub>1062</sub></td>
+        <td align=right><sub>1134</sub></td>
+        <td align=right><sub>1916</sub></td>
+        <td align=right><sub>1437</sub></td>
+        <td align=right><sub>24521</sub></td>
+        <td align=right><b><sub>217</sub></b></td>
+        <td align=right><b><sub>1389</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
         <td align=right><sub>0</sub></td>
-        <td align=right><sub>545</sub></td>
-        <td align=right><sub>1003</sub></td>
-        <td align=right><sub>970</sub></td>
-        <td align=right><sub>857</sub></td>
-        <td align=right><sub>844</sub></td>
-        <td align=right><sub>849</sub></td>
-        <td align=right><sub>880</sub></td>
-        <td align=right><sub>1582</sub></td>
-        <td align=right><sub>1128</sub></td>
-        <td align=right><sub>26836</sub></td>
-        <td align=right><b><sub>162</sub></b></td>
-        <td align=right><b><sub>916</sub></b></td>
+        <td align=right><sub>538</sub></td>
+        <td align=right><sub>1022</sub></td>
+        <td align=right><sub>985</sub></td>
+        <td align=right><sub>867</sub></td>
+        <td align=right><sub>855</sub></td>
+        <td align=right><sub>860</sub></td>
+        <td align=right><sub>881</sub></td>
+        <td align=right><sub>1632</sub></td>
+        <td align=right><sub>1145</sub></td>
+        <td align=right><sub>27099</sub></td>
+        <td align=right><b><sub>146</sub></b></td>
+        <td align=right><b><sub>1225</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
         <td align=right><sub>15.8</sub></td>
         <td align=right><sub>563</sub></td>
-        <td align=right><sub>906</sub></td>
-        <td align=right><sub>779</sub></td>
-        <td align=right><sub>782</sub></td>
-        <td align=right><sub>791</sub></td>
-        <td align=right><sub>787</sub></td>
+        <td align=right><sub>959</sub></td>
         <td align=right><sub>824</sub></td>
-        <td align=right><sub>1530</sub></td>
-        <td align=right><sub>1074</sub></td>
-        <td align=right><sub>23952</sub></td>
+        <td align=right><sub>828</sub></td>
+        <td align=right><sub>832</sub></td>
+        <td align=right><sub>825</sub></td>
+        <td align=right><sub>890</sub></td>
+        <td align=right><sub>1548</sub></td>
+        <td align=right><sub>1131</sub></td>
+        <td align=right><sub>24360</sub></td>
         <td align=right><b><sub>172</sub></b></td>
-        <td align=right><b><sub>832</sub></b></td>
+        <td align=right><b><sub>1118</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>sinuous</sub></td>
         <td align=right><sub>7.5</sub></td>
-        <td align=right><sub>662</sub></td>
-        <td align=right><sub>833</sub></td>
-        <td align=right><sub>796</sub></td>
-        <td align=right><sub>759</sub></td>
-        <td align=right><sub>778</sub></td>
-        <td align=right><sub>775</sub></td>
-        <td align=right><sub>787</sub></td>
-        <td align=right><sub>1422</sub></td>
-        <td align=right><sub>1043</sub></td>
-        <td align=right><sub>16578</sub></td>
-        <td align=right><b><sub>162</sub></b></td>
-        <td align=right><b><sub>783</sub></b></td>
+        <td align=right><sub>674</sub></td>
+        <td align=right><sub>835</sub></td>
+        <td align=right><sub>803</sub></td>
+        <td align=right><sub>820</sub></td>
+        <td align=right><sub>803</sub></td>
+        <td align=right><sub>792</sub></td>
+        <td align=right><sub>783</sub></td>
+        <td align=right><sub>1435</sub></td>
+        <td align=right><sub>1041</sub></td>
+        <td align=right><sub>17636</sub></td>
+        <td align=right><b><sub>163</sub></b></td>
+        <td align=right><b><sub>1045</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>jquery</sub></td>
         <td align=right><sub>31.3</sub></td>
-        <td align=right><sub>684</sub></td>
-        <td align=right><sub>784</sub></td>
-        <td align=right><sub>693</sub></td>
-        <td align=right><sub>628</sub></td>
-        <td align=right><sub>628</sub></td>
-        <td align=right><sub>626</sub></td>
-        <td align=right><sub>675</sub></td>
-        <td align=right><sub>1091</sub></td>
-        <td align=right><sub>831</sub></td>
-        <td align=right><sub>5370</sub></td>
-        <td align=right><b><sub>90</sub></b></td>
-        <td align=right><b><sub>573</sub></b></td>
+        <td align=right><sub>668</sub></td>
+        <td align=right><sub>796</sub></td>
+        <td align=right><sub>698</sub></td>
+        <td align=right><sub>634</sub></td>
+        <td align=right><sub>634</sub></td>
+        <td align=right><sub>633</sub></td>
+        <td align=right><sub>680</sub></td>
+        <td align=right><sub>1089</sub></td>
+        <td align=right><sub>834</sub></td>
+        <td align=right><sub>5495</sub></td>
+        <td align=right><b><sub>89</sub></b></td>
+        <td align=right><b><sub>784</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align=right><sub>2.9</sub></td>
+        <td align=right><sub>1096</sub></td>
+        <td align=right><sub>443</sub></td>
+        <td align=right><sub>438</sub></td>
+        <td align=right><sub>439</sub></td>
+        <td align=right><sub>436</sub></td>
+        <td align=right><sub>440</sub></td>
+        <td align=right><sub>450</sub></td>
+        <td align=right><sub>806</sub></td>
+        <td align=right><sub>589</sub></td>
+        <td align=right><sub>11869</sub></td>
+        <td align=right><b><sub>160</sub></b></td>
+        <td align=right><b><sub>720</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>lit-html</sub></td>
+        <td align=right><sub>17.3</sub></td>
+        <td align=right><sub>1336</sub></td>
+        <td align=right><sub>440</sub></td>
+        <td align=right><sub>407</sub></td>
+        <td align=right><sub>407</sub></td>
+        <td align=right><sub>405</sub></td>
+        <td align=right><sub>406</sub></td>
+        <td align=right><sub>429</sub></td>
+        <td align=right><sub>710</sub></td>
+        <td align=right><sub>541</sub></td>
+        <td align=right><sub>4593</sub></td>
+        <td align=right><b><sub>80</sub></b></td>
+        <td align=right><b><sub>538</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>ractive</sub></td>
+        <td align=right><sub>68.2</sub></td>
+        <td align=right><sub>4708</sub></td>
+        <td align=right><sub>162</sub></td>
+        <td align=right><sub>154</sub></td>
+        <td align=right><sub>155</sub></td>
+        <td align=right><sub>155</sub></td>
+        <td align=right><sub>155</sub></td>
+        <td align=right><sub>161</sub></td>
+        <td align=right><sub>297</sub></td>
+        <td align=right><sub>207</sub></td>
+        <td align=right><sub>1797</sub></td>
+        <td align=right><b><sub>37</sub></b></td>
+        <td align=right><b><sub>224</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>knockout</sub></td>
         <td align=right><sub>24.8</sub></td>
-        <td align=right><sub>2676</sub></td>
-        <td align=right><sub>86</sub></td>
+        <td align=right><sub>3247</sub></td>
+        <td align=right><sub>87</sub></td>
+        <td align=right><sub>63</sub></td>
         <td align=right><sub>64</sub></td>
-        <td align=right><sub>65</sub></td>
-        <td align=right><sub>65</sub></td>
-        <td align=right><sub>65</sub></td>
-        <td align=right><sub>80</sub></td>
-        <td align=right><sub>122</sub></td>
-        <td align=right><sub>97</sub></td>
-        <td align=right><sub>1115</sub></td>
-        <td align=right><b><sub>48</sub></b></td>
-        <td align=right><b><sub>147</sub></b></td>
+        <td align=right><sub>64</sub></td>
+        <td align=right><sub>64</sub></td>
+        <td align=right><sub>78</sub></td>
+        <td align=right><sub>120</sub></td>
+        <td align=right><sub>96</sub></td>
+        <td align=right><sub>1114</sub></td>
+        <td align=right><b><sub>46</sub></b></td>
+        <td align=right><b><sub>168</sub></b></td>
     </tr>
 </table>
 

@@ -10,9 +10,9 @@
     const internal = window.location.search.indexOf("internal") !== -1;
     const keyed = window.location.search.indexOf("keyed") !== -1;
 
-    if(keyed || strict || modes){
+    if(keyed || strict || modes || internal){
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : "Modes") + (internal ? ", Data-Driven" : "") + ")"
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : "Non-Keyed") + (internal ? ", Data-Driven" : "") + ")"
     }
 
     if(modes){
