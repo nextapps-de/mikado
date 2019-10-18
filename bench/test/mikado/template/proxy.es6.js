@@ -44,6 +44,8 @@ export default {
     ],
     "s": "padding-right: 10px;"
   },
+  "k": "id",
+  "d": false,
   "n": "proxy",
   "v": "0.0.4"
 };

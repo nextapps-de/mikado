@@ -1,3 +1,9 @@
+## 0.6.6
+`new` support callbacks<br>
+`improve` support PointerEvents for the synthetic tap listener<br>
+`improve` improve data-driven concept<br>
+`new` add new "stealth" mode when proxy is used for all template expressions<br>
+
 ## 0.6.2
 `new` option ___keep___ to force Mikado to run in exclusive keyed-shared mode<br>
 `new` option ___size___ to limit the pool size<br>

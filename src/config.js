@@ -74,6 +74,12 @@ const SUPPORT_POOLS = true;
  * @define {boolean}
  */
 
+const SUPPORT_CALLBACKS = true;
+
+/**
+ * @define {boolean}
+ */
+
 const SUPPORT_COMPILE = true;
 
 /**

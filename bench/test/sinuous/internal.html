@@ -3,7 +3,7 @@
     <title>sinuous</title>
 </head>
 <body>
-<h1>Benchmark: sinuous-0.14.2 (strict)</h1><hr>
+<h1>Benchmark: sinuous-0.14.2 (data-driven)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script type="module">
@@ -37,11 +37,6 @@
     root.appendChild(App());
 
     suite["sinuous"] = function(items){
-
-        if(items.length) {
-
-            data(null);
-        }
 
         data(items);
     };

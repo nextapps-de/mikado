@@ -3,7 +3,7 @@
     <title>surplus</title>
 </head>
 <body>
-<h1>Benchmark: surplus-0.5.3 (strict)</h1><hr>
+<h1>Benchmark: surplus-0.5.3 (data-driven)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script src="https://rawgit.com/adamhaile/S/master/dist/S.js"></script>
@@ -48,11 +48,6 @@
     root.appendChild(view);
 
     suite["surplus"] = function(items){
-
-        if(items.length){
-
-            todos([]);
-        }
 
         todos(items);
     };

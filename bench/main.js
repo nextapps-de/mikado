@@ -3,36 +3,85 @@
     "use strict";
 
     const iframe = document.getElementById("iframe");
-    const result = document.getElementById("result");
-    const mikado = Mikado.new(result, "row", { cache: false, store: false, pool: false });
-    const strict = window.location.search.indexOf("strict") !== -1;
-    const modes = window.location.search.indexOf("modes") !== -1;
-    const internal = window.location.search.indexOf("internal") !== -1;
-    const keyed = window.location.search.indexOf("keyed") !== -1;
+    const options = { cache: false, store: false, pool: false };
+    const mikado = Mikado.new(document.getElementById("result"), "row", options);
+    const list = Mikado.new(document.getElementById("lib"), "lib", options);
 
-    if(keyed || strict || modes || internal){
-
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : "Non-Keyed") + (internal ? ", Data-Driven" : "") + ")"
-    }
-
-    if(modes){
-
-        document.body.className = "modes";
-    }
+    let strict;
+    let modes = window.location.hash.indexOf("modes") !== -1;
+    let internal;
+    let keyed;
+    let duration = 3;
+    let hidden = 1;
 
     const lib = shuffle(modes ? [
 
-        "mikado-cross-shared", "mikado-exclusive",
-        "mikado-keyed", "mikado-keyed-shared", "mikado-non-keyed"
-    ]:[
-        //"1", "2", "3", "4", "5", "6",
+        "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
+        "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy"
+    ]:[//"1", "2", "3", "4", "5", "6",
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
         "knockout", "lit-html", "ractive"
     ]);
 
-    Mikado.once(document.getElementById("lib"), "lib", lib, {"mode": (keyed ? "keyed.html" : strict ? "strict.html" : "") + (internal ? "?internal" : "")});
+    function init(hash){
+
+        strict = hash.indexOf("strict") !== -1;
+        //modes = hash.indexOf("modes") !== -1;
+        internal = hash.indexOf("internal") !== -1;
+        keyed = hash.indexOf("keyed") !== -1;
+
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : internal ? "Data-Driven" : "Non-Keyed") + ")"
+
+        if(modes){
+
+            document.body.className = "modes";
+        }
+
+        list.render(lib, {"mode": (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "")});
+    }
+
+    init(window.location.hash);
+
+    let index = -1;
+
+    document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
+
+    if(modes){
+
+        document.getElementById("mode").hidden = true;
+    }
+
+    Mikado.route("start", function(target){
+
+        if(target.value === "Start"){
+
+            index = -1;
+            target.value = "Stop";
+            setTimeout(runner, 100);
+        }
+        else{
+
+            current[index][test[2]] = "";
+            target.value = "Start";
+            iframe.src = "";
+            index = lib.length;
+        }
+
+    }).route("mode", function(target){
+
+        init(window.location.hash = "#" + target.value);
+
+    }).route("duration", function(target){
+
+        duration = target.value;
+
+    }).route("hide", function(target){
+
+        iframe.hidden = hidden = target.checked;
+
+    }).listen("click").listen("change");
 
     const test = [
 
@@ -43,7 +92,6 @@
     ];
 
     let current = new Array(lib.length);
-    let index = -1;
 
     let size = {
 
@@ -64,7 +112,8 @@
         "mikado-exclusive": 2.8,
         "mikado-keyed": 2.8,
         "mikado-keyed-shared": 2.8,
-        "mikado-non-keyed": 2.8
+        "mikado-non-keyed": 2.8,
+        "mikado-proxy": 6.9
         //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
     };
 
@@ -109,7 +158,7 @@
         index++;
         current[index][test[2]] = "run...";
         mikado.update(mikado.node(index), current[index]);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : (strict ? "strict.html" : "")) + (internal ? "?internal" : "");
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration + "&hidden=" + hidden);
     }
 
     function get_score(){
@@ -216,36 +265,39 @@
 
     window.onmessage = function(event){
 
-        if(event.origin === location.protocol + "//" + location.hostname) { // "https://nextapps-de.github.io" "https://raw.githack.com"
+        if(index < lib.length){
 
-            const parts = event.data.split(",");
+            if(event.origin === location.protocol + "//" + location.hostname){ // "https://nextapps-de.github.io" "https://raw.githack.com"
 
-            current[index][parts[0]] = parseInt(parts[1], 10);
-            current[index]["memory"] += parseInt(parts[2], 10);
-            mikado.update(mikado.node(index), current[index]);
+                const parts = event.data.split(",");
 
-            if(parts[0] === "clear"){
+                current[index][parts[0]] = parseInt(parts[1], 10);
+                current[index]["memory"] += parseInt(parts[2], 10);
+                mikado.update(mikado.node(index), current[index]);
 
-                if(index < lib.length - 1){
+                if(parts[0] === "clear"){
 
-                    setTimeout(runner, 200);
+                    if(index < lib.length - 1){
+
+                        setTimeout(runner, 200);
+                    }
+                    else{
+
+                        get_score();
+
+                        current.sort(function(a, b){
+
+                            return b["score"] - a["score"];
+                        });
+
+                        mikado.render(current);
+                    }
                 }
                 else{
 
-                    get_score();
-
-                    current.sort(function(a, b){
-
-                        return b["score"] - a["score"];
-                    });
-
-                    mikado.render(current);
+                    current[index][test[test.indexOf(parts[0]) + 1]] = "run...";
+                    mikado.update(mikado.node(index), current[index]);
                 }
-            }
-            else{
-
-                current[index][test[test.indexOf(parts[0]) + 1]] = "run...";
-                mikado.update(mikado.node(index), current[index]);
             }
         }
     };
@@ -296,5 +348,4 @@
         return sum / length;
     }
 
-    setTimeout(runner, 200);
 }());

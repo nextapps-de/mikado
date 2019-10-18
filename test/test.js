@@ -884,7 +884,7 @@ describe("Store", function(){
 
         // clear root
         mikado.clear();
-        mikado.render();
+        mikado.render(store);
         expect(store[0]).to.equal(tmp);
         expect(mikado.store.length).to.equal(store.length);
         validate(mikado.dom[0], data[0]);
@@ -892,14 +892,14 @@ describe("Store", function(){
 
         // clear store
         store.splice(0);
-        mikado.render();
+        mikado.render(store);
         expect(mikado.length).to.equal(0);
         expect(mikado.dom.length).to.equal(0);
         expect(mikado.store.length).to.equal(0);
 
         // assign new store
         mikado.store = store = data.slice(0);
-        mikado.render();
+        mikado.render(store);
         expect(mikado.store).to.equal(store);
         expect(mikado.length).to.equal(store.length);
         expect(mikado.dom.length).to.equal(store.length);
@@ -1970,6 +1970,63 @@ describe("Proxy", function(){
 
         expect(root_1.children[0].dataset.id).to.equal("bar");
         expect(root_1.children[1].dataset.id).to.equal("foo");
+
+        mikado.clear();
+    });
+});
+
+describe("Callbacks", function(){
+
+    it("Should have been called hooks properly", function(){
+
+        var count_create = 0;
+        var count_insert = 0;
+        var count_update = 0;
+        var count_change = 0;
+        var count_remove = 0;
+
+        var mikado = new Mikado(root_1, "template", {
+            on: {
+                create: function(node){ count_create++; },
+                insert: function(node){ count_insert++; },
+                update: function(node){ count_update++; },
+                change: function(node){ count_change++; },
+                remove: function(node){ count_remove++; },
+            }
+        });
+
+        var items = data.slice(0);
+        mikado.render(items);
+
+        expect(count_create).to.equal(items.length);
+        expect(count_insert).to.equal(items.length);
+        expect(count_update).to.equal(0);
+        expect(count_change).to.equal(0);
+        expect(count_remove).to.equal(0);
+
+        mikado.refresh();
+
+        expect(count_create).to.equal(items.length);
+        expect(count_insert).to.equal(items.length);
+        expect(count_update).to.equal(0);
+        expect(count_change).to.equal(items.length);
+        expect(count_remove).to.equal(0);
+
+        mikado.render(items);
+
+        expect(count_create).to.equal(items.length);
+        expect(count_insert).to.equal(items.length);
+        expect(count_update).to.equal(items.length);
+        expect(count_change).to.equal(items.length * 2);
+        expect(count_remove).to.equal(0);
+
+        mikado.clear();
+
+        expect(count_create).to.equal(items.length);
+        expect(count_insert).to.equal(items.length);
+        expect(count_update).to.equal(items.length);
+        expect(count_change).to.equal(items.length * 2);
+        expect(count_remove).to.equal(items.length);
     });
 });
 

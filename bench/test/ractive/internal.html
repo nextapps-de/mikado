@@ -3,7 +3,7 @@
     <title>ractive</title>
 </head>
 <body>
-<h1>Benchmark: ractive-1.4.0 (non-keyed)</h1><hr>
+<h1>Benchmark: ractive-1.4.0 (data-driven)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script id="template" type="text/ractive">
@@ -33,6 +33,12 @@
     });
 
     suite["ractive"] = function(items){
+
+        if(items.length){
+
+            ractive.set("items", []);
+            ractive.update("items");
+        }
 
         ractive.set("items", items);
         ractive.update("items");

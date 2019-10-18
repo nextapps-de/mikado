@@ -84,21 +84,24 @@ __Demo:__
     - <a href="#extern">Extern/Custom Store</a>
     - <a href="#export">Export / Import Views</a>
 16. <a href="#view.state">State</a>
-17. <a href="#load">Transport / Load Templates</a>
-18. <a href="#static">Static Templates</a>
+17. <a href="#callbacks">Callbacks</a>
+18. <a href="#load">Transport / Load Templates</a>
+19. <a href="#static">Static Templates</a>
     - <a href="#mikado.once">Once (One-time rendering)</a>
-19. <a href="#compiler-service">Compiler Service / Live Templates</a>
+20. <a href="#compiler-service">Compiler Service / Live Templates</a>
     - <a href="#localdev">Local Development</a>
-20. Template Features:
+21. Template Features:
     - <a href="#includes">Includes</a>
     - <a href="#loop-partials">Loop Partials</a>
     - <a href="#inline-loops">Inline Loops</a>
     - <a href="#conditional">Conditional Branches</a>
-21. <a href="#proxy">Reactive Proxy (Observer)</a>
-22. <a href="#best-practices">Best Practices</a>
-23. <a href="#memory">Memory Optimizations</a>
-24. <a href="#concept">Concept of Shared Pools</a>
-25. <a href="#builds">Custom Builds</a>
+22. <a href="#proxy">Reactive Proxy (Observer)</a>
+    - <a href="#limitations">Limitations</a>
+    - <a href="#stealth">Stealth Mode</a>
+23. <a href="#best-practices">Best Practices</a>
+24. <a href="#memory">Memory Optimizations</a>
+25. <a href="#concept">Concept of Shared Pools</a>
+26. <a href="#builds">Custom Builds</a>
 
 <!--
 TODO: it gets conflict when mixing external loading with imports (or load via script tag).
@@ -106,7 +109,9 @@ TODO: it gets conflict when mixing external loading with imports (or load via sc
 -->
 
 <a name="get-latest"></a>
-#### Get Latest:
+#### Get Latest
+
+Choose one of these bundles:
 
 <table>
     <tr></tr>
@@ -128,13 +133,27 @@ TODO: it gets conflict when mixing external loading with imports (or load via sc
     </tr>
     <tr></tr>
     <tr>
+        <td>mikado.es5.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.es5.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.es5.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.es5.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.debug.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td>mikado.custom.js</td>
         <td><a href="#builds">Custom Build</a></td>
         <td></td>
     </tr>
 </table>
 
-> __Recommended:__ To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.3.1/`, or also a commit hash.
+> __Recommended:__ To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.6.6/`, or also a commit hash.
+
+The es5 version has all features included. The debug version also but additionally provide debugging information through the console.
 
 #### Node.js
 
@@ -289,10 +308,10 @@ Run the benchmark (non-keyed):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
 
 Run the benchmark (keyed):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/?keyed</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed</a><br>
 
 Run the benchmark (internal/data-driven):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/?internal">https://raw.githack.com/nextapps-de/mikado/master/bench/?internal</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#internal">https://raw.githack.com/nextapps-de/mikado/master/bench/#internal</a><br>
 
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
@@ -322,209 +341,209 @@ Values represents operations per second, each benchmark task has to process a da
     <tr>
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>31</sub></td>
+        <td align=right><sub>26</sub></td>
         <td align=right><sub>18049</sub></td>
-        <td align=right><sub>7818</sub></td>
-        <td align=right><sub>38784</sub></td>
-        <td align=right><sub>28248</sub></td>
-        <td align=right><sub>231732</sub></td>
-        <td align=right><sub>31932</sub></td>
+        <td align=right><sub>7988</sub></td>
+        <td align=right><sub>233959</sub></td>
+        <td align=right><sub>28262</sub></td>
+        <td align=right><sub>241864</sub></td>
+        <td align=right><sub>32552</sub></td>
         <td align=right><sub>26697</sub></td>
-        <td align=right><sub>29195</sub></td>
-        <td align=right><sub>24488</sub></td>
-        <td align=right><b><sub>991</sub></b></td>
-        <td align=right><b><sub>44951</sub></b></td>
+        <td align=right><sub>29532</sub></td>
+        <td align=right><sub>24919</sub></td>
+        <td align=right><b><sub>996</sub></b></td>
+        <td align=right><b><sub>69307</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>inferno</sub></td>
         <td align=right><sub>8.4</sub></td>
-        <td align=right><sub>327</sub></td>
-        <td align=right><sub>737</sub></td>
-        <td align=right><sub>685</sub></td>
-        <td align=right><sub>4914</sub></td>
-        <td align=right><sub>4831</sub></td>
-        <td align=right><sub>5717</sub></td>
-        <td align=right><sub>1278</sub></td>
-        <td align=right><sub>5995</sub></td>
-        <td align=right><sub>2219</sub></td>
-        <td align=right><sub>14308</sub></td>
-        <td align=right><b><sub>200</sub></b></td>
-        <td align=right><b><sub>2911</sub></b></td>
+        <td align=right><sub>359</sub></td>
+        <td align=right><sub>755</sub></td>
+        <td align=right><sub>701</sub></td>
+        <td align=right><sub>5701</sub></td>
+        <td align=right><sub>3974</sub></td>
+        <td align=right><sub>5760</sub></td>
+        <td align=right><sub>1320</sub></td>
+        <td align=right><sub>5538</sub></td>
+        <td align=right><sub>2271</sub></td>
+        <td align=right><sub>12608</sub></td>
+        <td align=right><b><sub>180</sub></b></td>
+        <td align=right><b><sub>2931</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>mithril</sub></td>
         <td align=right><sub>9.6</sub></td>
-        <td align=right><sub>230</sub></td>
-        <td align=right><sub>646</sub></td>
-        <td align=right><sub>632</sub></td>
-        <td align=right><sub>3974</sub></td>
-        <td align=right><sub>4144</sub></td>
-        <td align=right><sub>4856</sub></td>
-        <td align=right><sub>1207</sub></td>
-        <td align=right><sub>6599</sub></td>
-        <td align=right><sub>2013</sub></td>
-        <td align=right><sub>12152</sub></td>
-        <td align=right><b><sub>190</sub></b></td>
-        <td align=right><b><sub>2631</sub></b></td>
+        <td align=right><sub>294</sub></td>
+        <td align=right><sub>620</sub></td>
+        <td align=right><sub>603</sub></td>
+        <td align=right><sub>4674</sub></td>
+        <td align=right><sub>3245</sub></td>
+        <td align=right><sub>4774</sub></td>
+        <td align=right><sub>1121</sub></td>
+        <td align=right><sub>6501</sub></td>
+        <td align=right><sub>1945</sub></td>
+        <td align=right><sub>11691</sub></td>
+        <td align=right><b><sub>172</sub></b></td>
+        <td align=right><b><sub>2596</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>domc</sub></td>
         <td align=right><sub>4.5</sub></td>
-        <td align=right><sub>429</sub></td>
-        <td align=right><sub>1107</sub></td>
-        <td align=right><sub>1037</sub></td>
-        <td align=right><sub>1036</sub></td>
-        <td align=right><sub>1040</sub></td>
-        <td align=right><sub>1062</sub></td>
-        <td align=right><sub>1134</sub></td>
-        <td align=right><sub>1916</sub></td>
-        <td align=right><sub>1437</sub></td>
-        <td align=right><sub>24521</sub></td>
-        <td align=right><b><sub>217</sub></b></td>
-        <td align=right><b><sub>1389</sub></b></td>
+        <td align=right><sub>425</sub></td>
+        <td align=right><sub>1108</sub></td>
+        <td align=right><sub>1032</sub></td>
+        <td align=right><sub>1019</sub></td>
+        <td align=right><sub>1028</sub></td>
+        <td align=right><sub>1084</sub></td>
+        <td align=right><sub>1105</sub></td>
+        <td align=right><sub>1986</sub></td>
+        <td align=right><sub>1424</sub></td>
+        <td align=right><sub>23500</sub></td>
+        <td align=right><b><sub>212</sub></b></td>
+        <td align=right><b><sub>1403</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
         <td align=right><sub>0</sub></td>
-        <td align=right><sub>538</sub></td>
-        <td align=right><sub>1022</sub></td>
-        <td align=right><sub>985</sub></td>
-        <td align=right><sub>867</sub></td>
-        <td align=right><sub>855</sub></td>
-        <td align=right><sub>860</sub></td>
-        <td align=right><sub>881</sub></td>
-        <td align=right><sub>1632</sub></td>
-        <td align=right><sub>1145</sub></td>
-        <td align=right><sub>27099</sub></td>
-        <td align=right><b><sub>146</sub></b></td>
-        <td align=right><b><sub>1225</sub></b></td>
+        <td align=right><sub>547</sub></td>
+        <td align=right><sub>1001</sub></td>
+        <td align=right><sub>958</sub></td>
+        <td align=right><sub>954</sub></td>
+        <td align=right><sub>837</sub></td>
+        <td align=right><sub>843</sub></td>
+        <td align=right><sub>888</sub></td>
+        <td align=right><sub>1649</sub></td>
+        <td align=right><sub>1126</sub></td>
+        <td align=right><sub>26081</sub></td>
+        <td align=right><b><sub>156</sub></b></td>
+        <td align=right><b><sub>1240</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
         <td align=right><sub>15.8</sub></td>
-        <td align=right><sub>563</sub></td>
-        <td align=right><sub>959</sub></td>
-        <td align=right><sub>824</sub></td>
-        <td align=right><sub>828</sub></td>
-        <td align=right><sub>832</sub></td>
-        <td align=right><sub>825</sub></td>
-        <td align=right><sub>890</sub></td>
-        <td align=right><sub>1548</sub></td>
-        <td align=right><sub>1131</sub></td>
-        <td align=right><sub>24360</sub></td>
-        <td align=right><b><sub>172</sub></b></td>
-        <td align=right><b><sub>1118</sub></b></td>
+        <td align=right><sub>526</sub></td>
+        <td align=right><sub>896</sub></td>
+        <td align=right><sub>783</sub></td>
+        <td align=right><sub>811</sub></td>
+        <td align=right><sub>794</sub></td>
+        <td align=right><sub>793</sub></td>
+        <td align=right><sub>874</sub></td>
+        <td align=right><sub>1465</sub></td>
+        <td align=right><sub>1091</sub></td>
+        <td align=right><sub>23614</sub></td>
+        <td align=right><b><sub>168</sub></b></td>
+        <td align=right><b><sub>1104</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>sinuous</sub></td>
         <td align=right><sub>7.5</sub></td>
-        <td align=right><sub>674</sub></td>
-        <td align=right><sub>835</sub></td>
-        <td align=right><sub>803</sub></td>
-        <td align=right><sub>820</sub></td>
-        <td align=right><sub>803</sub></td>
-        <td align=right><sub>792</sub></td>
-        <td align=right><sub>783</sub></td>
-        <td align=right><sub>1435</sub></td>
-        <td align=right><sub>1041</sub></td>
-        <td align=right><sub>17636</sub></td>
+        <td align=right><sub>658</sub></td>
+        <td align=right><sub>833</sub></td>
+        <td align=right><sub>789</sub></td>
+        <td align=right><sub>782</sub></td>
+        <td align=right><sub>779</sub></td>
+        <td align=right><sub>793</sub></td>
+        <td align=right><sub>804</sub></td>
+        <td align=right><sub>1540</sub></td>
+        <td align=right><sub>1046</sub></td>
+        <td align=right><sub>17795</sub></td>
         <td align=right><b><sub>163</sub></b></td>
-        <td align=right><b><sub>1045</sub></b></td>
+        <td align=right><b><sub>1064</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>jquery</sub></td>
         <td align=right><sub>31.3</sub></td>
-        <td align=right><sub>668</sub></td>
-        <td align=right><sub>796</sub></td>
-        <td align=right><sub>698</sub></td>
-        <td align=right><sub>634</sub></td>
-        <td align=right><sub>634</sub></td>
-        <td align=right><sub>633</sub></td>
-        <td align=right><sub>680</sub></td>
-        <td align=right><sub>1089</sub></td>
-        <td align=right><sub>834</sub></td>
-        <td align=right><sub>5495</sub></td>
-        <td align=right><b><sub>89</sub></b></td>
-        <td align=right><b><sub>784</sub></b></td>
+        <td align=right><sub>679</sub></td>
+        <td align=right><sub>791</sub></td>
+        <td align=right><sub>693</sub></td>
+        <td align=right><sub>703</sub></td>
+        <td align=right><sub>627</sub></td>
+        <td align=right><sub>622</sub></td>
+        <td align=right><sub>677</sub></td>
+        <td align=right><sub>1077</sub></td>
+        <td align=right><sub>818</sub></td>
+        <td align=right><sub>5493</sub></td>
+        <td align=right><b><sub>87</sub></b></td>
+        <td align=right><b><sub>793</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>redom</sub></td>
         <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>1096</sub></td>
+        <td align=right><sub>1112</sub></td>
+        <td align=right><sub>442</sub></td>
+        <td align=right><sub>434</sub></td>
+        <td align=right><sub>432</sub></td>
+        <td align=right><sub>432</sub></td>
+        <td align=right><sub>437</sub></td>
         <td align=right><sub>443</sub></td>
-        <td align=right><sub>438</sub></td>
-        <td align=right><sub>439</sub></td>
-        <td align=right><sub>436</sub></td>
-        <td align=right><sub>440</sub></td>
-        <td align=right><sub>450</sub></td>
-        <td align=right><sub>806</sub></td>
-        <td align=right><sub>589</sub></td>
-        <td align=right><sub>11869</sub></td>
-        <td align=right><b><sub>160</sub></b></td>
-        <td align=right><b><sub>720</sub></b></td>
+        <td align=right><sub>830</sub></td>
+        <td align=right><sub>568</sub></td>
+        <td align=right><sub>11268</sub></td>
+        <td align=right><b><sub>158</sub></b></td>
+        <td align=right><b><sub>722</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>lit-html</sub></td>
         <td align=right><sub>17.3</sub></td>
-        <td align=right><sub>1336</sub></td>
-        <td align=right><sub>440</sub></td>
-        <td align=right><sub>407</sub></td>
-        <td align=right><sub>407</sub></td>
-        <td align=right><sub>405</sub></td>
+        <td align=right><sub>1376</sub></td>
+        <td align=right><sub>436</sub></td>
+        <td align=right><sub>408</sub></td>
+        <td align=right><sub>409</sub></td>
+        <td align=right><sub>409</sub></td>
         <td align=right><sub>406</sub></td>
-        <td align=right><sub>429</sub></td>
-        <td align=right><sub>710</sub></td>
-        <td align=right><sub>541</sub></td>
-        <td align=right><sub>4593</sub></td>
+        <td align=right><sub>441</sub></td>
+        <td align=right><sub>731</sub></td>
+        <td align=right><sub>553</sub></td>
+        <td align=right><sub>4811</sub></td>
         <td align=right><b><sub>80</sub></b></td>
-        <td align=right><b><sub>538</sub></b></td>
+        <td align=right><b><sub>548</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>ractive</sub></td>
         <td align=right><sub>68.2</sub></td>
-        <td align=right><sub>4708</sub></td>
-        <td align=right><sub>162</sub></td>
-        <td align=right><sub>154</sub></td>
-        <td align=right><sub>155</sub></td>
-        <td align=right><sub>155</sub></td>
-        <td align=right><sub>155</sub></td>
-        <td align=right><sub>161</sub></td>
-        <td align=right><sub>297</sub></td>
-        <td align=right><sub>207</sub></td>
-        <td align=right><sub>1797</sub></td>
+        <td align=right><sub>4426</sub></td>
+        <td align=right><sub>158</sub></td>
+        <td align=right><sub>153</sub></td>
+        <td align=right><sub>153</sub></td>
+        <td align=right><sub>157</sub></td>
+        <td align=right><sub>153</sub></td>
+        <td align=right><sub>160</sub></td>
+        <td align=right><sub>293</sub></td>
+        <td align=right><sub>205</sub></td>
+        <td align=right><sub>1721</sub></td>
         <td align=right><b><sub>37</sub></b></td>
-        <td align=right><b><sub>224</sub></b></td>
+        <td align=right><b><sub>225</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>knockout</sub></td>
         <td align=right><sub>24.8</sub></td>
-        <td align=right><sub>3247</sub></td>
-        <td align=right><sub>87</sub></td>
+        <td align=right><sub>3111</sub></td>
+        <td align=right><sub>82</sub></td>
+        <td align=right><sub>63</sub></td>
         <td align=right><sub>63</sub></td>
         <td align=right><sub>64</sub></td>
         <td align=right><sub>64</sub></td>
-        <td align=right><sub>64</sub></td>
-        <td align=right><sub>78</sub></td>
-        <td align=right><sub>120</sub></td>
-        <td align=right><sub>96</sub></td>
-        <td align=right><sub>1114</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
+        <td align=right><sub>77</sub></td>
+        <td align=right><sub>118</sub></td>
+        <td align=right><sub>95</sub></td>
+        <td align=right><sub>1126</sub></td>
+        <td align=right><b><sub>45</sub></b></td>
         <td align=right><b><sub>168</sub></b></td>
     </tr>
 </table>
 
 The file size and memory gets less relevance. The maximum possible ___index___ is 1000, that requires a library to be best in each category. The ___score___ value is relational where a score of 1000 represents the statistical midfield.
 
-Read more about this test <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
+Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
 
 <a name="api"></a>
 ## API Overview
@@ -795,12 +814,14 @@ npm install mikado-compile
 
 Compile the template through the command line by:
 ```cmd
-npx mikado compile user/list.html
+npx mikado-compile user/list.html
 ```
 
-> __Notation:__ npx mikado compile _{{input}} {{destination}}_
+> __Notation:__ npx mikado-compile _{{input}} {{destination}}_
 
+<!--
 Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
+-->
 
 After compilation you will have 4 different files:
 1. __template.js__ the template compiled in ES5 compatible Javascript
@@ -1378,7 +1399,7 @@ view.refresh();
 
 Passing a components root node or an index to the refresh method performs faster than passing no parameter.
 
-__Hint:__ You can also use the refresh method when new items was pushed (added to the end) or was removed from the end. You cannot use refresh when new items was inserted/removed/arranged/replaced before the end, this requires ___.render()___.
+__Hint:__ You cannot use refresh when new items was added/removed, this requires ___.render(data)___.
 
 <a name="usage"></a>
 ## Create, Initialize, Destroy Views
@@ -2013,6 +2034,54 @@ var view = new Mikado(root, template, {
 });
 ```
 
+<a name="callbacks"></a>
+## Callbacks
+
+Apply callbacks during initialization:
+```js
+var view = new Mikado(root, template, {
+    on: {
+        create: function(node){ console.log("created:", node) },
+        insert: function(node){ console.log("inserted:", node) },
+        update: function(node){ console.log("updated:", node) },
+        change: function(node){ console.log("changed:", node) },
+        remove: function(node){ console.log("removed:", node) },
+    }
+});
+```
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Callback</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>create</td>
+        <td>Called when a new template node was created.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>add</td>
+        <td>Called when a new template node was added.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>update</td>
+        <td>Called when a template node was updated.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>change</td>
+        <td>Called when the contents of a template node has changed.</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>remove</td>
+        <td>Called when a template node was removed.</td>
+    </tr>
+</table>
+
 <a name="load"></a>
 ## Transport / Load Templates
 
@@ -2131,10 +2200,12 @@ npm install mikado-server
 Start the compiler server:
 
 ```cmd
-npx mikado server
+npx mikado-server
 ```
 
+<!--
 Instead of `npx mikado server` you can also use `npx mikado-server` alternatively.
+-->
 
 The service is listening on localhost. The API has this specification:
 
@@ -2285,7 +2356,7 @@ Assume the template example from above is a tweet (title, article, footer).
 ```html
 <section>
     <title>{{ data.title }}</title>
-    <tweets include="tweet" for="data.tweets" max="5">
+    <tweets include="tweet" for="data.tweets">
         <!-- tweet -->
         <!-- tweet -->
         <!-- tweet -->
@@ -2294,6 +2365,16 @@ Assume the template example from above is a tweet (title, article, footer).
 ```
 
 This expression will render the template "tweet" through an array of data items/tweets. The template "tweet" is getting the array value ___data.tweets___ as ___data___.
+
+The ___max___ attribute could be used optionally to limit the partial loop:
+```html
+<tweets include="tweet" for="data.tweets" max="5">
+```
+
+The ___max___ attribute could also be negative to reverse the boundary direction, e.g. loop through the last 5 items:
+```html
+<tweets include="tweet" for="data.tweets" max="-5">
+```
 
 <a name="inline-loops"></a>
 ### Inline Loops
@@ -2435,7 +2516,9 @@ __Template markup__:
 
 > The expression for an observable property has to start with: `{{=`
 
-__Use with internal store:__
+Using proxy requires using one of the 3 storage strategies.
+
+__1. Use with internal store:__
 ```js
 var view = new Mikado(template, { store: true });
 view.render([...]);
@@ -2446,7 +2529,7 @@ When data changes, the corresponding dom element will automatically change:
 view.store[0].name = "New Name";
 ```
 
-__Use with external store:__
+__2. Use with external store:__
 ```js
 var data = [...];
 var view = new Mikado(template, { store: data });
@@ -2461,7 +2544,7 @@ data[0].name = "New Name";
 view.store[0].name = "New Name";
 ```
 
-__Use with loose store:__
+__3. Use with loose store:__
 ```js
 var view = new Mikado(template, { store: true, loose: true });
 view.render([...]);
@@ -2472,7 +2555,8 @@ When data changes, the corresponding dom element will automatically change:
 view.data(0).name = "New Name";
 ```
 
-#### Limitations
+<a name="limitations"></a>
+### Limitations
 
 Proxy actually comes with some limitations on template expressions. Improving those restrictions is already work in progress and will release soon.
 
@@ -2505,6 +2589,33 @@ var data = {
 ```
 
 Just use plain property notation within curly brackets.
+
+<a name="stealth"></a>
+### Stealth Mode
+
+Whenever __all__ your template expressions are just using proxy notation it enables the "stealth" mode which incredibly boost performance from every update process to the absolute maximum. This mode has no advantage when every render loop has to apply new items.
+
+This enables stealth mode:
+```html
+<item>
+    <caption>Name:</caption>
+    <p>{{= data.name }}</p>
+    <caption>Email:</caption>
+    <p>{{= data.mail }}</p>
+</item>
+```
+
+This not:
+```html
+<item>
+    <caption>Name:</caption>
+    <p>{{= data.name }}</p>
+    <caption>Email:</caption>
+    <p>{{ data.mail }}</p>
+</item>
+```
+
+Also using conditionals, loops and inline javascript will prevent from switching to the stealth mode. Just includes (without loop) could be used additionally to the proxy notation, but it requires all fields also observed by the partial which is included.
 
 <a name="bind" id="bind"></a>
 ## Bind Input Elements

@@ -9,9 +9,28 @@ let pos = -1;
 export const queue = [];
 const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
 const strict = window.location.pathname.indexOf("/strict.html") !== -1;
-const internal = window.location.search.indexOf("internal") !== -1;
+const internal = window.location.pathname.indexOf("/internal.html") !== -1;
+
+const params = (function(){
+
+    const obj = {};
+    const pairs = window.location.search.substring(1).split('&');
+
+    for(let i = 0, split; i < pairs.length; i++){
+
+        split = pairs[i].split('=');
+        obj[split[0]] = split[1];
+    }
+
+    return obj;
+}());
+
+const duration = parseInt(params["duration"] || "5", 10) * 1000;
+const hidden = params["hidden"] !== "false";
 const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
 let clone;
+
+root.hidden = hidden;
 
 function next(){
 
@@ -85,12 +104,7 @@ queue.push({
     test: null,
     start: null,
     prepare: function(index){
-        if(index % 5){
-            clone = enforce(update(items, index));
-        }
-        else{
-            clone = enforce(shuffle(items));
-        }
+        clone = enforce(update(items, index));
     },
     fn: null,
     end: null,
@@ -107,13 +121,24 @@ queue.push({
     test: null,
     start: null,
     prepare: function(index){
-        if(index % 2){ // swap
-            items.splice(1, 0, items.splice(items.length - 2, 1)[0]);
-            items.splice(items.length - 2, 0, items.splice(2, 1)[0]);
+        index %= 5;
+        if((index === 1) || (index === 3)){ // swap
+            const tmp = items[98];
+            items[98] = items[1];
+            items[1] = tmp;
         }
-        else{ // re-order
-            for(let i = 80; i < 90; i++) items.splice(i, 0, items.splice(10, 1)[0]);
-            for(let i = 30; i < 40; i++) items.splice(i, 0, items.splice(60, 1)[0]);
+        else if((index === 2) || (index === 4)){ // re-order
+            for(let i = 0, tmp; i < 10; i++) {
+                tmp = items[80 + i];
+                items[80 + i] = items[10 + i];
+                items[10 + i] = tmp;
+                tmp = items[30 + i];
+                items[30 + i] = items[60 + i];
+                items[60 + i] = tmp;
+            }
+        }
+        else{
+            shuffle(items);
         }
         clone = enforce(items);
     },
@@ -366,12 +391,9 @@ let warmup = 0;
 function perform(){
 
     const test = queue[current];
-    let duration = 0, memory = 0;
+    let elapsed = 0, memory = 0;
 
     if((current === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
-
-    const time = 5000;
-
     if(test.init) test.init();
 
     /*
@@ -385,7 +407,7 @@ function perform(){
     */
 
     let loops = 0, now = perf.now();
-    const end = now + time;
+    const end = now + duration;
 
     for(let start, mem_start, mem; now < end; loops++){
 
@@ -398,13 +420,11 @@ function perform(){
         test.fn(clone);
         now = perf.now();
         mem = perf.memory.usedJSHeapSize - mem_start;
-        duration += now - start;
+        elapsed += now - start;
         if(mem > 0) memory += mem;
 
         if(test.end) test.end(loops);
     }
-
-    //duration = 5000 + (now - end);
 
     if(test.complete) test.complete();
 
@@ -414,11 +434,11 @@ function perform(){
 
         if(window === window.top){
 
-            result.nodeValue = (str_results += test.name.padEnd(12) + String(Math.floor(1000 / duration * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n") + (current < queue.length ? "running..." : "");
+            result.nodeValue = (str_results += test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n") + (current < queue.length ? "running..." : "");
         }
         else{
 
-            window.top.postMessage(test.name + "," + Math.floor(1000 / duration * loops) + "," + Math.floor(memory / loops), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
+            window.top.postMessage(test.name + "," + Math.floor(1000 / elapsed * loops) + "," + Math.floor(memory / loops), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
         }
     }
 
