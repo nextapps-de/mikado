@@ -1,6 +1,7 @@
 import Mikado from "./mikado.js";
 import "./export.js";
 import compile from "./compile.js";
+import array from "./array.js";
 import {
     getAttribute,
     getClass,
@@ -18,13 +19,16 @@ import {
     setCSS,
     setHTML,
     setText
-    //setStyle,
-    //getStyle
 } from "./cache.js";
 
 if(SUPPORT_COMPILE){
 
     Mikado["compile"] = compile;
+}
+
+if(SUPPORT_REACTIVE){
+
+    Mikado["array"] = array;
 }
 
 if(SUPPORT_CACHE && SUPPORT_CACHE_HELPERS){
@@ -39,23 +43,12 @@ if(SUPPORT_CACHE && SUPPORT_CACHE_HELPERS){
     Mikado["toggleClass"] = toggleClass;
     Mikado["removeClass"] = removeClass;
     Mikado["addClass"] = addClass;
-    //Mikado["setStyle"] = setStyle;
-    //Mikado["getStyle"] = getStyle;
     Mikado["setCSS"] = setCSS;
     Mikado["getCSS"] = getCSS;
     Mikado["setAttribute"] = setAttribute;
     Mikado["getAttribute"] = getAttribute;
     Mikado["hasAttribute"] = hasAttribute;
     Mikado["removeAttribute"] = removeAttribute;
-
-    /*
-    Mikado.register;
-    Mikado.unregister;
-    Mikado.load;
-    Mikado.unload;
-    Mikado.new;
-    Mikado.once;
-    */
 }
 
 (function(){

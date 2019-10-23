@@ -22,6 +22,7 @@
     "_index": "_n",
     "_key": "_k",
     "_pool": "_o",
+    "_proxy": "_y",
 
     "\\.setAttribute\\(self": "._a(self",
     "this.target": "this._t"

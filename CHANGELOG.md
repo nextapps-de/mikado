@@ -1,8 +1,13 @@
+## 0.7.0
+`new` observable array based on ES6 proxy incl. polyfill (acts like a NodeList, semantically equal to an array-like object)<br>
+`change` the method ___Mikado.new()___ was removed, just use ___Mikado()___ instead (it automatically returns an instance)<br>
+`change` there are two types of external stores: 1. an extern array which gets changes now automatically applied (to keep in sync) and 2. an observable array via ___Mikado.array()___ which is in sync per default by its nature
+
 ## 0.6.6
 `new` support callbacks<br>
 `improve` support PointerEvents for the synthetic tap listener<br>
 `improve` improve data-driven concept<br>
-`new` add new "stealth" mode when proxy is used for all template expressions<br>
+`new` add new "stealth" mode when proxy is used for all template statements<br>
 
 ## 0.6.2
 `new` option ___keep___ to force Mikado to run in exclusive keyed-shared mode<br>

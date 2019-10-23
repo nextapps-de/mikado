@@ -43,7 +43,9 @@ import "./helper.js";
 import "./cache.js";
 import "./store.js";
 import "./polyfill.js";
+import Observer from "./array.js";
 import create_proxy from "./proxy.js";
+
 //import { profiler_start, profiler_end } from "./profiler.js";
 
 const { requestAnimationFrame, cancelAnimationFrame } = window;
@@ -87,6 +89,11 @@ const keyed_pool = {};
 
 export default function Mikado(root, template, options){
 
+    if(!(this instanceof Mikado)) {
+
+        return new Mikado(root, template, options);
+    }
+
     if(!root.nodeType){
 
         options = template;
@@ -127,15 +134,8 @@ Mikado.register = Mikado["register"] = function(name, tpl){
 };
 
 /**
- * @param {Element|Template} root
- * @param {Template|Object=} template
- * @param {Object=} options
+ * @returns {Mikado}
  */
-
-Mikado.new = Mikado["new"] = function(root, template, options){
-
-    return new Mikado(root, template, options);
-};
 
 Mikado.prototype.mount = function(target){
 
@@ -193,44 +193,32 @@ if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("sy
 
 if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("purge") !== -1))){
 
-    /**
-     * @this {Mikado}
-     */
+    Mikado.prototype.purge = function(){
 
-    /*Mikado["purge"] =*/ Mikado.prototype.purge = function(){
+        factory_pool[this.template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
 
-        //const template = this.template;
+        if(this.key){
 
-        //if(template || (template = this.template)){
+            // NOTE: fully purge the live pool when in use will lead into duped keys
 
-            // if(typeof template === "object"){
-            //
-            //     template = template["n"];
-            // }
+            if(this.length){
 
-            factory_pool[this.template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
+                const keys = Object.keys(this.live);
 
-            //NOTE: keep live pool?
-            this.key && (this.live = {});
-            this.tpl_pool && (this.tpl_pool = template_pool[this.template] = []);
-            this.key_pool && (this.key_pool = keyed_pool[this.template] = {});
-        //}
-        // TODO keep references to mikado instances
-        // else{
-        //
-        //     factory_pool = {};
-        //
-        //     if(SUPPORT_POOLS){
-        //
-        //         const keys = Object.keys(/** @type {!Object} */ (templates));
-        //
-        //         for(let i = 0, key; i < keys.length; i++){
-        //
-        //             template_pool[(key = keys[i])] = [];
-        //             keyed_pool[key] = {};
-        //         }
-        //     }
-        // }
+                for(let i = 0, length = keys.length, key; i < length; i++){
+
+                    this.key[(key = keys[i])] || delete this.key[key];
+                }
+            }
+            else{
+
+                this.live = {};
+            }
+        }
+
+        // TODO: this will de-reference other instances with the same template
+        this.tpl_pool && (this.tpl_pool = template_pool[this.template] = []);
+        this.key_pool && (this.key_pool = keyed_pool[this.template] = {});
 
         return this;
     };
@@ -250,15 +238,17 @@ if(SUPPORT_STORAGE){
 
     Mikado.prototype.data = function(index){
 
-        const get_by_node = typeof index === "object";
+        const get_by_node = (typeof index === "object");
 
         return (
 
-            this.loose ?
+            // NOTE: get store first (could be set during import process)
 
-                (get_by_node ? index : this.dom[index])["_data"]
-            :
+            this.store ?
+
                 this.store[get_by_node ? index["_idx"] : index]
+            :
+                (get_by_node ? index : this.dom[index])["_data"]
         );
     };
 
@@ -375,13 +365,7 @@ Mikado.prototype.init = function(template, options){
         }
     }
 
-    /*options = options ?
-
-        Object.assign({}, this.config || defaults, options)
-    :
-        defaults;*/
-
-    this.config = options || (options = this.config || {});
+    options || (options = this.config || {});
     this.reuse = options["reuse"] !== false;
     this.state = options["state"] || state;
 
@@ -403,19 +387,37 @@ Mikado.prototype.init = function(template, options){
 
     if(SUPPORT_STORAGE){
 
-        const store = options["store"] || (options["store"] !== false);
-        this.extern = store && (typeof store === "object");
-        this.loose = !this.extern && (options["loose"] !== false);
+        let store = options["store"] || (options["store"] !== false);
+        let is_object;
 
-        if(!store || this.loose){
+        if((this.extern = SUPPORT_REACTIVE && (store instanceof Observer))){
 
-            this.store = false;
+            store.mikado = this;
         }
-        else{
 
-            this.store = this.extern ? store : [];
+        if(SUPPORT_REACTIVE){
+
+            this.skip = false;
         }
+
+        if(store){
+
+            if((is_object = (typeof store === "object"))){
+
+                options["store"] = true;
+            }
+            else{
+
+                store = [];
+            }
+        }
+
+        // TODO: also enable by default on stealth mode
+        this.loose = !is_object && (options["loose"] !== false);
+        this.store = !this.loose && store;
     }
+
+    this.config = options;
 
     const tpl_name = template["n"];
 
@@ -462,7 +464,7 @@ Mikado.prototype.init = function(template, options){
 
 Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
-    const tmp = Mikado.new(root, template);
+    const tmp = new Mikado(root, template);
 
     if(typeof view === "function"){
 
@@ -615,7 +617,7 @@ Mikado.prototype.create = function(data, view, index){
         node = this.factory;
     }
 
-    if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth){
+    if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.extern){
 
         this.apply(node, data, view, index);
     }
@@ -664,6 +666,11 @@ Mikado.prototype.apply = function(root, data, payload, index){
         if(SUPPORT_STORAGE){
 
             data || (data = this.store ? this.store[index] : root["_data"]);
+
+            if(SUPPORT_REACTIVE && payload && this.extern){
+
+                this.store.view = payload;
+            }
         }
 
         //root || (root = this.factory);
@@ -717,6 +724,10 @@ if(SUPPORT_STORAGE){
             node = index;
             index = tmp;
         }
+        else{
+
+            view = index;
+        }
 
         if(node){
 
@@ -725,6 +736,14 @@ if(SUPPORT_STORAGE){
 
         let length = this.length;
         const data = this.store;
+
+        // data delegated from import
+        if(data && this.loose){
+
+            this.store = null;
+            return this.render(data, view);
+        }
+
         const count = data ? data.length : length;
         const min = length < count ? length : count;
 
@@ -746,25 +765,19 @@ if(SUPPORT_STORAGE){
         //     }
         // }
 
-        // data delegated from import
-        if(data && this.loose){
-
-            this.store = null;
-        }
-
         return this;
     };
 }
 
 /**
- * @param {!Array<*>|Function} data
+ * @param {Array<*>|Object|Function=} data
  * @param {Object|Function=} view
  * @param {Function|boolean=} callback
  * @param {boolean=} skip_async
  * @returns {Mikado|Promise}
  */
 
-Mikado.prototype.render = (function(data, view, callback, skip_async){
+Mikado.prototype.render = function(data, view, callback, skip_async){
 
     if(DEBUG){
 
@@ -833,7 +846,9 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
     // }
     // else{
 
-        if(SUPPORT_STORAGE && !data){
+        let length = this.length;
+
+        if(!data){
 
             if(this.static){
 
@@ -841,13 +856,22 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 return this;
             }
 
-            return this.refresh();
+            if(SUPPORT_STORAGE){
+
+                if(length){
+
+                    return this.refresh();
+                }
+
+                if(!(data = this.store)){
+
+                    return this;
+                }
+            }
         }
 
-        let length = this.length;
-        let count;
-
-        count = data.length;
+        // TODO: use array type check
+        let count = data.length;
 
         if(typeof count === "undefined"){
 
@@ -859,7 +883,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
             return this.remove(0, length);
         }
 
-        const replace_key = SUPPORT_POOLS && this.key;
+        const replace_key = SUPPORT_POOLS && (this.key_pool || !this.reuse) && this.key;
 
         if(!replace_key && !this.reuse){
 
@@ -873,18 +897,20 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
         // update
         if(x < min){
 
+            //let has_moved;
+
             for(; x < min; x++){
 
                 const node = this.dom[x];
                 const item = data[x];
-                let key, tmp, has_moved;
+                let key, tmp;
 
                 if(replace_key && (node["_key"] !== (key = item[replace_key]))){
 
                     if((tmp = this.live[key])){
 
                         this.arrange(node, tmp, item, view, x);
-                        has_moved = true;
+                        //has_moved = true;
                     }
                     else{
 
@@ -893,11 +919,7 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
                 }
                 else{
 
-                    if(has_moved){
-
-                        node["_idx"] = x;
-                    }
-
+                    // if(has_moved) node["_idx"] = x;
                     this.update(node, item, view, x);
                 }
             }
@@ -922,20 +944,27 @@ Mikado.prototype.render = (function(data, view, callback, skip_async){
     //profiler_end("render");
 
     return this;
-});
-
-/*
- * This is a naive "fast-swap" workaround which has almost ~ 30% better overall performance than reconciling.
- * It moves nodes from the keyed live pool into place.
- * Except some rare situations, when just few items was moved/added/removed, then reconciling performs faster.
- * Reconciling is not worth it, at least for this kind of templating library which uses pools.
- */
+};
 
 if(SUPPORT_POOLS){
 
-    Mikado.prototype.arrange = function(old_node, new_node, item, view, x){
+    /**
+     * @param old_node
+     * @param new_node
+     * @param item
+     * @param view
+     * @param x
+     * @param {number=} idx
+     */
 
-        const idx = new_node["_idx"];
+    Mikado.prototype.arrange = function(old_node, new_node, item, view, x, idx){
+
+        idx || (idx = new_node["_idx"]);
+
+        const no_predecessor = (idx + 1) !== x;
+
+        this.root.insertBefore(no_predecessor ? new_node : old_node, no_predecessor ? old_node : new_node);
+        if(no_predecessor && ((x + 1) !== idx)) this.root.insertBefore(old_node, this.dom[idx + 1] || null);
 
         new_node["_idx"] = x;
         old_node["_idx"] = idx;
@@ -943,22 +972,17 @@ if(SUPPORT_POOLS){
         this.dom[x] = new_node;
         this.dom[idx] = old_node;
 
-        if(SUPPORT_STORAGE){
+        if(item && !(SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth && ((this.store ? this.store[idx] : new_node["_data"]) === item))){
 
-            if(this.store && !this.extern){
-
-                this.store[idx] = this.store[x];
-                this.store[x] = item;
-            }
-            else if(this.loose){
-
-                old_node["_data"] = new_node["_data"];
-                new_node["_data"] = item;
-            }
+            this.apply(new_node, item, view, x);
         }
 
-        this.root.insertBefore(new_node, old_node);
-        (SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth) || this.apply(new_node, item, view, x);
+        if(SUPPORT_STORAGE && this.store && !this.extern){
+
+            item || (item = this.store[idx]);
+            this.store[idx] = this.store[x];
+            this.store[x] = item;
+        }
     };
 }
 
@@ -992,34 +1016,36 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
 
     let length = _replace_node || has_index ? index : this.length;
     const node = this.create(data, view, length);
-    let use_strict;
 
     if(SUPPORT_STORAGE) {
 
+        let stealth_mode;
+
         if(SUPPORT_REACTIVE && this.proxy){
 
-            if(this.stealth && this.loose && (node["_data"] === data)){
+            if(!data["_proxy"]){
 
-                use_strict = true;
-            }
-            else{
-
-                // TODO: how to skip when proxy was already applied?
                 data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy);
+            }
+            else if(this.stealth && this.loose && (node["_data"] === data)){
+
+                stealth_mode = true;
             }
         }
 
-        if(!use_strict){
+        if(!stealth_mode){
 
             if(this.store){
 
-                if(has_index){
+                if(has_index && !this.extern){
 
                     this.store.splice(length, 0, data);
                 }
                 else{
 
+                    if(SUPPORT_REACTIVE) this.skip = true;
                     this.store[length] = data;
+                    if(SUPPORT_REACTIVE) this.skip = false;
                 }
             }
             else if(this.loose){
@@ -1046,7 +1072,8 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
 
         if(_replace_node){
 
-            this.root.replaceChild(node, _replace_node); //node.replaceWith(node);
+            // TODO edge case: node from the live pool is used as the replacement
+            this.root.replaceChild(node, _replace_node);
         }
         else{
 
@@ -1069,9 +1096,21 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
     return this;
 };
 
-Mikado.prototype.clear = function(){
+/**
+ * @param {boolean=} purge
+ * @returns {Mikado}
+ */
 
-    return this.remove(0, this.length);
+Mikado.prototype.clear = function(purge){
+
+    this.remove(0, this.length);
+
+    if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("purge") !== -1))){
+
+        purge && this.purge();
+    }
+
+    return this;
 };
 
 Mikado.prototype.destroy = function(unload){
@@ -1201,7 +1240,6 @@ Mikado.prototype.remove = function(index, count, resize){
 
         if(SUPPORT_STORAGE && this.store && !this.extern){
 
-            // TODO: check if replacing index + resize array is faster then fill empty
             this.store = resize ? new Array(resize) : [];
         }
 
@@ -1338,7 +1376,15 @@ Mikado.prototype.replace = function(node, data, view, index){
 
     if(typeof index === "undefined"){
 
-        index = node["_idx"];
+        if(typeof node === "number"){
+
+            index = node;
+            node = this.dom[index];
+        }
+        else{
+
+            index = node["_idx"];
+        }
     }
 
     this.add(data, view, index, node);
@@ -1417,21 +1463,25 @@ Mikado.prototype.update = function(node, data, view, index){
 
     if(SUPPORT_STORAGE){
 
+        if(SUPPORT_REACTIVE && this.proxy){
+
+            if(!data["_proxy"]){
+
+                data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy);
+            }
+            else if(this.stealth && ((this.store ? this.store[index] : node["_data"]) === data)){
+
+                return this;
+            }
+        }
+
         if(this.store){
 
-            if(SUPPORT_REACTIVE && this.stealth && (this.store[index] === data)){
-
-                return this;
-            }
-
+            if(SUPPORT_REACTIVE) this.skip = true;
             this.store[index] = data;
+            if(SUPPORT_REACTIVE) this.skip = false;
         }
         else if(this.loose){
-
-            if(SUPPORT_REACTIVE && this.stealth && (node["_data"] === data)){
-
-                return this;
-            }
 
             node["_data"] = data;
         }
@@ -1638,7 +1688,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             has_update++;
         }
-
         else{
 
             node.className = class_name;

@@ -18,15 +18,17 @@
 
     "use strict";
 
-    import { suite, root } from "./../../bench.js";
+    import { suite, root, store } from "./../../bench.js";
 
     import domc from './dist/index.js';
-    //import './dist/vFor.js'
+    import './dist/vFor.js'
     import './dist/vMap.js'
 
     let app = domc(root);
     let scope = {items: []};
     app.rehydrate(scope);
+
+    store(scope.items);
 
     // NOTE: domc has a bug when running this test via vFor
 

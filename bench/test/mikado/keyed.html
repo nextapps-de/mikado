@@ -3,14 +3,10 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-0.6.0 (keyed)</h1><hr>
+<h1>Benchmark: mikado-0.7.0 (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
-<!--
-<script src="node_modules/mikado/src/config.js"></script>
-<script type="module" src="node_modules/mikado/src/browser.js"></script>
--->
-<script src="./dist/mikado.light.js"></script>
+<script src="./dist/mikado.min.js"></script>
 <script type="module">
 
     "use strict";
@@ -26,115 +22,6 @@
         "keep": true,
         "cache": true
     });
-
-    // const data_a = [
-    //     {
-    //         "id": "230BA161-675A-2288-3B15-C343DB3A1DFC",
-    //         "date": "2019-01-11T08:06:18-08:00",
-    //         "index": 1,
-    //         "classname": "yellow, green",
-    //         "title": "egestas lacinia. Sed congue,",
-    //         "content": "amet ante. Vivamus non lorem vitae odio sagittis",
-    //         "footer": "vehicula. Pellentesque tincidunt tempus",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "3F0836C5-C6FB-2227-EA1E-A5856955FA4C",
-    //         "date": "2020-02-05T15:08:46-08:00",
-    //         "index": 2,
-    //         "classname": "",
-    //         "title": "quam. Curabitur vel lectus.",
-    //         "content": "magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum eleifend, nunc risus varius orci, in consequat enim",
-    //         "footer": "eu, ultrices sit amet, risus. Donec",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "4C4B2CB7-3F6F-94F7-E546-AB0017342FCB",
-    //         "date": "2019-01-25T11:52:40-08:00",
-    //         "index": 3,
-    //         "classname": "blue, red",
-    //         "title": "tincidunt tempus risus. Donec egestas. Duis",
-    //         "content": "Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi.",
-    //         "footer": "ligula eu enim. Etiam imperdiet dictum",
-    //         "flag": 0
-    //     },
-    //     {
-    //         "id": "FE23DF27-6860-019F-EAEC-3F3B9542EEB0",
-    //         "date": "2019-01-05T03:37:43-08:00",
-    //         "index": 4,
-    //         "class": "blue, green",
-    //         "title": "massa. Suspendisse eleifend.",
-    //         "content": "lobortis augue scelerisque mollis.",
-    //         "footer": "aliquet magna a neque. Nullam",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "8D0FFA16-3548-85F9-B0D3-C9465F1F51D4",
-    //         "date": "2020-04-05T09:25:05-07:00",
-    //         "index": 5,
-    //         "class": "green, indigo",
-    //         "title": "ornare. Fusce mollis. Duis",
-    //         "content": "Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus facilisis",
-    //         "footer": "Aenean euismod mauris eu",
-    //         "flag": 1
-    //     }
-    // ];
-    //
-    // const data_b = [
-    //     {
-    //         "id": "3F0836C5-C6FB-2227-EA1E-A5856955FA4C",
-    //         "date": "2020-02-05T15:08:46-08:00",
-    //         "index": 2,
-    //         "classname": "",
-    //         "title": "quam. Curabitur vel lectus.",
-    //         "content": "magna. Phasellus dolor elit, pellentesque a, facilisis non, bibendum sed, est. Nunc laoreet lectus quis massa. Mauris vestibulum, neque sed dictum eleifend, nunc risus varius orci, in consequat enim",
-    //         "footer": "eu, ultrices sit amet, risus. Donec",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "4C4B2CB7-3F6F-94F7-E546-AB0017342FCB",
-    //         "date": "2019-01-25T11:52:40-08:00",
-    //         "index": 3,
-    //         "classname": "blue, red",
-    //         "title": "tincidunt tempus risus. Donec egestas. Duis",
-    //         "content": "Vivamus euismod urna. Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis, tristique ac, eleifend vitae, erat. Vivamus nisi.",
-    //         "footer": "ligula eu enim. Etiam imperdiet dictum",
-    //         "flag": 0
-    //     },
-    //     {
-    //         "id": "230BA161-675A-2288-3B15-C343DB3A1DFC",
-    //         "date": "2019-01-11T08:06:18-08:00",
-    //         "index": 1,
-    //         "classname": "yellow, green",
-    //         "title": "egestas lacinia. Sed congue,",
-    //         "content": "amet ante. Vivamus non lorem vitae odio sagittis",
-    //         "footer": "vehicula. Pellentesque tincidunt tempus",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "FE23DF27-6860-019F-EAEC-3F3B9542EEB0",
-    //         "date": "2019-01-05T03:37:43-08:00",
-    //         "index": 4,
-    //         "class": "blue, green",
-    //         "title": "massa. Suspendisse eleifend.",
-    //         "content": "lobortis augue scelerisque mollis.",
-    //         "footer": "aliquet magna a neque. Nullam",
-    //         "flag": 1
-    //     },
-    //     {
-    //         "id": "8D0FFA16-3548-85F9-B0D3-C9465F1F51D4",
-    //         "date": "2020-04-05T09:25:05-07:00",
-    //         "index": 5,
-    //         "class": "green, indigo",
-    //         "title": "ornare. Fusce mollis. Duis",
-    //         "content": "Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla semper tellus id nunc interdum feugiat. Sed nec metus facilisis",
-    //         "footer": "Aenean euismod mauris eu",
-    //         "flag": 1
-    //     }
-    // ];
-
-    //mikado.render(data_a);
-    //mikado.render(data_b);
 
     suite["mikado"] = function(items){
 

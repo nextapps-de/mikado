@@ -98,6 +98,7 @@ __Demo:__
 22. <a href="#proxy">Reactive Proxy (Observer)</a>
     - <a href="#limitations">Limitations</a>
     - <a href="#stealth">Stealth Mode</a>
+    - <a href="#observable">Observable Array (Virtual NodeList)</a>
 23. <a href="#best-practices">Best Practices</a>
 24. <a href="#memory">Memory Optimizations</a>
 25. <a href="#concept">Concept of Shared Pools</a>
@@ -341,202 +342,202 @@ Values represents operations per second, each benchmark task has to process a da
     <tr>
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>26</sub></td>
-        <td align=right><sub>18049</sub></td>
-        <td align=right><sub>7988</sub></td>
-        <td align=right><sub>233959</sub></td>
-        <td align=right><sub>28262</sub></td>
-        <td align=right><sub>241864</sub></td>
-        <td align=right><sub>32552</sub></td>
-        <td align=right><sub>26697</sub></td>
-        <td align=right><sub>29532</sub></td>
-        <td align=right><sub>24919</sub></td>
-        <td align=right><b><sub>996</sub></b></td>
-        <td align=right><b><sub>69307</sub></b></td>
+        <td align=right><sub>30</sub></td>
+        <td align=right><sub>15506</sub></td>
+        <td align=right><sub>7198</sub></td>
+        <td align=right><sub>50308</sub></td>
+        <td align=right><sub>14612</sub></td>
+        <td align=right><sub>129749</sub></td>
+        <td align=right><sub>26650</sub></td>
+        <td align=right><sub>24698</sub></td>
+        <td align=right><sub>26896</sub></td>
+        <td align=right><sub>24824</sub></td>
+        <td align=right><b><sub>994</sub></b></td>
+        <td align=right><b><sub>32260</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>inferno</sub></td>
         <td align=right><sub>8.4</sub></td>
-        <td align=right><sub>359</sub></td>
-        <td align=right><sub>755</sub></td>
-        <td align=right><sub>701</sub></td>
-        <td align=right><sub>5701</sub></td>
-        <td align=right><sub>3974</sub></td>
-        <td align=right><sub>5760</sub></td>
-        <td align=right><sub>1320</sub></td>
-        <td align=right><sub>5538</sub></td>
-        <td align=right><sub>2271</sub></td>
-        <td align=right><sub>12608</sub></td>
-        <td align=right><b><sub>180</sub></b></td>
-        <td align=right><b><sub>2931</sub></b></td>
+        <td align=right><sub>305</sub></td>
+        <td align=right><sub>744</sub></td>
+        <td align=right><sub>721</sub></td>
+        <td align=right><sub>5219</sub></td>
+        <td align=right><sub>4111</sub></td>
+        <td align=right><sub>5869</sub></td>
+        <td align=right><sub>1365</sub></td>
+        <td align=right><sub>5554</sub></td>
+        <td align=right><sub>2356</sub></td>
+        <td align=right><sub>13924</sub></td>
+        <td align=right><b><sub>214</sub></b></td>
+        <td align=right><b><sub>2917</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>mithril</sub></td>
         <td align=right><sub>9.6</sub></td>
-        <td align=right><sub>294</sub></td>
-        <td align=right><sub>620</sub></td>
-        <td align=right><sub>603</sub></td>
-        <td align=right><sub>4674</sub></td>
-        <td align=right><sub>3245</sub></td>
-        <td align=right><sub>4774</sub></td>
-        <td align=right><sub>1121</sub></td>
-        <td align=right><sub>6501</sub></td>
-        <td align=right><sub>1945</sub></td>
-        <td align=right><sub>11691</sub></td>
-        <td align=right><b><sub>172</sub></b></td>
-        <td align=right><b><sub>2596</sub></b></td>
+        <td align=right><sub>248</sub></td>
+        <td align=right><sub>641</sub></td>
+        <td align=right><sub>635</sub></td>
+        <td align=right><sub>4127</sub></td>
+        <td align=right><sub>3280</sub></td>
+        <td align=right><sub>4821</sub></td>
+        <td align=right><sub>1137</sub></td>
+        <td align=right><sub>6372</sub></td>
+        <td align=right><sub>2007</sub></td>
+        <td align=right><sub>11735</sub></td>
+        <td align=right><b><sub>198</sub></b></td>
+        <td align=right><b><sub>2543</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>domc</sub></td>
         <td align=right><sub>4.5</sub></td>
-        <td align=right><sub>425</sub></td>
-        <td align=right><sub>1108</sub></td>
-        <td align=right><sub>1032</sub></td>
-        <td align=right><sub>1019</sub></td>
-        <td align=right><sub>1028</sub></td>
-        <td align=right><sub>1084</sub></td>
-        <td align=right><sub>1105</sub></td>
-        <td align=right><sub>1986</sub></td>
-        <td align=right><sub>1424</sub></td>
-        <td align=right><sub>23500</sub></td>
-        <td align=right><b><sub>212</sub></b></td>
-        <td align=right><b><sub>1403</sub></b></td>
+        <td align=right><sub>420</sub></td>
+        <td align=right><sub>1109</sub></td>
+        <td align=right><sub>1051</sub></td>
+        <td align=right><sub>1047</sub></td>
+        <td align=right><sub>1052</sub></td>
+        <td align=right><sub>1042</sub></td>
+        <td align=right><sub>1157</sub></td>
+        <td align=right><sub>1866</sub></td>
+        <td align=right><sub>1387</sub></td>
+        <td align=right><sub>25400</sub></td>
+        <td align=right><b><sub>228</sub></b></td>
+        <td align=right><b><sub>1400</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
         <td align=right><sub>0</sub></td>
-        <td align=right><sub>547</sub></td>
-        <td align=right><sub>1001</sub></td>
-        <td align=right><sub>958</sub></td>
-        <td align=right><sub>954</sub></td>
-        <td align=right><sub>837</sub></td>
-        <td align=right><sub>843</sub></td>
-        <td align=right><sub>888</sub></td>
-        <td align=right><sub>1649</sub></td>
-        <td align=right><sub>1126</sub></td>
-        <td align=right><sub>26081</sub></td>
-        <td align=right><b><sub>156</sub></b></td>
-        <td align=right><b><sub>1240</sub></b></td>
+        <td align=right><sub>485</sub></td>
+        <td align=right><sub>973</sub></td>
+        <td align=right><sub>959</sub></td>
+        <td align=right><sub>949</sub></td>
+        <td align=right><sub>979</sub></td>
+        <td align=right><sub>987</sub></td>
+        <td align=right><sub>975</sub></td>
+        <td align=right><sub>1896</sub></td>
+        <td align=right><sub>1123</sub></td>
+        <td align=right><sub>26551</sub></td>
+        <td align=right><b><sub>169</sub></b></td>
+        <td align=right><b><sub>1290</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
         <td align=right><sub>15.8</sub></td>
-        <td align=right><sub>526</sub></td>
-        <td align=right><sub>896</sub></td>
-        <td align=right><sub>783</sub></td>
-        <td align=right><sub>811</sub></td>
-        <td align=right><sub>794</sub></td>
-        <td align=right><sub>793</sub></td>
-        <td align=right><sub>874</sub></td>
-        <td align=right><sub>1465</sub></td>
-        <td align=right><sub>1091</sub></td>
-        <td align=right><sub>23614</sub></td>
-        <td align=right><b><sub>168</sub></b></td>
-        <td align=right><b><sub>1104</sub></b></td>
+        <td align=right><sub>567</sub></td>
+        <td align=right><sub>923</sub></td>
+        <td align=right><sub>799</sub></td>
+        <td align=right><sub>815</sub></td>
+        <td align=right><sub>820</sub></td>
+        <td align=right><sub>828</sub></td>
+        <td align=right><sub>894</sub></td>
+        <td align=right><sub>1454</sub></td>
+        <td align=right><sub>1129</sub></td>
+        <td align=right><sub>22271</sub></td>
+        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>1094</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>sinuous</sub></td>
         <td align=right><sub>7.5</sub></td>
-        <td align=right><sub>658</sub></td>
-        <td align=right><sub>833</sub></td>
-        <td align=right><sub>789</sub></td>
-        <td align=right><sub>782</sub></td>
-        <td align=right><sub>779</sub></td>
-        <td align=right><sub>793</sub></td>
+        <td align=right><sub>710</sub></td>
+        <td align=right><sub>814</sub></td>
+        <td align=right><sub>796</sub></td>
+        <td align=right><sub>780</sub></td>
+        <td align=right><sub>763</sub></td>
+        <td align=right><sub>778</sub></td>
         <td align=right><sub>804</sub></td>
-        <td align=right><sub>1540</sub></td>
-        <td align=right><sub>1046</sub></td>
-        <td align=right><sub>17795</sub></td>
-        <td align=right><b><sub>163</sub></b></td>
-        <td align=right><b><sub>1064</sub></b></td>
+        <td align=right><sub>1571</sub></td>
+        <td align=right><sub>1039</sub></td>
+        <td align=right><sub>19765</sub></td>
+        <td align=right><b><sub>175</sub></b></td>
+        <td align=right><b><sub>1058</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>jquery</sub></td>
         <td align=right><sub>31.3</sub></td>
-        <td align=right><sub>679</sub></td>
-        <td align=right><sub>791</sub></td>
-        <td align=right><sub>693</sub></td>
-        <td align=right><sub>703</sub></td>
-        <td align=right><sub>627</sub></td>
-        <td align=right><sub>622</sub></td>
-        <td align=right><sub>677</sub></td>
-        <td align=right><sub>1077</sub></td>
-        <td align=right><sub>818</sub></td>
-        <td align=right><sub>5493</sub></td>
-        <td align=right><b><sub>87</sub></b></td>
-        <td align=right><b><sub>793</sub></b></td>
+        <td align=right><sub>741</sub></td>
+        <td align=right><sub>757</sub></td>
+        <td align=right><sub>706</sub></td>
+        <td align=right><sub>694</sub></td>
+        <td align=right><sub>691</sub></td>
+        <td align=right><sub>686</sub></td>
+        <td align=right><sub>751</sub></td>
+        <td align=right><sub>1222</sub></td>
+        <td align=right><sub>834</sub></td>
+        <td align=right><sub>5344</sub></td>
+        <td align=right><b><sub>93</sub></b></td>
+        <td align=right><b><sub>813</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>redom</sub></td>
         <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>1112</sub></td>
-        <td align=right><sub>442</sub></td>
-        <td align=right><sub>434</sub></td>
+        <td align=right><sub>1180</sub></td>
+        <td align=right><sub>427</sub></td>
         <td align=right><sub>432</sub></td>
-        <td align=right><sub>432</sub></td>
-        <td align=right><sub>437</sub></td>
-        <td align=right><sub>443</sub></td>
-        <td align=right><sub>830</sub></td>
-        <td align=right><sub>568</sub></td>
-        <td align=right><sub>11268</sub></td>
-        <td align=right><b><sub>158</sub></b></td>
-        <td align=right><b><sub>722</sub></b></td>
+        <td align=right><sub>424</sub></td>
+        <td align=right><sub>426</sub></td>
+        <td align=right><sub>429</sub></td>
+        <td align=right><sub>436</sub></td>
+        <td align=right><sub>825</sub></td>
+        <td align=right><sub>580</sub></td>
+        <td align=right><sub>12448</sub></td>
+        <td align=right><b><sub>165</sub></b></td>
+        <td align=right><b><sub>717</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>lit-html</sub></td>
         <td align=right><sub>17.3</sub></td>
-        <td align=right><sub>1376</sub></td>
-        <td align=right><sub>436</sub></td>
+        <td align=right><sub>1093</sub></td>
         <td align=right><sub>408</sub></td>
-        <td align=right><sub>409</sub></td>
-        <td align=right><sub>409</sub></td>
+        <td align=right><sub>399</sub></td>
+        <td align=right><sub>403</sub></td>
         <td align=right><sub>406</sub></td>
-        <td align=right><sub>441</sub></td>
-        <td align=right><sub>731</sub></td>
-        <td align=right><sub>553</sub></td>
-        <td align=right><sub>4811</sub></td>
-        <td align=right><b><sub>80</sub></b></td>
-        <td align=right><b><sub>548</sub></b></td>
+        <td align=right><sub>404</sub></td>
+        <td align=right><sub>420</sub></td>
+        <td align=right><sub>716</sub></td>
+        <td align=right><sub>550</sub></td>
+        <td align=right><sub>4580</sub></td>
+        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>542</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>ractive</sub></td>
         <td align=right><sub>68.2</sub></td>
-        <td align=right><sub>4426</sub></td>
-        <td align=right><sub>158</sub></td>
+        <td align=right><sub>4568</sub></td>
         <td align=right><sub>153</sub></td>
-        <td align=right><sub>153</sub></td>
-        <td align=right><sub>157</sub></td>
-        <td align=right><sub>153</sub></td>
-        <td align=right><sub>160</sub></td>
-        <td align=right><sub>293</sub></td>
-        <td align=right><sub>205</sub></td>
-        <td align=right><sub>1721</sub></td>
-        <td align=right><b><sub>37</sub></b></td>
+        <td align=right><sub>154</sub></td>
+        <td align=right><sub>156</sub></td>
+        <td align=right><sub>152</sub></td>
+        <td align=right><sub>155</sub></td>
+        <td align=right><sub>165</sub></td>
+        <td align=right><sub>295</sub></td>
+        <td align=right><sub>206</sub></td>
+        <td align=right><sub>1940</sub></td>
+        <td align=right><b><sub>39</sub></b></td>
         <td align=right><b><sub>225</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
         <td><sub>knockout</sub></td>
         <td align=right><sub>24.8</sub></td>
-        <td align=right><sub>3111</sub></td>
-        <td align=right><sub>82</sub></td>
-        <td align=right><sub>63</sub></td>
-        <td align=right><sub>63</sub></td>
+        <td align=right><sub>3135</sub></td>
+        <td align=right><sub>76</sub></td>
+        <td align=right><sub>62</sub></td>
+        <td align=right><sub>66</sub></td>
         <td align=right><sub>64</sub></td>
         <td align=right><sub>64</sub></td>
-        <td align=right><sub>77</sub></td>
-        <td align=right><sub>118</sub></td>
-        <td align=right><sub>95</sub></td>
-        <td align=right><sub>1126</sub></td>
-        <td align=right><b><sub>45</sub></b></td>
+        <td align=right><sub>78</sub></td>
+        <td align=right><sub>120</sub></td>
+        <td align=right><sub>97</sub></td>
+        <td align=right><sub>1137</sub></td>
+        <td align=right><b><sub>46</sub></b></td>
         <td align=right><b><sub>168</sub></b></td>
     </tr>
 </table>
@@ -2593,7 +2594,7 @@ Just use plain property notation within curly brackets.
 <a name="stealth"></a>
 ### Stealth Mode
 
-Whenever __all__ your template expressions are just using proxy notation it enables the "stealth" mode which incredibly boost performance from every update process to the absolute maximum. This mode has no advantage when every render loop has to apply new items.
+Whenever __all__ your template expressions are just using proxy notation it enables the "stealth" mode which boost performance from every update process to the absolute maximum. This mode has no advantage when every render loop has to apply new items.
 
 This enables stealth mode:
 ```html
@@ -2616,6 +2617,104 @@ This not:
 ```
 
 Also using conditionals, loops and inline javascript will prevent from switching to the stealth mode. Just includes (without loop) could be used additionally to the proxy notation, but it requires all fields also observed by the partial which is included.
+
+<a name="observable"></a>
+### Observable Array (Virtual NodeList)
+
+Additionally to react on changes of properties you can create an observable Array which acts like a synchronized NodeList. It uses ES6 Proxy under the hood which fully falls back to classical observer, when not available.
+
+> Semantically the observable Array is equal to an array-like Javascript array.
+
+Create an observable array:
+```js
+var array = Mikado.array();
+```
+
+Create an observable array with initial data:
+```js
+var items = [...];
+var array = Mikado.array(items);
+```
+
+Bind this store to a Mikado instance:
+```js
+var view = Mikado(target, template, { store: array });
+```
+
+Now the observable array ist linked with your instance. Whenever you change the array all changes applies automatically to the corresponding template.
+
+You can use all common array built-ins, e.g.:
+```js
+array.push({ ... });
+```
+```js
+var last = array.pop();
+```
+```js
+array.unshift({ ... });
+```
+```js
+array.splice(0, 1, { ... });
+```
+
+The best is you can __get and set via array index access__ which is a rare available feature (including non-proxy fallback):
+```js
+array[0] = { ... };
+```
+```js
+array[array.length] = { ... };
+```
+```js
+var first = array[0];
+```
+
+A list of all supported array prototypes:
+- length
+- push
+- pop
+- shift
+- unshift
+- slice
+- splice
+- concat
+- indexOf
+- lastIndexOf
+- filter
+- map
+- reverse
+- sort
+- swap
+
+These methods are basically implemented, without some extensions like parameter chaining. They may come in a future update .e.g `array.push(a, b, c)` is not available, instead you have to call push for each item on by one.
+
+The method `array.swap(a, b)` is an optionally performance shortcut.
+
+There are some methods which differs slightly from the original implementation. These methods will apply changes ___in place___ and returning the original reference instead of applying on a copy:
+
+- concat
+- filter
+- map
+
+When you need the original behavior you can simply do that by:
+```js
+var new_array = [ ... ];
+var copy = Array.prototype.concat.call(array, new_array);
+```
+```js
+var copy = Array.prototype.filter.call(array, function(){ ... });
+```
+
+There is a limitation when falling back to the non-proxy polyfill. You cannot fill sparse arrays or access indexes which are greater than the current `array.length`. There is just one undefined index which could always accessed (by read/write) that is the last "undefined" index on an array when you call `array[array.length]`. This index is a special marker which increase the "virtual" array size. Whenever you assign a value to this special index the size of the observable index growth automatically and the next "undefined" index in the queue becomes this marker. This limitation is not existing when ES6 proxy is available.
+
+Also there are some drawbacks when reflection is used:
+```js
+var array = Mikado.array();
+console.log(array.constructor === Array); // -> false
+console.log(array.prototype === Array.prototype); // -> false
+console.log(array instanceof Array); // -> false
+```
+
+The proxy feature theoretically allows those reflection but could not be used to keep the polyfill working in addition of sharing mostly of the same codebase.
 
 <a name="bind" id="bind"></a>
 ## Bind Input Elements
