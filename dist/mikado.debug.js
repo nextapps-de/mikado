@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.0
+ * Mikado.js v0.7.1
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -788,10 +788,8 @@ var proxy$$module$tmp$proxy = SUPPORT_REACTIVE && !window["Proxy"] && function()
     return obj;
   }
   Proxy.prototype["_proxy"] = true;
-  Proxy.prototype.define = function(obj, _key, _val) {
+  Proxy.prototype.define = function(obj, key, val) {
     var self = this;
-    var key = _key;
-    var val = _val;
     Object.defineProperty(obj, key, {get:function() {
       return val;
     }, set:function(newVal) {
@@ -818,7 +816,7 @@ function create_proxy$$module$tmp$proxy(obj, path, handler) {
   return new (proxy$$module$tmp$proxy || Proxy)(obj, {path:path, handler:handler, get:proxy_get$$module$tmp$proxy, set:proxy_set$$module$tmp$proxy});
 }
 function proxy_get$$module$tmp$proxy(target, prop) {
-  return prop === "_proxy" ? true : target[prop];
+  return prop === "_proxy" || target[prop];
 }
 function proxy_set$$module$tmp$proxy(target, prop, value) {
   if (target[prop] !== value) {
@@ -1020,21 +1018,20 @@ Mikado$$module$tmp$mikado.prototype.init = function(template, options) {
   }
   if (SUPPORT_STORAGE) {
     var store = options["store"] || options["store"] !== false;
-    var is_object;
-    if (this.extern = SUPPORT_REACTIVE && store instanceof Observer$$module$tmp$array) {
-      store.mikado = this;
-    }
-    if (SUPPORT_REACTIVE) {
-      this.skip = false;
-    }
-    if (store) {
-      if (is_object = typeof store === "object") {
-        options["store"] = true;
-      } else {
+    if (this.extern = typeof store === "object") {
+      options["store"] = true;
+    } else {
+      if (store) {
         store = [];
       }
     }
-    this.loose = !is_object && options["loose"] !== false;
+    if (SUPPORT_REACTIVE) {
+      if (this.observe = store instanceof Observer$$module$tmp$array) {
+        store.mikado = this;
+      }
+      this.skip = false;
+    }
+    this.loose = !this.extern && options["loose"] !== false;
     this.store = !this.loose && store;
   }
   this.config = options;
@@ -1148,7 +1145,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
       node = this.factory;
     }
   }
-  if (!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.extern) {
+  if (!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe) {
     this.apply(node, data, view, index);
   }
   if (factory) {
@@ -1173,7 +1170,7 @@ Mikado$$module$tmp$mikado.prototype.apply = function(root, data, payload, index)
   } else {
     if (SUPPORT_STORAGE) {
       data || (data = this.store ? this.store[index] : root["_data"]);
-      if (SUPPORT_REACTIVE && payload && this.extern) {
+      if (SUPPORT_REACTIVE && payload && this.observe) {
         this.store.view = payload;
       }
     }
@@ -1337,7 +1334,7 @@ if (SUPPORT_POOLS) {
     old_node["_idx"] = idx;
     this.dom[x] = new_node;
     this.dom[idx] = old_node;
-    if (item && !(SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth && (this.store ? this.store[idx] : new_node["_data"]) === item)) {
+    if (item && !(SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth && (this.store ? this.store[this.extern ? x : idx] : new_node["_data"]) === item)) {
       this.apply(new_node, item, view, x);
     }
     if (SUPPORT_STORAGE && this.store && !this.extern) {
@@ -1365,17 +1362,15 @@ Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_n
   if (SUPPORT_STORAGE) {
     var stealth_mode;
     if (SUPPORT_REACTIVE && this.proxy) {
-      if (!data["_proxy"]) {
-        data = create_proxy$$module$tmp$proxy(data, node["_path"] || this.create_path(node), this.proxy);
+      if (this.stealth && this.loose && node["_data"] === data) {
+        stealth_mode = true;
       } else {
-        if (this.stealth && this.loose && node["_data"] === data) {
-          stealth_mode = true;
-        }
+        data["_proxy"] || (data = create_proxy$$module$tmp$proxy(data, node["_path"] || this.create_path(node), this.proxy));
       }
     }
     if (!stealth_mode) {
       if (this.store) {
-        if (has_index && !this.extern) {
+        if (has_index && !this.observe) {
           this.store.splice(length, 0, data);
         } else {
           if (SUPPORT_REACTIVE) {
@@ -1492,8 +1487,12 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize) {
   }
   var nodes;
   if (!index && count >= length) {
-    if (SUPPORT_STORAGE && this.store && !this.extern) {
-      this.store = resize ? new Array(resize) : [];
+    if (SUPPORT_STORAGE && this.store && !this.observe) {
+      if (this.extern) {
+        this.store.splice(0);
+      } else {
+        this.store = resize ? new Array(resize) : [];
+      }
     }
     if (SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"] && (this.key_pool || this.tpl_pool)) {
       for (var y = 0; y < this["include"].length; y++) {
@@ -1506,7 +1505,7 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize) {
     this.root["_dom"] = this.dom = resize ? new Array(resize) : [];
     length = 0;
   } else {
-    if (SUPPORT_STORAGE && this.store && !this.extern) {
+    if (SUPPORT_STORAGE && this.store && !this.observe) {
       this.store.splice(index, count);
     }
     nodes = this.dom.splice(index, count);
@@ -1609,13 +1608,10 @@ Mikado$$module$tmp$mikado.prototype.update = function(node, data, view, index) {
   }
   if (SUPPORT_STORAGE) {
     if (SUPPORT_REACTIVE && this.proxy) {
-      if (!data["_proxy"]) {
-        data = create_proxy$$module$tmp$proxy(data, node["_path"] || this.create_path(node), this.proxy);
-      } else {
-        if (this.stealth && (this.store ? this.store[index] : node["_data"]) === data) {
-          return this;
-        }
+      if (this.stealth && (this.store ? this.store[index] : node["_data"]) === data) {
+        return this;
       }
+      data["_proxy"] || (data = create_proxy$$module$tmp$proxy(data, node["_path"] || this.create_path(node), this.proxy));
     }
     if (this.store) {
       if (SUPPORT_REACTIVE) {

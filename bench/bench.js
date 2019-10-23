@@ -1,5 +1,8 @@
 import { generate } from "./data.js";
 
+const DATA_SIZE = 100;
+const DATA_SIZE_HALF = (DATA_SIZE / 2) | 0;
+
 export let suite = {};
 export const test = {};
 export const root = document.getElementById("root");
@@ -21,7 +24,6 @@ const params = (function(){
     const pairs = window.location.search.substring(1).split('&');
 
     for(let i = 0, split; i < pairs.length; i++){
-
         split = pairs[i].split('=');
         obj[split[0]] = split[1];
     }
@@ -29,18 +31,33 @@ const params = (function(){
     return obj;
 }());
 
+const rnd = (function(){
+
+    const array = new Array(DATA_SIZE_HALF);
+    for(let i = 0; i < DATA_SIZE_HALF; i++) array[i] = i;
+    for(let i = 0; i < 3; i++) shuffle(array);
+
+    return array;
+}());
+
 const duration = parseFloat(params["duration"] || "5") * 1000;
 const hidden = params["hidden"] !== "false";
-const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
-let clone;
+const factory = strict ? null : [
+    generate(DATA_SIZE),
+    generate(DATA_SIZE),
+    generate(DATA_SIZE),
+    generate(DATA_SIZE),
+    generate(DATA_SIZE)
+];
 
+let clone;
 root.hidden = hidden;
 
 function next(){
 
     if(strict){
 
-        return items = generate(100);
+        return items = generate(DATA_SIZE);
     }
 
     if(internal){
@@ -93,13 +110,15 @@ queue.push({
     },
     test: null,
     start: function(){
-        shuffle();
+        shuffle_rnd();
     },
     prepare: function(){
         clone = next();
     },
     fn: null,
     end: function(){
+        // store references to keep internal state
+        //if(internal) copy(clone, factory[pos === 0 ? factory.length - 1 : pos - 1]);
         items.splice(0);
         this.fn(items);
     },
@@ -113,7 +132,7 @@ queue.push({
     },
     test: null,
     start: function(){
-        shuffle();
+        shuffle_rnd();
     },
     prepare: function(){
         clone = next();
@@ -157,13 +176,14 @@ queue.push({
             swap(items, 1, items.length - 2);
         }
         else if((index === 2) || (index === 4)){ // re-order
-            for(let i = 0; i < 10; i++){
-                swap(items, 10 + i, 80 + i);
-                swap(items, 60 + i, 30 + i);
+            const div = (DATA_SIZE / 10) | 0;
+            for(let i = 0; i < div; i++){
+                swap(items, div * 1 + i, div * 8 + i);
+                swap(items, div * 6 + i, div * 3 + i);
             }
         }
         else{
-            shuffle(items);
+            shuffle_rnd(items);
         }
         clone = enforce(items);
     },
@@ -200,8 +220,8 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle();
-        tmp = next().splice(50);
+        shuffle_rnd();
+        tmp = next().splice(DATA_SIZE_HALF);
         this.fn(enforce(items));
     },
     prepare: function(){
@@ -220,11 +240,11 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle();
+        shuffle_rnd();
         this.fn(next());
     },
     prepare: function(){
-        items.splice(50);
+        items.splice(DATA_SIZE_HALF);
         clone = enforce(items);
     },
     fn: null,
@@ -238,7 +258,7 @@ queue.push({
 queue.push({
     name: "toggle",
     init: function(){
-        shuffle();
+        shuffle_rnd();
         this.fn(clone = next());
     },
     test: null,
@@ -248,7 +268,7 @@ queue.push({
             clone = enforce(clone.concat(tmp));
         }
         else{
-            tmp = clone.splice(50);
+            tmp = clone.splice(DATA_SIZE_HALF);
             clone = enforce(clone);
         }
     },
@@ -265,7 +285,7 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle();
+        shuffle_rnd();
         this.fn(next());
     },
     prepare: function(){
@@ -424,9 +444,17 @@ function check_test(test){
 
 function check_loop(name){
 
+    let target = root;
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
+
+    if(target.children.length !== clone.length) return msg("length", target.children.length + " should be " + clone.length);
+
     for(let i = 0; i < clone.length; i++){
 
-        if(!validate(clone[i], i)){
+        if(!validate(clone[i], i, clone.length)){
 
             return msg("test failed: " + name + ", index:" + i);
         }
@@ -554,51 +582,19 @@ function perform(){
     }
 }
 
-/*
-function median(arr){
-
-    arr.sort(function(a, b){
-
-        return a - b;
-    });
-
-    const length = arr.length;
-    const half = length / 2;
-
-    return (
-
-        length % 2 ?
-
-            arr[half | 0]
-        :
-            (arr[half - 1] + arr[half]) / 2
-    );
-}
-
-function normalize(arr){
-
-    arr.sort(function(a, b){
-
-        return a - b;
-    });
-
-    arr = arr.slice((arr.length / 4) | 0, (arr.length / 2) | 0);
-
-    const length = arr.length;
-    let sum = 0;
-
-    for(let i = 0; i < length; i++){
-
-        sum += arr[i];
-    }
-
-    return sum / length;
-}
-*/
-
-function shuffle(items){
+function shuffle_rnd(items){
 
     items || (items = factory[pos]);
+
+    for(let i = 0; i < DATA_SIZE_HALF; i++) {
+
+        swap(items, i, DATA_SIZE_HALF + rnd[i]);
+    }
+
+    return items;
+}
+
+function shuffle(items){
 
     for(let i = items.length - 1; i > 0; i--) {
 
@@ -620,23 +616,26 @@ function swap(items, a, b){
 
 function update(items, index){
 
-    for(let i = 0, length = items.length; i < length; i++){
+    for(let i = 0, current; i < DATA_SIZE_HALF; i++){
 
-        if((i + index) % 29 === 0) swap_value(items, i, length, "date");
-        if((i + index) % 23 === 0) swap_value(items, i, length, "classname");
-        if((i + index) % 19 === 0) swap_value(items, i, length, "months");
-        if((i + index) % 17 === 0) swap_value(items, i, length, "content");
-        if((i + index) % 13 === 0) swap_value(items, i, length, "title");
-        if((i + index) % 11 === 0) swap_value(items, i, length, "days");
-        if((i + index) % 7 === 0) swap_value(items, i, length, "footer");
+        current = i + index;
+
+       (current % 29) || swap_value(items, current, "date");
+       (current % 23) || swap_value(items, current, "classname");
+       (current % 19) || swap_value(items, current, "months");
+       (current % 17) || swap_value(items, current, "content");
+       (current % 13) || swap_value(items, current, "title");
+       (current % 11) || swap_value(items, current, "days");
+       (current % 7 ) || swap_value(items, current, "footer");
     }
 
     return items;
 }
 
-function swap_value(items, a, b, prop){
+function swap_value(items, a, prop, b){
 
-    b = (Math.random() * b) | 0;
+    a %= DATA_SIZE_HALF;
+    b = DATA_SIZE_HALF + rnd[a];
 
     if(a !== b){
 

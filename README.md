@@ -343,17 +343,17 @@ Values represents operations per second, each benchmark task has to process a da
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>30</sub></td>
-        <td align=right><sub>15506</sub></td>
-        <td align=right><sub>7198</sub></td>
-        <td align=right><sub>50308</sub></td>
-        <td align=right><sub>14612</sub></td>
-        <td align=right><sub>129749</sub></td>
-        <td align=right><sub>26650</sub></td>
-        <td align=right><sub>24698</sub></td>
-        <td align=right><sub>26896</sub></td>
-        <td align=right><sub>24824</sub></td>
-        <td align=right><b><sub>994</sub></b></td>
-        <td align=right><b><sub>32260</sub></b></td>
+        <td align=right><sub>17604</sub></td>
+        <td align=right><sub>7635</sub></td>
+        <td align=right><sub>75998</sub></td>
+        <td align=right><sub>22272</sub></td>
+        <td align=right><sub>245380</sub></td>
+        <td align=right><sub>33123</sub></td>
+        <td align=right><sub>27130</sub></td>
+        <td align=right><sub>30645</sub></td>
+        <td align=right><sub>25168</sub></td>
+        <td align=right><b><sub>995</sub></b></td>
+        <td align=right><b><sub>50625</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -369,7 +369,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>5554</sub></td>
         <td align=right><sub>2356</sub></td>
         <td align=right><sub>13924</sub></td>
-        <td align=right><b><sub>214</sub></b></td>
+        <td align=right><b><sub>195</sub></b></td>
         <td align=right><b><sub>2917</sub></b></td>
     </tr>
     <tr></tr>
@@ -386,7 +386,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6372</sub></td>
         <td align=right><sub>2007</sub></td>
         <td align=right><sub>11735</sub></td>
-        <td align=right><b><sub>198</sub></b></td>
+        <td align=right><b><sub>182</sub></b></td>
         <td align=right><b><sub>2543</sub></b></td>
     </tr>
     <tr></tr>
@@ -403,7 +403,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1866</sub></td>
         <td align=right><sub>1387</sub></td>
         <td align=right><sub>25400</sub></td>
-        <td align=right><b><sub>228</sub></b></td>
+        <td align=right><b><sub>221</sub></b></td>
         <td align=right><b><sub>1400</sub></b></td>
     </tr>
     <tr>
@@ -419,7 +419,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1896</sub></td>
         <td align=right><sub>1123</sub></td>
         <td align=right><sub>26551</sub></td>
-        <td align=right><b><sub>169</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>1290</sub></b></td>
     </tr>
     <tr>
@@ -435,7 +435,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1454</sub></td>
         <td align=right><sub>1129</sub></td>
         <td align=right><sub>22271</sub></td>
-        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>165</sub></b></td>
         <td align=right><b><sub>1094</sub></b></td>
     </tr>
     <tr></tr>
@@ -452,7 +452,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1571</sub></td>
         <td align=right><sub>1039</sub></td>
         <td align=right><sub>19765</sub></td>
-        <td align=right><b><sub>175</sub></b></td>
+        <td align=right><b><sub>170</sub></b></td>
         <td align=right><b><sub>1058</sub></b></td>
     </tr>
     <tr></tr>
@@ -469,7 +469,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1222</sub></td>
         <td align=right><sub>834</sub></td>
         <td align=right><sub>5344</sub></td>
-        <td align=right><b><sub>93</sub></b></td>
+        <td align=right><b><sub>89</sub></b></td>
         <td align=right><b><sub>813</sub></b></td>
     </tr>
     <tr></tr>
@@ -486,7 +486,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>825</sub></td>
         <td align=right><sub>580</sub></td>
         <td align=right><sub>12448</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>717</sub></b></td>
     </tr>
     <tr></tr>
@@ -503,7 +503,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>716</sub></td>
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4580</sub></td>
-        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>82</sub></b></td>
         <td align=right><b><sub>542</sub></b></td>
     </tr>
     <tr></tr>
@@ -520,7 +520,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>295</sub></td>
         <td align=right><sub>206</sub></td>
         <td align=right><sub>1940</sub></td>
-        <td align=right><b><sub>39</sub></b></td>
+        <td align=right><b><sub>38</sub></b></td>
         <td align=right><b><sub>225</sub></b></td>
     </tr>
     <tr></tr>
@@ -539,7 +539,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1137</sub></td>
         <td align=right><b><sub>46</sub></b></td>
         <td align=right><b><sub>168</sub></b></td>
-    </tr>
+    </tr>	
 </table>
 
 The file size and memory gets less relevance. The maximum possible ___index___ is 1000, that requires a library to be best in each category. The ___score___ value is relational where a score of 1000 represents the statistical midfield.

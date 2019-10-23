@@ -54,17 +54,17 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>30</sub></td>
-        <td align=right><sub>15506</sub></td>
-        <td align=right><sub>7198</sub></td>
-        <td align=right><sub>50308</sub></td>
-        <td align=right><sub>14612</sub></td>
-        <td align=right><sub>129749</sub></td>
-        <td align=right><sub>26650</sub></td>
-        <td align=right><sub>24698</sub></td>
-        <td align=right><sub>26896</sub></td>
-        <td align=right><sub>24824</sub></td>
-        <td align=right><b><sub>994</sub></b></td>
-        <td align=right><b><sub>32260</sub></b></td>
+        <td align=right><sub>17604</sub></td>
+        <td align=right><sub>7635</sub></td>
+        <td align=right><sub>75998</sub></td>
+        <td align=right><sub>22272</sub></td>
+        <td align=right><sub>245380</sub></td>
+        <td align=right><sub>33123</sub></td>
+        <td align=right><sub>27130</sub></td>
+        <td align=right><sub>30645</sub></td>
+        <td align=right><sub>25168</sub></td>
+        <td align=right><b><sub>995</sub></b></td>
+        <td align=right><b><sub>50625</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -80,7 +80,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>5554</sub></td>
         <td align=right><sub>2356</sub></td>
         <td align=right><sub>13924</sub></td>
-        <td align=right><b><sub>214</sub></b></td>
+        <td align=right><b><sub>195</sub></b></td>
         <td align=right><b><sub>2917</sub></b></td>
     </tr>
     <tr></tr>
@@ -97,7 +97,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6372</sub></td>
         <td align=right><sub>2007</sub></td>
         <td align=right><sub>11735</sub></td>
-        <td align=right><b><sub>198</sub></b></td>
+        <td align=right><b><sub>182</sub></b></td>
         <td align=right><b><sub>2543</sub></b></td>
     </tr>
     <tr></tr>
@@ -114,7 +114,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1866</sub></td>
         <td align=right><sub>1387</sub></td>
         <td align=right><sub>25400</sub></td>
-        <td align=right><b><sub>228</sub></b></td>
+        <td align=right><b><sub>221</sub></b></td>
         <td align=right><b><sub>1400</sub></b></td>
     </tr>
     <tr>
@@ -130,7 +130,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1896</sub></td>
         <td align=right><sub>1123</sub></td>
         <td align=right><sub>26551</sub></td>
-        <td align=right><b><sub>169</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>1290</sub></b></td>
     </tr>
     <tr>
@@ -146,7 +146,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1454</sub></td>
         <td align=right><sub>1129</sub></td>
         <td align=right><sub>22271</sub></td>
-        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>165</sub></b></td>
         <td align=right><b><sub>1094</sub></b></td>
     </tr>
     <tr></tr>
@@ -163,7 +163,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1571</sub></td>
         <td align=right><sub>1039</sub></td>
         <td align=right><sub>19765</sub></td>
-        <td align=right><b><sub>175</sub></b></td>
+        <td align=right><b><sub>170</sub></b></td>
         <td align=right><b><sub>1058</sub></b></td>
     </tr>
     <tr></tr>
@@ -180,7 +180,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1222</sub></td>
         <td align=right><sub>834</sub></td>
         <td align=right><sub>5344</sub></td>
-        <td align=right><b><sub>93</sub></b></td>
+        <td align=right><b><sub>89</sub></b></td>
         <td align=right><b><sub>813</sub></b></td>
     </tr>
     <tr></tr>
@@ -197,7 +197,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>825</sub></td>
         <td align=right><sub>580</sub></td>
         <td align=right><sub>12448</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
         <td align=right><b><sub>717</sub></b></td>
     </tr>
     <tr></tr>
@@ -214,7 +214,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>716</sub></td>
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4580</sub></td>
-        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>82</sub></b></td>
         <td align=right><b><sub>542</sub></b></td>
     </tr>
     <tr></tr>
@@ -231,7 +231,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>295</sub></td>
         <td align=right><sub>206</sub></td>
         <td align=right><sub>1940</sub></td>
-        <td align=right><b><sub>39</sub></b></td>
+        <td align=right><b><sub>38</sub></b></td>
         <td align=right><b><sub>225</sub></b></td>
     </tr>
     <tr></tr>
@@ -250,7 +250,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1137</sub></td>
         <td align=right><b><sub>46</sub></b></td>
         <td align=right><b><sub>168</sub></b></td>
-    </tr>
+    </tr>	
 </table>
 
 #### Non-Keyed
@@ -279,15 +279,15 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>27</sub></td>
         <td align=right><sub>18101</sub></td>
         <td align=right><sub>7760</sub></td>
-        <td align=right><sub>66088</sub></td>
-        <td align=right><sub>15267</sub></td>
-        <td align=right><sub>251311</sub></td>
-        <td align=right><sub>32611</sub></td>
-        <td align=right><sub>25724</sub></td>
-        <td align=right><sub>29082</sub></td>
-        <td align=right><sub>24841</sub></td>
+        <td align=right><sub>73757</sub></td>
+        <td align=right><sub>22797</sub></td>
+        <td align=right><sub>254418</sub></td>
+        <td align=right><sub>33216</sub></td>
+        <td align=right><sub>27032</sub></td>
+        <td align=right><sub>31020</sub></td>
+        <td align=right><sub>24896</sub></td>
         <td align=right><b><sub>1000</sub></b></td>
-        <td align=right><b><sub>16425</sub></b></td>
+        <td align=right><b><sub>17113</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -303,7 +303,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>22124</sub></td>
         <td align=right><sub>4261</sub></td>
         <td align=right><sub>22452</sub></td>
-        <td align=right><b><sub>553</sub></b></td>
+        <td align=right><b><sub>511</sub></b></td>
         <td align=right><b><sub>5430</sub></b></td>
     </tr>
     <tr></tr>
@@ -320,7 +320,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>8255</sub></td>
         <td align=right><sub>1532</sub></td>
         <td align=right><sub>4754</sub></td>
-        <td align=right><b><sub>265</sub></b></td>
+        <td align=right><b><sub>241</sub></b></td>
         <td align=right><b><sub>2592</sub></b></td>
     </tr>
     <tr></tr>
@@ -337,7 +337,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6619</sub></td>
         <td align=right><sub>1935</sub></td>
         <td align=right><sub>11892</sub></td>
-        <td align=right><b><sub>208</sub></b></td>
+        <td align=right><b><sub>199</sub></b></td>
         <td align=right><b><sub>1239</sub></b></td>
     </tr>
     <tr></tr>
@@ -354,7 +354,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6292</sub></td>
         <td align=right><sub>1418</sub></td>
         <td align=right><sub>12013</sub></td>
-        <td align=right><b><sub>245</sub></b></td>
+        <td align=right><b><sub>236</sub></b></td>
         <td align=right><b><sub>1214</sub></b></td>
     </tr>
     <tr></tr>
@@ -371,7 +371,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>5312</sub></td>
         <td align=right><sub>2239</sub></td>
         <td align=right><sub>10636</sub></td>
-        <td align=right><b><sub>193</sub></b></td>
+        <td align=right><b><sub>183</sub></b></td>
         <td align=right><b><sub>1212</sub></b></td>
     </tr>
     <tr>
@@ -387,7 +387,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1609</sub></td>
         <td align=right><sub>1149</sub></td>
         <td align=right><sub>22221</sub></td>
-        <td align=right><b><sub>148</sub></b></td>
+        <td align=right><b><sub>145</sub></b></td>
         <td align=right><b><sub>786</sub></b></td>
     </tr>
     <tr>
@@ -403,7 +403,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1457</sub></td>
         <td align=right><sub>1113</sub></td>
         <td align=right><sub>19349</sub></td>
-        <td align=right><b><sub>159</sub></b></td>
+        <td align=right><b><sub>157</sub></b></td>
         <td align=right><b><sub>735</sub></b></td>
     </tr>
     <tr></tr>
@@ -420,7 +420,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>2738</sub></td>
         <td align=right><sub>596</sub></td>
         <td align=right><sub>1740</sub></td>
-        <td align=right><b><sub>92</sub></b></td>
+        <td align=right><b><sub>85</sub></b></td>
         <td align=right><b><sub>710</sub></b></td>
     </tr>
     <tr></tr>
@@ -437,7 +437,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1461</sub></td>
         <td align=right><sub>1019</sub></td>
         <td align=right><sub>15545</sub></td>
-        <td align=right><b><sub>160</sub></b></td>
+        <td align=right><b><sub>158</sub></b></td>
         <td align=right><b><sub>695</sub></b></td>
     </tr>
     <tr></tr>
@@ -454,7 +454,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1153</sub></td>
         <td align=right><sub>840</sub></td>
         <td align=right><sub>5087</sub></td>
-        <td align=right><b><sub>88</sub></b></td>
+        <td align=right><b><sub>86</sub></b></td>
         <td align=right><b><sub>508</sub></b></td>
     </tr>
     <tr></tr>
@@ -473,7 +473,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1053</sub></td>
         <td align=right><b><sub>47</sub></b></td>
         <td align=right><b><sub>144</sub></b></td>
-    </tr>
+    </tr>	
 </table>
 
 #### Data-Driven (Internal)
@@ -500,17 +500,17 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>27</sub></td>
-        <td align=right><sub>6956</sub></td>
-        <td align=right><sub>2706</sub></td>
-        <td align=right><sub>9082</sub></td>
-        <td align=right><sub>4604</sub></td>
-        <td align=right><sub>5272326</sub></td>
-        <td align=right><sub>9459</sub></td>
-        <td align=right><sub>21574</sub></td>
-        <td align=right><sub>13116</sub></td>
-        <td align=right><sub>17528</sub></td>
-        <td align=right><b><sub>704</sub></b></td>
-        <td align=right><b><sub>562985</sub></b></td>
+        <td align=right><sub>17284</sub></td>
+        <td align=right><sub>7187</sub></td>
+        <td align=right><sub>20029</sub></td>
+        <td align=right><sub>20196</sub></td>
+        <td align=right><sub>137185</sub></td>
+        <td align=right><sub>29482</sub></td>
+        <td align=right><sub>25343</sub></td>
+        <td align=right><sub>25639</sub></td>
+        <td align=right><sub>25040</sub></td>
+        <td align=right><b><sub>955</sub></b></td>
+        <td align=right><b><sub>25768</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -526,8 +526,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>18375</sub></td>
         <td align=right><sub>3929</sub></td>
         <td align=right><sub>22862</sub></td>
-        <td align=right><b><sub>499</sub></b></td>
-        <td align=right><b><sub>14534</sub></b></td>
+        <td align=right><b><sub>543</sub></b></td>
+        <td align=right><b><sub>14539</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -536,15 +536,15 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>279</sub></td>
         <td align=right><sub>797</sub></td>
         <td align=right><sub>766</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>20483</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>1552</sub></td>
         <td align=right><sub>16508</sub></td>
         <td align=right><sub>2990</sub></td>
         <td align=right><sub>13956</sub></td>
-        <td align=right><b><sub>364</sub></b></td>
-        <td align=right><b><sub>2564</sub></b></td>
+        <td align=right><b><sub>380</sub></b></td>
+        <td align=right><b><sub>2569</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -560,8 +560,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6738</sub></td>
         <td align=right><sub>2266</sub></td>
         <td align=right><sub>14219</sub></td>
-        <td align=right><b><sub>185</sub></b></td>
-        <td align=right><b><sub>2133</sub></b></td>
+        <td align=right><b><sub>210</sub></b></td>
+        <td align=right><b><sub>2136</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -570,15 +570,15 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>206</sub></td>
         <td align=right><sub>956</sub></td>
         <td align=right><sub>802</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>13723</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>1775</sub></td>
         <td align=right><sub>13084</sub></td>
         <td align=right><sub>3262</sub></td>
         <td align=right><sub>23738</sub></td>
-        <td align=right><b><sub>364</sub></b></td>
-        <td align=right><b><sub>2246</sub></b></td>
+        <td align=right><b><sub>357</sub></b></td>
+        <td align=right><b><sub>2249</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -594,8 +594,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6242</sub></td>
         <td align=right><sub>1982</sub></td>
         <td align=right><sub>11814</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
-        <td align=right><b><sub>1838</sub></b></td>
+        <td align=right><b><sub>190</sub></b></td>
+        <td align=right><b><sub>1841</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
@@ -610,8 +610,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1683</sub></td>
         <td align=right><sub>1149</sub></td>
         <td align=right><sub>26727</sub></td>
-        <td align=right><b><sub>175</sub></b></td>
-        <td align=right><b><sub>920</sub></b></td>
+        <td align=right><b><sub>165</sub></b></td>
+        <td align=right><b><sub>1012</sub></b></td>
     </tr>
     <tr>
         <td><sub>jquery</sub></td>
@@ -626,8 +626,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1103</sub></td>
         <td align=right><sub>836</sub></td>
         <td align=right><sub>5613</sub></td>
-        <td align=right><b><sub>85</sub></b></td>
-        <td align=right><b><sub>647</sub></b></td>
+        <td align=right><b><sub>93</sub></b></td>
+        <td align=right><b><sub>648</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -643,8 +643,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>814</sub></td>
         <td align=right><sub>579</sub></td>
         <td align=right><sub>12155</sub></td>
-        <td align=right><b><sub>85</sub></b></td>
-        <td align=right><b><sub>608</sub></b></td>
+        <td align=right><b><sub>163</sub></b></td>
+        <td align=right><b><sub>613</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -660,8 +660,8 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>751</sub></td>
         <td align=right><sub>539</sub></td>
         <td align=right><sub>4605</sub></td>
-        <td align=right><b><sub>56</sub></b></td>
-        <td align=right><b><sub>438</sub></b></td>
+        <td align=right><b><sub>82</sub></b></td>
+        <td align=right><b><sub>440</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -670,15 +670,15 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1573</sub></td>
         <td align=right><sub>85</sub></td>
         <td align=right><sub>63</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>115</sub></td>
-        <td align=right><sub>- failed -</sub></td>
+        <td align=right><sub>-failed-</sub></td>
         <td align=right><sub>132</sub></td>
         <td align=right><sub>344</sub></td>
         <td align=right><sub>200</sub></td>
         <td align=right><sub>1077</sub></td>
-        <td align=right><b><sub>28</sub></b></td>
-        <td align=right><b><sub>201</sub></b></td>
+        <td align=right><b><sub>61</sub></b></td>
+        <td align=right><b><sub>203</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -694,9 +694,9 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>275</sub></td>
         <td align=right><sub>206</sub></td>
         <td align=right><sub>1855</sub></td>
-        <td align=right><b><sub>24</sub></b></td>
-        <td align=right><b><sub>183</sub></b></td>
-    </tr>
+        <td align=right><b><sub>38</sub></b></td>
+        <td align=right><b><sub>184</sub></b></td>
+    </tr>	
 </table>
 
 #### Test goal

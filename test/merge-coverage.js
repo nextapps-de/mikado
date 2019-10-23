@@ -17,5 +17,5 @@ map.merge(normalizeJestCoverage(coverage_1));
 map.merge(normalizeJestCoverage(coverage_2));
 
 const reporter = createReporter();
-reporter.addAll(['html', 'json', 'lcov', 'text', 'text-lcov']);
+reporter.addAll(['html', 'json', 'lcov', 'text']);
 reporter.write(map);

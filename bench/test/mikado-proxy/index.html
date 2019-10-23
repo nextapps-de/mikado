@@ -11,12 +11,12 @@
 
     "use strict";
 
-    import { suite, root } from "./../../bench.js";
+    import { suite, root, store } from "./../../bench.js";
     import template from "./template/proxy.es6.js";
 
     const mikado = new Mikado(root, template, {
 
-        "store": true,
+        "store": store(),
         "reuse": true,
         "pool": false,
         "keep": true,

@@ -26,11 +26,11 @@ const proxy = SUPPORT_REACTIVE && !window["Proxy"] && (function(){
     // hide proxy check
     Proxy.prototype["_proxy"] = true;
 
-    Proxy.prototype.define = function(obj, _key, _val){
+    Proxy.prototype.define = function(obj, key, val){
 
         const self = this;
-        const key = _key;
-        let val = _val;
+        //const key = _key;
+        //let val = _val;
 
         Object.defineProperty(obj, key, {
 
@@ -94,7 +94,7 @@ export default function create_proxy(obj, path, handler){
 function proxy_get(target, prop){
 
     // hide proxy check
-    return prop === "_proxy" ? true : target[prop];
+    return (prop === "_proxy") || target[prop];
 }
 
 /**

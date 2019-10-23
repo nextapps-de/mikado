@@ -20,14 +20,12 @@
 
     const mikado = new Mikado(root, template, {
 
-        "store": true, // Mikado.array(),
+        "store": store(),
         "reuse": true,
         "pool": false,
         "keep": true,
         "cache": true
     });
-
-    //store(mikado.store);
 
     suite["mikado"] = function(items){
 

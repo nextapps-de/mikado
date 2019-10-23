@@ -12,7 +12,6 @@
     let internal;
     let keyed;
     let duration = 3;
-    let hidden = 1;
 
     const lib = shuffle(modes ? [
 
@@ -76,10 +75,6 @@
     }).route("duration", function(target){
 
         duration = target.value;
-
-    }).route("hide", function(target){
-
-        iframe.hidden = hidden = target.checked;
 
     }).listen("click").listen("change");
 
@@ -158,7 +153,7 @@
         index++;
         current[index][test[2]] = "run...";
         mikado.update(mikado.node(index), current[index]);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration + "&hidden=" + hidden);
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration);
     }
 
     function get_score(){
@@ -217,7 +212,7 @@
 
             for(let y = 0; y < test.length; y++){
 
-                if(current[x][test[y]] && (current[x][test[y]] !== "- failed -")){
+                if(current[x][test[y]] && (current[x][test[y]] !== "-failed-")){
 
                     length[x]++;
 
@@ -275,7 +270,7 @@
 
                 if(!current[index][parts[0]]){
 
-                    current[index][parts[0]] = "- failed -";
+                    current[index][parts[0]] = "-failed-";
                 }
 
                 mikado.update(mikado.node(index), current[index]);

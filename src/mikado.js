@@ -388,32 +388,28 @@ Mikado.prototype.init = function(template, options){
     if(SUPPORT_STORAGE){
 
         let store = options["store"] || (options["store"] !== false);
-        let is_object;
 
-        if((this.extern = SUPPORT_REACTIVE && (store instanceof Observer))){
+        if((this.extern = (typeof store === "object"))){
 
-            store.mikado = this;
+            options["store"] = true;
+        }
+        else if(store){
+
+            store = [];
         }
 
         if(SUPPORT_REACTIVE){
 
+            if((this.observe = store instanceof Observer)){
+
+                store.mikado = this;
+            }
+
             this.skip = false;
         }
 
-        if(store){
-
-            if((is_object = (typeof store === "object"))){
-
-                options["store"] = true;
-            }
-            else{
-
-                store = [];
-            }
-        }
-
         // TODO: also enable by default on stealth mode
-        this.loose = !is_object && (options["loose"] !== false);
+        this.loose = !this.extern && (options["loose"] !== false);
         this.store = !this.loose && store;
     }
 
@@ -617,7 +613,7 @@ Mikado.prototype.create = function(data, view, index){
         node = this.factory;
     }
 
-    if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.extern){
+    if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe){
 
         this.apply(node, data, view, index);
     }
@@ -667,7 +663,7 @@ Mikado.prototype.apply = function(root, data, payload, index){
 
             data || (data = this.store ? this.store[index] : root["_data"]);
 
-            if(SUPPORT_REACTIVE && payload && this.extern){
+            if(SUPPORT_REACTIVE && payload && this.observe){
 
                 this.store.view = payload;
             }
@@ -972,7 +968,7 @@ if(SUPPORT_POOLS){
         this.dom[x] = new_node;
         this.dom[idx] = old_node;
 
-        if(item && !(SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth && ((this.store ? this.store[idx] : new_node["_data"]) === item))){
+        if(item && !(SUPPORT_STORAGE && SUPPORT_REACTIVE && this.stealth && ((this.store ? this.store[this.extern ? x : idx] : new_node["_data"]) === item))){
 
             this.apply(new_node, item, view, x);
         }
@@ -1023,13 +1019,13 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
 
         if(SUPPORT_REACTIVE && this.proxy){
 
-            if(!data["_proxy"]){
-
-                data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy);
-            }
-            else if(this.stealth && this.loose && (node["_data"] === data)){
+            if(this.stealth && this.loose && (node["_data"] === data)){
 
                 stealth_mode = true;
+            }
+            else{
+
+                data["_proxy"] || (data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy));
             }
         }
 
@@ -1037,7 +1033,7 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
 
             if(this.store){
 
-                if(has_index && !this.extern){
+                if(has_index && !this.observe){
 
                     this.store.splice(length, 0, data);
                 }
@@ -1238,9 +1234,16 @@ Mikado.prototype.remove = function(index, count, resize){
 
     if(!index && (count >= length)){
 
-        if(SUPPORT_STORAGE && this.store && !this.extern){
+        if(SUPPORT_STORAGE && this.store && !this.observe){
 
-            this.store = resize ? new Array(resize) : [];
+            if(this.extern){
+
+                this.store.splice(0);
+            }
+            else{
+
+                this.store = resize ? new Array(resize) : [];
+            }
         }
 
         if(SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"] && (this.key_pool || this.tpl_pool)){
@@ -1259,7 +1262,7 @@ Mikado.prototype.remove = function(index, count, resize){
     }
     else{
 
-        if(SUPPORT_STORAGE && this.store && !this.extern){
+        if(SUPPORT_STORAGE && this.store && !this.observe){
 
             this.store.splice(index, count);
         }
@@ -1309,7 +1312,7 @@ Mikado.prototype.remove = function(index, count, resize){
            }
         }
 
-        if(this.cache && (count > 1) && !this.key){
+        if(this.cache && (count > 1) && !this.key_pool){
 
             // reverse is applied in order to use push/pop rather than shift/unshift
             // when no keyed pool is used the right order of items will:
@@ -1465,14 +1468,12 @@ Mikado.prototype.update = function(node, data, view, index){
 
         if(SUPPORT_REACTIVE && this.proxy){
 
-            if(!data["_proxy"]){
-
-                data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy);
-            }
-            else if(this.stealth && ((this.store ? this.store[index] : node["_data"]) === data)){
+            if(this.stealth && ((this.store ? this.store[index] : node["_data"]) === data)){
 
                 return this;
             }
+
+            data["_proxy"] || (data = create_proxy(data, node["_path"] || this.create_path(node), this.proxy));
         }
 
         if(this.store){

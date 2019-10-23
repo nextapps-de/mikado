@@ -66,14 +66,13 @@ const len_continents = continents.length;
 export function generate(count){
 
     const data = new Array(count);
-    const date = new Date().toISOString();
 
     for(let i = 0; i < count; i++){
 
         data[i] = {
 
             "id": (random_string(4) + "-" + random_string(8) + "-" + random_string(4)).toUpperCase(),
-            "date": date,
+            "date": new Date(Math.random() * 999999999999).toISOString(),
             "index": i,
             "classname": colors[random(len_colors)],
             "title": titles[random(len_titles)],
