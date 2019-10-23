@@ -10,7 +10,7 @@
 
     "use strict";
 
-    import { suite, root } from "./../../bench.js";
+    import { suite, root, store } from "./../../bench.js";
 
     import { observable } from './dist/observable.js';
     import { html } from './dist/sinuous.js';
@@ -35,6 +35,8 @@
     };
 
     root.appendChild(App());
+
+    store(data());
 
     suite["sinuous"] = function(items){
 

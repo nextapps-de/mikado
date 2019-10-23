@@ -4,8 +4,8 @@
 
     const iframe = document.getElementById("iframe");
     const options = { cache: false, store: false, pool: false };
-    const mikado = Mikado.new(document.getElementById("result"), "row", options);
-    const list = Mikado.new(document.getElementById("lib"), "lib", options);
+    const mikado = Mikado(document.getElementById("result"), "row", options);
+    const list = Mikado(document.getElementById("lib"), "lib", options);
 
     let strict;
     let modes = window.location.hash.indexOf("modes") !== -1;
@@ -17,8 +17,9 @@
     const lib = shuffle(modes ? [
 
         "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
-        "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy"
-    ]:[//"1", "2", "3", "4", "5", "6",
+        "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy",
+        "mikado-observer"
+    ]:[
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
@@ -28,11 +29,10 @@
     function init(hash){
 
         strict = hash.indexOf("strict") !== -1;
-        //modes = hash.indexOf("modes") !== -1;
         internal = hash.indexOf("internal") !== -1;
         keyed = hash.indexOf("keyed") !== -1;
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : internal ? "Data-Driven" : "Non-Keyed") + ")"
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : internal ? "Data-Driven" : "Non-Keyed") + ")";
 
         if(modes){
 
@@ -113,8 +113,8 @@
         "mikado-keyed": 2.8,
         "mikado-keyed-shared": 2.8,
         "mikado-non-keyed": 2.8,
-        "mikado-proxy": 6.9
-        //"1": 2.3, "2": 2.3, "3": 2.3, "4": 2.3, "5": 2.3, "6": 2.3
+        "mikado-proxy": 7.1,
+        "mikado-observer": 7.1
     };
 
     let memory = {
@@ -206,43 +206,42 @@
 
         let score = new Array(lib.length);
         let index = new Array(lib.length);
+        let length = new Array(lib.length);
         let max_score = 0, max_index = 0;
 
         for(let x = 0; x < lib.length; x++){
 
             score[x] = 0;
             index[x] = 0;
+            length[x] = 0;
 
             for(let y = 0; y < test.length; y++){
 
-                if((test[y] === "size") || (test[y] === "memory")){
+                if(current[x][test[y]] && (current[x][test[y]] !== "- failed -")){
 
-                    if(current[x][test[y]]){
+                    length[x]++;
 
-                        //if(test[y] === "size"){
+                    if((test[y] === "size") || (test[y] === "memory")){
 
-                            score[x] += Math.sqrt(median(val[y]) / current[x][test[y]]);
-                            index[x] += Math.sqrt(max[y] / current[x][test[y]]);
-                            current[x]["color_" + test[y]] = color(Math.sqrt(max[y]), Math.sqrt(current[x][test[y]]));
-                        // }
-                        // else{
-                        //
-                        //     score[x] += average(val[y]) / current[x][test[y]];
-                        //     index[x] += max[y] / current[x][test[y]];
-                        //     current[x]["color_" + test[y]] = color(max[y], current[x][test[y]]);
-                        // }
+                        score[x] += Math.sqrt(median(val[y]) / current[x][test[y]]);
+                        index[x] += Math.sqrt(max[y] / current[x][test[y]]);
+                        current[x]["color_" + test[y]] = color(Math.sqrt(max[y]), Math.sqrt(current[x][test[y]]));
+                    }
+                    else{
+
+                        score[x] += current[x][test[y]] / median(val[y]);
+                        index[x] += current[x][test[y]] / max[y];
+                        current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
                 }
                 else{
 
-                    score[x] += current[x][test[y]] / median(val[y]);
-                    index[x] += current[x][test[y]] / max[y];
-                    current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
+                    current[x]["color_" + test[y]] = "#ccc";
                 }
             }
 
-            current[x]["score"] = (score[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
-            current[x]["index"] = (index[x] / (test.length - (lib[x] === "innerHTML" ? 1 : 0)) * 1000 + 0.5) | 0;
+            current[x]["score"] = (score[x] / length[x] * 1000 + 0.5) | 0;
+            current[x]["index"] = (index[x] / length[x] * 1000 + 0.5) | 0;
             if(max_score < current[x]["score"]) max_score = current[x]["score"];
             if(max_index < current[x]["index"]) max_index = current[x]["index"];
         }
@@ -273,6 +272,12 @@
 
                 current[index][parts[0]] = parseInt(parts[1], 10);
                 current[index]["memory"] += parseInt(parts[2], 10);
+
+                if(!current[index][parts[0]]){
+
+                    current[index][parts[0]] = "- failed -";
+                }
+
                 mikado.update(mikado.node(index), current[index]);
 
                 if(parts[0] === "clear"){
@@ -335,6 +340,7 @@
         );
     }
 
+    /*
     function average(arr){
 
         const length = arr.length;
@@ -347,5 +353,6 @@
 
         return sum / length;
     }
+    */
 
 }());

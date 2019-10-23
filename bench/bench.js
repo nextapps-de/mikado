@@ -4,12 +4,16 @@ export let suite = {};
 export const test = {};
 export const root = document.getElementById("root");
 const result = document.getElementById("result").appendChild(document.createTextNode("running..."));
-let items = generate(3);
-let pos = -1;
+let items = [];
+export function store(data){ return (data && (items = data)) || items; }
+let pos = 0;
 export const queue = [];
-const keyed = window.location.pathname.indexOf("/keyed.html") !== -1;
-const strict = window.location.pathname.indexOf("/strict.html") !== -1;
-const internal = window.location.pathname.indexOf("/internal.html") !== -1;
+const pathname = window.location.pathname;
+const keyed = pathname.indexOf("/keyed.html") !== -1;
+const strict = pathname.indexOf("/strict.html") !== -1;
+const internal = (pathname.indexOf("/internal.html") !== -1) ||
+                 (pathname.indexOf("mikado-observer") !== -1) ||
+                 (pathname.indexOf("mikado-proxy") !== -1);
 
 const params = (function(){
 
@@ -25,7 +29,7 @@ const params = (function(){
     return obj;
 }());
 
-const duration = parseInt(params["duration"] || "5", 10) * 1000;
+const duration = parseFloat(params["duration"] || "5") * 1000;
 const hidden = params["hidden"] !== "false";
 const factory = strict ? [] : [generate(100), generate(100), generate(100), generate(100), generate(100)];
 let clone;
@@ -39,12 +43,31 @@ function next(){
         return items = generate(100);
     }
 
+    if(internal){
+
+        copy(factory[pos], items);
+    }
+    else{
+
+        items = enforce(factory[pos]);
+    }
+
     if(++pos === factory.length){
 
         pos = 0;
     }
 
-    return items = enforce(shuffle(factory[pos]));
+    return items;
+}
+
+function copy(data, items){
+
+    for(let i = 0; i < data.length; i++){
+
+        items[i] = data[i];
+    }
+
+    return items;
 }
 
 function enforce(data){
@@ -65,16 +88,20 @@ function enforce(data){
 queue.push({
     name: "create",
     init: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     },
     test: null,
     start: function(){
+        shuffle();
+    },
+    prepare: function(){
         clone = next();
     },
-    prepare: null,
     fn: null,
     end: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     },
     complete: null
 });
@@ -86,13 +113,16 @@ queue.push({
     },
     test: null,
     start: function(){
+        shuffle();
+    },
+    prepare: function(){
         clone = next();
     },
-    prepare: null,
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -109,7 +139,8 @@ queue.push({
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -123,18 +154,12 @@ queue.push({
     prepare: function(index){
         index %= 5;
         if((index === 1) || (index === 3)){ // swap
-            const tmp = items[98];
-            items[98] = items[1];
-            items[1] = tmp;
+            swap(items, 1, items.length - 2);
         }
         else if((index === 2) || (index === 4)){ // re-order
-            for(let i = 0, tmp; i < 10; i++) {
-                tmp = items[80 + i];
-                items[80 + i] = items[10 + i];
-                items[10 + i] = tmp;
-                tmp = items[30 + i];
-                items[30 + i] = items[60 + i];
-                items[60 + i] = tmp;
+            for(let i = 0; i < 10; i++){
+                swap(items, 10 + i, 80 + i);
+                swap(items, 60 + i, 30 + i);
             }
         }
         else{
@@ -145,7 +170,8 @@ queue.push({
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -162,23 +188,30 @@ queue.push({
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
+
+let tmp;
 
 queue.push({
     name: "append",
     init: null,
     test: null,
     start: function(){
-        this.fn(next().slice(0, 50));
-        clone = enforce(items);
+        shuffle();
+        tmp = next().splice(50);
+        this.fn(enforce(items));
     },
-    prepare: null,
+    prepare: function(){
+        clone = enforce(items.concat(tmp));
+    },
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -187,33 +220,43 @@ queue.push({
     init: null,
     test: null,
     start: function(){
+        shuffle();
         this.fn(next());
-        clone = enforce(items.slice(0, 50));
     },
-    prepare: null,
+    prepare: function(){
+        items.splice(50);
+        clone = enforce(items);
+    },
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
-
-let toggle = 0;
 
 queue.push({
     name: "toggle",
     init: function(){
-        this.fn(next());
+        shuffle();
+        this.fn(clone = next());
     },
     test: null,
-    start: function(){
-        clone = enforce((toggle = !toggle) ? items.slice(0, 50) : items);
+    start: null,
+    prepare: function(index){
+        if(index % 2){
+            clone = enforce(clone.concat(tmp));
+        }
+        else{
+            tmp = clone.splice(50);
+            clone = enforce(clone);
+        }
     },
-    prepare: null,
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -222,14 +265,18 @@ queue.push({
     init: null,
     test: null,
     start: function(){
+        shuffle();
         this.fn(next());
-        clone = [];
     },
-    prepare: null,
+    prepare: function(){
+        items.splice(0);
+        clone = items;
+    },
     fn: null,
     end: null,
     complete: function(){
-        this.fn([]);
+        items.splice(0);
+        this.fn(items);
     }
 });
 
@@ -301,18 +348,25 @@ window.onload = function(){
 
 function check(fn){
 
-    fn(enforce([items[0]]));
-    if(!validate(items[0])) return false;
+    const data = generate(2);
 
-    fn(enforce([items[1]]));
-    if(!validate(items[1])) return false;
+    items.push(data[0]);
+    fn(enforce(items));
+    if(!validate(data[0])) return false;
 
-    fn(enforce([items[0]]));
-    if(!validate(items[0])) return false;
+    items.pop();
+    items.push(data[1]);
+    fn(enforce(items));
+    if(!validate(data[1])) return false;
+
+    items.pop();
+    items.push(data[0]);
+    fn(enforce(items));
+    if(!validate(data[0])) return false;
 
     // checks if libs updates contents on same id
 
-    const tmp = enforce([items[0]]);
+    const tmp = enforce(items);
     tmp[0].title = "test";
     fn(tmp);
     if(!validate(tmp[0])) return false;
@@ -321,7 +375,9 @@ function check(fn){
 
         const node = root.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
-        fn(enforce([items[1]])); // every keyed lib which fails this test are not explicit keyed
+        items.pop();
+        items.push(data[1]);
+        fn(enforce(items));
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in keyed mode.");
             return false;
@@ -330,10 +386,12 @@ function check(fn){
     }
     else if(strict){
 
-        fn(enforce([items[0]]));
+        items.pop();
+        items.push(data[0]);
+        fn(enforce(items));
         const node = root.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
-        fn(enforce([items[0]]));
+        fn(enforce(items));
         if(root.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib does not run in strict mode.");
             return false;
@@ -341,40 +399,75 @@ function check(fn){
         node._test = false;
     }
 
-    fn([]);
+    items.pop();
+    fn(items);
     return (root.children.length === 0) || (root.firstElementChild.children.length === 0);
 }
 
-function validate(item){
+function check_test(test){
+
+    if(test.init) test.init();
+
+    for(let i = 0; i < 3; i++){
+
+        if(test.start) test.start(i);
+        if(test.prepare) test.prepare(i);
+        test.fn(clone);
+        if(!check_loop(test.name)) return false;
+        if(test.end) test.end(i);
+    }
+
+    if(test.complete) test.complete();
+
+    return (root.children.length === 0) || (root.firstElementChild.children.length === 0);
+}
+
+function check_loop(name){
+
+    for(let i = 0; i < clone.length; i++){
+
+        if(!validate(clone[i], i)){
+
+            return msg("test failed: " + name + ", index:" + i);
+        }
+    }
+
+    return true;
+}
+
+function validate(item, index){
 
     let section = root.firstElementChild;
     if(!section) return msg("root.firstElementChild");
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
+
+    index && (section = section.parentElement.children[index]);
+
     const dataset = section.dataset;
-    if(dataset.id !== item.id) return msg("dataset.id");
-    if(dataset.date !== item.date) return msg("dataset.date");
-    if(dataset.index !== String(item.index)) return msg("dataset.index");
+    if(dataset.id !== item.id) return msg("dataset.id", dataset.id + " should be " + item.id);
+    if(dataset.date !== item.date) return msg("dataset.date", dataset.date + " should be " + item.date);
+    if(dataset.index !== String(item.index)) return msg("dataset.index", dataset.index + " should be " + item.index);
 
     const wrapper = section.firstElementChild;
-    if(wrapper.className !== item.classname) return msg("wrapper.className");
-    if(wrapper.style.paddingRight !== "10px") return msg("wrapper.style");
+    if(wrapper.className !== item.classname) return msg("wrapper.className", wrapper.className + " should be " + item.classname);
+    if(wrapper.style.paddingRight !== "10px") return msg("wrapper.style", wrapper.style.paddingRight + " should be " + "10px");
 
     const title = wrapper.firstElementChild;
-    if(title.textContent !== item.title) return msg("title.textContent");
+    if(title.textContent !== item.title) return msg("title.textContent", title.textContent + " should be " + item.title);
 
     const content = title.nextElementSibling;
-    if(content.textContent !== item.content) return msg("content.textContent");
+    if(content.textContent !== item.content) return msg("content.textContent", content.textContent + " should be " + item.content);
 
     const footer = content.nextElementSibling;
-    if(footer.textContent !== item.footer) return msg("footer.textContent");
+    if(footer.textContent !== item.footer) return msg("footer.textContent", footer.textContent + " should be " + item.footer);
 
     return true;
 }
 
-function msg(message){
+function msg(message, a){
 
-    console.error(message);
+    a ? console.error(message, a) : console.error(message);
     return false;
 }
 
@@ -386,72 +479,79 @@ const perf = window.performance;
       perf.memory || (perf.memory = { usedJSHeapSize: 0 });
 
 let current = 0;
-let warmup = 0;
+let update_failed;
 
 function perform(){
 
     const test = queue[current];
     let elapsed = 0, memory = 0;
 
-    if((current === 0) && test.test) check(test.test) || console.warn("Test failed: " + test.name);
-    if(test.init) test.init();
+    if(current === 0 && test.test) check(test.test) || msg("Main test failed");
+    let status = check_test(test) || msg("Test failed: " + test.name);
 
-    /*
-    if(test.defer){
-
-        defer_test = test;
-        if(test.start) test.start();
-        test.defer();
-        return;
+    // Not allowed when update test fails
+    if(update_failed && (test.name === "repaint")){
+        status = false;
     }
-    */
 
     let loops = 0, now = perf.now();
-    const end = now + duration;
 
-    for(let start, mem_start, mem; now < end; loops++){
+    if(status){
 
-        if(test.start) test.start(loops);
-        if(!internal && test.prepare) test.prepare(loops);
+        if(test.init) test.init();
 
-        mem_start = perf.memory.usedJSHeapSize;
-        start = perf.now();
-        if(internal && test.prepare) test.prepare(loops);
-        test.fn(clone);
-        now = perf.now();
-        mem = perf.memory.usedJSHeapSize - mem_start;
-        elapsed += now - start;
-        if(mem > 0) memory += mem;
+        // if(test.defer){
+        //     defer_test = test;
+        //     if(test.start) test.start();
+        //     test.defer();
+        //     return;
+        // }
 
-        if(test.end) test.end(loops);
+        const end = now + duration;
+
+        for(let start, mem_start, mem; now < end; loops++){
+
+            if(test.start) test.start(loops);
+            if(!internal && test.prepare) test.prepare(loops);
+
+            mem_start = perf.memory.usedJSHeapSize;
+            start = perf.now();
+            if(internal && test.prepare) test.prepare(loops);
+            test.fn(clone);
+            now = perf.now();
+            mem = perf.memory.usedJSHeapSize - mem_start;
+            elapsed += now - start;
+            if(mem > 0) memory += mem;
+
+            if(test.end) test.end(loops);
+        }
+
+        if(test.complete) test.complete();
+    }
+    else if(test.name === "update"){
+
+        update_failed = true;
     }
 
-    if(test.complete) test.complete();
+    current++;
 
-    if(!warmup){
+    if(window === window.top){
 
-        current++;
+        result.nodeValue = (str_results += (status ? test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t" + (memory ? Math.floor(memory / loops) : "-") : "- failed -") + "\n") + (current < queue.length ? "running..." : "");
+    }
+    else{
 
-        if(window === window.top){
-
-            result.nodeValue = (str_results += test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t"  + (memory ? Math.floor(memory / loops) : "-") + "\n") + (current < queue.length ? "running..." : "");
-        }
-        else{
-
-            window.top.postMessage(test.name + "," + Math.floor(1000 / elapsed * loops) + "," + Math.floor(memory / loops), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
-        }
+        window.top.postMessage(test.name + "," + (status ? Math.floor(1000 / elapsed * loops) : 0) + "," + (status ? Math.floor(memory / loops) : 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
     }
 
     if(current < queue.length){
 
-        setTimeout(perform, warmup ? 50 : 500);
+        setTimeout(perform, 500);
     }
     else{
 
         current = 0;
     }
-
-    //root.textContent = "";
 }
 
 /*
@@ -496,41 +596,52 @@ function normalize(arr){
 }
 */
 
-export function shuffle(items){
+function shuffle(items){
 
-    for(let i = items.length - 1, j, x; i > 0; i--) {
+    items || (items = factory[pos]);
 
-        j = (Math.random() * i) | 0;
-        x = items[i];
-        items[i] = items[j];
-        items[j] = x;
+    for(let i = items.length - 1; i > 0; i--) {
+
+        swap(items, i, (Math.random() * i) | 0);
     }
 
     return items;
 }
 
-export function update(items, index){
+function swap(items, a, b){
+
+    if(a !== b){
+
+        const tmp = items[b];
+        items[b] = items[a];
+        items[a] = tmp;
+    }
+}
+
+function update(items, index){
 
     for(let i = 0, length = items.length; i < length; i++){
 
-        if((i + index) % 15 === 0){
-            items[i]["date"] = items[(Math.random() * length) | 0]["date"];
-        }
-        else if((i + index) % 10 === 0){
-            items[i]["classname"] = items[(Math.random() * length) | 0]["classname"];
-        }
-        else if((i + index) % 5 === 0){
-            items[i]["content"] = items[(Math.random() * length) | 0]["content"];
-        }
-        else if((i + index) % 3 === 0){
-            items[i]["title"] = items[(Math.random() * length) | 0]["title"];
-        }
+        if((i + index) % 29 === 0) swap_value(items, i, length, "date");
+        if((i + index) % 23 === 0) swap_value(items, i, length, "classname");
+        if((i + index) % 19 === 0) swap_value(items, i, length, "months");
+        if((i + index) % 17 === 0) swap_value(items, i, length, "content");
+        if((i + index) % 13 === 0) swap_value(items, i, length, "title");
+        if((i + index) % 11 === 0) swap_value(items, i, length, "days");
+        if((i + index) % 7 === 0) swap_value(items, i, length, "footer");
     }
 
     return items;
 }
 
-export function set_clone(_clone){
+function swap_value(items, a, b, prop){
 
-    clone = _clone;
+    b = (Math.random() * b) | 0;
+
+    if(a !== b){
+
+        const tmp = items[b][prop];
+        items[b][prop] = items[a][prop];
+        items[a][prop] = tmp;
+    }
 }

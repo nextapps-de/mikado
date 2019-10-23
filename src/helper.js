@@ -303,33 +303,36 @@ if(SUPPORT_HELPERS){
                     tmp_b = b["_idx"];
                 }
 
-                if(tmp_a !== tmp_b){
+                //if(tmp_a !== tmp_b){
 
                     if(SUPPORT_STORAGE && this.reuse && (this.store || this.loose)){
 
                         const tmp = this.store ? this.store[tmp_a] : a["_data"];
-                        this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_b);
-                        this.update(b, tmp, view, tmp_a);
+                        this.update(a, this.store ? this.store[tmp_b] : b["_data"], view, tmp_a);
+                        this.update(b, tmp, view, tmp_b);
                     }
                     else{
 
-                        this.root.insertBefore(a, b);
-                        this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                        this.arrange(a, b, null, view, tmp_a, tmp_b);
 
-                        a["_idx"] = tmp_b;
-                        b["_idx"] = tmp_a;
-
-                        this.dom[tmp_a] = b;
-                        this.dom[tmp_b] = a;
-
-                        if(SUPPORT_STORAGE && this.store){
-
-                            const tmp = this.store[tmp_b];
-                            this.store[tmp_b] = this.store[tmp_a];
-                            this.store[tmp_a] = tmp;
-                        }
+                        // this.root.insertBefore(a, b);
+                        // //this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                        // this.root.insertBefore(b, this.dom[tmp_a + 1] || null);
+                        //
+                        // a["_idx"] = tmp_b;
+                        // b["_idx"] = tmp_a;
+                        //
+                        // this.dom[tmp_a] = b;
+                        // this.dom[tmp_b] = a;
+                        //
+                        // if(SUPPORT_STORAGE && this.store && !this.extern){
+                        //
+                        //     const tmp = this.store[tmp_b];
+                        //     this.store[tmp_b] = this.store[tmp_a];
+                        //     this.store[tmp_a] = tmp;
+                        // }
                     }
-                }
+                //}
             }
 
             //profiler_end("swap");

@@ -31,6 +31,13 @@
     <script>
         var param = window.location.search.substr(1);
         if(param === "coverage"){
+            Object.assign = null;
+            Object.values = null;
+            window["requestAnimationFrame"] = null;
+            window["cancelAnimationFrame"] = null;
+            window["Promise"] = null;
+            window["_Proxy"] = window["Proxy"];
+            window["Proxy"] = null;
             document.write('<script type="text/javascript" src="dist/dist/mikado.pre.js"><\/script>');
         }
         else if(param === "es5" || param === "light" || param === "min"){
@@ -40,6 +47,7 @@
             document.write('<script type="text/javascript" src="dist/mikado.pre.js"><\/script>');
         }
     </script>
+    <script>window["Proxy"] = window["_Proxy"];</script>
     <script src="node_modules/mocha/mocha.js"></script>
     <script src="node_modules/chai/chai.js"></script>
     <script src="template.js"></script>

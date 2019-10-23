@@ -1,4 +1,5 @@
 import Mikado from "./mikado.js";
+import Observer from "./array.js";
 
 /** @export */
 Mikado.prototype.load;
@@ -12,8 +13,6 @@ Mikado.prototype.replace;
 Mikado.prototype.render;
 /** @export */
 Mikado.prototype.refresh;
-/** @export */
-Mikado.prototype.apply;
 /** @export */
 Mikado.prototype.unload;
 /** @export */
@@ -79,10 +78,6 @@ Mikado.prototype.removeClass;
 /** @export */
 Mikado.prototype.toggleClass;
 /** @export */
-//Mikado.prototype.setStyle;
-/** @export */
-//Mikado.prototype.getStyle;
-/** @export */
 Mikado.prototype.setCSS;
 /** @export */
 Mikado.prototype.getCSS;
@@ -110,5 +105,39 @@ Mikado.prototype.before;
 Mikado.prototype.after;
 /** @export */
 Mikado.prototype.swap;
+
+/** @export */
+Observer.prototype.swap;
+/** @export */
+Observer.prototype.concat;
+/** @export */
+Observer.prototype.push;
+/** @export */
+Observer.prototype.splice;
+/** @export */
+Observer.prototype.pop;
+/** @export */
+Observer.prototype.shift;
+/** @export */
+Observer.prototype.unshift;
+/** @export */
+Observer.prototype.slice;
+/** @export */
+Observer.prototype.set;
+/** @export */
+Observer.prototype.sort;
+/** @export */
+Observer.prototype.reverse;
+/** @export */
+Observer.prototype.map;
+/** @export */
+Observer.prototype.filter;
+/** @export */
+Observer.prototype.indexOf;
+/** @export */
+Observer.prototype.lastIndexOf;
+/** @export */
+Observer.prototype.forEach;
+
 /** @export */
 Promise.prototype.then;

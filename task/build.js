@@ -132,6 +132,7 @@ const files = [
     "export.js",
     "store.js",
     "proxy.js",
+    "array.js",
     "compile.js",
     "polyfill.js"
 ];

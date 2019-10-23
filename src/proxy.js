@@ -1,3 +1,58 @@
+const proxy = SUPPORT_REACTIVE && !window["Proxy"] && (function(){
+
+    /**
+     * @param obj
+     * @param proxy
+     * @constructor
+     */
+
+    function Proxy(obj, proxy){
+
+        // TODO: hide references
+        this.path = proxy.path;
+        this.handler = proxy.handler;
+
+        const keys = Object.keys(obj);
+
+        for(let i = 0, length = keys.length; i < length; i++){
+
+            const key = keys[i];
+            this.define(obj, key, obj[key]);
+        }
+
+        return obj;
+    }
+
+    // hide proxy check
+    Proxy.prototype["_proxy"] = true;
+
+    Proxy.prototype.define = function(obj, _key, _val){
+
+        const self = this;
+        const key = _key;
+        let val = _val;
+
+        Object.defineProperty(obj, key, {
+
+            get: function(){
+
+                return val;
+            },
+            set: function(newVal){
+
+                if(val !== newVal){
+
+                    proxy_loop(self.handler, self.path, key, newVal);
+                    val = newVal;
+                }
+            }
+        });
+    };
+
+    return Proxy;
+}());
+
+// TODO: synchronize with Cache
 const proxy_setter = {
 
     "_text": function(target, text){
@@ -23,16 +78,23 @@ const proxy_setter = {
 };
 
 // Handler holds multiple dynamic expressions which references to the same data field
-// {"title": [["text", node, key]]}
+// {"title": [["text", node, value, attr], [...]]}
 
 export default function create_proxy(obj, path, handler){
 
-    return new Proxy(obj, /** @type {!ProxyHandler} */ ({
+    return new (proxy || Proxy)(obj, /** @type {!ProxyHandler} */ ({
 
         path: path,
         handler: handler,
+        get: proxy_get,
         set: proxy_set
     }));
+}
+
+function proxy_get(target, prop){
+
+    // hide proxy check
+    return prop === "_proxy" ? true : target[prop];
 }
 
 /**
@@ -50,7 +112,8 @@ function proxy_set(target, prop, value){
         target[prop] = value;
     }
 
-    //return true;
+    // accept changes:
+    return true;
 }
 
 function proxy_loop(handler, path, prop, value){
@@ -64,60 +127,5 @@ function proxy_loop(handler, path, prop, value){
             tmp = exp[i];
             proxy_setter[tmp[0]](path[tmp[1]], value, tmp[2] || prop);
         }
-    }
-}
-
-if(SUPPORT_REACTIVE){
-
-    if(!window["Proxy"]){
-
-        /**
-         * @param obj
-         * @param proxy
-         * @constructor
-         */
-
-        function Proxy(obj, proxy){
-
-            this.path = proxy.path;
-            this.handler = proxy.handler;
-
-            const observe = obj;
-            const keys = Object.keys(obj);
-
-            for(let i = 0, length = keys.length; i < length; i++){
-
-                const key = keys[i];
-                this.define(observe, key, obj[key]);
-            }
-
-            return observe;
-        }
-
-        Proxy.prototype.define = function(_obj, _key, _val){
-
-            const self = this;
-            const obj = _obj;
-            const key = _key;
-            let val = _val;
-
-            Object.defineProperty(obj, key, {
-
-                get: function(){
-
-                    return val;
-                },
-                set: function(newVal){
-
-                    if(val !== newVal){
-
-                        proxy_loop(self.handler, self.path, key, newVal);
-                        val = newVal;
-                    }
-                }
-            });
-        };
-
-        window["Proxy"] = Proxy;
     }
 }
