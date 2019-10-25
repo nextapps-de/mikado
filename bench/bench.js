@@ -16,7 +16,8 @@ const keyed = pathname.indexOf("/keyed.html") !== -1;
 const strict = pathname.indexOf("/strict.html") !== -1;
 const internal = (pathname.indexOf("/internal.html") !== -1) ||
                  (pathname.indexOf("mikado-observer") !== -1) ||
-                 (pathname.indexOf("mikado-proxy") !== -1);
+                 (pathname.indexOf("mikado-proxy") !== -1) ||
+                 (pathname.indexOf("mikado-observer-proxy") !== -1);
 
 const params = (function(){
 
@@ -31,14 +32,18 @@ const params = (function(){
     return obj;
 }());
 
-const rnd = (function(){
+// const rnd = (function(){
+//
+//     const array = new Array(DATA_SIZE_HALF);
+//     for(let i = 0; i < DATA_SIZE_HALF; i++) array[i] = i;
+//     for(let i = 0; i < 3; i++) shuffle(array);
+//
+//     return array;
+// }());
+//
+// console.log(rnd);
 
-    const array = new Array(DATA_SIZE_HALF);
-    for(let i = 0; i < DATA_SIZE_HALF; i++) array[i] = i;
-    for(let i = 0; i < 3; i++) shuffle(array);
-
-    return array;
-}());
+const rnd = [27, 36, 31, 21, 13, 5, 11, 0, 16, 8, 9, 28, 25, 49, 6, 26, 12, 29, 38, 1, 40, 35, 20, 23, 2, 7, 18, 48, 45, 17, 22, 39, 32, 37, 24, 4, 41, 44, 14, 34, 19, 47, 46, 10, 30, 15, 33, 3, 42, 43];
 
 const duration = parseFloat(params["duration"] || "5") * 1000;
 const hidden = params["hidden"] !== "false";
@@ -117,8 +122,6 @@ queue.push({
     },
     fn: null,
     end: function(){
-        // store references to keep internal state
-        //if(internal) copy(clone, factory[pos === 0 ? factory.length - 1 : pos - 1]);
         items.splice(0);
         this.fn(items);
     },
@@ -171,20 +174,37 @@ queue.push({
     test: null,
     start: null,
     prepare: function(index){
-        index %= 5;
-        if((index === 1) || (index === 3)){ // swap
-            swap(items, 1, items.length - 2);
-        }
-        else if((index === 2) || (index === 4)){ // re-order
-            const div = (DATA_SIZE / 10) | 0;
+        index %= 3;
+        // a too short path comes to close to the repaint test
+        // if(index === 3){ // swap (shortest path: 2)
+        //     swap(items, 5, items.length - 6);
+        // }
+        if(index === 2){ // re-order (shortest path: 10)
+            const div = (DATA_SIZE / 20) | 0;
             for(let i = 0; i < div; i++){
-                swap(items, div * 1 + i, div * 8 + i);
-                swap(items, div * 6 + i, div * 3 + i);
+                items.splice(div *  4 + i, 0, items.splice(div * 16 + i, 1)[0]);
+                items.splice(div * 12 + i, 0, items.splice(div * 8  + i, 1)[0]);
+                // items[div * 9 + i].id = "" + (Math.random() * 999999999 | 0);
+                // items[div * 5 + i].id = "" + (Math.random() * 999999999 | 0);
             }
         }
-        else{
-            shuffle_rnd(items);
+        else if(index){ // re-order (shortest path: 10)
+            const div = (DATA_SIZE / 10) | 0;
+            for(let i = 0; i < div; i += 2){
+                items.splice(div * 2 + i, 0, items.splice(div * 8 + i, 1)[0]);
+                items.splice(div * 6 + i, 0, items.splice(div * 4 + i, 1)[0]);
+            }
         }
+        else{ // re-order (shortest path: 10)
+            const div = (DATA_SIZE / 5) | 0;
+            for(let i = 0; i < div; i += 4){
+                swap(items, div * 1 + i, div * 3 + i);
+            }
+        }
+        // a full shuffle is theoretically a full replace, those test already exist
+        // else{
+        //     shuffle_rnd(items); // re-order (shortest path: 100)
+        // }
         clone = enforce(items);
     },
     fn: null,

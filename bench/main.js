@@ -17,7 +17,7 @@
 
         "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
         "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy",
-        "mikado-observer"
+        "mikado-observer", "mikado-observer-proxy"
     ]:[
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
@@ -109,23 +109,8 @@
         "mikado-keyed-shared": 2.8,
         "mikado-non-keyed": 2.8,
         "mikado-proxy": 7.1,
-        "mikado-observer": 7.1
-    };
-
-    let memory = {
-
-        "mikado": 16487,
-        "domc": 115023,
-        "inferno": 150165,
-        "redom": 287875,
-        "sinuous": 232137,
-        "surplus": 175334,
-        "innerHTML": 415128,
-        "jquery": 519162,
-        "lit-html": 352913,
-        "mithril": 250668,
-        "ractive": 1318599,
-        "knockout": 5037020
+        "mikado-observer": 7.1,
+        "mikado-observer-proxy": 7.1
     };
 
     for(let x = 0; x < lib.length; x++){
@@ -168,32 +153,26 @@
 
             for(let x = 0; x < lib.length; x++){
 
-                if(current[x][test[y]]){
+                if(current[x][test[y]] && (current[x][test[y]] !== "-failed-")){
 
-                    val[y].push(current[x][test[y]]);
-                }
-                else if(test[y] === "memory"){
+                    if(current[x][test[y]]){
 
-                    val[y].push(memory[lib[x]]);
-                }
-
-                if((test[y] === "size") || (test[y] === "memory")){
-
-                    if((test[y] === "memory") && !current[x][test[y]]){
-
-                        current[x][test[y]] = memory[lib[x]];
+                        val[y].push(current[x][test[y]]);
                     }
 
-                    if(current[x][test[y]] && ((current[x][test[y]] < max[y]) || !max[y])){
+                    if((test[y] === "size") || (test[y] === "memory")){
 
-                        max[y] = current[x][test[y]];
+                        if((current[x][test[y]] < max[y]) || !max[y]){
+
+                            max[y] = current[x][test[y]];
+                        }
                     }
-                }
-                else{
+                    else{
 
-                    if(current[x][test[y]] > max[y]){
+                        if(current[x][test[y]] > max[y]){
 
-                        max[y] = current[x][test[y]];
+                            max[y] = current[x][test[y]];
+                        }
                     }
                 }
             }

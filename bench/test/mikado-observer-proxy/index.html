@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: Mikado (Proxy)</h1><hr>
+<h1>Benchmark: Mikado (Observer + Proxy)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script src="./../mikado/dist/mikado.min.js"></script>
@@ -16,17 +16,14 @@
 
     const mikado = new Mikado(root, template, {
 
-        "store": store(),
+        "store": store(Mikado.array()),
         "reuse": true,
         "pool": false,
         "keep": true,
         "cache": true
     });
 
-    suite["mikado"] = function(items){
-
-        mikado.render(items);
-    };
+    suite["mikado"] = function(items){};
 
 </script>
 </body>

@@ -313,24 +313,29 @@ if(SUPPORT_HELPERS){
                     }
                     else{
 
-                        this.arrange(a, b, null, view, tmp_a, tmp_b);
+                        //this.arrange(a, b, null, view, tmp_a, tmp_b);
 
-                        // this.root.insertBefore(a, b);
-                        // //this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
-                        // this.root.insertBefore(b, this.dom[tmp_a + 1] || null);
-                        //
-                        // a["_idx"] = tmp_b;
-                        // b["_idx"] = tmp_a;
-                        //
-                        // this.dom[tmp_a] = b;
-                        // this.dom[tmp_b] = a;
-                        //
-                        // if(SUPPORT_STORAGE && this.store && !this.extern){
-                        //
-                        //     const tmp = this.store[tmp_b];
-                        //     this.store[tmp_b] = this.store[tmp_a];
-                        //     this.store[tmp_a] = tmp;
-                        // }
+                        const no_predecessor = (tmp_a + 1) !== tmp_b;
+
+                        this.root.insertBefore(no_predecessor ? a : b, no_predecessor ? b : a);
+                        if(no_predecessor && ((tmp_b + 1) !== tmp_a)) this.root.insertBefore(b, this.dom[tmp_a + 1] || null);
+
+                        //this.root.insertBefore(a, b);
+                        //this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
+                        //this.root.insertBefore(b, this.dom[tmp_a + 1] || null);
+
+                        a["_idx"] = tmp_b;
+                        b["_idx"] = tmp_a;
+
+                        this.dom[tmp_a] = b;
+                        this.dom[tmp_b] = a;
+
+                        if(SUPPORT_STORAGE && this.store && !this.extern){
+
+                            const tmp = this.store[tmp_b];
+                            this.store[tmp_b] = this.store[tmp_a];
+                            this.store[tmp_a] = tmp;
+                        }
                     }
                 //}
             }

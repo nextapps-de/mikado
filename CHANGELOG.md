@@ -1,3 +1,6 @@
+## 0.7.2
+`new` reconcile based on "longest distance strategy"<br>
+
 ## 0.7.0
 `new` observable array based on ES6 proxy incl. polyfill (acts like a NodeList, semantically equal to an array-like object)<br>
 `change` the method ___Mikado.new()___ was removed, just use ___Mikado()___ instead (it automatically returns an instance)<br>
