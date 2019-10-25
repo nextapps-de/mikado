@@ -151,6 +151,30 @@ const handler = {
                         const replace_key = SUPPORT_POOLS && mikado.key;
                         const node = mikado.dom[prop];
 
+                        // let tmp, key;
+
+                        // if(replace_key && (node["_key"] !== (key = value[replace_key]))){
+                        //
+                        //     if((tmp = mikado.live[key])){
+                        //
+                        //         const idx = tmp["_idx"];
+                        //         const item = target[idx];
+                        //         target[idx] = target[prop];
+                        //         target[prop] = item;
+                        //
+                        //         mikado.arrange(node, tmp, value, view, prop);
+                        //         //has_moved = true;
+                        //     }
+                        //     else{
+                        //
+                        //         mikado.replace(node, value, view, prop);
+                        //     }
+                        // }
+                        // else{
+                        //
+                        //     mikado.update(node, value, view, prop);
+                        // }
+
                         // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
                         if(mikado.reuse || (replace_key && (node["_key"] === value[replace_key]))){
 

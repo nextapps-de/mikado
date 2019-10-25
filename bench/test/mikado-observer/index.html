@@ -6,13 +6,13 @@
 <h1>Benchmark: Mikado (Observer + Proxy)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
-<script src="./dist/mikado.min.js"></script>
+<script src="./../mikado/dist/mikado.min.js"></script>
 <script type="module">
 
     "use strict";
 
     import { suite, root, store } from "./../../bench.js";
-    import template from "./template/proxy.es6.js";
+    import template from "./template/keyed.es6.js";
 
     const mikado = new Mikado(root, template, {
 
@@ -23,7 +23,10 @@
         "cache": true
     });
 
-    suite["mikado"] = function(items){};
+    suite["mikado"] = function(items){
+
+        mikado.render(items);
+    };
 
 </script>
 </body>
