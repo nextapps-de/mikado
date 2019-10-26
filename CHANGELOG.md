@@ -1,5 +1,7 @@
 ## 0.7.2
 `new` reconcile based on "longest distance strategy"<br>
+`new` __mikado-compile:__ use wildcard for compiling recursively through a directory<br>
+`add` es6 modules for production (bundled via babel)
 
 ## 0.7.0
 `new` observable array based on ES6 proxy incl. polyfill (acts like a NodeList, semantically equal to an array-like object)<br>

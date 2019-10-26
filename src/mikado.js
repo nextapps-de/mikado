@@ -6,8 +6,6 @@
  * https://github.com/nextapps-de/mikado
  */
 
-"use strict";
-
 /*
     Modes (keyed / non-keyed):
 

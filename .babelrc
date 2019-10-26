@@ -1,0 +1,41 @@
+{
+  "plugins": [
+    ["conditional-compile", {
+      "define": {
+        "DEBUG": false,
+        "USE_POLYFILL": true,
+        "SUPPORT_CACHE": true,
+        "SUPPORT_EVENTS": true,
+        "SUPPORT_STORAGE": true,
+        "SUPPORT_HELPERS": "move,swap,up,down,first,last,before,after,sync,purge,find,search,where",
+        "SUPPORT_CACHE_HELPERS": true,
+        "SUPPORT_ASYNC": true,
+        "SUPPORT_TRANSPORT": true,
+        "SUPPORT_TEMPLATE_EXTENSION": true,
+        "SUPPORT_REACTIVE": true,
+        "SUPPORT_POOLS": true,
+        "SUPPORT_CALLBACKS": true,
+        "SUPPORT_COMPILE": true
+      }
+    }],
+    "babel-plugin-minify-constant-folding",
+    "babel-plugin-minify-dead-code-elimination",
+    "babel-plugin-minify-flip-comparisons",
+    "babel-plugin-minify-guarded-expressions",
+    "babel-plugin-minify-infinity",
+    "babel-plugin-minify-mangle-names",
+    "babel-plugin-minify-replace",
+    "babel-plugin-minify-simplify",
+    "babel-plugin-minify-type-constructors",
+    "babel-plugin-transform-member-expression-literals",
+    "babel-plugin-transform-merge-sibling-variables",
+    "babel-plugin-transform-minify-booleans",
+    "babel-plugin-transform-property-literals",
+    "babel-plugin-transform-simplify-comparison-operators",
+    "babel-plugin-transform-undefined-to-void"
+  ],
+  "minified": true,
+  "compact": true,
+  "comments": false,
+  "ignore": "config.js"
+}

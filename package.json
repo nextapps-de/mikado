@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.2",
+  "version": "0.7.21",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -37,9 +37,10 @@
     "build:es5": "node task/build RELEASE=es5 USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
     "build:debug": "node task/build RELEASE=debug USE_POLYFILL=true DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
     "build:pre": "node task/build RELEASE=pre USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:module": "babel src -d dist/module && exit 0",
     "build:custom": "node task/build RELEASE=custom",
-    "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug",
-    "update": "npm install google-closure-compiler@nightly",
+    "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug && npm run build:module",
+    "update": "npm install google-closure-compiler@nightly && npm install babel-cli && npm install babel-plugin-minify-constant-folding && npm install babel-plugin-minify-dead-code-elimination && npm install babel-plugin-minify-flip-comparisons && npm install babel-plugin-minify-guarded-expressions && npm install babel-plugin-minify-infinity && npm install babel-plugin-minify-mangle-names && npm install babel-plugin-minify-replace && npm install babel-plugin-minify-simplify && npm install babel-plugin-minify-type-constructors && npm install babel-plugin-transform-member-expression-literals && npm install babel-plugin-transform-merge-sibling-variables && npm install babel-plugin-transform-minify-booleans && npm install babel-plugin-transform-property-literals && npm install babel-plugin-transform-simplify-comparison-operators && npm install babel-plugin-transform-undefined-to-void",
     "test": "npm run build:pre && cd test && npm install && mikado-compile template.html && mikado-compile proxy.html && mikado-compile keyed.html && npm run test"
   },
   "files": [
@@ -53,6 +54,24 @@
   "readme": "README.md",
   "dependencies": {},
   "devDependencies": {
-    "google-closure-compiler": "^20191024.0.0-nightly"
+    "babel-cli": "^6.26.0",
+    "babel-plugin-conditional-compile": "0.0.5",
+    "babel-plugin-minify-constant-folding": "^0.5.0",
+    "babel-plugin-minify-dead-code-elimination": "^0.5.1",
+    "babel-plugin-minify-flip-comparisons": "^0.4.3",
+    "babel-plugin-minify-guarded-expressions": "^0.4.4",
+    "babel-plugin-minify-infinity": "^0.4.3",
+    "babel-plugin-minify-mangle-names": "^0.5.0",
+    "babel-plugin-minify-replace": "^0.5.0",
+    "babel-plugin-minify-simplify": "^0.5.1",
+    "babel-plugin-minify-type-constructors": "^0.4.3",
+    "babel-plugin-transform-member-expression-literals": "^6.9.4",
+    "babel-plugin-transform-merge-sibling-variables": "^6.9.4",
+    "babel-plugin-transform-minify-booleans": "^6.9.4",
+    "babel-plugin-transform-property-literals": "^6.9.4",
+    "babel-plugin-transform-simplify-comparison-operators": "^6.9.4",
+    "babel-plugin-transform-undefined-to-void": "^6.9.4",
+    "google-closure-compiler": "^20191024.0.0-nightly",
+    "mikado-compile": "^0.7.2"
   }
 }

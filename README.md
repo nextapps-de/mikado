@@ -14,10 +14,11 @@ Rendering has by far the most impact on application performance. Mikado takes te
 <a href="#options">Options</a> &ensp;&bull;&ensp; 
 <a href="#api">API</a> &ensp;&bull;&ensp; 
 <a href="#concept">Concept</a> &ensp;&bull;&ensp; 
+<a href="#benchmark">Benchmark</a> &ensp;&bull;&ensp; 
 <a href="#builds">Custom Builds</a> &ensp;&bull;&ensp; 
 <a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
-<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;
+<!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;-->
 <a href="CHANGELOG.md">Changelog</a>
 
 __Services:__
@@ -28,7 +29,7 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 
 <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> (Serve Templates)<br>`npm install mikado-server`
 
-<a href="https://github.com/nextapps-de/mikado-express">Express Middleware</a> (Server-Side Rendering) _\*WIP\*_<br>`npm install mikado-express`
+<!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware</a> (Server-Side Rendering) _\*WIP\*_<br>`npm install mikado-express`-->
 
 __Benchmark:__
 
@@ -45,7 +46,7 @@ __Demo:__
 
 #### Comming Soon
 `new` webpack loader to bundle templates<br>
-`change` file endings for templates are customizable (e.g use ___.shtml___)<br>
+`add` file endings for templates are customizable (e.g use ___.shtml___)<br>
 
 ## Table of contents
 
@@ -105,13 +106,10 @@ __Demo:__
 26. <a href="#concept">Concept of Shared Pools</a>
 27. <a href="#builds">Custom Builds</a>
 
-<!--
-TODO: it gets conflict when mixing external loading with imports (or load via script tag).
-`change` template names will inherit from foldername (relative to the app root) and filename (instead of just filenames)<br>
--->
-
 <a name="get-latest"></a>
-#### Get Latest
+## Get Latest
+
+### Bundle
 
 Choose one of these bundles:
 
@@ -155,21 +153,56 @@ Choose one of these bundles:
 
 > __Recommended:__ To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.6.6/`, or also a commit hash.
 
-The es5 version has all features included. The debug version also but additionally provide debugging information through the console.
+The es5-strict version is including all features. The debug version also but additionally provide debugging information through the console.
 
-#### Node.js
+Example:
+```html
+<script src="dist/mikado.min.js"></script>
+<script>
+    // ....
+</script>
+```
+
+### Node.js
 
 Install Mikado via NPM:
 ```npm
 npm install mikado
 ```
 
-You can also classically include one of the distributed builds as a script tag or use the sources as ES6 modules.
+The ___dist___ and ___src___ folder are located in `node_modules/mikado/`.
 
-> To make the command line interface available you have to install via NPM.
+### ES6 Modules
+
+#### Production
+The ES6 minified production modules are located in `dist/module/`.
+
+```html
+<script>
+    import Mikado from "./dist/module/mikado.js";
+</script>
+```
+
+You can also load modules via CDN, e.g.:
+
+```html
+<script>
+    import Mikado from "https://unpkg.com/mikado@0.7.21/dist/module/mikado.js";
+</script>
+```
+
+#### Development
+Use the modules from the "src" folder for development/debugging. When using the "src" modules you have to load the "src/config.js" via a normal script tag before you load the modules.
+
+```html
+<script src="src/config.js"></script>
+<script>
+    import Mikado from "./src/mikado.js";
+</script>
+```
 
 <a name="feature-comparison"></a>
-#### Feature Comparison
+### Feature Comparison
 <table>
     <tr></tr>
     <tr>
