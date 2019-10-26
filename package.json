@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.21",
+  "version": "0.7.22",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -44,10 +44,11 @@
     "test": "npm run build:pre && cd test && npm install && mikado-compile template.html && mikado-compile proxy.html && mikado-compile keyed.html && npm run test"
   },
   "files": [
+    ".babelrc",
+    "index.d.ts",
     "dist/",
     "src/",
     "task/",
-    "server/",
     "README.md",
     "LICENSE"
   ],

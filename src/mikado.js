@@ -997,7 +997,7 @@ if(SUPPORT_POOLS){
         const key = this.key;
         //let steps = 0;
 
-        for(; x < max_end; x++){
+        for(x || (x = 0); x < max_end; x++){
 
             let found = false;
 
@@ -1283,16 +1283,18 @@ if(SUPPORT_ASYNC){
             cancelAnimationFrame(this.timer);
             this.timer = null;
         }
+
+        return this;
     };
 }
 
 /**
  * @param {Object|Array<Object>=} data
  * @param {Object|number=} view
- * @param {number=} position
+ * @param {number=} index
  */
 
-Mikado.prototype.append = function(data, view, position){
+Mikado.prototype.append = function(data, view, index){
 
     //profiler_start("append");
 
@@ -1300,20 +1302,20 @@ Mikado.prototype.append = function(data, view, position){
 
     if(typeof view === "number"){
 
-        position = view;
+        index = view;
         view = null;
         has_position = true;
     }
     else{
 
-        has_position = position || (position === 0);
+        has_position = index || (index === 0);
     }
 
     const count = data.length;
 
     for(let x = 0; x < count; x++){
 
-        this.add(data[x], view, has_position ? position++ : null);
+        this.add(data[x], view, has_position ? index++ : null);
     }
 
     //profiler_end("append");

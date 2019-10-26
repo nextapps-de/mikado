@@ -17,8 +17,7 @@ Rendering has by far the most impact on application performance. Mikado takes te
 <a href="#benchmark">Benchmark</a> &ensp;&bull;&ensp; 
 <a href="#builds">Custom Builds</a> &ensp;&bull;&ensp; 
 <a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
-<a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; 
-<!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;-->
+<a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; <!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;-->
 <a href="CHANGELOG.md">Changelog</a>
 
 __Services:__
@@ -38,8 +37,9 @@ __Benchmark:__
 
 __Demo:__
 
-1. <a href="demo/basic/demo.html">Basic Example (Classic Javascript)</a>
-2. <a href="demo/basic/demo.es6.html">Basic Example (ES6 Modules)</a>
+1. <a href="demo/basic/basic.html">Basic Example</a>
+1. <a href="demo/basic/demo.html">Basic Example + Events (Classic Javascript)</a>
+2. <a href="demo/basic/demo.es6.html">Basic Example + Events (ES6 Modules)</a>
 3. <a href="demo/basic/compiler.html">Runtime Compiler</a>
 4. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 5. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
@@ -47,6 +47,19 @@ __Demo:__
 #### Comming Soon
 `new` webpack loader to bundle templates<br>
 `add` file endings for templates are customizable (e.g use ___.shtml___)<br>
+
+#### How to learn Mikado?
+
+Thanks to the reversed engineering Mikado provides you one of the most simple to learn idiomatic style which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. __It will take 3 minutes to become productive.__ Don't let confuse you about the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of other framework documentations. You will do not need this details to start with. But when you would like to know more you have a chance to go deeper.
+
+Also all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no anything external is required. You can start out of the box seamlessly. No pain you might know from other frameworks.
+
+Checklist for new developers (the most simple example, takes 3 minutes):
+- Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
+- Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
+- Compile the template, create Mikado instance by passing the root node and the compiled template
+- Just use `.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
+- <a href="demo/basic/basic.html">Source Code</a>
 
 ## Table of contents
 

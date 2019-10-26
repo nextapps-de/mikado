@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <title>Mikado Basic Example</title>
+</head>
+<body>
+<div id="root"></div>
+<template id="basic">
+    <div class="{{data.class}}">
+        <div class="title">{{data.title}}</div>
+        <div class="content">{{data.content}}</div>
+    </div>
+</template>
+<script src="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js"></script>
+<script>
+
+    (function(){
+
+        const root = document.getElementById("root");
+        const template = Mikado.compile("basic");
+        const view = Mikado(root, template);
+
+        const data = [{
+            "class": "yellow, green",
+            "title": "This is title 1",
+            "content": "This is content 1"
+        },{
+            "class": "",
+            "title": "This is title 2",
+            "content": "This is content 2"
+        },{
+            "class": "blue, red",
+            "title": "This is title 3",
+            "content": "This is content 3"
+        }];
+
+        view.render(data);
+
+    }());
+
+</script>
+</body>
+</html>

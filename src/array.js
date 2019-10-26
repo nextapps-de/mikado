@@ -227,29 +227,31 @@ if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("sw
 }
 
 /**
- * @param a
- * @param b
- * @param {*=} c
- * @returns {*}
+ * @param {number=} start
+ * @param {number=} count
+ * @param {*=} insert
+ * @returns {Array<*>}
  */
 
-Observer.prototype.splice = function(a, b, c){
+Observer.prototype.splice = function(start, count, insert){
 
     skip = true;
 
-    if(typeof b === "undefined"){
+    start || (start = 0);
 
-        b = this.length - a;
-        if(b < 0) b = 0;
+    if(typeof count === "undefined"){
+
+        count = this.length - start;
+        if(count < 0) count = 0;
     }
 
-    b && this.mikado.remove(a, b);
+    count && this.mikado.remove(start, count);
 
-    const tmp = c ? this.proto.splice(a, b, c) : this.proto.splice(a, b);
+    const tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
 
-    c && this.mikado.add(c, a, this.view);
+    insert && this.mikado.add(insert, start, this.view);
 
-    //this.length += (c ? 1 : 0) - b;
+    //this.length += (insert ? 1 : 0) - count;
     skip = false;
     return tmp;
 };
