@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.2
+ * Mikado.js v0.7.23
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -668,17 +668,18 @@ if (SUPPORT_HELPERS === true || SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap
     return this;
   };
 }
-Observer$$module$tmp$array.prototype.splice = function(a, b, c) {
+Observer$$module$tmp$array.prototype.splice = function(start, count, insert) {
   skip$$module$tmp$array = true;
-  if (typeof b === "undefined") {
-    b = this.length - a;
-    if (b < 0) {
-      b = 0;
+  start || (start = 0);
+  if (typeof count === "undefined") {
+    count = this.length - start;
+    if (count < 0) {
+      count = 0;
     }
   }
-  b && this.mikado.remove(a, b);
-  var tmp = c ? this.proto.splice(a, b, c) : this.proto.splice(a, b);
-  c && this.mikado.add(c, a, this.view);
+  count && this.mikado.remove(start, count);
+  var tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
+  insert && this.mikado.add(insert, start, this.view);
   skip$$module$tmp$array = false;
   return tmp;
 };
@@ -1329,20 +1330,6 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
   return this;
 };
 if (SUPPORT_POOLS) {
-  var move = function(arr, pos_old, pos_new) {
-    var tmp = arr[pos_old];
-    var i = pos_old;
-    if (pos_old < pos_new) {
-      for (; i < pos_new; i++) {
-        arr[i] = arr[i + 1];
-      }
-    } else {
-      for (; i > pos_new; i--) {
-        arr[i] = arr[i - 1];
-      }
-    }
-    arr[pos_new] = tmp;
-  };
   Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x) {
     var a = this.dom;
     var keys = this.live;
@@ -1351,7 +1338,7 @@ if (SUPPORT_POOLS) {
     var max_end = end_a > end_b ? end_a : end_b;
     var shift = 0;
     var key = this.key;
-    for (; x < max_end; x++) {
+    for (x || (x = 0); x < max_end; x++) {
       var found = false;
       if (x < end_b) {
         var b_x = b[x];
@@ -1382,14 +1369,14 @@ if (SUPPORT_POOLS) {
             if (idx_a >= idx_b) {
               var tmp_a = a[idx_a - 1];
               this.root.insertBefore(tmp_a, a_x);
-              move(a, idx_a - 1, x);
+              splice$$module$tmp$mikado(a, idx_a - 1, x);
               tmp_a["_idx"] = x;
               this.update(tmp_a, b_x, view, x);
               shift++;
             } else {
               var index = idx_b - 1 + shift;
               this.root.insertBefore(a_x, a[index]);
-              move(a, x, (index > end_a ? end_a : index) - 1);
+              splice$$module$tmp$mikado(a, x, (index > end_a ? end_a : index) - 1);
               shift--;
               x--;
             }
@@ -1407,6 +1394,28 @@ if (SUPPORT_POOLS) {
     }
     return this;
   };
+}
+function splice$$module$tmp$mikado(arr, pos_old, pos_new, insert, remove) {
+  var tmp = insert || arr[pos_old];
+  if (insert) {
+    pos_old++;
+  }
+  var i = pos_old;
+  if (pos_old < pos_new) {
+    for (; i < pos_new; i++) {
+      arr[i] = arr[i + 1];
+    }
+  } else {
+    for (; i > pos_new; i--) {
+      arr[i] = arr[i - 1];
+    }
+  }
+  if (remove) {
+    arr.pop();
+    return [tmp];
+  } else {
+    arr[pos_new] = tmp;
+  }
 }
 Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing) {
   var has_index;
@@ -1435,7 +1444,7 @@ Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_n
     if (!stealth_mode) {
       if (this.store) {
         if (has_index && !this.extern) {
-          this.store.splice(length, 0, data);
+          splice$$module$tmp$mikado(this.store, this.length - 1, length, data);
         } else {
           if (SUPPORT_REACTIVE) {
             this.skip = true;
@@ -1455,7 +1464,7 @@ Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_n
   node["_idx"] = length;
   if (has_index) {
     this.root.insertBefore(node, this.dom[length] || null);
-    this.dom.splice(length, 0, node);
+    splice$$module$tmp$mikado(this.dom, this.length - 1, length, node);
     this.length++;
     if (!_skip_indexing) {
       for (; ++length < this.length;) {
@@ -1511,20 +1520,21 @@ if (SUPPORT_ASYNC) {
       cancelAnimationFrame$$module$tmp$mikado(this.timer);
       this.timer = null;
     }
+    return this;
   };
 }
-Mikado$$module$tmp$mikado.prototype.append = function(data, view, position) {
+Mikado$$module$tmp$mikado.prototype.append = function(data, view, index) {
   var has_position;
   if (typeof view === "number") {
-    position = view;
+    index = view;
     view = null;
     has_position = true;
   } else {
-    has_position = position || position === 0;
+    has_position = index || index === 0;
   }
   var count = data.length;
   for (var x = 0; x < count; x++) {
-    this.add(data[x], view, has_position ? position++ : null);
+    this.add(data[x], view, has_position ? index++ : null);
   }
   return this;
 };
@@ -1572,9 +1582,17 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize, _ski
     length = 0;
   } else {
     if (SUPPORT_STORAGE && this.store && !this.observe) {
-      this.store.splice(index, count);
+      if (count === 1) {
+        splice$$module$tmp$mikado(this.store, index, length - 1, null, true);
+      } else {
+        this.store.splice(index, count);
+      }
     }
-    nodes = this.dom.splice(index, count);
+    if (count === 1) {
+      nodes = splice$$module$tmp$mikado(this.dom, index, length - 1, null, true);
+    } else {
+      nodes = this.dom.splice(index, count);
+    }
     length -= count;
   }
   var tmp;

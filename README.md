@@ -59,7 +59,7 @@ Checklist for new developers (the most simple example, takes 3 minutes):
 - Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
 - Compile the template, create Mikado instance by passing the root node and the compiled template
 - Just use `.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
-- <a href="demo/basic/basic.html">Source Code</a>
+- <a href="demo/basic/basic.html">Final Source Code</a>
 
 ## Table of contents
 

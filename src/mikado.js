@@ -1043,7 +1043,7 @@ if(SUPPORT_POOLS){
 
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(tmp_a, a_x);
-                            move(a, idx_a - 1, x);
+                            splice(a, idx_a - 1, x);
                             //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
 
                             tmp_a["_idx"] = x;
@@ -1059,7 +1059,7 @@ if(SUPPORT_POOLS){
 
                             // distance is always greater than 1, no predecessor check necessary
                             this.root.insertBefore(a_x, a[index]);
-                            move(a, x, (index > end_a ? end_a : index) - 1);
+                            splice(a, x, (index > end_a ? end_a : index) - 1);
                             //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 
                             shift--;
@@ -1087,26 +1087,48 @@ if(SUPPORT_POOLS){
 
         return this;
     };
+}
 
-    function move(arr, pos_old, pos_new){
+/**
+ * @param {Array} arr
+ * @param {number} pos_old
+ * @param {number} pos_new
+ * @param {*=} insert
+ * @param {boolean=} remove
+ */
 
-        const tmp = arr[pos_old];
-        let i = pos_old;
+function splice(arr, pos_old, pos_new, insert, remove){
 
-        if(pos_old < pos_new){
+    const tmp = insert || arr[pos_old];
 
-            for(; i < pos_new; i++){
+    if(insert){
 
-                arr[i] = arr[i + 1];
-            }
+        pos_old++;
+    }
+
+    let i = pos_old;
+
+    if(pos_old < pos_new){
+
+        for(; i < pos_new; i++){
+
+            arr[i] = arr[i + 1];
         }
-        else /*if(pos_old > pos_new)*/{
+    }
+    else /*if(pos_old > pos_new)*/{
 
-            for(; i > pos_new; i--){
+        for(; i > pos_new; i--){
 
-                arr[i] = arr[i - 1];
-            }
+            arr[i] = arr[i - 1];
         }
+    }
+
+    if(remove){
+
+        arr.pop();
+        return [tmp];
+    }
+    else{
 
         arr[pos_new] = tmp;
     }
@@ -1166,7 +1188,8 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
 
                 if(has_index && !this.extern){
 
-                    this.store.splice(length, 0, data);
+                    splice(this.store, this.length - 1, length, data);
+                    //this.store.splice(length, 0, data);
                 }
                 else{
 
@@ -1187,7 +1210,8 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
     if(has_index){
 
         this.root.insertBefore(node, this.dom[length] || null);
-        this.dom.splice(length, 0, node);
+        splice(this.dom, this.length - 1, length, node);
+        //this.dom.splice(length, 0, node);
         this.length++;
 
         if(!_skip_indexing){
@@ -1401,10 +1425,25 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
 
         if(SUPPORT_STORAGE && this.store && !this.observe){
 
-            this.store.splice(index, count);
+            if(count === 1){
+
+                splice(this.store, index, length - 1, null, true);
+            }
+            else{
+
+                this.store.splice(index, count);
+            }
         }
 
-        nodes = this.dom.splice(index, count);
+        if(count === 1){
+
+            nodes = splice(this.dom, index, length - 1, null, true);
+        }
+        else{
+
+            nodes = this.dom.splice(index, count);
+        }
+
         length -= count;
     }
 

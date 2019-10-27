@@ -1,8 +1,11 @@
 declare class Mikado {
-    constructor(root: HTMLElement|Template, template?: Template, options?: Options);
+    constructor(root: HTMLElement, template: Template, options?: Options);
+    constructor(template: Template, options?: Options);
     add(data: Object, view?: Object, index?: number): Mikado;
+    add(data: Object, index?: number): Mikado;
     after(node_a: HTMLElement|number, node_b: HTMLElement|number): Mikado;
     append(data: Object, view?: Object, index?: number): Mikado;
+    append(data: Object, index?: number): Mikado;
     before(node_a: HTMLElement|number, node_b: HTMLElement|number): Mikado;
     cancel(): Mikado;
     check(): Mikado;
