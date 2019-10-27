@@ -977,157 +977,154 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 //     };
 // }
 
-if(SUPPORT_POOLS){
+/**
+ * Reconcile based on "longest distance" strategy:
+ * https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
+ * Author: Thomas Wilkerling
+ * Licence: Apache-2.0
+ *
+ * @param {Array=} b
+ * @param {Object=} view
+ * @param {number=} x
+ * @param {boolean|number=} render
+ * @returns {Mikado}
+ */
 
-    /**
-     * Reconcile based on "longest distance" strategy:
-     * https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
-     * Author: Thomas Wilkerling
-     * Licence: Apache-2.0
-     *
-     * @param {Array=} b
-     * @param {Object=} view
-     * @param {number=} x
-     * @param {boolean|number=} render
-     * @returns {Mikado}
-     */
+Mikado.prototype.reconcile = function(b, view, x, render){
 
-    Mikado.prototype.reconcile = function(b, view, x, render){
+    const a = this.dom;
+    const keys = this.live;
+    let end_b = b.length;
+    let end_a = a.length;
+    let max_end = end_a > end_b ? end_a : end_b;
+    let shift = 0;
+    let has_update;
+    const key = this.key;
+    //let steps = 0;
 
-        const a = this.dom;
-        const keys = this.live;
-        let end_b = b.length;
-        let end_a = a.length;
-        let max_end = end_a > end_b ? end_a : end_b;
-        let shift = 0;
-        let has_update;
-        const key = this.key;
-        //let steps = 0;
+    for(x || (x = 0); x < max_end; x++){
 
-        for(x || (x = 0); x < max_end; x++){
+        let found;
 
-            let found;
+        if(x < end_b){
 
-            if(x < end_b){
+            const b_x = b[x];
+            const b_x_key = b_x[key];
 
-                const b_x = b[x];
-                const b_x_key = b_x[key];
+            if(render && (!keys[b_x_key] || (x >= end_a))){
 
-                if(render && (!keys[b_x_key] || (x >= end_a))){
+                end_a++;
+                max_end = end_a > end_b ? end_a : end_b;
+                has_update = 1;
 
-                    end_a++;
-                    max_end = end_a > end_b ? end_a : end_b;
-                    has_update = 1;
+                this.add(b_x, view, x, null, /* skip indexing */ 1);
+                continue;
+            }
 
-                    this.add(b_x, view, x, null, /* skip indexing */ 1);
-                    continue;
+            const a_x = a[x];
+            const a_x_key = a_x["_key"];
+
+            if(a_x_key === b_x_key){
+
+                if(has_update){
+
+                    a_x["_idx"] = x;
                 }
 
-                const a_x = a[x];
-                const a_x_key = a_x["_key"];
+                if(render){
 
-                if(a_x_key === b_x_key){
-
-                    if(has_update){
-
-                        a_x["_idx"] = x;
-                    }
-
-                    if(render){
-
-                        this.update(a_x, b_x, view, x);
-                    }
-
-                    continue;
+                    this.update(a_x, b_x, view, x);
                 }
 
-                let idx_a, idx_b;
+                continue;
+            }
 
-                for(let y = x + 1; y < max_end; y++){
+            let idx_a, idx_b;
 
-                    // determine longest distance
-                    if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
-                    if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
+            for(let y = x + 1; y < max_end; y++){
 
-                    if(idx_a && idx_b){
+                // determine longest distance
+                if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
+                if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
 
-                        // shift up (move target => current)
-                        if(idx_a >= idx_b){
+                if(idx_a && idx_b){
 
-                            const tmp_a = a[idx_a - 1];
+                    // shift up (move target => current)
+                    if(idx_a >= idx_b){
 
-                            // when distance is 1 it will always move before, no predecessor check necessary
-                            this.root.insertBefore(tmp_a, a_x);
-                            tmp_a["_idx"] = x;
+                        const tmp_a = a[idx_a - 1];
+
+                        // when distance is 1 it will always move before, no predecessor check necessary
+                        this.root.insertBefore(tmp_a, a_x);
+                        tmp_a["_idx"] = x;
+
+                        if(render){
+
+                            this.update(tmp_a, b_x, view, x);
+                        }
+
+                        if((idx_a === idx_b) && ((y - x) > 1)){
+
+                            this.root.insertBefore(a_x, a[idx_a] || null);
+                            a_x["_idx"] = y;
+                            a[x] = a[y];
+                            a[y] = a_x;
 
                             if(render){
 
-                                this.update(tmp_a, b_x, view, x);
-                            }
-
-                            if((idx_a === idx_b) && ((y - x) > 1)){
-
-                                this.root.insertBefore(a_x, a[idx_a] || null);
-                                a_x["_idx"] = y;
-                                a[x] = a[y];
-                                a[y] = a_x;
-
-                                if(render){
-
-                                    this.update(a_x, b[y], view, y);
-                                }
-
-                                //steps++;
-                            }
-                            else{
-
-                                splice(a, idx_a - 1, x);
-                                //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
-
-                                shift++;
-                                has_update = 1;
+                                this.update(a_x, b[y], view, y);
                             }
 
                             //steps++;
                         }
-                        // shift down (move current => target)
                         else{
 
-                            const index = idx_b - 1 + shift;
+                            splice(a, idx_a - 1, x);
+                            //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
 
-                            // distance is always greater than 1, no predecessor check necessary
-                            this.root.insertBefore(a_x, a[index]);
-                            splice(a, x, (index > end_a ? end_a : index) - 1);
-                            //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
-
+                            shift++;
                             has_update = 1;
-                            shift--;
-                            x--;
-                            //steps++;
                         }
 
-                        found = 1;
-                        break;
+                        //steps++;
                     }
+                    // shift down (move current => target)
+                    else{
+
+                        const index = idx_b - 1 + shift;
+
+                        // distance is always greater than 1, no predecessor check necessary
+                        this.root.insertBefore(a_x, a[index]);
+                        splice(a, x, (index > end_a ? end_a : index) - 1);
+                        //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
+
+                        has_update = 1;
+                        shift--;
+                        x--;
+                        //steps++;
+                    }
+
+                    found = 1;
+                    break;
                 }
-            }
-
-            if(!found){
-
-                this.remove(x, 1, /* resize */ 0, /* skip indexing */ 1);
-
-                has_update = 1;
-                end_a--;
-                max_end = end_a > end_b ? end_a : end_b;
-                x--;
             }
         }
 
-        //if(steps) console.log(steps);
+        if(!found){
 
-        return this;
-    };
-}
+            this.remove(x, 1, /* resize */ 0, /* skip indexing */ 1);
+
+            has_update = 1;
+            end_a--;
+            max_end = end_a > end_b ? end_a : end_b;
+            x--;
+        }
+    }
+
+    //if(steps) console.log(steps);
+
+    return this;
+};
 
 /**
  * @param {Array} arr
