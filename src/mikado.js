@@ -298,7 +298,7 @@ if(SUPPORT_STORAGE){
             for(let x = 0, data, found; x < this.length; x++){
 
                 data = this.data(x);
-                found = true;
+                found = 1;
 
                 for(let y = 0, key; y < length; y++){
 
@@ -306,7 +306,7 @@ if(SUPPORT_STORAGE){
 
                     if(data[key] !== payload[key]){
 
-                        found = false;
+                        found = 0;
                         break;
                     }
                 }
@@ -403,7 +403,7 @@ Mikado.prototype.init = function(template, options){
                 store.mikado = this;
             }
 
-            this.skip = false;
+            this.skip = 0;
         }
 
         // TODO: also enable by default on stealth mode
@@ -421,8 +421,8 @@ Mikado.prototype.init = function(template, options){
         this.static = template["d"];
         this.vpath = null;
         this.update_path = null;
-        if(SUPPORT_REACTIVE && SUPPORT_STORAGE) this.stealth = false;
-        if(SUPPORT_REACTIVE && SUPPORT_STORAGE) this.proxy = false;
+        if(SUPPORT_REACTIVE && SUPPORT_STORAGE) this.stealth = 0;
+        if(SUPPORT_REACTIVE && SUPPORT_STORAGE) this.proxy = 0;
         if(SUPPORT_TEMPLATE_EXTENSION) this["include"] = null;
         this.factory = (options["prefetch"] !== false) && this.parse(template);
 
@@ -472,7 +472,7 @@ Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
         callback = function(){
 
-            tmp.destroy(true);
+            tmp.destroy(1);
             fn();
         }
     }
@@ -481,7 +481,7 @@ Mikado.once = Mikado["once"] = function(root, template, data, view, callback){
 
     if(!callback){
 
-        tmp.destroy(true);
+        tmp.destroy(1);
     }
 
     return Mikado;
@@ -548,7 +548,7 @@ Mikado.prototype.create = function(data, view, index){
         (node = this.live[key])
     )){
 
-        found = true;
+        found = 1;
 
         if(pool){
 
@@ -577,7 +577,7 @@ Mikado.prototype.create = function(data, view, index){
         else{
 
             // skip referencing
-            keyed = false;
+            keyed = 0;
         }
     }
     // 2. queued pool (shared)
@@ -758,7 +758,7 @@ if(SUPPORT_STORAGE){
  * @param {Array<*>|Object|Function=} data
  * @param {Object|Function=} view
  * @param {Function|boolean=} callback
- * @param {boolean=} skip_async
+ * @param {boolean|number=} skip_async
  * @returns {Mikado|Promise}
  */
 
@@ -796,7 +796,7 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
             this.timer = requestAnimationFrame(function(){
 
                 self.timer = 0;
-                self.render(data, view, null, true);
+                self.render(data, view, null, 1);
 
                 if(typeof callback === "function"){
 
@@ -816,7 +816,7 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
                 self.timer = requestAnimationFrame(function(){
 
                     self.timer = 0;
-                    self.render(data, view, null, true);
+                    self.render(data, view, null, 1);
                     resolve();
                 });
             });
@@ -892,7 +892,7 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 
                 if(replace_key && (node["_key"] !== (/*key =*/ item[replace_key]))){
 
-                    return this.reconcile(data, view, x);
+                    return this.reconcile(data, view, x, 1);
 
                     // if((tmp = this.live[key])){
                     //     this.arrange(node, tmp, item, view, x);
@@ -986,7 +986,7 @@ if(SUPPORT_POOLS){
         Licence: Apache-2.0
      */
 
-    Mikado.prototype.reconcile = function(b, view, x){
+    Mikado.prototype.reconcile = function(b, view, x, render){
 
         const a = this.dom;
         const keys = this.live;
@@ -994,24 +994,26 @@ if(SUPPORT_POOLS){
         let end_a = a.length;
         let max_end = end_a > end_b ? end_a : end_b;
         let shift = 0;
+        let has_update;
         const key = this.key;
         //let steps = 0;
 
         for(x || (x = 0); x < max_end; x++){
 
-            let found = false;
+            let found;
 
             if(x < end_b){
 
                 const b_x = b[x];
                 const b_x_key = b_x[key];
 
-                if(!keys[b_x_key] || (x >= end_a)){
+                if(render && (!keys[b_x_key] || (x >= end_a))){
 
                     end_a++;
                     max_end = end_a > end_b ? end_a : end_b;
+                    has_update = 1;
 
-                    this.add(b_x, view, x, null, /* skip indexing */ true);
+                    this.add(b_x, view, x, null, /* skip indexing */ 1);
                     continue;
                 }
 
@@ -1020,9 +1022,16 @@ if(SUPPORT_POOLS){
 
                 if(a_x_key === b_x_key){
 
-                    a_x["_idx"] = x;
+                    if(has_update){
 
-                    this.update(a_x, b_x, view, x);
+                        a_x["_idx"] = x;
+                    }
+
+                    if(render){
+
+                        this.update(a_x, b_x, view, x);
+                    }
+
                     continue;
                 }
 
@@ -1031,6 +1040,7 @@ if(SUPPORT_POOLS){
                 for(let y = x + 1; y < max_end; y++){
 
                     // determine longest distance
+                    // 1 4 3 2 5
                     if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
                     if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
 
@@ -1043,13 +1053,36 @@ if(SUPPORT_POOLS){
 
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(tmp_a, a_x);
-                            splice(a, idx_a - 1, x);
-                            //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
-
                             tmp_a["_idx"] = x;
-                            this.update(tmp_a, b_x, view, x);
 
-                            shift++;
+                            if(render){
+
+                                this.update(tmp_a, b_x, view, x);
+                            }
+
+                            if((idx_a === idx_b) && ((y - x) > 1)){
+
+                                this.root.insertBefore(a_x, a[idx_a] || null);
+                                a_x["_idx"] = y;
+                                a[x] = a[y];
+                                a[y] = a_x;
+
+                                if(render){
+
+                                    this.update(a_x, b[y], view, y);
+                                }
+
+                                //steps++;
+                            }
+                            else{
+
+                                splice(a, idx_a - 1, x);
+                                //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
+
+                                shift++;
+                                has_update = 1;
+                            }
+
                             //steps++;
                         }
                         // shift down (move current => target)
@@ -1062,12 +1095,13 @@ if(SUPPORT_POOLS){
                             splice(a, x, (index > end_a ? end_a : index) - 1);
                             //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 
+                            has_update = 1;
                             shift--;
                             x--;
                             //steps++;
                         }
 
-                        found = true;
+                        found = 1;
                         break;
                     }
                 }
@@ -1075,8 +1109,9 @@ if(SUPPORT_POOLS){
 
             if(!found){
 
-                this.remove(x, 1, /* resize */ 0, /* skip indexing */ true);
+                this.remove(x, 1, /* resize */ 0, /* skip indexing */ 1);
 
+                has_update = 1;
                 end_a--;
                 max_end = end_a > end_b ? end_a : end_b;
                 x--;
@@ -1094,10 +1129,15 @@ if(SUPPORT_POOLS){
  * @param {number} pos_old
  * @param {number} pos_new
  * @param {*=} insert
- * @param {boolean=} remove
+ * @param {boolean|number=} remove
  */
 
 function splice(arr, pos_old, pos_new, insert, remove){
+
+    if(remove && !pos_old){
+
+        return [arr.shift()];
+    }
 
     const tmp = insert || arr[pos_old];
 
@@ -1106,20 +1146,18 @@ function splice(arr, pos_old, pos_new, insert, remove){
         pos_old++;
     }
 
-    let i = pos_old;
-
     if(pos_old < pos_new){
 
-        for(; i < pos_new; i++){
+        for(; pos_old < pos_new; pos_old++){
 
-            arr[i] = arr[i + 1];
+            arr[pos_old] = arr[pos_old + 1];
         }
     }
     else /*if(pos_old > pos_new)*/{
 
-        for(; i > pos_new; i--){
+        for(; pos_old > pos_new; pos_old--){
 
-            arr[i] = arr[i - 1];
+            arr[pos_old] = arr[pos_old - 1];
         }
     }
 
@@ -1139,7 +1177,7 @@ function splice(arr, pos_old, pos_new, insert, remove){
  * @param {Object|number=} view
  * @param {number|null=} index
  * @param {Element=} _replace_node
- * @param {boolean=} _skip_indexing
+ * @param {boolean|number=} _skip_indexing
  * @returns {Mikado}
  */
 
@@ -1155,11 +1193,11 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
 
             index = view;
             view = null;
-            has_index = true;
+            has_index = 1;
         }
         else if(index || (index === 0)){
 
-            has_index = true;
+            has_index = 1;
         }
     }
 
@@ -1174,7 +1212,7 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
 
             if(this.stealth && this.loose && (node["_data"] === data)){
 
-                stealth_mode = true;
+                stealth_mode = 1;
             }
             else{
 
@@ -1193,9 +1231,9 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
                 }
                 else{
 
-                    if(SUPPORT_REACTIVE) this.skip = true;
+                    if(SUPPORT_REACTIVE) this.skip = 1;
                     this.store[length] = data;
-                    if(SUPPORT_REACTIVE) this.skip = false;
+                    if(SUPPORT_REACTIVE) this.skip = 0;
                 }
             }
             else if(this.loose){
@@ -1328,7 +1366,7 @@ Mikado.prototype.append = function(data, view, index){
 
         index = view;
         view = null;
-        has_position = true;
+        has_position = 1;
     }
     else{
 
@@ -1351,7 +1389,7 @@ Mikado.prototype.append = function(data, view, index){
  * @param {!Element|number} index
  * @param {number=} count
  * @param {number=} resize
- * @param {boolean=} _skip_indexing
+ * @param {boolean|number=} _skip_indexing
  * @returns {Mikado}
  */
 
@@ -1427,7 +1465,7 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
 
             if(count === 1){
 
-                splice(this.store, index, length - 1, null, true);
+                splice(this.store, index, length - 1, null, 1);
             }
             else{
 
@@ -1437,7 +1475,7 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
 
         if(count === 1){
 
-            nodes = splice(this.dom, index, length - 1, null, true);
+            nodes = splice(this.dom, index, length - 1, null, 1);
         }
         else{
 
@@ -1614,9 +1652,9 @@ Mikado.prototype.update = function(node, data, view, index){
 
         if(this.store){
 
-            if(SUPPORT_REACTIVE) this.skip = true;
+            if(SUPPORT_REACTIVE) this.skip = 1;
             this.store[index] = data;
-            if(SUPPORT_REACTIVE) this.skip = false;
+            if(SUPPORT_REACTIVE) this.skip = 0;
         }
         else if(this.loose){
 
@@ -1950,7 +1988,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         const old_fn = tmp_fn;
         tmp_fn = "";
-        this["include"].push(new Mikado(node, partial, Object.assign({}, this.config, { "store": false, "async": false })));
+        this["include"].push(new Mikado(node, partial, Object.assign({}, this.config, { "store": false, "async": 0 })));
         tmp_fn = old_fn;
 
         has_update++;
@@ -2053,11 +2091,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         this.vpath[path_length] = path;
         dom_path[path_length] = node;
-        this.static = false;
+        this.static = 0;
 
         if(has_update === has_observe){
 
-            this.stealth = true;
+            this.stealth = 1;
         }
 
         // push path before recursion

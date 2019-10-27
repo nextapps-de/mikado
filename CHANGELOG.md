@@ -1,3 +1,6 @@
+## 0.7.3
+`add` make reconcile method public<br>
+
 ## 0.7.2
 `new` reconcile based on "longest distance strategy"<br>
 `new` __mikado-compile:__ use wildcard for compiling recursively through a directory<br>

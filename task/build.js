@@ -53,7 +53,7 @@ var options = (function(argv){
 
 const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "--light");
 const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
-//const extern = process.argv[2] === "--extern";
+const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
 
 let parameter = (function(opt){
 

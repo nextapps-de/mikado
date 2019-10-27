@@ -632,6 +632,7 @@ Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
 - <a href="#view.mount">view.__mount__(root)</a>
 - <a href="#view.render">view.__render__(\<data\>, \<payload\>, \<callback\>)</a>
+- <a href="#view.reconcile">view.__reconcile__(data)</a>
 - <a href="#view.create">view.__create__(data, \<payload\>)</a>
 - <a href="#view.add">view.__add__(data, \<payload\>, <index\>)</a>
 - <a href="#view.append">view.__append__(data, \<payload\>, <index\>)</a>
@@ -1458,7 +1459,16 @@ view.refresh();
 
 Passing a components root node or an index to the refresh method performs faster than passing no parameter.
 
-__Hint:__ You cannot use refresh when new items was added/removed, this requires ___.render(data)___.
+__Hint:__ You cannot use refresh when new items was added/removed, this requires ___.reconcile(data)___ or ___.render(data)___.
+
+<a name="view.reconcile"></a>
+When you just add/remove/move items without updating its contents and you are in __keyed mode__ you can call reconciliation directly:
+
+```js
+view.reconcile(items);
+```
+
+__Hint:__ The sum of ___.reconcile(data)___ and ___.refresh()___ is basically ___.render(data)___ under the hood. When you need both: adding/removing/moving together with updating contents than call ___.render(data)___ instead of calling the corresponding partial methods one by one.
 
 <a name="usage"></a>
 ## Create, Initialize, Destroy Views
