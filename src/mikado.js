@@ -979,11 +979,17 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 
 if(SUPPORT_POOLS){
 
-    /*
-        Reconcile based on "longest distance" strategy:
-        https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
-        Author: Thomas Wilkerling
-        Licence: Apache-2.0
+    /**
+     * Reconcile based on "longest distance" strategy:
+     * https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
+     * Author: Thomas Wilkerling
+     * Licence: Apache-2.0
+     *
+     * @param {Array=} b
+     * @param {Object=} view
+     * @param {number=} x
+     * @param {boolean|number=} render
+     * @returns {Mikado}
      */
 
     Mikado.prototype.reconcile = function(b, view, x, render){
