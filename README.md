@@ -1424,7 +1424,7 @@ Mikado is able to restoring 100% of the original state. This helps in situations
 __Notice:__ An original state does not include an event listener which was directly bound to an element. The original state is the state before you apply anything manually (or by external).
 
 <a name="refresh"></a>
-#### Render vs. Refresh
+#### Render vs. Refresh vs. Reconcile
 
 > When reusing was disabled you can take advantage of Mikados 2 different render functions. 
 

@@ -1040,7 +1040,6 @@ if(SUPPORT_POOLS){
                 for(let y = x + 1; y < max_end; y++){
 
                     // determine longest distance
-                    // 1 4 3 2 5
                     if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
                     if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
 
