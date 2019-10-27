@@ -1,5 +1,6 @@
 ## 0.7.3
 `add` make reconcile method public<br>
+`change` live pool becomes a non-optional feature<br>
 
 ## 0.7.2
 `new` reconcile based on "longest distance strategy"<br>

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.3
+ * Mikado.js v0.7.34
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -613,7 +613,7 @@ E.once = E.once = function(a, b, c, d, e) {
 E.prototype.check = function() {
   if (this.root) {
     var a = this.root._tpl;
-    a !== this.template && (this.root._tpl = this.template, a && (this.key && (this.live = {}), this.length = 0, this.remove(0, this.length)));
+    a !== this.template && (this.root._tpl = this.template, a && (this.live = {}, this.remove(0, this.length)));
   }
   return this;
 };
@@ -625,7 +625,7 @@ function xa(a) {
 }
 E.prototype.create = function(a, b, c) {
   var d = this.key, e = d && a[d], f, g;
-  if (d && ((g = this.key_pool) && (f = g[e]) || (f = this.live[e]))) {
+  if (d && (g = this.key_pool) && (f = g[e])) {
     var h = 1;
     if (g) {
       if (g[e] = null, g = this.tpl_pool) {
@@ -843,10 +843,8 @@ E.prototype.clear = function(a) {
 };
 E.prototype.destroy = function(a) {
   a && this.unload();
-  this.factory = this.update_path = this.vpath = this.template = this.root = this.dom = null;
   this.length = 0;
-  this.live = {};
-  this.store = this.include = null;
+  this.include = this.store = this.live = this.factory = this.update_path = this.vpath = this.template = this.root = this.dom = null;
 };
 E.prototype.cancel = function() {
   this.timer && (va(this.timer), this.timer = null);
@@ -899,7 +897,7 @@ E.prototype.remove = function(a, b, c, d) {
       this.dom[a]._idx = a;
     }
   }
-  if (this.tpl_pool && !this.key_pool && this.cache && 1 < b) {
+  if (this.tpl_pool && !this.key_pool && 1 < b) {
     a = f;
     d = a.length;
     g = d / 2 | 0;

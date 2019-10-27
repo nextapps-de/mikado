@@ -139,7 +139,7 @@ Mikado.prototype.mount = function(target){
 
     if(this.root !== target){
 
-        if(SUPPORT_POOLS && this.key && this.root){
+        if(this.key && this.root){
 
             this.root["_pool"] = this.live;
             this.live = target["_pool"] || {};
@@ -254,7 +254,7 @@ if(SUPPORT_STORAGE){
 
         Mikado.prototype.find = function(data){
 
-            if(SUPPORT_POOLS && this.key){
+            if(this.key){
 
                 const key = typeof data !== "object" ? data : data[this.key];
 
@@ -428,10 +428,10 @@ Mikado.prototype.init = function(template, options){
 
         this.check();
 
-        if(SUPPORT_POOLS){
+        this.key = template["k"];
+        this.live = this.key && {};
 
-            this.key = template["k"];
-            this.live = this.key && {};
+        if(SUPPORT_POOLS){
 
             this.tpl_pool = this.reuse && (options["pool"] !== false) && (template_pool[tpl_name] || (
                 template_pool[tpl_name] = []
@@ -499,16 +499,7 @@ Mikado.prototype.check = function(){
 
             if(id){
 
-                if(SUPPORT_POOLS){
-
-                    if(this.key){
-
-                        this.live = {};
-                    }
-
-                    this.length = 0;
-                }
-
+                this.live = {};
                 this.remove(0, this.length);
             }
         }
@@ -536,16 +527,16 @@ Mikado.prototype.create = function(data, view, index){
 
     //profiler_start("create");
 
-    let keyed = SUPPORT_POOLS && this.key;
+    let keyed = this.key;
     const key = keyed && data[keyed];
     let node, pool, factory, found;
 
     // 1. keyed pools (live + shared)
-    if(keyed && (
-        ((pool = this.key_pool) && (node = pool[key])) ||
+    if(SUPPORT_POOLS && keyed && (
         // NOTE: this optimization cannot render more than one data item which has
         //       the same key within same template on the same view instance
-        (node = this.live[key])
+        //(node = this.live[key]) ||
+        ((pool = this.key_pool) && (node = pool[key]))
     )){
 
         found = 1;
@@ -1297,7 +1288,10 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
 
 Mikado.prototype.clear = function(purge){
 
-    this.remove(0, this.length);
+    if(this.length){
+
+        this.remove(0, this.length);
+    }
 
     if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("purge") !== -1))){
 
@@ -1314,27 +1308,23 @@ Mikado.prototype.destroy = function(unload){
         this.unload();
     }
 
+    this.length = 0;
     this.dom = null;
     this.root = null;
     this.template = null;
     this.vpath = null;
     this.update_path = null;
     this.factory = null;
-    this.length = 0;
+    this.live = null;
 
-    if(SUPPORT_POOLS){
+    if(SUPPORT_STORAGE){
 
-        this.live = {};
+        this.store = null;
     }
 
     if(SUPPORT_TEMPLATE_EXTENSION){
 
         this["include"] = null;
-    }
-
-    if(SUPPORT_STORAGE){
-
-        this.store = null;
     }
 };
 
@@ -1507,7 +1497,7 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
         }
     }
 
-    if(SUPPORT_POOLS && this.tpl_pool && !this.key_pool && this.cache && (count > 1)){
+    if(SUPPORT_POOLS && this.tpl_pool && !this.key_pool && (count > 1)){
 
         // reverse is applied in order to use push/pop rather than shift/unshift
         // when no keyed pool is used the right order of items will:
@@ -1527,10 +1517,7 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
             this.root.removeChild(node);
         }
 
-        if(SUPPORT_POOLS){
-
-            this.checkout(node);
-        }
+        this.checkout(node);
     }
 
     //profiler_end("remove");
@@ -1547,14 +1534,17 @@ Mikado.prototype.checkout = function(node){
         // remove from keyed live-pool
         this.live[ref] = null;
 
-        if(this.key_pool){
+        if(SUPPORT_POOLS){
 
-            // add to keyed shared-pool
-            this.key_pool[ref] = node;
+            if(this.key_pool){
+
+                // add to keyed shared-pool
+                this.key_pool[ref] = node;
+            }
         }
     }
 
-    if(this.tpl_pool){
+    if(SUPPORT_POOLS && this.tpl_pool){
 
         const length = this.tpl_pool.length;
 
@@ -1590,11 +1580,7 @@ Mikado.prototype.replace = function(node, data, view, index){
     }
 
     this.add(data, view, index, node);
-
-    if(SUPPORT_POOLS){
-
-        this.checkout(node);
-    }
+    this.checkout(node);
 
     let tmp;
 
@@ -1664,7 +1650,7 @@ Mikado.prototype.update = function(node, data, view, index){
         }
     }
 
-    if(SUPPORT_POOLS && this.key){
+    if(this.key){
 
         const ref = node["_key"];
         const tmp = data[this.key];
