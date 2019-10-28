@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.34
+ * Mikado.js v0.7.4
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -775,7 +775,7 @@ E.prototype.reconcile = function(a, b, c, d) {
       }
       for (var x = void 0, y = void 0, A = c + 1; A < m; A++) {
         if (!x && A < h && e[A]._key === u && (x = A + 1), !y && A < g && a[A][w] === z && (y = A + 1), x && y) {
-          x >= y ? (l = e[x - 1], this.root.insertBefore(l, r), l._idx = c, d && this.update(l, t, b, c), x === y && 1 < A - c ? (this.root.insertBefore(r, e[x] || null), r._idx = A, e[c] = e[A], e[A] = r, d && this.update(r, a[A], b, A)) : (U(e, x - 1, c), n++, p = 1)) : (p = y - 1 + n, this.root.insertBefore(r, e[p]), U(e, c, (p > h ? h : p) - 1), p = 1, n--, c--);
+          x >= y ? (l = e[x - 1], this.root.insertBefore(l, r), l._idx = c, d && this.update(l, t, b, c), x === y ? (1 < A - c && this.root.insertBefore(r, e[x] || null), r._idx = A, e[c] = e[A], e[A] = r, d && this.update(r, a[A], b, A)) : (U(e, x - 1, c), n++, p = 1)) : (p = y - 1 + n, this.root.insertBefore(r, e[p] || null), U(e, c, (p > h ? h : p) - 1), p = 1, n--, c--);
           l = 1;
           break;
         }
@@ -783,13 +783,11 @@ E.prototype.reconcile = function(a, b, c, d) {
     }
     l || (this.remove(c, 1, 0, 1), p = 1, h--, m = h > g ? h : g, c--);
   }
+  this.store && !this.extern && (this.store = a);
   return this;
 };
-function U(a, b, c, d, e) {
-  if (e && !b) {
-    return [a.shift()];
-  }
-  var f = d || a[b];
+function U(a, b, c, d) {
+  var e = d || a[b];
   d && b++;
   if (b < c) {
     for (; b < c; b++) {
@@ -800,10 +798,7 @@ function U(a, b, c, d, e) {
       a[b] = a[b - 1];
     }
   }
-  if (e) {
-    return a.pop(), [f];
-  }
-  a[c] = f;
+  a[c] = e;
 }
 E.prototype.add = function(a, b, c, d, e) {
   if (!d) {
@@ -837,7 +832,7 @@ E.prototype.add = function(a, b, c, d, e) {
   return this;
 };
 E.prototype.clear = function(a) {
-  this.remove(0, this.length);
+  this.length && this.remove(0, this.length);
   a && this.purge();
   return this;
 };
@@ -871,7 +866,7 @@ E.prototype.remove = function(a, b, c, d) {
   }
   0 > b ? (a -= b + 1, 0 > a && (a = 0), b *= -1) : b || (b = 1);
   if (!a && b >= e) {
-    this.store && !this.observe && (this.extern ? this.store.splice(0) : this.store = c ? Array(c) : []);
+    this.store && !this.extern && (this.store = c ? Array(c) : []);
     if (this.include && (this.key_pool || this.tpl_pool)) {
       for (b = 0; b < this.include.length; b++) {
         this.include[b].clear();
@@ -883,7 +878,7 @@ E.prototype.remove = function(a, b, c, d) {
     this.root._dom = this.dom = c ? Array(c) : [];
     e = 0;
   } else {
-    this.store && !this.observe && (1 === b ? U(this.store, a, e - 1, null, 1) : this.store.splice(a, b)), f = 1 === b ? U(this.dom, a, e - 1, null, 1) : this.dom.splice(a, b), e -= b;
+    this.store && !this.observe && this.store.splice(a, b), f = this.dom.splice(a, b), e -= b;
   }
   var g;
   if ((g = this.on) && (g = g.remove)) {
@@ -958,7 +953,6 @@ E.prototype.create_path = function(a) {
     }
     d[g] = h;
   }
-  this.cache && (a._cache = {});
   return a._path = d;
 };
 var V;

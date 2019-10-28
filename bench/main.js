@@ -11,7 +11,6 @@
     let modes = window.location.hash.indexOf("modes") !== -1;
     let internal;
     let keyed;
-    let duration = 3;
 
     const lib = shuffle(modes ? [
 
@@ -72,10 +71,6 @@
 
         init(window.location.hash = "#" + target.value);
 
-    }).route("duration", function(target){
-
-        duration = target.value;
-
     }).listen("click").listen("change");
 
     const test = [
@@ -134,6 +129,8 @@
     mikado.render(current);
 
     function runner(){
+
+        const duration = document.getElementById("duration").value;
 
         index++;
         current[index][test[2]] = "run...";
@@ -252,8 +249,6 @@
                     current[index][parts[0]] = "-failed-";
                 }
 
-                mikado.update(mikado.node(index), current[index]);
-
                 if(parts[0] === "clear"){
 
                     if(index < lib.length - 1){
@@ -270,13 +265,15 @@
                         });
 
                         mikado.render(current);
+                        return;
                     }
                 }
                 else{
 
                     current[index][test[test.indexOf(parts[0]) + 1]] = "run...";
-                    mikado.update(mikado.node(index), current[index]);
                 }
+
+                mikado.refresh(index);
             }
         }
     };

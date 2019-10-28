@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.35
+ * Mikado.js v0.7.4
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1158,6 +1158,9 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   }
   if (factory) {
     node = this.factory.cloneNode(true);
+    if (SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS) {
+      node["_cache"] = Object.assign({}, this.factory["_cache"]);
+    }
     var tmp;
     if (SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["create"])) {
       tmp(node);
@@ -1373,8 +1376,10 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
             if (render) {
               this.update(tmp_a, b_x, view, x);
             }
-            if (idx_a === idx_b && y - x > 1) {
-              this.root.insertBefore(a_x, a[idx_a] || null);
+            if (idx_a === idx_b) {
+              if (y - x > 1) {
+                this.root.insertBefore(a_x, a[idx_a] || null);
+              }
               a_x["_idx"] = y;
               a[x] = a[y];
               a[y] = a_x;
@@ -1388,7 +1393,7 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
             }
           } else {
             var index = idx_b - 1 + shift;
-            this.root.insertBefore(a_x, a[index]);
+            this.root.insertBefore(a_x, a[index] || null);
             splice$$module$tmp$mikado(a, x, (index > end_a ? end_a : index) - 1);
             has_update = 1;
             shift--;
@@ -1407,12 +1412,12 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
       x--;
     }
   }
+  if (SUPPORT_STORAGE && this.store && !this.extern) {
+    this.store = b;
+  }
   return this;
 };
-function splice$$module$tmp$mikado(arr, pos_old, pos_new, insert, remove) {
-  if (remove && !pos_old) {
-    return [arr.shift()];
-  }
+function splice$$module$tmp$mikado(arr, pos_old, pos_new, insert) {
   var tmp = insert || arr[pos_old];
   if (insert) {
     pos_old++;
@@ -1426,12 +1431,7 @@ function splice$$module$tmp$mikado(arr, pos_old, pos_new, insert, remove) {
       arr[pos_old] = arr[pos_old - 1];
     }
   }
-  if (remove) {
-    arr.pop();
-    return [tmp];
-  } else {
-    arr[pos_new] = tmp;
-  }
+  arr[pos_new] = tmp;
 }
 Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing) {
   var has_index;
@@ -1579,12 +1579,8 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize, _ski
   }
   var nodes;
   if (!index && count >= length) {
-    if (SUPPORT_STORAGE && this.store && !this.observe) {
-      if (this.extern) {
-        this.store.splice(0);
-      } else {
-        this.store = resize ? new Array(resize) : [];
-      }
+    if (SUPPORT_STORAGE && this.store && !this.extern) {
+      this.store = resize ? new Array(resize) : [];
     }
     if (SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"] && (this.key_pool || this.tpl_pool)) {
       for (var y = 0; y < this["include"].length; y++) {
@@ -1598,17 +1594,9 @@ Mikado$$module$tmp$mikado.prototype.remove = function(index, count, resize, _ski
     length = 0;
   } else {
     if (SUPPORT_STORAGE && this.store && !this.observe) {
-      if (count === 1) {
-        splice$$module$tmp$mikado(this.store, index, length - 1, null, 1);
-      } else {
-        this.store.splice(index, count);
-      }
+      this.store.splice(index, count);
     }
-    if (count === 1) {
-      nodes = splice$$module$tmp$mikado(this.dom, index, length - 1, null, 1);
-    } else {
-      nodes = this.dom.splice(index, count);
-    }
+    nodes = this.dom.splice(index, count);
     length -= count;
   }
   var tmp;
@@ -1729,9 +1717,6 @@ Mikado$$module$tmp$mikado.prototype.create_path = function(root) {
   for (var x = 0, path = undefined; x < length; x++) {
     path = this.vpath[x];
     new_path[x] = cache[path] || resolve$$module$tmp$mikado(root, path, cache);
-  }
-  if (SUPPORT_CACHE && this.cache) {
-    root["_cache"] = {};
   }
   root["_path"] = new_path;
   return new_path;
@@ -2372,5 +2357,5 @@ if (SUPPORT_CACHE && SUPPORT_CACHE_HELPERS) {
     }
   }
 })();
-var module$tmp$browser = {};
+var module$tmp$bundle = {};
 }).call(this);

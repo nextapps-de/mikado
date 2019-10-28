@@ -53,18 +53,241 @@ Weather a library provides optimizations to one of these modes or not, it is fai
     <tr>
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
+        <td align=right><sub>25</sub></td>
+        <td align=right><sub>18432</sub></td>
+        <td align=right><sub>6014</sub></td>
+        <td align=right><sub>90335</sub></td>
+        <td align=right><sub>46951</sub></td>
+        <td align=right><sub>284969</sub></td>
+        <td align=right><sub>34245</sub></td>
+        <td align=right><sub>27452</sub></td>
+        <td align=right><sub>30704</sub></td>
+        <td align=right><sub>25674</sub></td>
+        <td align=right><b><sub>987</sub></b></td>
+        <td align=right><b><sub>18045</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>domc</sub></td>
+        <td align=right><sub>4.5</sub></td>
+        <td align=right><sub>119</sub></td>
+        <td align=right><sub>1142</sub></td>
+        <td align=right><sub>6524</sub></td>
+        <td align=right><sub>51753</sub></td>
+        <td align=right><sub>11723</sub></td>
+        <td align=right><sub>94361</sub></td>
+        <td align=right><sub>2395</sub></td>
+        <td align=right><sub>22497</sub></td>
+        <td align=right><sub>4617</sub></td>
+        <td align=right><sub>25167</sub></td>
+        <td align=right><b><sub>493</sub></b></td>
+        <td align=right><b><sub>5271</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>lit-html</sub></td>
+        <td align=right><sub>17.3</sub></td>
+        <td align=right><sub>359</sub></td>
+        <td align=right><sub>446</sub></td>
+        <td align=right><sub>4505</sub></td>
+        <td align=right><sub>28027</sub></td>
+        <td align=right><sub>8252</sub></td>
+        <td align=right><sub>44001</sub></td>
+        <td align=right><sub>897</sub></td>
+        <td align=right><sub>8317</sub></td>
+        <td align=right><sub>1645</sub></td>
+        <td align=right><sub>5021</sub></td>
+        <td align=right><b><sub>235</sub></b></td>
+        <td align=right><b><sub>2607</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>inferno</sub></td>
+        <td align=right><sub>8.4</sub></td>
+        <td align=right><sub>283</sub></td>
+        <td align=right><sub>761</sub></td>
+        <td align=right><sub>750</sub></td>
+        <td align=right><sub>5469</sub></td>
+        <td align=right><sub>5000</sub></td>
+        <td align=right><sub>5988</sub></td>
+        <td align=right><sub>1363</sub></td>
+        <td align=right><sub>7366</sub></td>
+        <td align=right><sub>2345</sub></td>
+        <td align=right><sub>16151</sub></td>
+        <td align=right><b><sub>200</sub></b></td>
+        <td align=right><b><sub>1272</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>mithril</sub></td>
+        <td align=right><sub>9.6</sub></td>
+        <td align=right><sub>244</sub></td>
+        <td align=right><sub>645</sub></td>
+        <td align=right><sub>2134</sub></td>
+        <td align=right><sub>4636</sub></td>
+        <td align=right><sub>3126</sub></td>
+        <td align=right><sub>5039</sub></td>
+        <td align=right><sub>1179</sub></td>
+        <td align=right><sub>7191</sub></td>
+        <td align=right><sub>2011</sub></td>
+        <td align=right><sub>12604</sub></td>
+        <td align=right><b><sub>198</sub></b></td>
+        <td align=right><b><sub>1200</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align=right><sub>2.9</sub></td>
+        <td align=right><sub>355</sub></td>
+        <td align=right><sub>448</sub></td>
+        <td align=right><sub>2416</sub></td>
+        <td align=right><sub>4184</sub></td>
+        <td align=right><sub>3397</sub></td>
+        <td align=right><sub>4554</sub></td>
+        <td align=right><sub>874</sub></td>
+        <td align=right><sub>6620</sub></td>
+        <td align=right><sub>1530</sub></td>
+        <td align=right><sub>12348</sub></td>
+        <td align=right><b><sub>232</sub></b></td>
+        <td align=right><b><sub>1167</sub></b></td>
+    </tr>
+    <tr>
+        <td><sub>innerhtml</sub></td>
+        <td align=right><sub>0</sub></td>
+        <td align=right><sub>506</sub></td>
+        <td align=right><sub>1059</sub></td>
+        <td align=right><sub>1009</sub></td>
+        <td align=right><sub>1018</sub></td>
+        <td align=right><sub>890</sub></td>
+        <td align=right><sub>883</sub></td>
+        <td align=right><sub>901</sub></td>
+        <td align=right><sub>1636</sub></td>
+        <td align=right><sub>1186</sub></td>
+        <td align=right><sub>27371</sub></td>
+        <td align=right><b><sub>159</sub></b></td>
+        <td align=right><b><sub>791</sub></b></td>
+    </tr>
+    <tr>
+        <td><sub>surplus</sub></td>
+        <td align=right><sub>15.8</sub></td>
+        <td align=right><sub>581</sub></td>
+        <td align=right><sub>955</sub></td>
+        <td align=right><sub>831</sub></td>
+        <td align=right><sub>835</sub></td>
+        <td align=right><sub>835</sub></td>
+        <td align=right><sub>845</sub></td>
+        <td align=right><sub>939</sub></td>
+        <td align=right><sub>1540</sub></td>
+        <td align=right><sub>1155</sub></td>
+        <td align=right><sub>25324</sub></td>
+        <td align=right><b><sub>171</sub></b></td>
+        <td align=right><b><sub>740</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>ractive</sub></td>
+        <td align=right><sub>68.2</sub></td>
+        <td align=right><sub>1182</sub></td>
+        <td align=right><sub>164</sub></td>
+        <td align=right><sub>1514</sub></td>
+        <td align=right><sub>5826</sub></td>
+        <td align=right><sub>2619</sub></td>
+        <td align=right><sub>8082</sub></td>
+        <td align=right><sub>336</sub></td>
+        <td align=right><sub>2970</sub></td>
+        <td align=right><sub>616</sub></td>
+        <td align=right><sub>1768</sub></td>
+        <td align=right><b><sub>86</sub></b></td>
+        <td align=right><b><sub>716</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>sinuous</sub></td>
+        <td align=right><sub>7.5</sub></td>
+        <td align=right><sub>641</sub></td>
+        <td align=right><sub>838</sub></td>
+        <td align=right><sub>802</sub></td>
+        <td align=right><sub>803</sub></td>
+        <td align=right><sub>817</sub></td>
+        <td align=right><sub>810</sub></td>
+        <td align=right><sub>814</sub></td>
+        <td align=right><sub>1609</sub></td>
+        <td align=right><sub>1075</sub></td>
+        <td align=right><sub>16384</sub></td>
+        <td align=right><b><sub>157</sub></b></td>
+        <td align=right><b><sub>678</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>jquery</sub></td>
+        <td align=right><sub>31.3</sub></td>
+        <td align=right><sub>687</sub></td>
+        <td align=right><sub>822</sub></td>
+        <td align=right><sub>720</sub></td>
+        <td align=right><sub>716</sub></td>
+        <td align=right><sub>653</sub></td>
+        <td align=right><sub>657</sub></td>
+        <td align=right><sub>708</sub></td>
+        <td align=right><sub>1136</sub></td>
+        <td align=right><sub>872</sub></td>
+        <td align=right><sub>5531</sub></td>
+        <td align=right><b><sub>88</sub></b></td>
+        <td align=right><b><sub>503</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>knockout</sub></td>
+        <td align=right><sub>24.8</sub></td>
+        <td align=right><sub>2576</sub></td>
+        <td align=right><sub>91</sub></td>
+        <td align=right><sub>67</sub></td>
+        <td align=right><sub>69</sub></td>
+        <td align=right><sub>68</sub></td>
+        <td align=right><sub>69</sub></td>
+        <td align=right><sub>85</sub></td>
+        <td align=right><sub>130</sub></td>
+        <td align=right><sub>103</sub></td>
+        <td align=right><sub>1181</sub></td>
+        <td align=right><b><sub>46</sub></b></td>
+        <td align=right><b><sub>140</sub></b></td>
+    </tr>
+</table>
+
+#### Recycle (Non-Keyed)
+
+<table>
+    <tr></tr>
+    <tr>
+        <td><sub>Library</sub></td>
+        <td align=center><sub>KB</sub></td>
+        <td align=center><sub>RAM</sub></td>
+        <td align=center><sub>Create</sub></td>
+        <td align=center><sub>Replace</sub></td>
+        <td align=center><sub>Update</sub></td>
+        <td align=center><sub>Order</sub></td>
+        <td align=center><sub>Repaint</sub></td>
+        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Remove</sub></td>
+        <td align=center><sub>Toggle</sub></td>
+        <td align=center><sub>Clear</sub></td>
+        <td align=center><sub>Index</sub></td>
+        <td align=center><sub>Score</sub></td>
+    </tr>
+    <tr>
+        <td><sub>mikado</sub></td>
+        <td align=right><sub>2.8</sub></td>
         <td align=right><sub>27</sub></td>
-        <td align=right><sub>18962</sub></td>
+        <td align=right><sub>18745</sub></td>
         <td align=right><sub>6030</sub></td>
-        <td align=right><sub>79394</sub></td>
+        <td align=right><sub>92669</sub></td>
         <td align=right><sub>45868</sub></td>
-        <td align=right><sub>266941</sub></td>
+        <td align=right><sub>299140</sub></td>
         <td align=right><sub>35254</sub></td>
         <td align=right><sub>27563</sub></td>
         <td align=right><sub>31265</sub></td>
-        <td align=right><sub>26153</sub></td>
-        <td align=right><b><sub>997</sub></b></td>
-        <td align=right><b><sub>54418</sub></b></td>
+        <td align=right><sub>25182</sub></td>
+        <td align=right><b><sub>993</sub></b></td>
+        <td align=right><b><sub>59354</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -80,7 +303,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>7443</sub></td>
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
-        <td align=right><b><sub>201</sub></b></td>
+        <td align=right><b><sub>200</sub></b></td>
         <td align=right><b><sub>3099</sub></b></td>
     </tr>
     <tr></tr>
@@ -97,7 +320,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>6614</sub></td>
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
-        <td align=right><b><sub>179</sub></b></td>
+        <td align=right><b><sub>178</sub></b></td>
         <td align=right><b><sub>2639</sub></b></td>
     </tr>
     <tr></tr>
@@ -253,229 +476,6 @@ Weather a library provides optimizations to one of these modes or not, it is fai
     </tr>
 </table>
 
-#### Recycle (Non-Keyed)
-
-<table>
-    <tr></tr>
-    <tr>
-        <td><sub>Library</sub></td>
-        <td align=center><sub>KB</sub></td>
-        <td align=center><sub>RAM</sub></td>
-        <td align=center><sub>Create</sub></td>
-        <td align=center><sub>Replace</sub></td>
-        <td align=center><sub>Update</sub></td>
-        <td align=center><sub>Order</sub></td>
-        <td align=center><sub>Repaint</sub></td>
-        <td align=center><sub>Append</sub></td>
-        <td align=center><sub>Remove</sub></td>
-        <td align=center><sub>Toggle</sub></td>
-        <td align=center><sub>Clear</sub></td>
-        <td align=center><sub>Index</sub></td>
-        <td align=center><sub>Score</sub></td>
-    </tr>
-    <tr>
-        <td><sub>mikado</sub></td>
-        <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>25</sub></td>
-        <td align=right><sub>18731</sub></td>
-        <td align=right><sub>6014</sub></td>
-        <td align=right><sub>81463</sub></td>
-        <td align=right><sub>45757</sub></td>
-        <td align=right><sub>269855</sub></td>
-        <td align=right><sub>34245</sub></td>
-        <td align=right><sub>27452</sub></td>
-        <td align=right><sub>30704</sub></td>
-        <td align=right><sub>26035</sub></td>
-        <td align=right><b><sub>988</sub></b></td>
-        <td align=right><b><sub>17574</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>domc</sub></td>
-        <td align=right><sub>4.5</sub></td>
-        <td align=right><sub>119</sub></td>
-        <td align=right><sub>1142</sub></td>
-        <td align=right><sub>6524</sub></td>
-        <td align=right><sub>51753</sub></td>
-        <td align=right><sub>11723</sub></td>
-        <td align=right><sub>94361</sub></td>
-        <td align=right><sub>2395</sub></td>
-        <td align=right><sub>22497</sub></td>
-        <td align=right><sub>4617</sub></td>
-        <td align=right><sub>25167</sub></td>
-        <td align=right><b><sub>501</sub></b></td>
-        <td align=right><b><sub>5271</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>lit-html</sub></td>
-        <td align=right><sub>17.3</sub></td>
-        <td align=right><sub>359</sub></td>
-        <td align=right><sub>446</sub></td>
-        <td align=right><sub>4505</sub></td>
-        <td align=right><sub>28027</sub></td>
-        <td align=right><sub>8252</sub></td>
-        <td align=right><sub>44001</sub></td>
-        <td align=right><sub>897</sub></td>
-        <td align=right><sub>8317</sub></td>
-        <td align=right><sub>1645</sub></td>
-        <td align=right><sub>5021</sub></td>
-        <td align=right><b><sub>240</sub></b></td>
-        <td align=right><b><sub>2607</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>inferno</sub></td>
-        <td align=right><sub>8.4</sub></td>
-        <td align=right><sub>283</sub></td>
-        <td align=right><sub>761</sub></td>
-        <td align=right><sub>750</sub></td>
-        <td align=right><sub>5469</sub></td>
-        <td align=right><sub>5000</sub></td>
-        <td align=right><sub>5988</sub></td>
-        <td align=right><sub>1363</sub></td>
-        <td align=right><sub>7366</sub></td>
-        <td align=right><sub>2345</sub></td>
-        <td align=right><sub>16151</sub></td>
-        <td align=right><b><sub>201</sub></b></td>
-        <td align=right><b><sub>1272</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>mithril</sub></td>
-        <td align=right><sub>9.6</sub></td>
-        <td align=right><sub>244</sub></td>
-        <td align=right><sub>645</sub></td>
-        <td align=right><sub>2134</sub></td>
-        <td align=right><sub>4636</sub></td>
-        <td align=right><sub>3126</sub></td>
-        <td align=right><sub>5039</sub></td>
-        <td align=right><sub>1179</sub></td>
-        <td align=right><sub>7191</sub></td>
-        <td align=right><sub>2011</sub></td>
-        <td align=right><sub>12604</sub></td>
-        <td align=right><b><sub>199</sub></b></td>
-        <td align=right><b><sub>1200</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>355</sub></td>
-        <td align=right><sub>448</sub></td>
-        <td align=right><sub>2416</sub></td>
-        <td align=right><sub>4184</sub></td>
-        <td align=right><sub>3397</sub></td>
-        <td align=right><sub>4554</sub></td>
-        <td align=right><sub>874</sub></td>
-        <td align=right><sub>6620</sub></td>
-        <td align=right><sub>1530</sub></td>
-        <td align=right><sub>12348</sub></td>
-        <td align=right><b><sub>233</sub></b></td>
-        <td align=right><b><sub>1167</sub></b></td>
-    </tr>
-    <tr>
-        <td><sub>innerhtml</sub></td>
-        <td align=right><sub>0</sub></td>
-        <td align=right><sub>506</sub></td>
-        <td align=right><sub>1059</sub></td>
-        <td align=right><sub>1009</sub></td>
-        <td align=right><sub>1018</sub></td>
-        <td align=right><sub>890</sub></td>
-        <td align=right><sub>883</sub></td>
-        <td align=right><sub>901</sub></td>
-        <td align=right><sub>1636</sub></td>
-        <td align=right><sub>1186</sub></td>
-        <td align=right><sub>27371</sub></td>
-        <td align=right><b><sub>159</sub></b></td>
-        <td align=right><b><sub>791</sub></b></td>
-    </tr>
-    <tr>
-        <td><sub>surplus</sub></td>
-        <td align=right><sub>15.8</sub></td>
-        <td align=right><sub>581</sub></td>
-        <td align=right><sub>955</sub></td>
-        <td align=right><sub>831</sub></td>
-        <td align=right><sub>835</sub></td>
-        <td align=right><sub>835</sub></td>
-        <td align=right><sub>845</sub></td>
-        <td align=right><sub>939</sub></td>
-        <td align=right><sub>1540</sub></td>
-        <td align=right><sub>1155</sub></td>
-        <td align=right><sub>25324</sub></td>
-        <td align=right><b><sub>172</sub></b></td>
-        <td align=right><b><sub>740</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>ractive</sub></td>
-        <td align=right><sub>68.2</sub></td>
-        <td align=right><sub>1182</sub></td>
-        <td align=right><sub>164</sub></td>
-        <td align=right><sub>1514</sub></td>
-        <td align=right><sub>5826</sub></td>
-        <td align=right><sub>2619</sub></td>
-        <td align=right><sub>8082</sub></td>
-        <td align=right><sub>336</sub></td>
-        <td align=right><sub>2970</sub></td>
-        <td align=right><sub>616</sub></td>
-        <td align=right><sub>1768</sub></td>
-        <td align=right><b><sub>86</sub></b></td>
-        <td align=right><b><sub>716</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>sinuous</sub></td>
-        <td align=right><sub>7.5</sub></td>
-        <td align=right><sub>641</sub></td>
-        <td align=right><sub>838</sub></td>
-        <td align=right><sub>802</sub></td>
-        <td align=right><sub>803</sub></td>
-        <td align=right><sub>817</sub></td>
-        <td align=right><sub>810</sub></td>
-        <td align=right><sub>814</sub></td>
-        <td align=right><sub>1609</sub></td>
-        <td align=right><sub>1075</sub></td>
-        <td align=right><sub>16384</sub></td>
-        <td align=right><b><sub>157</sub></b></td>
-        <td align=right><b><sub>678</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>jquery</sub></td>
-        <td align=right><sub>31.3</sub></td>
-        <td align=right><sub>687</sub></td>
-        <td align=right><sub>822</sub></td>
-        <td align=right><sub>720</sub></td>
-        <td align=right><sub>716</sub></td>
-        <td align=right><sub>653</sub></td>
-        <td align=right><sub>657</sub></td>
-        <td align=right><sub>708</sub></td>
-        <td align=right><sub>1136</sub></td>
-        <td align=right><sub>872</sub></td>
-        <td align=right><sub>5531</sub></td>
-        <td align=right><b><sub>88</sub></b></td>
-        <td align=right><b><sub>503</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>knockout</sub></td>
-        <td align=right><sub>24.8</sub></td>
-        <td align=right><sub>2576</sub></td>
-        <td align=right><sub>91</sub></td>
-        <td align=right><sub>67</sub></td>
-        <td align=right><sub>69</sub></td>
-        <td align=right><sub>68</sub></td>
-        <td align=right><sub>69</sub></td>
-        <td align=right><sub>85</sub></td>
-        <td align=right><sub>130</sub></td>
-        <td align=right><sub>103</sub></td>
-        <td align=right><sub>1181</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
-        <td align=right><b><sub>140</sub></b></td>
-    </tr>	
-</table>
-
 #### Data-Driven (Internal)
 
 <table>
@@ -500,17 +500,17 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>15</sub></td>
-        <td align=right><sub>18530</sub></td>
+        <td align=right><sub>17481</sub></td>
         <td align=right><sub>6015</sub></td>
-        <td align=right><sub>69730</sub></td>
-        <td align=right><sub>42935</sub></td>
-        <td align=right><sub>264040</sub></td>
+        <td align=right><sub>71626</sub></td>
+        <td align=right><sub>45370</sub></td>
+        <td align=right><sub>294877</sub></td>
         <td align=right><sub>33575</sub></td>
         <td align=right><sub>27901</sub></td>
         <td align=right><sub>30799</sub></td>
-        <td align=right><sub>25391</sub></td>
+        <td align=right><sub>25028</sub></td>
         <td align=right><b><sub>1000</sub></b></td>
-        <td align=right><b><sub>44576</sub></b></td>
+        <td align=right><b><sub>47922</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -526,7 +526,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>14914</sub></td>
         <td align=right><sub>3703</sub></td>
         <td align=right><sub>22609</sub></td>
-        <td align=right><b><sub>426</sub></b></td>
+        <td align=right><b><sub>422</sub></b></td>
         <td align=right><b><sub>13764</sub></b></td>
     </tr>
     <tr></tr>
@@ -543,7 +543,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>18119</sub></td>
         <td align=right><sub>3034</sub></td>
         <td align=right><sub>15289</sub></td>
-        <td align=right><b><sub>372</sub></b></td>
+        <td align=right><b><sub>368</sub></b></td>
         <td align=right><b><sub>3311</sub></b></td>
     </tr>
     <tr></tr>
@@ -560,7 +560,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>13561</sub></td>
         <td align=right><sub>3480</sub></td>
         <td align=right><sub>20871</sub></td>
-        <td align=right><b><sub>322</sub></b></td>
+        <td align=right><b><sub>321</sub></b></td>
         <td align=right><b><sub>2564</sub></b></td>
     </tr>
     <tr></tr>
@@ -610,7 +610,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1675</sub></td>
         <td align=right><sub>1167</sub></td>
         <td align=right><sub>20810</sub></td>
-        <td align=right><b><sub>138</sub></b></td>
+        <td align=right><b><sub>139</sub></b></td>
         <td align=right><b><sub>957</sub></b></td>
     </tr>
     <tr>
@@ -626,7 +626,7 @@ Weather a library provides optimizations to one of these modes or not, it is fai
         <td align=right><sub>1112</sub></td>
         <td align=right><sub>856</sub></td>
         <td align=right><sub>5553</sub></td>
-        <td align=right><b><sub>87</sub></b></td>
+        <td align=right><b><sub>88</sub></b></td>
         <td align=right><b><sub>636</sub></b></td>
     </tr>
     <tr></tr>

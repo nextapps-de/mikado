@@ -34,8 +34,11 @@
     "babel-plugin-transform-simplify-comparison-operators",
     "babel-plugin-transform-undefined-to-void"
   ],
+  "ignore": [
+    "config.js",
+    "export.js"
+  ],
   "minified": true,
   "compact": true,
-  "comments": false,
-  "ignore": "config.js"
+  "comments": false
 }

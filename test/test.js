@@ -917,7 +917,7 @@
             mikado.render(store);
             expect(mikado.length).to.equal(0);
             expect(mikado.dom.length).to.equal(0);
-            expect(mikado.store.length).to.equal(0);
+            expect(mikado.store.length).to.equal(data.length);
 
             // assign new store
             mikado.store = store = data.slice(0);

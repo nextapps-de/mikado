@@ -45,7 +45,19 @@ const params = (function(){
 
 const rnd = [27, 36, 31, 21, 13, 5, 11, 0, 16, 8, 9, 28, 25, 49, 6, 26, 12, 29, 38, 1, 40, 35, 20, 23, 2, 7, 18, 48, 45, 17, 22, 39, 32, 37, 24, 4, 41, 44, 14, 34, 19, 47, 46, 10, 30, 15, 33, 3, 42, 43];
 
-const duration = parseFloat(params["duration"] || "5") * 1000;
+let runs;
+let duration;
+
+if(params["duration"] && (params["duration"].indexOf("run-") !== -1)){
+
+    duration = 86400000;
+    runs = parseInt(params["duration"].replace("run-", ""), 10);
+}
+else{
+
+    duration = parseFloat(params["duration"] || "3") * 1000;
+}
+
 const hidden = params["hidden"] !== "false";
 const factory = strict ? null : [
     generate(DATA_SIZE),
@@ -572,6 +584,11 @@ function perform(){
             if(mem > 0) memory += mem;
 
             if(test.end) test.end(loops);
+
+            if(runs && (runs === loops + 1)){
+
+                break;
+            }
         }
 
         if(test.complete) test.complete();
@@ -614,15 +631,15 @@ function shuffle_rnd(items){
     return items;
 }
 
-function shuffle(items){
-
-    for(let i = items.length - 1; i > 0; i--) {
-
-        swap(items, i, (Math.random() * i) | 0);
-    }
-
-    return items;
-}
+// function shuffle(items){
+//
+//     for(let i = items.length - 1; i > 0; i--) {
+//
+//         swap(items, i, (Math.random() * i) | 0);
+//     }
+//
+//     return items;
+// }
 
 function swap(items, a, b){
 

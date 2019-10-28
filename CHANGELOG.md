@@ -1,3 +1,8 @@
+## 0.7.4
+`improve` improve cache handler which gains overall performance up to 20%<br>
+`improve` add fast path within reconciliation<br>
+`fix` external/internal stores<br>
+
 ## 0.7.3
 `add` make reconcile method public<br>
 `change` live pool becomes a non-optional feature<br>

@@ -98,7 +98,7 @@ let parameter = (function(opt){
     module_resolution: "BROWSER",
     //dependency_mode: "SORT_ONLY",
     //js_module_root: "./",
-    entry_point: "./tmp/browser.js",
+    entry_point: "./tmp/bundle.js",
     //manage_closure_dependencies: true,
     dependency_mode: "PRUNE_LEGACY",
     rewrite_polyfills: use_polyfill || false,
@@ -123,7 +123,7 @@ if(custom){
 const files = [
 
     "mikado.js",
-    "browser.js",
+    "bundle.js",
     "config.js",
     "event.js",
     "helper.js",

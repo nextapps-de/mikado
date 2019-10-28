@@ -406,17 +406,17 @@ Values represents operations per second, each benchmark task has to process a da
         <td><sub>mikado</sub></td>
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>27</sub></td>
-        <td align=right><sub>18962</sub></td>
+        <td align=right><sub>18745</sub></td>
         <td align=right><sub>6030</sub></td>
-        <td align=right><sub>79394</sub></td>
+        <td align=right><sub>92669</sub></td>
         <td align=right><sub>45868</sub></td>
-        <td align=right><sub>266941</sub></td>
+        <td align=right><sub>299140</sub></td>
         <td align=right><sub>35254</sub></td>
         <td align=right><sub>27563</sub></td>
         <td align=right><sub>31265</sub></td>
-        <td align=right><sub>26153</sub></td>
-        <td align=right><b><sub>997</sub></b></td>
-        <td align=right><b><sub>54418</sub></b></td>
+        <td align=right><sub>25182</sub></td>
+        <td align=right><b><sub>993</sub></b></td>
+        <td align=right><b><sub>59354</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -432,7 +432,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7443</sub></td>
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
-        <td align=right><b><sub>201</sub></b></td>
+        <td align=right><b><sub>200</sub></b></td>
         <td align=right><b><sub>3099</sub></b></td>
     </tr>
     <tr></tr>
@@ -449,7 +449,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6614</sub></td>
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
-        <td align=right><b><sub>179</sub></b></td>
+        <td align=right><b><sub>178</sub></b></td>
         <td align=right><b><sub>2639</sub></b></td>
     </tr>
     <tr></tr>
@@ -2306,7 +2306,7 @@ Types:
     <tr></tr>
     <tr>
         <td><b>es5</b></td>
-        <td>Uses Mikado from the global namespace. This requires a non-ES6 build of mikado or import "browser.js", both <u>before</u> loading this template.</td>
+        <td>Uses Mikado from the global namespace. This requires a non-ES6 build of mikado or import "bundle.js", both <u>before</u> loading this template.</td>
     </tr>
     <tr></tr>
     <tr>
