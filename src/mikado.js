@@ -224,7 +224,12 @@ if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_H
 
 Mikado.prototype.index = function(node){
 
-    return node["_idx"];
+    for(let i = 0, length = this.length; i < length; i++){
+
+        if(this.dom[i] === node) return i;
+    }
+
+    return -1;
 };
 
 Mikado.prototype.node = function(index){
@@ -244,7 +249,7 @@ if(SUPPORT_STORAGE){
 
             this.store ?
 
-                this.store[get_by_node ? index["_idx"] : index]
+                this.store[get_by_node ? this.index(index) : index]
             :
                 (get_by_node ? index : this.dom[index])["_data"]
         );
@@ -516,7 +521,6 @@ function collection_to_array(collection){
     for(let i = 0, node; i < length; i++) {
 
         node = collection[i];
-        node["_idx"] = i;
         array[i] = node;
     }
 
@@ -535,7 +539,7 @@ Mikado.prototype.create = function(data, view, index){
     if(SUPPORT_POOLS && keyed && (
         // NOTE: this optimization cannot render more than one data item which has
         //       the same key within same template on the same view instance
-        // TODO: removing from the live pool may break indices
+        // TODO: removing from the live pool may break indices, also breaks shift within reconcile
         //(node = this.live[key]) ||
         ((pool = this.key_pool) && (node = pool[key]))
     )){
@@ -592,10 +596,10 @@ Mikado.prototype.create = function(data, view, index){
         factory = 1;
         node = this.factory;
 
-        // if(node){
-        //
-        //     node["_cache"] = {};
-        // }
+        if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && node && this.cache){
+
+            node["_cache"] = {};
+        }
     }
 
     if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe){
@@ -607,9 +611,11 @@ Mikado.prototype.create = function(data, view, index){
 
         node = this.factory.cloneNode(true);
 
-        if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS){
+        if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache){
 
-            node["_cache"] = Object.assign({}, this.factory["_cache"]);
+            node["_cache"] = this.factory["_cache"];
+            // NOTE: how often a cache from factory could be re-used VS. overhead from Object.assign
+            //node["_cache"] = Object.assign({}, this.factory["_cache"]);
         }
 
         let tmp;
@@ -647,8 +653,6 @@ Mikado.prototype.apply = function(root, data, payload, index){
         }
     }
     else{
-
-        //index || (index === 0) || (index = root["_idx"]);
 
         if(SUPPORT_STORAGE){
 
@@ -706,11 +710,11 @@ if(SUPPORT_STORAGE){
 
             node = this.dom[index];
         }
-        else if(index && (typeof (tmp = index["_idx"]) === "number")){
-
-            node = index;
-            index = tmp;
-        }
+        // else if(index && (typeof (tmp = index["_idx"]) === "number")){
+        //
+        //     node = index;
+        //     index = tmp;
+        // }
         else{
 
             view = index;
@@ -884,8 +888,6 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
         // update
         if(x < min){
 
-            //let has_moved;
-
             for(; x < min; x++){
 
                 const node = this.dom[x];
@@ -898,16 +900,13 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 
                     // if((tmp = this.live[key])){
                     //     this.arrange(node, tmp, item, view, x);
-                    //     //has_moved = true;
                     // }
                     // else{
-                    //
                     //     this.replace(node, item, view, x);
                     // }
                 }
                 else{
 
-                    // if(has_moved) node["_idx"] = x;
                     this.update(node, item, view, x);
                 }
             }
@@ -1000,7 +999,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
     let end_a = a.length;
     let max_end = end_a > end_b ? end_a : end_b;
     let shift = 0;
-    let has_update;
     const key = this.key;
     //let steps = 0;
 
@@ -1011,31 +1009,40 @@ Mikado.prototype.reconcile = function(b, view, x, render){
         if(x < end_b){
 
             const b_x = b[x];
-            const b_x_key = b_x[key];
+            const ended = x >= end_a;
+            let a_x;
+            let b_x_key;
+            let a_x_key;
 
-            if(render && (!keys[b_x_key] || (x >= end_a))){
+            if(!ended){
 
-                end_a++;
-                max_end = end_a > end_b ? end_a : end_b;
-                has_update = 1;
+                a_x = a[x];
+                b_x_key = b_x[key];
+                a_x_key = a_x["_key"];
 
-                this.add(b_x, view, x, null, /* skip indexing */ 1);
-                continue;
+                if(a_x_key === b_x_key){
+
+                    if(render){
+
+                        this.update(a_x, b_x, view, x);
+                    }
+
+                    continue;
+                }
             }
 
-            const a_x = a[x];
-            const a_x_key = a_x["_key"];
+            if(render && (ended || !keys[b_x_key])){
 
-            if(a_x_key === b_x_key){
+                if(ended || !this.key_pool){
 
-                if(has_update){
+                    end_a++;
+                    max_end = end_a > end_b ? end_a : end_b;
 
-                    a_x["_idx"] = x;
+                    this.add(b_x, view, x);
                 }
+                else{
 
-                if(render){
-
-                    this.update(a_x, b_x, view, x);
+                    this.replace(a_x, b_x, view, x);
                 }
 
                 continue;
@@ -1058,14 +1065,13 @@ Mikado.prototype.reconcile = function(b, view, x, render){
 
                         // when distance is 1 it will always move before, no predecessor check necessary
                         this.root.insertBefore(tmp_a, a_x);
-                        tmp_a["_idx"] = x;
 
                         if(render){
 
                             this.update(tmp_a, b_x, view, x);
                         }
 
-                        // fast path optimization when distance is equal (just useful to skip re-indexing), has no extra cost
+                        // fast path optimization when distance is equal (just useful to skip re-indexing)
                         if(idx_a === idx_b){
 
                             if((y - x) > 1){
@@ -1073,7 +1079,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                                 this.root.insertBefore(a_x, a[idx_a] || null);
                             }
 
-                            a_x["_idx"] = y;
                             a[x] = a[y];
                             a[y] = a_x;
 
@@ -1090,7 +1095,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                             //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
 
                             shift++;
-                            has_update = 1;
                         }
 
                         //steps++;
@@ -1098,7 +1102,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                     // shift down (move current => target)
                     else{
 
-                        // the shift counter is the secret key for this strategy
                         const index = idx_b - 1 + shift;
 
                         // distance is always greater than 1, no predecessor check necessary
@@ -1106,7 +1109,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                         splice(a, x, (index > end_a ? end_a : index) - 1);
                         //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 
-                        has_update = 1;
                         shift--;
                         x--;
                         //steps++;
@@ -1120,9 +1122,8 @@ Mikado.prototype.reconcile = function(b, view, x, render){
 
         if(!found){
 
-            this.remove(x, 1, /* resize */ 0, /* skip indexing */ 1);
+            this.remove(x);
 
-            has_update = 1;
             end_a--;
             max_end = end_a > end_b ? end_a : end_b;
             x--;
@@ -1178,11 +1179,10 @@ function splice(arr, pos_old, pos_new, insert){
  * @param {Object|number=} view
  * @param {number|null=} index
  * @param {Element=} _replace_node
- * @param {boolean|number=} _skip_indexing
  * @returns {Mikado}
  */
 
-Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing){
+Mikado.prototype.add = function(data, view, index, _replace_node){
 
     //profiler_start("add");
 
@@ -1244,22 +1244,12 @@ Mikado.prototype.add = function(data, view, index, _replace_node, _skip_indexing
         }
     }
 
-    node["_idx"] = length;
-
     if(has_index){
 
         this.root.insertBefore(node, this.dom[length] || null);
         splice(this.dom, this.length - 1, length, node);
         //this.dom.splice(length, 0, node);
         this.length++;
-
-        if(!_skip_indexing){
-
-            for(;++length < this.length;){
-
-                this.dom[length]["_idx"] = length;
-            }
-        }
     }
     else{
 
@@ -1389,11 +1379,10 @@ Mikado.prototype.append = function(data, view, index){
  * @param {!Element|number} index
  * @param {number=} count
  * @param {number=} resize
- * @param {boolean|number=} _skip_indexing
  * @returns {Mikado}
  */
 
-Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
+Mikado.prototype.remove = function(index, count, resize){
 
     let length = this.length;
 
@@ -1403,7 +1392,7 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
 
         if(typeof index === "object"){
 
-            index = index["_idx"];
+            index = this.index(index);
         }
         else if(index < 0){
 
@@ -1413,20 +1402,23 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
 
     if(!length || (index >= length)) return this;
 
-    if(count < 0){
+    if(count){
 
-        index -= count + 1;
+        if(count < 0){
 
-        if(index < 0){
+            index -= count + 1;
 
-            index = 0;
+            if(index < 0){
+
+                index = 0;
+            }
+
+            count *= -1;
         }
-
-        count *= -1;
     }
     else{
 
-        count || (count = 1);
+        count = 1;
     }
 
     let nodes;
@@ -1481,14 +1473,6 @@ Mikado.prototype.remove = function(index, count, resize, _skip_indexing){
     }
 
     this.length = length;
-
-    if(!_skip_indexing && (index < length)){
-
-        for(; index < length; index++){
-
-            this.dom[index]["_idx"] = index;
-        }
-    }
 
     if(SUPPORT_POOLS && this.tpl_pool && !this.key_pool && (count > 1)){
 
@@ -1568,7 +1552,7 @@ Mikado.prototype.replace = function(node, data, view, index){
         }
         else{
 
-            index = node["_idx"];
+            index = this.index(node);
         }
     }
 
@@ -1615,7 +1599,7 @@ Mikado.prototype.update = function(node, data, view, index){
         }
         else{
 
-            index = node["_idx"];
+            index = this.index(node);
         }
     }
 
@@ -1786,7 +1770,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         tmp_fn = "";
         this.vpath = [];
         node["_path"] = dom_path = [];
-        if(SUPPORT_CACHE && this.cache) node["_cache"] = {};
+        if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache) node["_cache"] = {};
         root_node = node;
     }
 

@@ -1,6 +1,9 @@
 ## 0.7.4
-`improve` improve cache handler which gains overall performance up to 20%<br>
+`improve` inherit cache from factory<br>
 `improve` add fast path within reconciliation<br>
+`improve` indices requires no sync anymore<br>
+`change` remove dom indices, method access by index is now recommended (access by node is still supported but has extra costs, prevent looping via method access by node)<br>
+`new` method ___dispatch___ to call/invoke an event handler manually<br>
 `fix` external/internal stores<br>
 
 ## 0.7.3
