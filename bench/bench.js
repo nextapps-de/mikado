@@ -55,7 +55,7 @@ if(params["duration"] && (params["duration"].indexOf("run-") !== -1)){
 }
 else{
 
-    duration = parseFloat(params["duration"] || "3") * 1000;
+    duration = parseFloat(params["duration"] || "5") * 1000;
 }
 
 const hidden = params["hidden"] !== "false";
@@ -391,7 +391,7 @@ window.onload = function(){
             item.test || (item.test = suite[lib]);
         }
 
-        setTimeout(perform, 500);
+        setTimeout(perform, 200);
     }
 };
 
@@ -554,7 +554,7 @@ function perform(){
         status = false;
     }
 
-    let loops = 0, now = perf.now();
+    let loops = 0, now = 0;
 
     if(status){
 
@@ -567,9 +567,14 @@ function perform(){
         //     return;
         // }
 
-        const end = now + duration;
+        const end = perf.now() + duration;
 
         for(let start, mem_start, mem; now < end; loops++){
+
+            if(runs && (runs === loops)){
+
+                break;
+            }
 
             if(test.start) test.start(loops);
             if(!internal && test.prepare) test.prepare(loops);
@@ -580,15 +585,10 @@ function perform(){
             test.fn(clone);
             now = perf.now();
             mem = perf.memory.usedJSHeapSize - mem_start;
-            elapsed += now - start;
+            elapsed += (now - start);
             if(mem > 0) memory += mem;
 
             if(test.end) test.end(loops);
-
-            if(runs && (runs === loops + 1)){
-
-                break;
-            }
         }
 
         if(test.complete) test.complete();
@@ -602,16 +602,16 @@ function perform(){
 
     if(window === window.top){
 
-        result.nodeValue = (str_results += (status ? test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t" + (memory ? Math.floor(memory / loops) : "-") : "- failed -") + "\n") + (current < queue.length ? "running..." : "");
+        result.nodeValue = (str_results += (status ? test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t" + (memory ? Math.ceil(memory / loops) : "-") : "- failed -") + "\n") + (current < queue.length ? "running..." : "");
     }
     else{
 
-        window.top.postMessage(test.name + "," + (status ? Math.floor(1000 / elapsed * loops) : 0) + "," + (status ? Math.floor(memory / loops) : 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
+        window.top.postMessage(test.name + "," + (status ? Math.floor(1000 / elapsed * loops) : 0) + "," + (status ? Math.ceil(memory / loops) : 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
     }
 
     if(current < queue.length){
 
-        setTimeout(perform, 500);
+        setTimeout(perform, 200);
     }
     else{
 

@@ -104,6 +104,12 @@ if(SUPPORT_EVENTS){
         return this;
     };
 
+    Mikado["dispatch"] = Mikado.prototype.dispatch = function(id, target, event, event_target){
+
+        listener[id](target, event, event_target);
+        return this;
+    };
+
     let touch_x, touch_y;
     let register_tap;
 

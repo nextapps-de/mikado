@@ -54,6 +54,8 @@ Mikado.prototype.add;
 /** @export */
 Mikado.prototype.route;
 /** @export */
+Mikado.prototype.dispatch;
+/** @export */
 Mikado.prototype.listen;
 /** @export */
 Mikado.prototype.unlisten;

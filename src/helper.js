@@ -16,7 +16,7 @@ if(SUPPORT_HELPERS){
             }
             else{
 
-                index = node["_idx"];
+                index = this.index(node);
             }
 
             if(position < 0){
@@ -52,7 +52,7 @@ if(SUPPORT_HELPERS){
             }
             else{
 
-                index = a["_idx"];
+                index = this.index(a);
             }
 
             const up = offset < 0;
@@ -90,7 +90,6 @@ if(SUPPORT_HELPERS){
                         for(let i = index; i > pos; i--){
 
                             current = this.dom[i] = this.dom[i - 1];
-                            current["_idx"] = i;
 
                             if(SUPPORT_STORAGE && this.store){
 
@@ -103,7 +102,6 @@ if(SUPPORT_HELPERS){
                         for(let i = index; i < pos; i++){
 
                             current = this.dom[i] = this.dom[i + 1];
-                            current["_idx"] = i;
 
                             if(SUPPORT_STORAGE && this.store){
 
@@ -113,7 +111,6 @@ if(SUPPORT_HELPERS){
                     }
 
                     current = this.dom[pos] = tmp;
-                    current["_idx"] = pos;
 
                     if(SUPPORT_STORAGE && this.store){
 
@@ -131,9 +128,6 @@ if(SUPPORT_HELPERS){
     }
 
     function update(dom, store, a, b, index_b, index_a){
-
-        a["_idx"] = index_b;
-        b["_idx"] = index_a;
 
         dom[index_a] = b;
         dom[index_b] = a;
@@ -195,12 +189,12 @@ if(SUPPORT_HELPERS){
 
             if(typeof tmp_a !== "number"){
 
-                tmp_a = tmp_a["_idx"];
+                tmp_a = this.index(tmp_a);
             }
 
             if(typeof tmp_b !== "number"){
 
-                tmp_b = tmp_b["_idx"];
+                tmp_b = this.index(tmp_b);
             }
 
             if(tmp_b !== tmp_a + 1){
@@ -233,12 +227,12 @@ if(SUPPORT_HELPERS){
 
             if(typeof tmp_a !== "number"){
 
-                tmp_a = tmp_a["_idx"];
+                tmp_a = this.index(tmp_a);
             }
 
             if(typeof tmp_b !== "number"){
 
-                tmp_b = tmp_b["_idx"];
+                tmp_b = this.index(tmp_b);
             }
 
             if(tmp_b !== tmp_a - 1){
@@ -290,7 +284,7 @@ if(SUPPORT_HELPERS){
                 }
                 else{
 
-                    tmp_a = a["_idx"];
+                    tmp_a = this.index(a);
                 }
 
                 if(typeof b === "number"){
@@ -300,7 +294,7 @@ if(SUPPORT_HELPERS){
                 }
                 else{
 
-                    tmp_b = b["_idx"];
+                    tmp_b = this.index(b);
                 }
 
                 //if(tmp_a !== tmp_b){
@@ -323,9 +317,6 @@ if(SUPPORT_HELPERS){
                         //this.root.insertBefore(a, b);
                         //this.root.insertBefore(b, (tmp_a + 1) === tmp_b ? a : this.dom[tmp_a + 1]);
                         //this.root.insertBefore(b, this.dom[tmp_a + 1] || null);
-
-                        a["_idx"] = tmp_b;
-                        b["_idx"] = tmp_a;
 
                         this.dom[tmp_a] = b;
                         this.dom[tmp_b] = a;
