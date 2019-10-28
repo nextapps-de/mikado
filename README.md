@@ -1,5 +1,5 @@
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
-<h3>Web's fastest templating engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Next generation template engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high performance applications.
 
@@ -50,11 +50,11 @@ __Demo:__
 
 #### How to learn Mikado?
 
-Thanks to the reversed engineering Mikado provides you one of the most simple to learn idiomatic style which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. __It will take 3 minutes to become productive.__ Don't let confuse you about the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of other framework documentations. You will do not need this details to start with. But when you would like to know more you have a chance to go deeper.
+Thanks to the reversed engineering Mikado provides you one of the most simple to learn idiomatic style which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. __It will take 3 minutes to become productive.__ Don't let confuse you about the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of other framework documentations. You will do not need this details to start with. But when you would like to know more you get a chance to go deeper.
 
 Also all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no anything external is required. You can start out of the box seamlessly. No pain you might know from other frameworks.
 
-Checklist for new developers (the most simple example, takes 3 minutes):
+Guide for new developers (the most simple example, just takes 3 minutes):
 - Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
 - Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
 - Compile the template, create Mikado instance by passing the root node and the compiled template
@@ -84,7 +84,7 @@ Checklist for new developers (the most simple example, takes 3 minutes):
     - <a href="#shared-keyed">Exclusive-Shared Keyed</a>
     - <a href="#explicit-shared-keyed">Explicit Keyed (Shared)</a>
 12. <a href="#reuse">Non-Reusing</a>
-    - <a href="#refresh">Render vs. Refresh</a>
+    - <a href="#refresh">Render vs. Refresh vs. Reconcile</a>
 13. Usage:
     - <a href="#usage">Create, Initialize, Destroy Views</a>
     - <a href="#view.render">Render Templates</a>
@@ -93,10 +93,12 @@ Checklist for new developers (the most simple example, takes 3 minutes):
     - <a href="#manipulate">Manipulate Views</a>
     - <a href="#cache-helpers">Caching Helpers</a>
 14. <a href="#cache">DOM State Caching</a>
-15. <a href="#store">Storage</a>
-    - <a href="#options.loose">Loose Option</a>
+15. Stores:
+    - <a href="#store">Internal Store</a>
+    - <a href="#options.loose">Loose Store</a>
     - <a href="#extern">Extern/Custom Store</a>
-    - <a href="#export">Export / Import Views</a>
+    - <a href="#extern">Reactive Store</a>
+    - <a href="#export">Export / Import Stores</a>
 16. <a href="#view.state">State</a>
 17. <a href="#callbacks">Callbacks</a>
 18. <a href="#load">Transport / Load Templates</a>
@@ -407,16 +409,16 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2.8</sub></td>
         <td align=right><sub>27</sub></td>
         <td align=right><sub>18745</sub></td>
-        <td align=right><sub>6030</sub></td>
+        <td align=right><sub>8124</sub></td>
         <td align=right><sub>92669</sub></td>
-        <td align=right><sub>45868</sub></td>
+        <td align=right><sub>49554</sub></td>
         <td align=right><sub>299140</sub></td>
         <td align=right><sub>35254</sub></td>
         <td align=right><sub>27563</sub></td>
         <td align=right><sub>31265</sub></td>
-        <td align=right><sub>25182</sub></td>
-        <td align=right><b><sub>993</sub></b></td>
-        <td align=right><b><sub>59354</sub></b></td>
+        <td align=right><sub>25276</sub></td>
+        <td align=right><b><sub>994</sub></b></td>
+        <td align=right><b><sub>60020</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -432,7 +434,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>7443</sub></td>
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
-        <td align=right><b><sub>200</sub></b></td>
+        <td align=right><b><sub>196</sub></b></td>
         <td align=right><b><sub>3099</sub></b></td>
     </tr>
     <tr></tr>
@@ -449,7 +451,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>6614</sub></td>
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
-        <td align=right><b><sub>178</sub></b></td>
+        <td align=right><b><sub>175</sub></b></td>
         <td align=right><b><sub>2639</sub></b></td>
     </tr>
     <tr></tr>
@@ -466,7 +468,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2049</sub></td>
         <td align=right><sub>1464</sub></td>
         <td align=right><sub>24931</sub></td>
-        <td align=right><b><sub>218</sub></b></td>
+        <td align=right><b><sub>214</sub></b></td>
         <td align=right><b><sub>1385</sub></b></td>
     </tr>
     <tr>
@@ -482,7 +484,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1769</sub></td>
         <td align=right><sub>1186</sub></td>
         <td align=right><sub>27131</sub></td>
-        <td align=right><b><sub>162</sub></b></td>
+        <td align=right><b><sub>157</sub></b></td>
         <td align=right><b><sub>1232</sub></b></td>
     </tr>
     <tr>
@@ -498,7 +500,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1560</sub></td>
         <td align=right><sub>1187</sub></td>
         <td align=right><sub>23713</sub></td>
-        <td align=right><b><sub>168</sub></b></td>
+        <td align=right><b><sub>165</sub></b></td>
         <td align=right><b><sub>1093</sub></b></td>
     </tr>
     <tr></tr>
@@ -515,7 +517,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1577</sub></td>
         <td align=right><sub>1096</sub></td>
         <td align=right><sub>18047</sub></td>
-        <td align=right><b><sub>164</sub></b></td>
+        <td align=right><b><sub>161</sub></b></td>
         <td align=right><b><sub>1043</sub></b></td>
     </tr>
     <tr></tr>
@@ -532,7 +534,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1129</sub></td>
         <td align=right><sub>860</sub></td>
         <td align=right><sub>5520</sub></td>
-        <td align=right><b><sub>89</sub></b></td>
+        <td align=right><b><sub>86</sub></b></td>
         <td align=right><b><sub>784</sub></b></td>
     </tr>
     <tr></tr>
@@ -549,7 +551,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>864</sub></td>
         <td align=right><sub>603</sub></td>
         <td align=right><sub>11765</sub></td>
-        <td align=right><b><sub>160</sub></b></td>
+        <td align=right><b><sub>158</sub></b></td>
         <td align=right><b><sub>715</sub></b></td>
     </tr>
     <tr></tr>
@@ -566,7 +568,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>761</sub></td>
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4964</sub></td>
-        <td align=right><b><sub>82</sub></b></td>
+        <td align=right><b><sub>80</sub></b></td>
         <td align=right><b><sub>538</sub></b></td>
     </tr>
     <tr></tr>
@@ -583,7 +585,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>298</sub></td>
         <td align=right><sub>212</sub></td>
         <td align=right><sub>1944</sub></td>
-        <td align=right><b><sub>38</sub></b></td>
+        <td align=right><b><sub>37</sub></b></td>
         <td align=right><b><sub>223</sub></b></td>
     </tr>
     <tr></tr>
@@ -609,6 +611,10 @@ The file size and memory gets less relevance. The maximum possible ___index___ i
 
 Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
 
+##### Worst Case Scenario
+
+Mikado has no specific worst case scenario. The replace test could be named like this, but that is always the worst case scenario for every lib. This test simply couldn't use most of the runtime optimizations.
+
 <a name="api"></a>
 ## API Overview
 
@@ -627,6 +633,10 @@ Global methods (not included in mikado.light.js):
 - <a href="#mikado.compile">Mikado.__compile__(\<template | string\>)</a>
 - <a href="#mikado.load">Mikado.__load__(url, \<callback\>)</a>
 - <a href="#mikado.unload">Mikado.__unload__(template)</a>
+- <a href="#mikado.route">mikado.__route__(name, handler)</a>
+- <a href="#mikado.listen">mikado.__listen__(event)</a>
+- <a href="#mikado.unlisten">mikado.__unlisten__(event)</a>
+- <a href="#mikado.dispatch">mikado.__dispatch__(name, \<target\>, \<event\>, \<self\>)</a>
 
 Instance methods:
 - <a href="#view.init">view.__init__(\<template\>, \<options\>)</a>
@@ -657,10 +667,13 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.import">view.__import__()</a>
 - <a href="#view.export">view.__export__()</a>
 - <a href="#view.load">view.__load__(url, \<callback\>)</a>
-
-DOM manipulation helpers (optional, not included in mikado.light.js):
+- <a href="#view.route">view.__route__(name, handler)</a>
 - <a href="#view.listen">view.__listen__(event)</a>
 - <a href="#view.unlisten">view.__unlisten__(event)</a>
+- <a href="#view.dispatch">view.__dispatch__(name, \<target\>, \<event\>, \<self\>)</a>
+
+DOM manipulation helpers (optional, not included in mikado.light.js):
+
 - <a href="#view.move">view.__move__(node | index, index)</a>
 - <a href="#view.shift">view.__shift__(node | index, index)</a>
 - <a href="#view.up">view.__up__(node | index)</a>
@@ -738,13 +751,13 @@ Global helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>store</b></td>
-        <td>Passed data for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "Extern Storage"</a>).</td>
+        <td>Passed data for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "External Store"</a>).</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>loose</b></td>
-        <td>When storage is enabled this flag removes also data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
+        <td>When store is enabled this flag removes also data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -1293,6 +1306,19 @@ Same way you could also unregister events:
 Mikado.unlisten("click");
 ```
 
+<a name="view.dispatch"></a><a name="dispatch"></a>
+#### Dispatch Event Handler
+
+Manually dispatch an event:
+```js
+view.dispatch("handler");
+```
+
+Manually dispatch an event and pass parameters:
+```js
+view.dispatch("handler", target, event, self);
+```
+
 <a name="keyed"></a>
 ## Keyed/Non-Keyed Modes
 
@@ -1426,7 +1452,7 @@ __Notice:__ An original state does not include an event listener which was direc
 <a name="refresh"></a>
 #### Render vs. Refresh vs. Reconcile
 
-> When reusing was disabled you can take advantage of Mikados 2 different render functions. 
+> When reusing was disabled you can take advantage of Mikados 3 different render functions.
 
 Whenever you call ___.render()___ when reusing was disabled all components will be recreated (restoring original state):
 ```js
@@ -1517,7 +1543,7 @@ view.destroy();
 <a name="view.render"></a>
 ## Render Templates
 
-> When using an internal storage (not external), every render task also updates the storage data.
+> When using an internal store (not external), every render task also updates the stored data.
 
 Render a template incrementally through a set of data items:
 ```js
@@ -1732,7 +1758,9 @@ var name = view.template;
 <a name="manipulate"></a>
 ## Manipulate Views
 
-Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To prevent re-syncing Mikado provides you several helper functions to manipulate the dom and also keep them in sync. Using the helper function also grants you a maximum performance.
+Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To prevent re-syncing by applying manual changes Mikado provides you several optional helper functions to manipulate the dom and also keep them in sync. Using the helper function also grants you a maximum performance.
+
+> All helpers could be used by index or by node as passed parameters.
 
 <a name="view.move"></a>
 Move a data item/node to a specific index:
@@ -1780,6 +1808,12 @@ Swap two data items/nodes:
 ```js
 view.swap(node_a, node_b);
 ```
+
+#### Some notes about helpers
+
+Those helpers are just missing in most of other libs, although there are so useful. It is just a pain when you want to apply a simple transformation but the lib forces you to run through the whole roundtrip. Super-advanced-fine-grained reconciliation isn't the holy grail, it is just for your laziness. Luckily Mikado provides you the <a href="#benchmark">most effective reconcile</a> today, so that shouldn't be a problem.
+
+Let's come to the most absurd part. Especially data-driven reconciliation often becomes absolutely nonsense when you dealing with __internal data__ and you start to apply changes by hand like `data.push(item)` instead of simply doing this `view.add(item)`, or `var data = store(); data[0] = item; store(data);` instead of simply doing this `view.replace(0, item)`, the latter does not need reconciliation at all and performs faster by a huge factor and also it says what it does. Now take the helper methods and imagine you would apply them via data-driven. You will end up by start coding creepy things like `data.splice(index_a, 0, data.splice(index_b, 1)[0])`. Please do me the favor, use that helpers and don't pain yourself as well as your applications performance. Your users will thank you.
 
 <a name="cache"></a>
 ## DOM State Caching
@@ -1977,14 +2011,22 @@ view.sort(function(data_a, data_b){
 -->
 
 <a name="store"></a>
-## Storage
+## Stores
 
-Enable internal storage by passing the options during initialization:
+Mikado provides 4 different type of stores. It is very useful to understand how they are handled.
+
+#### 1. Internal Store
+
+An internal store gets updated automatically by Mikado. This comes with a small extra cost. Use this store when you need a reference to the data store as an array of items which are currently rendered.
+
+> When internal store is used, this store gets automatically updated by any of Mikados methods e.g. render/update/add/append/remove.
+
+Enable internal store by passing the options during initialization:
 ```js
 var view = new Mikado(template, { store: true });
 ```
 
-Whenever you call the ___.render()___ function along with passed data, this data will keep in cache (internal storage). Mikado will handle those data for you.
+Whenever you call the ___.render()___ function along with passed data, this data will updated (add/remove/change) to the internal store.
 ```js
 view.render(data);
 ```
@@ -2025,9 +2067,11 @@ view.store = store = [];
 ```
 
 <a name="options.loose"></a>
-#### Loose Option
+#### 2. Loose Store (Default)
 
-When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs generally faster and has lower memory footprint but you will also loose any data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this shouldn't be an issue, but it depends on your application.
+When ___loose___ is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs slightly faster and has lower memory footprint but you will also loose any data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situation this is the expected behavior, but it depends on your application.
+
+Initialize a loose store:
 ```js
 var view = new Mikado(template, { store: true, loose: true });
 ```
@@ -2041,27 +2085,43 @@ var item = view.data(node);
 ```
 
 <a name="extern"></a>
-#### Extern/Custom Store
+#### 3. External/Custom Store
+
+External stores differs from the other ones. An external store assumes to get updated from the outside and will not changed by Mikado. That means that you have to apply all changes to the external store before rendering. Use this store when:
+
+- you like to use data-driven style
+- you need sharing the data store to your application functions or libs
+- you like to make the data store immutable for Mikado
+
+> When external store is used, this store gets __not__ updated by any of Mikados methods e.g. render/update/add/append/remove.
+
+There is one exception: when you use <a href="#proxy">proxy</a> (observable attributes), the external store will replaced by the proxyfied reference once (otherwise the proxy feature becomes useless).
 
 You can also pass an reference to an external store. This store must be an Array-like type.
 ```js
 var MyStore = [ /* Item Data */ ];
 ```
 
-Pass in the external storage when initializing:
+Pass in the external store when initializing:
 ```js
 var view = new Mikado(root, template, {
-    store: MyStore,
-    loose: false,
-    persist: false
+    store: MyStore
 });
 ```
+
+#### 4. Reactive Store (Observable Array)
+
+This is also an external store with all its attributes described above. Additionally this store reacts when indices gets changed (applies changes to DOM automatically). That makes reconciliation unnecessary but also has a noticeable extra cost for all other kind of updates. The main reason why this store is slower in the benchmark by a large margin is, that this store cannot apply a bulk of updates through a loop. It reacts at the moment the data was assigned/removed from an index. Still, this store could perform faster than all other ones depending on your application / current view.
+
+The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you do not need calling any of Mikados methods anymore like render/reconcile/update/add/append/remove. All this methods gets redundant, because the view is completely synchronized along the whole state of your store. This combination and how they are integrated in Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#modes">astronomical</a>.
+
+Read the documentation about this kind of store <a href="#observable">here</a>.
 
 <a name="export"></a>
 #### Export / Import Views
 
 <a name="view.export"></a>
-You can export the data of a view to the local storage.
+You can export the data of a view to the local store.
 ```js
 view.export();
 ```
@@ -2585,7 +2645,7 @@ __Template markup__:
 
 > The expression for an observable property has to start with: `{{=`
 
-Using proxy requires using one of the 3 storage strategies.
+Using proxy requires using one of the 3 store strategies.
 
 __1. Use with internal store:__
 ```js
@@ -2906,15 +2966,14 @@ view.destroy(/* unload? */ true);
 
 Mikado comes with its own new diffing algorithm which gains performance of reconcile/re-arrangement. The algorithm is based on a concept <a href="https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance">"Longest Distance"</a> which was invented by me, the author of this library. I also discovered two other concepts from scratch from where I have also implemented the <a href="https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#3-3-way-splice">"3-Way-Splice"</a>, but longest distance has slightly better overall performance. Although by a very small margin. Theoretically the splice concept has some advantages but it isn't that easy to make them capable.
 
-Mikados reconcile provides you one of the most effective diffing today.
+Mikados reconcile provides you the most effective diffing today (you can take the row "order" from the <a href="#benchmark">benchmark</a> as a reference).
 
 <a name="concept"></a>
 ## Concept of Shared Pools
 
 The are four kinds of synchronized pools under the hood. Three of them are shared across all template instances to make them re-usable. That also save memory and skip redundant re-calculations.
 
-<br>
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg" alt="Mikado Shared Pool (Concept)">
+<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg" alt="Mikado Shared Pool (Concept)"><br><br>
 
 #### Factory Pool
 

@@ -14,6 +14,7 @@ declare class Mikado {
     data(index: number): Object;
     delete(id: string): Mikado;
     destroy(unload?: boolean): void;
+    dispatch(name: string, target?: HTMLElement, event?: Event, self?: EventTarget): Mikado;
     down(node: HTMLElement|number, offset?: number): Mikado;
     export(): Mikado;
     find(data: Object|string): HTMLElement|void;
@@ -67,6 +68,7 @@ declare namespace Mikado {
     }
     function addClass(target: HTMLElement, classname: string): Mikado;
     function compile(node: HTMLTemplateElement|string): Mikado;
+    function dispatch(name: string, target?: HTMLElement, event?: Event, self?: EventTarget): Mikado;
     function getAttribute(target: HTMLElement, attr: string): string;
     function getCSS(target: HTMLElement): string;
     function getClass(target: HTMLElement): string;

@@ -237,15 +237,15 @@
             validate(root_1.children[0], items[0]);
         });
 
-        it("Should have been indexed properly", function(){
-
-            mikado = new Mikado(root_1, "template");
-
-            mikado.render(data);
-
-            expect(mikado.dom[0]["_idx"]).to.equal(0);
-            expect(mikado.dom[data.length - 1]["_idx"]).to.equal(data.length - 1);
-        });
+        // it("Should have been indexed properly", function(){
+        //
+        //     mikado = new Mikado(root_1, "template");
+        //
+        //     mikado.render(data);
+        //
+        //     expect(mikado.dom[0]["_idx"]).to.equal(0);
+        //     expect(mikado.dom[data.length - 1]["_idx"]).to.equal(data.length - 1);
+        // });
 
         it("Should have been re-mounted properly", function(){
 
@@ -261,7 +261,7 @@
             mikado.mount(root_1);
 
             expect(mikado.dom).to.equal(root_1._dom);
-            expect(mikado.dom[0]["_idx"]).to.equal(0);
+            //expect(mikado.dom[0]["_idx"]).to.equal(0);
             expect(mikado.dom[0].dataset.id).to.equal(data[0]["id"]);
             validate(mikado.dom[0], data[0]);
 
@@ -269,14 +269,14 @@
 
             expect(mikado.root).to.equal(root_2);
             expect(mikado.dom).to.equal(root_2._dom);
-            expect(mikado.dom[0]["_idx"]).to.equal(0);
+            //expect(mikado.dom[0]["_idx"]).to.equal(0);
             expect(mikado.dom[0].dataset.id).to.equal(data[10]["id"]);
             validate(mikado.dom[0], data[10]);
 
             mikado.mount(root_1);
 
             expect(mikado.dom).to.equal(root_1._dom);
-            expect(mikado.dom[0]["_idx"]).to.equal(0);
+            //expect(mikado.dom[0]["_idx"]).to.equal(0);
             expect(mikado.dom[0].dataset.id).to.equal(data[0]["id"]);
             validate(mikado.dom[0], data[0]);
         });
@@ -392,7 +392,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 validate(mikado.dom[i], items[i]);
             }
 
@@ -406,7 +406,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 validate(mikado.dom[i], items[i]);
             }
         });
@@ -420,7 +420,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 validate(mikado.dom[i], items[i]);
             }
 
@@ -434,7 +434,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 validate(mikado.dom[i], items[i]);
             }
         });
@@ -452,7 +452,7 @@
             for(var i = 0; i < items.length; i++){
 
                 mikado.dom[i]._test = items[i].id;
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.dom[i]["_data"]).to.equal(items[i]);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
@@ -470,7 +470,7 @@
             for(var i = 0; i < items.length; i++){
 
                 if(mikado.dom[i]._test) expect(mikado.dom[i]._test).to.equal(items[i].id);
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.dom[i]["_data"]).to.equal(items[i]);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
@@ -488,7 +488,7 @@
             for(var i = 0; i < items.length; i++){
 
                 mikado.dom[i]._test = items[i].id;
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 expect(mikado.store[i]).to.equal(items[i]);
@@ -506,7 +506,7 @@
             for(var i = 0; i < items.length; i++){
 
                 if(mikado.dom[i]._test) expect(mikado.dom[i]._test).to.equal(items[i].id);
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 expect(mikado.store[i]).to.equal(items[i]);
@@ -523,7 +523,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 validate(mikado.dom[i], items[i]);
@@ -539,7 +539,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 validate(mikado.dom[i], items[i]);
@@ -555,7 +555,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 validate(mikado.dom[i], items[i]);
@@ -571,7 +571,7 @@
 
             for(var i = 0; i < items.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 expect(mikado.dom[i]["_key"]).to.equal(items[i].id);
                 expect(mikado.live[items[i].id]).to.equal(mikado.dom[i]);
                 validate(mikado.dom[i], items[i]);
@@ -1146,7 +1146,7 @@
 
             for(var i = 0; i < mikado.length; i++){
 
-                expect(mikado.dom[i]["_idx"]).to.equal(i);
+                //expect(mikado.dom[i]["_idx"]).to.equal(i);
                 validate(mikado.dom[i], items[i]);
             }
         });
@@ -1394,8 +1394,8 @@
             expect(root_1.children[9]).to.equal(tmp_a);
             expect(root_1.children[10]).to.equal(mikado.dom[10]);
             expect(root_1.children[9]).to.equal(mikado.dom[9]);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[9]["_idx"]).to.equal(9);
+            //expect(mikado.dom[10]["_idx"]).to.equal(10);
+            //expect(mikado.dom[9]["_idx"]).to.equal(9);
 
             tmp_a = root_1.children[10];
             tmp_b = root_1.children[9];
@@ -1426,10 +1426,10 @@
             expect(root_1.children[6]).to.equal(tmp_b);
             expect(root_1.children[10]).to.equal(tmp_c);
 
-            expect(mikado.dom[5]["_idx"]).to.equal(5);
-            expect(mikado.dom[6]["_idx"]).to.equal(6);
-            expect(mikado.dom[7]["_idx"]).to.equal(7);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[5]["_idx"]).to.equal(5);
+            // expect(mikado.dom[6]["_idx"]).to.equal(6);
+            // expect(mikado.dom[7]["_idx"]).to.equal(7);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
 
             expect(root_1.children[5]).to.equal(mikado.dom[5]);
             expect(root_1.children[6]).to.equal(mikado.dom[6]);
@@ -1452,10 +1452,10 @@
             expect(root_1.children[1]).to.equal(tmp_b);
             expect(root_1.children[2]).to.equal(tmp_c);
 
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[9]["_idx"]).to.equal(9);
-            expect(mikado.dom[1]["_idx"]).to.equal(1);
-            expect(mikado.dom[0]["_idx"]).to.equal(0);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[9]["_idx"]).to.equal(9);
+            // expect(mikado.dom[1]["_idx"]).to.equal(1);
+            // expect(mikado.dom[0]["_idx"]).to.equal(0);
 
             expect(root_1.children[10]).to.equal(mikado.dom[10]);
             expect(root_1.children[9]).to.equal(mikado.dom[9]);
@@ -1477,8 +1477,8 @@
             expect(root_1.children[11]).to.equal(tmp_a);
             expect(root_1.children[10]).to.equal(mikado.dom[10]);
             expect(root_1.children[11]).to.equal(mikado.dom[11]);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             tmp_a = root_1.children[10];
             tmp_b = root_1.children[11];
@@ -1509,10 +1509,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[14]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);
@@ -1536,10 +1536,10 @@
             expect(root_1.children[length - 2]).to.equal(tmp_b);
             expect(root_1.children[10]).to.equal(tmp_c);
 
-            expect(mikado.dom[length - 1]["_idx"]).to.equal(length - 1);
-            expect(mikado.dom[length - 2]["_idx"]).to.equal(length - 2);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[length - 1]["_idx"]).to.equal(length - 1);
+            // expect(mikado.dom[length - 2]["_idx"]).to.equal(length - 2);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[length - 1]).to.equal(mikado.dom[length - 1]);
             expect(root_1.children[length - 2]).to.equal(mikado.dom[length - 2]);
@@ -1563,10 +1563,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[14]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);
@@ -1596,10 +1596,10 @@
             expect(root_1.children[6]).to.equal(tmp_b);
             expect(root_1.children[10]).to.equal(tmp_c);
 
-            expect(mikado.dom[5]["_idx"]).to.equal(5);
-            expect(mikado.dom[6]["_idx"]).to.equal(6);
-            expect(mikado.dom[7]["_idx"]).to.equal(7);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[5]["_idx"]).to.equal(5);
+            // expect(mikado.dom[6]["_idx"]).to.equal(6);
+            // expect(mikado.dom[7]["_idx"]).to.equal(7);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
 
             expect(root_1.children[5]).to.equal(mikado.dom[5]);
             expect(root_1.children[6]).to.equal(mikado.dom[6]);
@@ -1626,8 +1626,8 @@
             expect(mikado.dom[10]).to.equal(tmp_b);
             expect(mikado.dom[11]).to.equal(tmp_a);
 
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
         });
 
         it("Should have been used 'move' properly (down)", function(){
@@ -1646,10 +1646,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[14]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);
@@ -1682,10 +1682,10 @@
             expect(root_1.children[6]).to.equal(tmp_b);
             expect(root_1.children[10]).to.equal(tmp_c);
 
-            expect(mikado.dom[5]["_idx"]).to.equal(5);
-            expect(mikado.dom[6]["_idx"]).to.equal(6);
-            expect(mikado.dom[7]["_idx"]).to.equal(7);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[5]["_idx"]).to.equal(5);
+            // expect(mikado.dom[6]["_idx"]).to.equal(6);
+            // expect(mikado.dom[7]["_idx"]).to.equal(7);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
 
             expect(root_1.children[5]).to.equal(mikado.dom[5]);
             expect(root_1.children[6]).to.equal(mikado.dom[6]);
@@ -1734,10 +1734,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[14]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);
@@ -1795,10 +1795,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[14]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);
@@ -1856,10 +1856,10 @@
             expect(root_1.children[10]).to.equal(tmp_b);
             expect(root_1.children[11]).to.equal(tmp_c);
 
-            expect(mikado.dom[15]["_idx"]).to.equal(15);
-            expect(mikado.dom[14]["_idx"]).to.equal(14);
-            expect(mikado.dom[10]["_idx"]).to.equal(10);
-            expect(mikado.dom[11]["_idx"]).to.equal(11);
+            // expect(mikado.dom[15]["_idx"]).to.equal(15);
+            // expect(mikado.dom[14]["_idx"]).to.equal(14);
+            // expect(mikado.dom[10]["_idx"]).to.equal(10);
+            // expect(mikado.dom[11]["_idx"]).to.equal(11);
 
             expect(root_1.children[15]).to.equal(mikado.dom[15]);
             expect(root_1.children[14]).to.equal(mikado.dom[14]);

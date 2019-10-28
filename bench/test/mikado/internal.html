@@ -21,10 +21,8 @@
     const mikado = new Mikado(root, template, {
 
         "store": store(),
-        "reuse": true,
         "pool": false,
-        "keep": true,
-        "cache": true
+        "keep": true
     });
 
     suite["mikado"] = function(items){

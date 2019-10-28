@@ -7,12 +7,15 @@
     const mikado = Mikado(document.getElementById("result"), "row", options);
     const list = Mikado(document.getElementById("lib"), "lib", options);
 
+    const modes = window.location.hash.indexOf("modes") !== -1;
     let strict;
-    let modes = window.location.hash.indexOf("modes") !== -1;
     let internal;
     let keyed;
+    let keep;
+    let repeat;
+    let index = -1;
 
-    const lib = shuffle(modes ? [
+    let lib = shuffle(modes ? [
 
         "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
         "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy",
@@ -42,8 +45,6 @@
 
     init(window.location.hash);
 
-    let index = -1;
-
     document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
 
     if(modes){
@@ -56,8 +57,9 @@
         if(target.value === "Start"){
 
             index = -1;
+            repeat = document.getElementById("repeat").value;
             target.value = "Stop";
-            setTimeout(runner, 100);
+            setTimeout(runner, 200);
         }
         else{
 
@@ -81,7 +83,7 @@
         "remove", "toggle", "clear"
     ];
 
-    let current = new Array(lib.length);
+    const current = new Array(lib.length);
 
     let size = {
 
@@ -131,10 +133,12 @@
     function runner(){
 
         const duration = document.getElementById("duration").value;
+        keep = document.getElementById("keep").checked;
 
         index++;
-        current[index][test[2]] = "run...";
-        mikado.update(mikado.node(index), current[index]);
+        const tmp = Object.assign({}, current[index]);
+        tmp[test[2]] = "run...";
+        mikado.update(mikado.node(index), tmp);
         iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration);
     }
 
@@ -239,12 +243,43 @@
 
             if(event.origin === location.protocol + "//" + location.hostname){ // "https://nextapps-de.github.io" "https://raw.githack.com"
 
+                //console.log(event.data);
+
                 const parts = event.data.split(",");
 
-                current[index][parts[0]] = parseInt(parts[1], 10);
-                current[index]["memory"] += parseInt(parts[2], 10);
+                let tmp = parseInt(parts[1], 10);
 
-                if(!current[index][parts[0]]){
+                if(keep){
+
+                    if(!current[index][parts[0]] || (tmp > current[index][parts[0]])){
+
+                        current[index][parts[0]] = tmp;
+                    }
+                }
+                else{
+
+                    if(current[index][parts[0]]){
+
+                        current[index][parts[0]] += tmp;
+                    }
+                    else{
+
+                        current[index][parts[0]] = tmp;
+                    }
+                }
+
+                tmp = parseInt(parts[2], 10);
+
+                if(current[index]["memory"]){
+
+                    current[index]["memory"] += tmp;
+                }
+                else{
+
+                    current[index]["memory"] = tmp;
+                }
+
+                if((repeat === 1) && (!current[index][parts[0]])){
 
                     current[index][parts[0]] = "-failed-";
                 }
@@ -253,7 +288,8 @@
 
                     if(index < lib.length - 1){
 
-                        setTimeout(runner, 200);
+                        mikado.update(index, current[index]);
+                        setTimeout(runner, 50);
                     }
                     else{
 
@@ -264,16 +300,30 @@
                             return b["score"] - a["score"];
                         });
 
+                        for(let i = 0; i < lib.length; i++){
+
+                            lib[i] = current[i]["name"];
+                        }
+
                         mikado.render(current);
-                        return;
+
+                        if(--repeat > 0){
+
+                            index = -1;
+                            setTimeout(runner, 50);
+                        }
+                        else{
+
+                            Mikado.dispatch("start", document.getElementById("start"));
+                        }
                     }
                 }
                 else{
 
-                    current[index][test[test.indexOf(parts[0]) + 1]] = "run...";
+                    const tmp = Object.assign({}, current[index]);
+                    tmp[test[test.indexOf(parts[0]) + 1]] = "run...";
+                    mikado.update(index, tmp);
                 }
-
-                mikado.refresh(index);
             }
         }
     };

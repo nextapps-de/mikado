@@ -33,7 +33,7 @@
 <table>
     <tr>
         <td>
-            <input type="button" click="start" value="Start">
+            <input type="button" id="start" click="start" value="Start">
         </td>
         <td>&emsp;</td>
         <td>
@@ -48,29 +48,30 @@
         <td>
             Duration:
             <select id="duration">
+                <!--
                 <optgroup label="run">
-                    <option value="run-2">2 runs</option>
-                    <option value="run-5">5 runs</option>
-                    <option value="run-10">10 runs</option>
                     <option value="run-50">50 runs</option>
                     <option value="run-100">100 runs</option>
+                    <option value="run-250">250 runs</option>
+                    <option value="run-500">500 runs</option>
                     <option value="run-1000">1000 runs</option>
                 </optgroup>
                 <optgroup label="time">
+                -->
                     <option value="0.1">100 ms</option>
                     <option value="0.5">500 ms</option>
                     <option value="1">1 sec</option>
-                    <option value="3" selected>3 sec</option>
-                    <option value="5">5 sec</option>
+                    <option value="3">3 sec</option>
+                    <option value="5" selected>5 sec</option>
                     <option value="10">10 sec</option>
                     <option value="30">30 sec</option>
-                </optgroup>
+                <!--</optgroup>-->
             </select>
         </td>
         <td>&emsp;</td>
         <td>
             Repeat:
-            <select change="repeat">
+            <select id="repeat">
                 <option value="1" selected>1</option>
                 <option value="2">2</option>
                 <option value="5">5</option>
@@ -82,7 +83,7 @@
         </td>
         <td>&emsp;</td>
         <td>
-            <input type="checkbox" id="best" checked disabled> keep best run
+            <input type="checkbox" id="keep" checked> keep best run
         </td>
     </tr>
 </table>
