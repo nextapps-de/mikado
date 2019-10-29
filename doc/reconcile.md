@@ -12,18 +12,18 @@ const a = [1, 2, 3, 4, 5];
 const b = [2, 3, 4, 1, 5];
 ```
 
-Loop through a and fill a blank array with offsets (`current_pos - target_pos`):
+Loop through a and fill a blank array with offsets (`target_pos - current_pos`):
 ```js
 const a = [1,  2,  3,  4, 5];
 const x = [3, -1, -1, -1, 0];
-const b = [2,  3,  4,  5, 1];
+const b = [2,  3,  4,  1, 5];
 ```
 
 When you skip all zero values and all values which are equal in a row, then just the changes will remain:
 ```js
 const a = [1,  2,  3,  4, 5];
 const x = [3               ];
-const b = [2,  3,  4,  5, 1];
+const b = [2,  3,  4,  1, 5];
 ```
 
 Which means shift ___1___ from ___a___ forward for ___3___ indexes and you are ready.
@@ -31,7 +31,7 @@ Which means shift ___1___ from ___a___ forward for ___3___ indexes and you are r
 Lets take another example (reversed), same concept:
 ```js
 const a = [1, 2, 3, 4, 5];
-const b = [5, 1, 2, 3, 4];
+const b = [1, 5, 2, 3, 4];
 ```
 
 ```js
@@ -41,9 +41,9 @@ const b = [1, 5, 2, 3,  4];
 ```
 
 ```js
-const a = [1, 2, 3, 4, 5];
-const x = [            3];
-const b = [1, 5, 2, 3, 4];
+const a = [1, 2, 3, 4,  5];
+const x = [            -3];
+const b = [1, 5, 2, 3,  4];
 ```
 
 Shift the last 3 indexes before and you are ready.
@@ -86,7 +86,7 @@ const b = [1, 5, 2, 3, 4];
 ```
 
 The offset from a[0] in list b is 0, the offset from b[0] in list a is also 0, so skip.<br>
-The offset from a[1] in list b is 1, the offset from b[0] in list a is 3, so move b[0] backwards:
+The offset from a[1] in list b is 1, the offset from b[1] in list a is 3, so move b[1] backwards:
 ```js
 const a = [1, 5, 2, 3, 4];
 ```
@@ -100,13 +100,13 @@ const b = [9, 2, 3, 4, 1, 5, 6, 8, 7];
 
 The offset from a[0] in list b is 4, the offset from b[0] in list a is 8, so move b[0] backwards:
 ```js
-const a = [9, 1, 2, 3, 4, 5, 6, 7, 8,];
+const a = [9, 1, 2, 3, 4, 5, 6, 7, 8];
 const b = [9, 2, 3, 4, 1, 5, 6, 8, 7];
 ```
 
 The offset from a[1] in list b is 3, the offset from b[1] in list a is 1, so move a[1] forward:
 ```js
-const a = [9, 2, 3, 4, 1, 5, 6, 7, 8,];
+const a = [9, 2, 3, 4, 1, 5, 6, 7, 8];
 const b = [9, 2, 3, 4, 1, 5, 6, 8, 7];
 ```
 Skip the next ones because they are equal.
