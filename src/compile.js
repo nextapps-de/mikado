@@ -285,7 +285,8 @@ function handle_value(template, key, value){
                          .replace(/}}/g, " + '");
 
         template[key] = [("'" + tmp + "'").replace(/'' \+ /g, "")
-                                          .replace(/ \+ ''/g, "")];
+                                          .replace(/ \+ ''/g, "")
+                                          .trim()];
         if(bind){
 
             template[key].push(2);

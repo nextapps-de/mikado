@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.42
+ * Mikado.js v0.7.44
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1379,13 +1379,13 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
         if (idx_a && idx_b) {
           if (idx_a >= idx_b) {
             var tmp_a = a[idx_a - 1];
-            insertBefore$$module$tmp$mikado(this.root, tmp_a, a_x);
+            this.root.insertBefore(tmp_a, a_x);
             if (render) {
               this.update(tmp_a, b_x, view, x);
             }
             if (idx_a === idx_b) {
               if (y - x > 1) {
-                insertBefore$$module$tmp$mikado(this.root, a_x, a[idx_a]);
+                this.root.insertBefore(a_x, a[idx_a]);
               }
               a[x] = a[y];
               a[y] = a_x;
@@ -1395,7 +1395,7 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
             }
           } else {
             var index = idx_b - 1 + shift;
-            insertBefore$$module$tmp$mikado(this.root, a_x, a[index]);
+            this.root.insertBefore(a_x, a[index] || null);
             splice$$module$tmp$mikado(a, x, (index > end_a ? end_a : index) - 1);
             shift--;
             x--;
@@ -1417,12 +1417,6 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
   }
   return this;
 };
-function insertBefore$$module$tmp$mikado(root, a, b) {
-  root.insertBefore(a, b || null);
-}
-function appendChild$$module$tmp$mikado(root, child) {
-  root.appendChild(child);
-}
 function splice$$module$tmp$mikado(arr, pos_old, pos_new, insert) {
   var tmp = insert || arr[pos_old];
   if (insert) {
@@ -1484,14 +1478,14 @@ Mikado$$module$tmp$mikado.prototype.add = function(data, view, index, _replace_n
     }
   }
   if (has_index) {
-    insertBefore$$module$tmp$mikado(this.root, node, this.dom[length]);
+    this.root.insertBefore(node, this.dom[length]);
     splice$$module$tmp$mikado(this.dom, this.length - 1, length, node);
     this.length++;
   } else {
     if (_replace_node) {
       this.root.replaceChild(node, _replace_node);
     } else {
-      appendChild$$module$tmp$mikado(this.root, node);
+      this.root.appendChild(node);
       this.length++;
     }
     this.dom[length] = node;
@@ -1897,7 +1891,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
               path_length--;
             }
           }
-          appendChild$$module$tmp$mikado(node, text_node);
+          node.appendChild(text_node);
         } else {
           if (html) {
             if (typeof html === "object") {
@@ -1943,13 +1937,13 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         if (SUPPORT_TEMPLATE_EXTENSION && (include = current["+"])) {
           current = templates$$module$tmp$mikado[include];
         }
-        appendChild$$module$tmp$mikado(node, this.parse(current, index + i$14 + 1, path + tmp$13, dom_path));
+        node.appendChild(this.parse(current, index + i$14 + 1, path + tmp$13, dom_path));
       }
     } else {
       if (SUPPORT_TEMPLATE_EXTENSION && (include = child["+"])) {
         child = templates$$module$tmp$mikado[include];
       }
-      appendChild$$module$tmp$mikado(node, this.parse(child, index + 1, path + ">", dom_path));
+      node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
     }
   }
   if (SUPPORT_TEMPLATE_EXTENSION && tpl["f"]) {
@@ -2287,7 +2281,7 @@ function handle_value$$module$tmp$compile(template, key, value) {
     var proxy = bind || value.indexOf("{{=") !== -1;
     is_static$$module$tmp$compile = false;
     var tmp = value.replace(/{{==/g, "{{").replace(/{{=/g, "{{").replace(/"{{/g, "").replace(/}}"/g, "").replace(/{{/g, "' + ").replace(/}}/g, " + '");
-    template[key] = [("'" + tmp + "'").replace(/'' \+ /g, "").replace(/ \+ ''/g, "")];
+    template[key] = [("'" + tmp + "'").replace(/'' \+ /g, "").replace(/ \+ ''/g, "").trim()];
     if (bind) {
       template[key].push(2);
     } else {

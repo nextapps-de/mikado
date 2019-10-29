@@ -1071,7 +1071,7 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                         const tmp_a = a[idx_a - 1];
 
                         // when distance is 1 it will always move before, no predecessor check necessary
-                        insertBefore(this.root, tmp_a, a_x);
+                        this.root.insertBefore(tmp_a, a_x);
 
                         if(render){
 
@@ -1083,7 +1083,7 @@ Mikado.prototype.reconcile = function(b, view, x, render){
 
                             if((y - x) > 1){
 
-                                insertBefore(this.root, a_x, a[idx_a]);
+                                this.root.insertBefore(a_x, a[idx_a]);
                             }
 
                             a[x] = a[y];
@@ -1112,7 +1112,7 @@ Mikado.prototype.reconcile = function(b, view, x, render){
                         const index = idx_b - 1 + shift;
 
                         // distance is always greater than 1, no predecessor check necessary
-                        insertBefore(this.root, a_x, a[index]);
+                        this.root.insertBefore(a_x, a[index] || null);
                         splice(a, x, (index > end_a ? end_a : index) - 1);
                         //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 
@@ -1146,16 +1146,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
 
     return this;
 };
-
-function insertBefore(root, a, b){
-
-    root.insertBefore(a, b || null);
-}
-
-function appendChild(root, child){
-
-    root.appendChild(child);
-}
 
 /**
  * @param {Array} arr
@@ -1263,7 +1253,7 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
 
     if(has_index){
 
-        insertBefore(this.root, node, this.dom[length]);
+        this.root.insertBefore(node, this.dom[length]);
         splice(this.dom, this.length - 1, length, node);
         //this.dom.splice(length, 0, node);
         this.length++;
@@ -1277,7 +1267,7 @@ Mikado.prototype.add = function(data, view, index, _replace_node){
         }
         else{
 
-            appendChild(this.root, node);
+            this.root.appendChild(node);
             this.length++;
         }
 
@@ -2035,7 +2025,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 // }
             }
 
-            appendChild(node, text_node);
+            node.appendChild(text_node);
         }
         else if(html){
 
@@ -2114,7 +2104,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 }
 
                 // process child recursively
-                appendChild(node, this.parse(current, index + i + 1, path + tmp, dom_path));
+                node.appendChild(this.parse(current, index + i + 1, path + tmp, dom_path));
             }
         }
         else{
@@ -2126,7 +2116,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             }
 
             // process child recursively
-            appendChild(node, this.parse(child, index + 1, path + ">", dom_path));
+            node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
         }
     }
 
