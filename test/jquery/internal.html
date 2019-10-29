@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <title>jquery</title>
+</head>
+<body>
+<h1>Benchmark: jquery-3.4.1 (data-driven)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="./dist/jquery.min.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    suite["jquery"] = function(items){
+
+        $(root).html(render(items));
+    };
+
+    function render(items){
+
+        let html = "";
+
+        for(let i = 0; i < items.length; i++){
+
+            html += prototype(items[i]);
+        }
+
+        return html;
+    }
+
+    function prototype(item){
+
+        return (
+
+            '<section data-id="' + item.id + '" data-date="' + item.date + '" data-index="' + item.index + '">' +
+                '<div class="' + item.classname + '" style="padding-right: 10px;">' +
+                    '<div class="title">' + item.title + '</div>' +
+                    '<div class="content">' + item.content + '</div>' +
+                    '<div class="footer">' + item.footer + '</div>' +
+                '</div>' +
+            '</section>'
+        );
+    };
+
+</script>
+</body>
+</html>

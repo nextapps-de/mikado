@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <title>Mikado</title>
+</head>
+<body>
+<h1>Benchmark: Mikado (Observer + Proxy)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="./../mikado/dist/mikado.min.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root, store } from "./../../bench.js";
+    import template from "./template/proxy.es6.js";
+
+    const mikado = new Mikado(root, template, {
+
+        "store": store(Mikado.array()),
+        "reuse": true,
+        "pool": false,
+        "keep": true,
+        "cache": true
+    });
+
+    suite["mikado"] = function(items){};
+
+</script>
+</body>
+</html>

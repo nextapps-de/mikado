@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+    <title>surplus</title>
+</head>
+<body>
+<h1>Benchmark: surplus-0.5.3 (data-driven)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="https://rawgit.com/adamhaile/S/master/dist/S.js"></script>
+<script src="https://rawgit.com/adamhaile/surplus/master/index.js"></script>
+<script src="https://rawgit.com/adamhaile/S-array/master/index.js"></script>
+<script src="https://rawgit.com/adamhaile/surplus/master/compiler/index.js"></script>
+<script src="https://rawgit.com/adamhaile/surplus-mixin-data/master/index.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root, store } from "./../../bench.js";
+
+    var compile = window.SurplusCompiler.compile,
+        //data = window.SurplusDataMixin.default,
+        SArray = window.SArray.default;
+    var todos = SArray([]);
+
+    var Todo = t => ({
+            id: S.data(t.id),
+            date: S.data(t.date),
+            index: S.data(t.index),
+            class: S.data(t.classname),
+            title: S.data(t.title),
+            content: S.data(t.content),
+            footer: S.data(t.footer)
+        }),
+        view = eval(compile(`
+            <div>
+                {todos.map(todo =>
+                    <section data-id={todo.id} data-date={todo.date} data-index={todo.index}>
+                        <div className={todo.classname} style-padding-right="10px">
+                            <div class="title">{todo.title}</div>
+                            <div class="content">{todo.content}</div>
+                            <div class="footer">{todo.footer}</div>
+                        </div>
+                    </section>
+                )}
+            </div>
+        `));
+
+    root.appendChild(view);
+
+    store(todos());
+
+    suite["surplus"] = function(items){
+
+        todos(items);
+    };
+
+</script>
+</body>
+</html>

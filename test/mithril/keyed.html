@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <title>Mithril</title>
+</head>
+<body>
+<h1>Benchmark: mithril-2.0.4 (keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="https://unpkg.com/mithril/mithril.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    let data;
+    let is_mounted = false;
+
+    function Component() {
+
+        return {
+
+            view: function() {
+                return data.map(function(item){
+                    return m("section", {key: item.id, "data-id": item.id, "data-date": item.date, "data-index": item.index},
+                        m("div", {"class": item.classname, "style": "padding-right: 10px;"}, [
+                            m("div.title", item.title),
+                            m("div.content", item.content),
+                            m("div.footer", item.footer)
+                        ])
+                    )
+                })
+            }
+        }
+    }
+
+    suite["mithril"] = function(items){
+
+        data = items;
+
+        if(is_mounted){
+
+            m.redraw.sync();
+        }
+        else{
+
+            m.mount(root, Component);
+            is_mounted = true;
+        }
+    };
+
+</script>
+</body>
+</html>

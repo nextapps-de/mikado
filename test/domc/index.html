@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <title>domc</title>
+</head>
+<body>
+<h1>Benchmark: domc-0.0.12 (recycle)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root">
+    <section v-map="item of items" data-id="{{item.id}}" data-date="{{item.date}}" data-index="{{item.index}}">
+        <div class="{{item.classname}}" style="padding-right: 10px;">
+            <div class="title">{{item.title}}</div>
+            <div class="content">{{item.content}}</div>
+            <div class="footer">{{item.footer}}</div>
+        </div>
+    </section>
+</div>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    import domc from './dist/index.js';
+    import './dist/vMap.js'
+
+    let app = domc(root);
+    let scope = {items: []};
+    app.rehydrate(scope);
+
+    suite["domc"] = function(items){
+
+        scope.items = items;
+        root.update(scope);
+    };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+    <title>redom</title>
+</head>
+<body>
+<h1>Benchmark: redom-3.24.1 (recycle)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    import { el, setAttr, setChildren, text, mount, list } from './dist/redom.es.min.js';
+    const data = [];
+
+    class Item {
+        constructor({ store }){
+
+            this.store = store;
+            this.el = el('section',
+                this.div1 = el('div', {style: "padding-right: 10px;"},
+                    this.div2 = el('div', {class:"title"}, ""),
+                    this.div3 = el('div', {class:"content"}, ""),
+                    this.div4 = el('div', {class:"footer"}, ""),
+                )
+            );
+        }
+        update(data){
+
+            // manually setting nodeValue, textContent or className is not allowed for this test
+
+            this.el.dataset.id = data.id;
+            this.el.dataset.date = data.date;
+            this.el.dataset.index = data.index;
+            this.div1.className = data.classname;
+            this.div2.textContent = data.title;
+            this.div3.textContent = data.content;
+            this.div4.textContent = data.footer;
+
+            // could I apply any other improvements here?
+            /*
+            setAttr(this.el, {
+                dataset: {
+                    id: data.id,
+                    date: data.date,
+                    index: data.index
+                }
+            });
+
+            setAttr(this.div1, {
+                class: data.class
+            });
+
+            setChildren(this.div2, text(data.title));
+            setChildren(this.div3, text(data.content));
+            setChildren(this.div4, text(data.footer));
+            */
+        }
+    }
+
+    class App {
+        constructor ( store ) {
+            this.store = store;
+            this.el = this.table = list('div', Item, null, { store });
+        }
+        render () {
+            this.table.update(this.store);
+        }
+    }
+
+    const app = new App( data );
+
+    mount(root, app);
+
+    suite["redom"] = function(items){
+
+        app.store = items;
+        app.render();
+    };
+
+</script>
+</body>
+</html>
