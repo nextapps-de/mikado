@@ -24,7 +24,8 @@
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
-        "knockout", "lit-html", "ractive", "stage0"
+        "knockout", "lit-html", "ractive",
+        "stage0", "solid"
     ]);
 
     function init(hash){
@@ -100,6 +101,7 @@
         "lit-html": 17.31,
         "ractive": 68.2,
         "stage0": 0, // not allowed due to missing dom manipulation
+        "solid": 0, // it is a build and actually not comparable, TODO: take build size for all libs
 
         "mikado-cross-shared": 2.8,
         "mikado-exclusive": 2.8,

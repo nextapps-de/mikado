@@ -1,0 +1,22 @@
+<html lang="en">
+<head>
+    <title>solid</title>
+</head>
+<body>
+<h1>Benchmark: solid-0.9.3 (keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="dist/main.js"></script>
+<script type="module">
+
+    import { suite, root } from "./../../bench.js";
+    const solid =  window._solid;
+
+    suite["solid"] = function(items){
+
+        solid(items);
+    };
+
+</script>
+</body>
+</html>
