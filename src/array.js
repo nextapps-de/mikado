@@ -226,6 +226,12 @@ if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("sw
     };
 }
 
+Observer.prototype.set = function(array){
+    
+    this.splice();
+    return this.concat(array);
+};
+
 /**
  * @param {number=} start
  * @param {number=} count

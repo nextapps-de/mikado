@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.44
+ * Mikado.js v0.7.45
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -665,6 +665,10 @@ if (SUPPORT_HELPERS === true || SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap
     return this;
   };
 }
+Observer$$module$tmp$array.prototype.set = function(array) {
+  this.splice();
+  return this.concat(array);
+};
 Observer$$module$tmp$array.prototype.splice = function(start, count, insert) {
   skip$$module$tmp$array = true;
   start || (start = 0);
@@ -1280,9 +1284,6 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
       return this;
     }
     if (SUPPORT_STORAGE) {
-      if (length) {
-        return this.refresh();
-      }
       if (!(data = this.store)) {
         return this;
       }
@@ -1327,7 +1328,11 @@ Mikado$$module$tmp$mikado.prototype.render = function(data, view, callback, skip
   return this;
 };
 Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
-  var store = SUPPORT_STORAGE && this.store && !this.extern;
+  var store = SUPPORT_STORAGE && !this.extern && this.store;
+  if (store) {
+    b || (b = store);
+    this.store = 0;
+  }
   var a = this.dom;
   var keys = this.live;
   var end_b = b.length;
@@ -1335,9 +1340,6 @@ Mikado$$module$tmp$mikado.prototype.reconcile = function(b, view, x, render) {
   var max_end = end_a > end_b ? end_a : end_b;
   var shift = 0;
   var key = this.key;
-  if (store) {
-    this.store = 0;
-  }
   for (x || (x = 0); x < max_end; x++) {
     var found = undefined;
     if (x < end_b) {

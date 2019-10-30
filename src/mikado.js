@@ -849,10 +849,10 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 
             if(SUPPORT_STORAGE){
 
-                if(length){
-
-                    return this.refresh();
-                }
+                // if(length){
+                //
+                //     return this.refresh();
+                // }
 
                 if(!(data = this.store)){
 
@@ -993,7 +993,16 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 
 Mikado.prototype.reconcile = function(b, view, x, render){
 
-    const store = SUPPORT_STORAGE && this.store && !this.extern;
+    const store = SUPPORT_STORAGE && !this.extern && this.store;
+
+    if(store){
+
+        b || (b = store);
+
+        // skips updating internal store
+        this.store = 0;
+    }
+
     const a = this.dom;
     const keys = this.live;
     let end_b = b.length;
@@ -1002,12 +1011,6 @@ Mikado.prototype.reconcile = function(b, view, x, render){
     let shift = 0;
     const key = this.key;
     //let steps = 0;
-
-    if(store){
-
-        // skips updating internal store
-        this.store = 0;
-    }
 
     for(x || (x = 0); x < max_end; x++){
 
