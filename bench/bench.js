@@ -32,16 +32,12 @@ const params = (function(){
     return obj;
 }());
 
-// const rnd = (function(){
-//
+// console.log((function(){
 //     const array = new Array(DATA_SIZE_HALF);
 //     for(let i = 0; i < DATA_SIZE_HALF; i++) array[i] = i;
 //     for(let i = 0; i < 3; i++) shuffle(array);
-//
 //     return array;
-// }());
-//
-// console.log(rnd);
+// }()));
 
 const rnd = [27, 36, 31, 21, 13, 5, 11, 0, 16, 8, 9, 28, 25, 49, 6, 26, 12, 29, 38, 1, 40, 35, 20, 23, 2, 7, 18, 48, 45, 17, 22, 39, 32, 37, 24, 4, 41, 44, 14, 34, 19, 47, 46, 10, 30, 15, 33, 3, 42, 43];
 
@@ -126,9 +122,7 @@ queue.push({
         this.fn(items);
     },
     test: null,
-    start: function(){
-        shuffle_rnd();
-    },
+    start: null,
     prepare: function(){
         clone = next();
     },
@@ -146,9 +140,7 @@ queue.push({
         this.fn(next());
     },
     test: null,
-    start: function(){
-        shuffle_rnd();
-    },
+    start: null,
     prepare: function(){
         clone = next();
     },
@@ -252,7 +244,6 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
         tmp = next().splice(DATA_SIZE_HALF);
         this.fn(enforce(items));
     },
@@ -272,7 +263,6 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
         this.fn(next());
     },
     prepare: function(){
@@ -290,7 +280,6 @@ queue.push({
 queue.push({
     name: "toggle",
     init: function(){
-        shuffle_rnd();
         this.fn(clone = next());
     },
     test: null,
@@ -317,7 +306,6 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
         this.fn(next());
     },
     prepare: function(){
@@ -619,17 +607,17 @@ function perform(){
     }
 }
 
-function shuffle_rnd(items){
-
-    items || (items = factory[pos]);
-
-    for(let i = 0; i < DATA_SIZE_HALF; i++) {
-
-        swap(items, i, DATA_SIZE_HALF + rnd[i]);
-    }
-
-    return items;
-}
+// function shuffle_rnd(items){
+//
+//     items || (items = factory[pos]);
+//
+//     for(let i = 0; i < DATA_SIZE_HALF; i++) {
+//
+//         swap(items, i, DATA_SIZE_HALF + rnd[i]);
+//     }
+//
+//     return items;
+// }
 
 // function shuffle(items){
 //

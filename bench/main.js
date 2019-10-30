@@ -24,7 +24,7 @@
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
-        "knockout", "lit-html", "ractive"
+        "knockout", "lit-html", "ractive", "stage0"
     ]);
 
     function init(hash){
@@ -99,6 +99,7 @@
         "knockout": 24.8,
         "lit-html": 17.31,
         "ractive": 68.2,
+        "stage0": 0, // not allowed due to missing dom manipulation
 
         "mikado-cross-shared": 2.8,
         "mikado-exclusive": 2.8,

@@ -707,6 +707,10 @@ This stress test focuses a real life use case, where new data is coming from a s
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
 https://krausest.github.io/js-framework-benchmark/current.html
 
+#### Angular and React?
+
+There are some reasons why you did not find Angular or React on this list. Both aren't a library nor a framework, they are full integrated ecosystems which is quite unfair to compare. Also they runs completely async. If there was a way to force running them in sync I'm pretty sure, they would fill the bottom lines of this benchmark test.
+
 #### Local Installation
 
 Go to the folder _bench/_ and install dependencies:
