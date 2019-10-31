@@ -1817,20 +1817,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
         if(typeof class_name === "object"){
 
-            let observable = class_name[1];
-            class_name = class_name[0];
+            let observable = SUPPORT_REACTIVE && class_name[1];
+            class_name = "" + class_name[0];
 
             new_fn += SUPPORT_CACHE && this.cache ? (
 
-                SUPPORT_CACHE_HELPERS ?
+                SUPPORT_CACHE_HELPERS && !observable ?
 
                         ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}"
                     :
                         ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}"
-                ):
-                    ";self.className=" + class_name;
+                ):(
+                    class_name || !observable ?
 
-            if(SUPPORT_REACTIVE && observable){
+                        ";self.className=" + class_name
+                    :
+                        ""
+            );
+
+            if(observable){
 
                 init_proxy(this, class_name, ["_class", path_length]);
                 has_observe++;
@@ -1877,20 +1882,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 // NOTE: did not reset old state when attributes were manually changed
 
-                let observable = value[1];
-                value = value[0];
+                let observable = SUPPORT_REACTIVE && value[1];
+                value = "" + value[0];
 
                 new_fn += SUPPORT_CACHE && this.cache ? (
 
-                    SUPPORT_CACHE_HELPERS ?
+                    SUPPORT_CACHE_HELPERS && !observable ?
 
                             ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self.setAttribute('" + key + "',v)}"
                         :
                             ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}"
-                    ):
-                        ";self.setAttribute('" + key + "'," + value + ")";
+                    ):(
+                        value || !observable ?
 
-                if(SUPPORT_REACTIVE && observable){
+                        ";self.setAttribute('" + key + "'," + value + ")"
+                    :
+                        ""
+                );
+
+                if(observable){
 
                     init_proxy(this, value, ["_attr", path_length, key]);
                     has_observe++;
@@ -1913,20 +1923,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else if(style.length){
 
-            let observable = style[1];
+            let observable = SUPPORT_REACTIVE && style[1];
             style = style[0];
 
             new_fn += SUPPORT_CACHE && this.cache ? (
 
-                SUPPORT_CACHE_HELPERS ?
+                SUPPORT_CACHE_HELPERS && !observable ?
 
                         ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}"
                     :
                         ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}"
-                ):
-                    ";self.style.cssText=" + style;
+                ):(
+                    style || !observable ?
 
-            if(SUPPORT_REACTIVE && observable){
+                        ";self.style.cssText=" + style
+                    :
+                        ""
+            );
+
+            if(observable){
 
                 init_proxy(this, style, ["_css", path_length]);
                 has_observe++;
@@ -1983,8 +1998,8 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(is_object){
 
-                observable = text[1];
-                text = text[0];
+                observable = SUPPORT_REACTIVE && text[1];
+                text = "" + text[0];
             }
 
             let text_node = document.createTextNode(text);
@@ -2002,17 +2017,22 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 const text_fn = SUPPORT_CACHE && this.cache ? (
 
-                    SUPPORT_CACHE_HELPERS ?
+                    SUPPORT_CACHE_HELPERS && !observable ?
 
                             ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}"
                         :
                             ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}"
-                    ):
-                        ";self.nodeValue=" + text;
+                    ):(
+                        text || !observable ?
+
+                            ";self.nodeValue=" + text
+                        :
+                            ""
+                );
 
                 concat_path(has_update, text_fn, path_length, SUPPORT_CACHE && this.cache);
 
-                if(SUPPORT_REACTIVE && observable){
+                if(observable){
 
                     init_proxy(this, text, ["_text", path_length]);
                     has_observe++;
@@ -2034,20 +2054,25 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
             if(typeof html === "object"){
 
-                let observable = html[1];
-                html = html[0];
+                let observable = SUPPORT_REACTIVE && html[1];
+                html = "" + html[0];
 
                 new_fn += SUPPORT_CACHE && this.cache ? (
 
-                    SUPPORT_CACHE_HELPERS ?
+                    SUPPORT_CACHE_HELPERS && !observable ?
 
                             ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}"
                         :
                             ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}"
-                    ):
-                        ";self.innerHTML=" + html;
+                    ):(
+                        html || !observable ?
 
-                if(SUPPORT_REACTIVE && observable){
+                            ";self.innerHTML=" + html
+                        :
+                            ""
+                );
+
+                if(observable){
 
                     init_proxy(this, html, ["_html", path_length]);
                     has_observe++;
