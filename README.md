@@ -2991,6 +2991,17 @@ The keyed pool is basically the same concept like template pool, but it has keye
 
 The live pool contains all elements which are actually rendered on screen (in use). That will keep track of not sharing elements which are already in use by another view. When elements were removed, they will move from live pool to the shared pools. When the option ___reuse___ was set to false, the live pool will also share its elements to the next render loop of the same view.
 
+#### Some notes about pools
+
+Pooling just extends concepts which are already exist/used:
+
+1. The queued pool extends the feature of "recycling" (reusing) nodes
+2. The keyed pool extends the feature of keeping components which are referential keyed
+
+_"Does pooling have any advantages?"_ yes, absolutely. Otherwise recycling or keyed wouldn't have any advantage at all. So semantically there is nothing changed when using pools.
+
+_"How does pooling improve performance?"_ the benchmark suite from here gets a benefit in 4 from 11 test cases by using pools (create, replace, append, toggle). In all other tests pooling has no effect, except it has an extra cost because of applying pool transitions. But that isn't the main essence behind pools. Everyone who is thinking pooling exist to just boost this benchmark did not understand this <a href="#concept">concept</a>. The most important capability of Mikados pools isn't covered by any of this tests yet. Because the true advantage comes in when using partials, includes and partial loops. But those aren't strictly compared anywhere. If there was a benchmark which measures the performance of partial loops and __mixin them in different contexts__ (by example) I'm pretty sure, that Mikado gains an astronomical performance factor over all others. Sadly I haven't the time to provide such a comparison. In the future someone might be release a benchmark which covers this case, I would go in immediately.
+
 ## Motivation
 
 This library was build by reversed engineering with these primary goals as its base:
