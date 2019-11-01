@@ -14,11 +14,25 @@ if (process.env.production) {
 	plugins.push(terser());
 }
 
-export default {
+export default [{
 	input: 'src/main.jsx',
 	output: {
 		file: 'dist/main.js',
 		format: 'iife'
 	},
 	plugins
-};
+}, {
+	input: 'src/main-keyed.jsx',
+	output: {
+		file: 'dist/main-keyed.js',
+		format: 'iife'
+	},
+	plugins
+}, {
+	input: 'src/main-non-keyed.jsx',
+	output: {
+		file: 'dist/main-non-keyed.js',
+		format: 'iife'
+	},
+	plugins
+}];

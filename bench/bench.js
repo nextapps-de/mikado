@@ -160,7 +160,7 @@ queue.push({
     test: null,
     start: null,
     prepare: function(index){
-        clone = enforce(update(items, index));
+        clone = enforce(update(enforce(items), index));
     },
     fn: null,
     end: null,
