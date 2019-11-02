@@ -1,11 +1,12 @@
-import { createRoot, createState } from "solid-js";
+import { createRoot, createState, reconcile } from "solid-js";
 
-// Typical internal managed data usage
+// Explicit keyed reconciliation useful for immutable data stores or data snapshots
 const App = () => {
   let itemId, itemIndex;
   const [state, setState] = createState({ data: [] });
 
-  window._solid = items => setState("data", items.length ? items : []);
+  window._solid = items =>
+    setState(reconcile("data", items.length ? items : []));
 
   return (
     <div>
