@@ -1,5 +1,5 @@
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
-<h3>Next generation template engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>New generation template engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high performance applications.
 
@@ -397,7 +397,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=center><sub>Update</sub></td>
         <td align=center><sub>Order</sub></td>
         <td align=center><sub>Repaint</sub></td>
-        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Add</sub></td>
         <td align=center><sub>Remove</sub></td>
         <td align=center><sub>Toggle</sub></td>
         <td align=center><sub>Clear</sub></td>
@@ -418,7 +418,24 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>31265</sub></td>
         <td align=right><sub>25276</sub></td>
         <td align=right><b><sub>994</sub></b></td>
-        <td align=right><b><sub>60020</sub></b></td>
+        <td align=right><b><sub>59037</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>solid</sub></td>
+        <td align=right><sub>0</sub></td>
+        <td align=right><sub>339</sub></td>
+        <td align=right><sub>737</sub></td>
+        <td align=right><sub>665</sub></td>
+        <td align=right><sub>7291</sub></td>
+        <td align=right><sub>4029</sub></td>
+        <td align=right><sub>13279</sub></td>
+        <td align=right><sub>1391</sub></td>
+        <td align=right><sub>7487</sub></td>
+        <td align=right><sub>2470</sub></td>
+        <td align=right><sub>15227</sub></td>
+        <td align=right><b><sub>156</sub></b></td>
+        <td align=right><b><sub>4169</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -435,7 +452,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
         <td align=right><b><sub>196</sub></b></td>
-        <td align=right><b><sub>3099</sub></b></td>
+        <td align=right><b><sub>3048</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -452,7 +469,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
         <td align=right><b><sub>175</sub></b></td>
-        <td align=right><b><sub>2639</sub></b></td>
+        <td align=right><b><sub>2596</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -469,7 +486,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1464</sub></td>
         <td align=right><sub>24931</sub></td>
         <td align=right><b><sub>214</sub></b></td>
-        <td align=right><b><sub>1385</sub></b></td>
+        <td align=right><b><sub>1365</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
@@ -485,7 +502,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1186</sub></td>
         <td align=right><sub>27131</sub></td>
         <td align=right><b><sub>157</sub></b></td>
-        <td align=right><b><sub>1232</sub></b></td>
+        <td align=right><b><sub>1211</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
@@ -501,7 +518,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1187</sub></td>
         <td align=right><sub>23713</sub></td>
         <td align=right><b><sub>165</sub></b></td>
-        <td align=right><b><sub>1093</sub></b></td>
+        <td align=right><b><sub>1076</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -518,7 +535,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>1096</sub></td>
         <td align=right><sub>18047</sub></td>
         <td align=right><b><sub>161</sub></b></td>
-        <td align=right><b><sub>1043</sub></b></td>
+        <td align=right><b><sub>1028</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -535,7 +552,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>860</sub></td>
         <td align=right><sub>5520</sub></td>
         <td align=right><b><sub>86</sub></b></td>
-        <td align=right><b><sub>784</sub></b></td>
+        <td align=right><b><sub>776</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -552,7 +569,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>603</sub></td>
         <td align=right><sub>11765</sub></td>
         <td align=right><b><sub>158</sub></b></td>
-        <td align=right><b><sub>715</sub></b></td>
+        <td align=right><b><sub>706</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -569,7 +586,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4964</sub></td>
         <td align=right><b><sub>80</sub></b></td>
-        <td align=right><b><sub>538</sub></b></td>
+        <td align=right><b><sub>532</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -586,7 +603,7 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>212</sub></td>
         <td align=right><sub>1944</sub></td>
         <td align=right><b><sub>37</sub></b></td>
-        <td align=right><b><sub>223</sub></b></td>
+        <td align=right><b><sub>220</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -603,8 +620,8 @@ Values represents operations per second, each benchmark task has to process a da
         <td align=right><sub>103</sub></td>
         <td align=right><sub>1162</sub></td>
         <td align=right><b><sub>46</sub></b></td>
-        <td align=right><b><sub>175</sub></b></td>
-    </tr>	
+        <td align=right><b><sub>173</sub></b></td>
+    </tr>
 </table>
 
 The file size and memory gets less relevance. The maximum possible ___index___ is 1000, that requires a library to be best in each category. The ___score___ value is relational where a score of 1000 represents the statistical midfield.
@@ -1452,9 +1469,28 @@ __Notice:__ An original state does not include an event listener which was direc
 <a name="refresh"></a>
 #### Render vs. Refresh vs. Reconcile
 
-> When reusing was disabled you can take advantage of Mikados 3 different render functions.
+> Take advantage of Mikados 3 different render functions. Especially when reusing was disabled, this will gives you the full control.
 
-Whenever you call ___.render()___ when reusing was disabled all components will be recreated (restoring original state):
+<table>
+    <tr>
+        <td>.refresh()</td>
+        <td>Just apply the data changes to the DOM. (did not add/remove/move)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>.reconcile()</td>
+        <td>Just apply item order by moving nodes along the shortest path. (did not add/remove/update)</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>.render()</td>
+        <td>Perform a full update. (including: add/remove/reconcile/update)</td>
+    </tr>
+</table>
+
+Basically the render function is already trying to apply the minimum required changes to the DOM. But prediction is always limited, also nothing could never make a prediction better than the developer itself who is implementing the task. Most of the optional methods provided by Mikado are simply just there, to get the most out when it matters. Use them to manual control the flow of batch processes and optimize performance-heavy tasks.
+
+Whenever you call ___.render()___ when also ___reusing___ was explicitly disabled all components will be recreated (restoring original state):
 ```js
 view.render(items);
 ```
@@ -1485,10 +1521,10 @@ view.refresh();
 
 Passing a components root node or an index to the refresh method performs faster than passing no parameter.
 
-__Hint:__ You cannot use refresh when new items was added/removed, this requires ___.reconcile(data)___ or ___.render(data)___.
+__Hint:__ You cannot use refresh when new items was added/removed, this requires ___.render(data)___.
 
 <a name="view.reconcile"></a>
-When you just add/remove/move items without updating its contents and you are in __keyed mode__ you can call reconciliation directly:
+When you just want to move items to its new order without updating its contents (also no add/remove) and you are in __keyed mode__ you can call reconciliation directly:
 
 ```js
 view.reconcile(items);
