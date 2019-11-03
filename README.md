@@ -672,7 +672,6 @@ Instance methods:
 - <a href="#view.index">view.__index__(node)</a>
 - <a href="#view.destroy">view.__destroy__(\<unload?\>)</a>
 - <a href="#view.unload">view.__unload__()</a>
-- <a href="#view.sync">view.__sync__()</a>
 
 Instance methods (not included in mikado.light.js):
 - <a href="#view.refresh">view.__refresh__(\<node | index\>, \<payload\>)</a>

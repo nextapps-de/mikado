@@ -8,7 +8,6 @@ declare class Mikado {
     append(data: Object, index?: number): Mikado;
     before(node_a: HTMLElement|number, node_b: HTMLElement|number): Mikado;
     cancel(): Mikado;
-    check(): Mikado;
     clear(purge?: boolean): Mikado;
     create(data: Object, view?: Object): HTMLElement;
     data(index: number): Object;
