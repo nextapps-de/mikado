@@ -17,15 +17,15 @@
 
     let lib = shuffle(modes ? [
 
-        "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
-        "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy",
-        "mikado-observer", "mikado-observer-proxy"
+        "mode-cross-shared", "mode-exclusive", "mode-keyed-noop",
+        "mode-keyed-shared", "mode-non-keyed", "mode-proxy",
+        "mode-array", "mode-array-proxy"
     ]:[
         "mikado", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
         "knockout", "lit-html", "ractive",
-        "stage0", "solid"
+        "stage0", "solid", "mikado-proxy"
     ]);
 
     function init(hash){
@@ -88,7 +88,8 @@
 
     let size = {
 
-        "mikado": 2.8,
+        "mikado": 3.0,
+        "mikado-proxy": 8.3,
         "domc": 4.46,
         "inferno": 8.4,
         "redom": 2.88,
@@ -103,14 +104,14 @@
         "stage0": 0, // not allowed due to missing dom manipulation
         "solid": 0, // it is a build and actually not comparable, TODO: take build size for all libs
 
-        "mikado-cross-shared": 2.8,
-        "mikado-exclusive": 2.8,
-        "mikado-keyed": 2.8,
-        "mikado-keyed-shared": 2.8,
-        "mikado-non-keyed": 2.8,
-        "mikado-proxy": 7.1,
-        "mikado-observer": 7.1,
-        "mikado-observer-proxy": 7.1
+        "mode-cross-shared": 3.0,
+        "mode-exclusive": 3.0,
+        "mode-keyed-noop": 3.0,
+        "mode-keyed-shared": 3.0,
+        "mode-non-keyed": 3.0,
+        "mode-proxy": 8.3,
+        "mode-array": 8.3,
+        "mode-array-proxy": 8.3
     };
 
     for(let x = 0; x < lib.length; x++){

@@ -18,7 +18,7 @@
     import { suite, root, store } from "./../../bench.js";
 
     var compile = window.SurplusCompiler.compile,
-        //data = window.SurplusDataMixin.default,
+        data = window.SurplusDataMixin.default,
         SArray = window.SArray.default;
     var todos = SArray([]);
 
@@ -35,7 +35,7 @@
             <div>
                 {todos.map(todo =>
                     <section data-id={todo.id} data-date={todo.date} data-index={todo.index}>
-                        <div className={todo.classname} style-padding-right="10px">
+                        <div class={todo.classname} style-padding-right="10px">
                             <div class="title">{todo.title}</div>
                             <div class="content">{todo.content}</div>
                             <div class="footer">{todo.footer}</div>

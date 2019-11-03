@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-proxy-0.7.46 (recycle)</h1><hr>
+<h1>Benchmark: mikado-proxy-0.7.46 (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script src="./../mikado/dist/mikado.min.js"></script>
@@ -17,7 +17,7 @@
     const mikado = new Mikado(root, template, {
 
         "store": new Mikado.array(),
-        "reuse": true,
+        "reuse": false,
         "pool": false,
         "keep": true,
         "cache": true

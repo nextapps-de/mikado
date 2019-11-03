@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-proxy-0.7.46 (recycle)</h1><hr>
+<h1>Benchmark: Mikado (Proxy)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script src="./../mikado/dist/mikado.min.js"></script>
@@ -11,12 +11,12 @@
 
     "use strict";
 
-    import { suite, root } from "./../../bench.js";
-    import template from "./template/keyed.es6.js";
+    import { suite, root, store } from "./../../bench.js";
+    import template from "./template/proxy.es6.js";
 
     const mikado = new Mikado(root, template, {
 
-        "store": new Mikado.array(),
+        "store": store(),
         "reuse": true,
         "pool": false,
         "keep": true,

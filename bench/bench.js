@@ -15,9 +15,9 @@ const pathname = window.location.pathname;
 const keyed = pathname.indexOf("/keyed.html") !== -1;
 const strict = pathname.indexOf("/strict.html") !== -1;
 const internal = (pathname.indexOf("/internal.html") !== -1) ||
-                 (pathname.indexOf("mikado-observer") !== -1) ||
-                 (pathname.indexOf("mikado-proxy") !== -1) ||
-                 (pathname.indexOf("mikado-observer-proxy") !== -1);
+                 (pathname.indexOf("mode-array") !== -1) ||
+                 (pathname.indexOf("mode-proxy") !== -1) ||
+                 (pathname.indexOf("mode-array-proxy") !== -1);
 
 const params = (function(){
 
@@ -404,7 +404,7 @@ function check(fn){
     fn(enforce(items));
     if(!validate(data[0])) return false;
 
-    // checks if libs updates contents on same id
+    // checks if libs updates contents on same key
 
     const tmp = enforce(items);
     tmp[0].title = "test";
@@ -523,8 +523,9 @@ function msg(message, a){
 // #####################################################################################
 
 let str_results = "";
-const perf = window.performance;
+const perf = window.performance || {};
       perf.memory || (perf.memory = { usedJSHeapSize: 0 });
+      perf.now || (perf.now = function(){ return Date.now() });
 
 let current = 0;
 let update_failed;
@@ -645,13 +646,13 @@ function update(items, index){
 
         current = i + index;
 
-       (current % 29) || swap_value(items, current, "date");
-       (current % 23) || swap_value(items, current, "classname");
-       (current % 19) || swap_value(items, current, "months");
-       (current % 17) || swap_value(items, current, "content");
-       (current % 13) || swap_value(items, current, "title");
-       (current % 11) || swap_value(items, current, "days");
-       (current % 7 ) || swap_value(items, current, "footer");
+        (current % 29) || swap_value(items, current, "date");
+        (current % 23) || swap_value(items, current, "classname");
+        (current % 19) || swap_value(items, current, "months");
+        (current % 17) || swap_value(items, current, "content");
+        (current % 13) || swap_value(items, current, "title");
+        (current % 11) || swap_value(items, current, "days");
+        (current % 7 ) || swap_value(items, current, "footer");
     }
 
     return items;
