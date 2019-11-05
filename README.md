@@ -362,8 +362,8 @@ Use the modules from the "src" folder for development/debugging. When using the 
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>7.2 kb</td>
-        <td>2.8 kb</td>
+        <td>8.3 kb</td>
+        <td>3.0 kb</td>
     </tr>
 </table>
 
