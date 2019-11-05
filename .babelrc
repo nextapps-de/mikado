@@ -13,6 +13,7 @@
         "SUPPORT_TRANSPORT": true,
         "SUPPORT_TEMPLATE_EXTENSION": true,
         "SUPPORT_REACTIVE": true,
+        "SUPPORT_KEYED": true,
         "SUPPORT_POOLS": true,
         "SUPPORT_CALLBACKS": true,
         "SUPPORT_COMPILE": true

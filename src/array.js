@@ -304,23 +304,25 @@ Observer.prototype.concat = function(b){
     return this;
 };
 
-Observer.prototype.sort = function(fn){
+Observer.prototype.sort = proto.sort;
+// Observer.prototype.sort = function(fn){
+//
+//     //skip = true;
+//     proto.sort.call(this, fn);
+//     //this.mikado.refresh(this.view);
+//     //skip = false;
+//     return this;
+// };
 
-    //skip = true;
-    proto.sort.call(this, fn);
-    //this.mikado.refresh(this.view);
-    //skip = false;
-    return this;
-};
-
-Observer.prototype.reverse = function(){
-
-    //skip = true;
-    proto.reverse.call(this);
-    //this.mikado.refresh();
-    //skip = false;
-    return this;
-};
+Observer.prototype.reverse = proto.reverse;
+// Observer.prototype.reverse = function(){
+//
+//     //skip = true;
+//     proto.reverse.call(this);
+//     //this.mikado.refresh();
+//     //skip = false;
+//     return this;
+// };
 
 Observer.prototype.slice = proto.slice;
 

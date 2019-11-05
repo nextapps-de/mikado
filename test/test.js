@@ -481,7 +481,7 @@
         it("Should have been rendered properly in keyed mode (exclusive)", function(){
 
             var items = data.slice(0, 50);
-            mikado = new Mikado(root_1, "keyed", {reuse: false, keep: true, store: true, loose: false});
+            mikado = new Mikado(root_1, "keyed", {reuse: false, pool: "key", store: true, loose: false});
 
             mikado.render(items);
 
@@ -549,7 +549,7 @@
         it("Should have been rendered properly in keyed mode (exclusive shared)", function(){
 
             var items = data.slice(0, 50);
-            mikado = new Mikado(root_1, "keyed", {reuse: true, pool: true, keep: true});
+            mikado = new Mikado(root_1, "keyed", {reuse: true, pool: "key"});
 
             mikado.render(items);
 
@@ -581,7 +581,7 @@
         it("Should have been purged properly", function(){
 
             var items = data.slice(20, 30);
-            mikado = new Mikado(root_1, "keyed", {reuse: true, keep: true, pool: false});
+            mikado = new Mikado(root_1, "keyed", {reuse: true, pool: "key"});
 
             mikado.render(data.slice(0, 10));
             mikado.render(data.slice(10, 20));
@@ -600,7 +600,7 @@
         it("Should have been mounted properly", function(){
 
             var items = data.slice(0);
-            mikado = new Mikado(root_1, "keyed", {reuse: false, keep: true});
+            mikado = new Mikado(root_1, "keyed", {reuse: false, pool: "key"});
 
             mikado.render(items);
             validate(mikado.dom[0], items[0]);
@@ -1286,11 +1286,11 @@
         it("Should have been compiled properly (template string)", function(){
 
             var template = Mikado.compile(
-                '<section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}" root>' +
+                '<section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{ data.index }}" root>' +
                     '<div class="{{data.class}}" style="padding-right: 10px;" tap="attach">' +
-                        '<div class="title" click="delegate:root">{{=data.title}}</div>' +
-                        '<div class="content" click="delegate:foo">{{#data.content}}</div>' +
-                        '<div class="footer">{{data.footer}}</div>' +
+                        '<div class="title" click="delegate:root">{{= data.title }}</div>' +
+                        '<div class="content" click="delegate:foo">{{# data.content }}</div>' +
+                        '<div class="footer">{{ data.footer }}</div>' +
                     '</div>' +
                 '</section>'
             );
@@ -1349,7 +1349,7 @@
 
         it("Should have been find properly (keyed)", function(){
 
-            mikado = new Mikado(root_1, "keyed", { reuse: false, keep: true });
+            mikado = new Mikado(root_1, "keyed", { reuse: false, pool: "key" });
             mikado.render(data);
 
             expect(mikado.find(data[10].id)).to.equal(mikado.dom[10]);

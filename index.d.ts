@@ -58,6 +58,7 @@ declare namespace Mikado {
         pop(): Object;
         push(data: Object): void;
         reverse(): array;
+        set(array?: Array<Object>): array;
         shift(): Object;
         slice(index?: number): Array<Object>;
         sort(handler: Function): array;

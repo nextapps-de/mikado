@@ -15,14 +15,14 @@
 
     "use strict";
 
-    import { suite, root, store } from "./../../bench.js";
+    import { suite, root } from "./../../bench.js";
     import template from "./template/keyed.es6.js";
 
     const mikado = new Mikado(root, template, {
 
-        "store": store(),
-        "pool": false,
-        "keep": true
+        "store": false,
+        "reuse": true,
+        "pool": "key"
     });
 
     suite["mikado"] = function(items){

@@ -1,3 +1,10 @@
+## 0.7.5
+`change` the option __pool__ has changed, set it to _true_ to use both pools: Recycle Pool + Keyed Pool, or set it to _false_ to fully disable pooling, or set it to either one of both: ___"queue"___ or ___"key"___ to enable just one of them respectively<br>
+`change` the option __keep__ was removed, because it was replaced by option `pool: "key"` which will switch into the "explicit keyed mode"<br>
+`fix` observable properties<br>
+`fix` purge cache<br>
+`add` new build flag: _SUPPORT_KEYED_<br>
+
 ## 0.7.4
 `improve` inherit cache from factory<br>
 `improve` add fast path within reconciliation<br>

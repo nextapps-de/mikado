@@ -139,7 +139,7 @@ Mikado.prototype.mount = function(target){
 
     if(this.root !== target){
 
-        if(this.key && this.root){
+        if(SUPPORT_KEYED && this.key && this.root){
 
             this.root["_pool"] = this.live;
             this.live = target["_pool"] || {};
@@ -180,7 +180,7 @@ if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("sy
                 }
                 else{
 
-                    this.dom[i]["_cache"] = null;
+                    this.dom[i]["_cache"] = {};
                 }
             }
         }
@@ -195,7 +195,7 @@ if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_H
 
         factory_pool[this.template + (SUPPORT_CACHE && this.cache ? "_cache" : "")] = null;
 
-        if(this.key){
+        if(SUPPORT_KEYED && this.key){
 
             // NOTE: fully purge the live pool when in use will lead into duped keys
 
@@ -216,7 +216,7 @@ if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_H
 
         // TODO: this will de-reference other instances with the same template
         this.tpl_pool && (this.tpl_pool = template_pool[this.template] = []);
-        this.key_pool && (this.key_pool = keyed_pool[this.template] = {});
+        SUPPORT_KEYED && this.key_pool && (this.key_pool = keyed_pool[this.template] = {});
 
         return this;
     };
@@ -259,7 +259,7 @@ if(SUPPORT_STORAGE){
 
         Mikado.prototype.find = function(data){
 
-            if(this.key){
+            if(SUPPORT_KEYED && this.key){
 
                 const key = typeof data !== "object" ? data : data[this.key];
 
@@ -433,16 +433,21 @@ Mikado.prototype.init = function(template, options){
 
         this.check();
 
-        this.key = template["k"];
-        this.live = this.key && {};
+        if(SUPPORT_KEYED){
+
+            this.key = template["k"];
+            this.live = this.key && {};
+        }
 
         if(SUPPORT_POOLS){
 
-            this.tpl_pool = this.reuse && (options["pool"] !== false) && (template_pool[tpl_name] || (
+            const pool = options["pool"];
+
+            this.tpl_pool = this.reuse && (pool !== false) && (pool !== "key") && (template_pool[tpl_name] || (
                 template_pool[tpl_name] = []
             ));
 
-            this.key_pool = this.key && (options["keep"] || this.tpl_pool) && (keyed_pool[tpl_name] || (
+            if(SUPPORT_KEYED) this.key_pool = this.key && (pool !== false) && (pool !== "queue") && (keyed_pool[tpl_name] || (
                 keyed_pool[tpl_name] = {}
             ));
 
@@ -504,7 +509,7 @@ Mikado.prototype.check = function(){
 
             if(id){
 
-                this.live = {};
+                if(SUPPORT_KEYED) this.live = {};
                 this.remove(0, this.length);
             }
         }
@@ -531,7 +536,7 @@ Mikado.prototype.create = function(data, view, index){
 
     //profiler_start("create");
 
-    let keyed = this.key;
+    let keyed = SUPPORT_KEYED && this.key;
     const key = keyed && data[keyed];
     let node, pool, factory, found;
 
@@ -874,7 +879,7 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
             return this.remove(0, length);
         }
 
-        const replace_key = ((SUPPORT_POOLS && this.key_pool) || !this.reuse) && this.key;
+        const replace_key = SUPPORT_KEYED && ((SUPPORT_POOLS && this.key_pool) || !this.reuse) && this.key;
 
         if(!replace_key && !this.reuse){
 
@@ -978,177 +983,183 @@ Mikado.prototype.render = function(data, view, callback, skip_async){
 //     };
 // }
 
-/**
- * Reconcile based on "longest distance" strategy
- * Source: https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
- * Author: Thomas Wilkerling
- * Licence: Apache-2.0
- *
- * @param {Array=} b
- * @param {Object=} view
- * @param {number=} x
- * @param {boolean|number=} render
- * @returns {Mikado}
- */
+if(SUPPORT_KEYED){
 
-Mikado.prototype.reconcile = function(b, view, x, render){
+    /**
+     * Reconcile based on "longest distance" strategy
+     * Source: https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance
+     * Author: Thomas Wilkerling
+     * Licence: Apache-2.0
+     *
+     * @param {Array=} b
+     * @param {Object=} view
+     * @param {number=} x
+     * @param {boolean|number=} render
+     * @returns {Mikado}
+     */
 
-    const store = SUPPORT_STORAGE && !this.extern && this.store;
+    Mikado.prototype.reconcile = function(b, view, x, render){
 
-    if(store){
+        const store = SUPPORT_STORAGE && !this.extern && this.store;
 
-        b || (b = store);
+        if(store){
 
-        // skips updating internal store
-        this.store = 0;
-    }
+            b || (b = store);
 
-    const a = this.dom;
-    const keys = this.live;
-    let end_b = b.length;
-    let end_a = a.length;
-    let max_end = end_a > end_b ? end_a : end_b;
-    let shift = 0;
-    const key = this.key;
-    //let steps = 0;
+            // skips updating internal store
+            this.store = 0;
+        }
 
-    for(x || (x = 0); x < max_end; x++){
+        const a = this.dom;
+        const keys = this.live;
+        let end_b = b.length;
+        let end_a = a.length;
+        let max_end = end_a > end_b ? end_a : end_b;
+        let shift = 0;
+        const key = this.key;
+        //let steps = 0;
 
-        let found;
+        for(x || (x = 0); x < max_end; x++){
 
-        if(x < end_b){
+            let found;
 
-            const b_x = b[x];
-            const ended = x >= end_a;
-            let a_x;
-            let b_x_key;
-            let a_x_key;
+            if(x < end_b){
 
-            if(!ended){
+                const b_x = b[x];
+                const ended = x >= end_a;
+                let a_x;
+                let b_x_key;
+                let a_x_key;
 
-                a_x = a[x];
-                b_x_key = b_x[key];
-                a_x_key = a_x["_key"];
+                if(!ended){
 
-                if(a_x_key === b_x_key){
+                    a_x = a[x];
+                    b_x_key = b_x[key];
+                    a_x_key = a_x["_key"];
+
+                    if(a_x_key === b_x_key){
+
+                        if(render){
+
+                            this.update(a_x, b_x, view, x);
+                        }
+
+                        continue;
+                    }
+                }
+
+                if(ended || !keys[b_x_key]){
 
                     if(render){
 
-                        this.update(a_x, b_x, view, x);
+                        if(ended || !this.key_pool){
+
+                            end_a++;
+                            max_end = end_a > end_b ? end_a : end_b;
+
+                            this.add(b_x, view, x);
+                        }
+                        else{
+
+                            this.replace(a_x, b_x, view, x);
+                        }
                     }
 
                     continue;
                 }
-            }
 
-            if(render && (ended || !keys[b_x_key])){
+                let idx_a, idx_b;
 
-                if(ended || !this.key_pool){
+                for(let y = x + 1; y < max_end; y++){
 
-                    end_a++;
-                    max_end = end_a > end_b ? end_a : end_b;
+                    // determine longest distance
+                    if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
+                    if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
 
-                    this.add(b_x, view, x);
-                }
-                else{
+                    if(idx_a && idx_b){
 
-                    this.replace(a_x, b_x, view, x);
-                }
+                        // shift up (move target => current)
+                        if(idx_a >= idx_b){
 
-                continue;
-            }
+                            const tmp_a = a[idx_a - 1];
 
-            let idx_a, idx_b;
+                            // when distance is 1 it will always move before, no predecessor check necessary
+                            this.root.insertBefore(tmp_a, a_x);
 
-            for(let y = x + 1; y < max_end; y++){
+                            if(render){
 
-                // determine longest distance
-                if(!idx_a && (y < end_a) && (a[y]["_key"] === b_x_key)) idx_a = y + 1;
-                if(!idx_b && (y < end_b) && (b[y][key] === a_x_key)) idx_b = y + 1;
-
-                if(idx_a && idx_b){
-
-                    // shift up (move target => current)
-                    if(idx_a >= idx_b){
-
-                        const tmp_a = a[idx_a - 1];
-
-                        // when distance is 1 it will always move before, no predecessor check necessary
-                        this.root.insertBefore(tmp_a, a_x);
-
-                        if(render){
-
-                            this.update(tmp_a, b_x, view, x);
-                        }
-
-                        // fast path optimization when distance is equal (skips finding on next turn)
-                        if(idx_a === idx_b){
-
-                            if((y - x) > 1){
-
-                                this.root.insertBefore(a_x, a[idx_a]);
+                                this.update(tmp_a, b_x, view, x);
                             }
 
-                            a[x] = a[y];
-                            a[y] = a_x;
+                            // fast path optimization when distance is equal (skips finding on next turn)
+                            if(idx_a === idx_b){
 
-                            // if(render){
-                            //
-                            //     this.update(a_x, b[y], view, y);
-                            // }
+                                if((y - x) > 1){
+
+                                    this.root.insertBefore(a_x, a[idx_a]);
+                                }
+
+                                a[x] = a[y];
+                                a[y] = a_x;
+
+                                // if(render){
+                                //
+                                //     this.update(a_x, b[y], view, y);
+                                // }
+
+                                //steps++;
+                            }
+                            else{
+
+                                splice(a, idx_a - 1, x);
+                                //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
+
+                                shift++;
+                            }
 
                             //steps++;
                         }
+                        // shift down (move current => target)
                         else{
 
-                            splice(a, idx_a - 1, x);
-                            //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
+                            const index = idx_b - 1 + shift;
 
-                            shift++;
+                            // distance is always greater than 1, no predecessor check necessary
+                            this.root.insertBefore(a_x, a[index] || null);
+                            splice(a, x, (index > end_a ? end_a : index) - 1);
+                            //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
+
+                            shift--;
+                            x--;
+                            //steps++;
                         }
 
-                        //steps++;
+                        found = 1;
+                        break;
                     }
-                    // shift down (move current => target)
-                    else{
-
-                        const index = idx_b - 1 + shift;
-
-                        // distance is always greater than 1, no predecessor check necessary
-                        this.root.insertBefore(a_x, a[index] || null);
-                        splice(a, x, (index > end_a ? end_a : index) - 1);
-                        //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
-
-                        shift--;
-                        x--;
-                        //steps++;
-                    }
-
-                    found = 1;
-                    break;
                 }
+            }
+
+            if(!found){
+
+                this.remove(x);
+
+                end_a--;
+                max_end = end_a > end_b ? end_a : end_b;
+                x--;
             }
         }
 
-        if(!found){
+        if(store){
 
-            this.remove(x);
-
-            end_a--;
-            max_end = end_a > end_b ? end_a : end_b;
-            x--;
+            this.store = b;
         }
-    }
 
-    if(store){
+        //if(steps) console.log(steps);
 
-        this.store = b;
-    }
-
-    //if(steps) console.log(steps);
-
-    return this;
-};
+        return this;
+    };
+}
 
 /**
  * @param {Array} arr
@@ -1183,6 +1194,238 @@ function splice(arr, pos_old, pos_new, insert){
 
     arr[pos_new] = tmp;
 }
+
+// Mikado.prototype.reconcile = function(data, view, x){
+//
+//     const index = this.live;
+//     const a = this.dom; //Object.keys(index);
+//     const b = data;
+//
+//     let end = b.length;
+//     //let moves = [];
+//     let loops = 0;
+//     let used = {};
+//     //let clone = a.slice(0);
+//     let length = a.length;
+//
+//     if(!end){
+//
+//         return this.clear();
+//     }
+//
+//     for(; x < end; x++){
+//
+//         loops++;
+//
+//         used[b[x].id] = 1;
+//
+//         const current_b = b[x].id;
+//
+//         if((x < length) && index[current_b]){
+//
+//             const current_a = a[x]["_key"];
+//
+//             if(current_b !== current_a){
+//
+//                 for(let y = x + 1; y < length; y++){
+//
+//                     loops++;
+//
+//                     if((current_b === a[y]["_key"]) /*&& (x <= a.length)*/){
+//
+//                         //if(y === start) start++;
+//                         //else
+//                         // if(y === end - 1) end--;
+//
+//                         let tmp, from;
+//
+//                         if((y === x + 1) /*|| (current_a === b[y])*/){
+//
+//                             tmp = null;
+//                         }
+//                         else{
+//
+//                             if(y >= length - 1){
+//
+//                                 tmp = a.pop();
+//                             }
+//                             else{
+//
+//                                 tmp = a.splice(y, 1)[0];
+//                             }
+//
+//                             length--;
+//                             from = y;
+//                             //console.log(a);
+//                         }
+//
+//                         if(tmp && (x < (end - 1)) && (current_a === b[x + 1].id)){
+//
+//                             //this.arrange(this.dom[x + 1] || null, tmp, data[x], view, x);
+//                             this.root.insertBefore(tmp, a[x + 1] || null);
+//                             this.update(tmp, data[x], view, x);
+//
+//                             if(x >= length - 1){
+//
+//                                 a.push(tmp);
+//                                 //tmp = null;
+//                             }
+//                             else{
+//
+//                                 //tmp =
+//                                 a.splice(x, 0, tmp);//[0];
+//                                 //tmp = null;
+//                             }
+//
+//                             length++;
+//
+//                             //console.log(a);
+//
+//                             //moves.push(["m", y, x]);
+//                             //console.log((y) + " > " + (x ));
+//                         }
+//                         else{
+//
+//                             if(tmp){
+//
+//                                 //this.arrange(this.dom[x] || null, tmp, data[x], view, x);
+//                                 this.root.insertBefore(tmp, a[x] || null);
+//                                 this.update(tmp, data[x], view, x);
+//
+//                                 //if(x === a.length - 1){
+//
+//                                 //while(true){
+//
+//                                 const tmp2 = a[x];
+//                                 a[x] = tmp;
+//                                 //let tmp2 = a.pop();
+//                                 //a.push(tmp);
+//                                 tmp = tmp2;
+//                                 //}
+//
+//                                 // }
+//                                 // else{
+//                                 //
+//                                 //     tmp = a.splice(x, 1, tmp)[0];
+//                                 // }
+//
+//                                 //console.log(a);
+//
+//                                 //moves.push(["m", from, x]);
+//                                 //console.log((from) + " > " + (x));
+//
+//                                 from = x + 1;
+//                             }
+//                             else{
+//
+//                                 if(x >= length - 1){
+//
+//                                     tmp = a.pop();
+//                                 }
+//                                 else{
+//
+//                                     tmp = a.splice(x, 1)[0];
+//                                 }
+//
+//                                 length--;
+//
+//                                 //console.log(a);
+//
+//                                 from = x;
+//                             }
+//
+//                             for(let z = x + 1; z < end; z++){
+//
+//                                 loops++;
+//
+//                                 if(tmp["_key"] === b[z].id){
+//
+//                                     //if(z === start) start++;
+//                                     //else
+//                                     //if(z === end - 1) end--;
+//
+//                                     //this.arrange(this.dom[z + 1] || null, tmp, data[z], view, z);
+//                                     this.root.insertBefore(tmp, a[z + 1] || null);
+//                                     this.update(tmp, data[z], view, x);
+//
+//                                     if(z >= length - 1){
+//
+//                                         a.push(tmp);
+//                                     }
+//                                     else{
+//
+//                                         a.splice(z, 0, tmp);
+//                                     }
+//
+//                                     length++;
+//
+//                                     //console.log(a);
+//                                     //console.log("5");
+//
+//                                     //moves.push(["m", from, z]);
+//                                     //console.log((from) + " > " + (z));
+//                                     break;
+//                                 }
+//                                 // else if(z === end - 1){
+//                                 //
+//                                 //     //a.splice(from, 1);
+//                                 //     moves.push(["r", from]);
+//                                 //     //console.log("r: " + (from));
+//                                 // }
+//                             }
+//                         }
+//
+//                         break;
+//                     }
+//
+//                     //x++;
+//                 }
+//             }
+//             else{
+//
+//                 this.update(a[x], data[x], view, x);
+//             }
+//         }
+//         else{
+//
+//             const tmp = this.create(data[x], view, x);
+//
+//             tmp["_idx"] = x;
+//
+//             //this.add(data[x], view, x);
+//             //const tmp = this.dom[x];
+//             this.root.insertBefore(tmp, a[x + 1] || null);
+//             this.update(tmp, data[x], view, x);
+//
+//             if(x >= length - 1){
+//
+//                 a.push(tmp);
+//             }
+//             else{
+//
+//                 a.splice(x, 0, tmp);
+//             }
+//
+//             length++;
+//
+//             // console.log(a);
+//             // console.log("6");
+//             // moves.push(["n", x, current_b]);
+//         }
+//     }
+//
+//     for(let i = 0; i < a.length; i++){
+//
+//         if(!used[a[i]["_key"]]){
+//
+//             this.remove(a[i]);
+//
+//             //a.splice(i--, 1);
+//         }
+//     }
+//
+//     return this;
+// };
 
 /**
  * @param {!Object|Array<Object>=} data
@@ -1322,8 +1565,12 @@ Mikado.prototype.destroy = function(unload){
     this.template =
     this.vpath =
     this.update_path =
-    this.factory =
-    this.live = null;
+    this.factory = null;
+
+    if(SUPPORT_KEYED){
+
+        this.live = null;
+    }
 
     if(SUPPORT_STORAGE){
 
@@ -1447,7 +1694,7 @@ Mikado.prototype.remove = function(index, count, resize){
             //}
         }
 
-        if(SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"] && (this.key_pool || this.tpl_pool)){
+        if(SUPPORT_POOLS && SUPPORT_TEMPLATE_EXTENSION && this["include"] && ((SUPPORT_KEYED && this.key_pool) || this.tpl_pool)){
 
             for(let y = 0; y < this["include"].length; y++){
 
@@ -1484,7 +1731,7 @@ Mikado.prototype.remove = function(index, count, resize){
 
     this.length = length;
 
-    if(SUPPORT_POOLS && this.tpl_pool && !this.key_pool && (count > 1)){
+    if(SUPPORT_POOLS && this.tpl_pool && (!SUPPORT_KEYED || !this.key_pool) && (count > 1)){
 
         // reverse is applied in order to use push/pop rather than shift/unshift
         // when no keyed pool is used the right order of items will:
@@ -1514,7 +1761,7 @@ Mikado.prototype.remove = function(index, count, resize){
 
 Mikado.prototype.checkout = function(node){
 
-    if(this.key){
+    if(SUPPORT_KEYED && this.key){
 
         const ref = node["_key"];
 
@@ -1537,7 +1784,7 @@ Mikado.prototype.checkout = function(node){
 
         if(!this.size || (length < this.size)){
 
-            if(this.key_pool){
+            if(SUPPORT_KEYED && this.key_pool){
 
                 // update reference to queued shared-pool
                 node["_index"] = length;
@@ -1637,7 +1884,7 @@ Mikado.prototype.update = function(node, data, view, index){
         }
     }
 
-    if(this.key){
+    if(SUPPORT_KEYED && this.key){
 
         const ref = node["_key"];
         const tmp = data[this.key];
@@ -1820,15 +2067,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             let observable = SUPPORT_REACTIVE && class_name[1];
             class_name = "" + class_name[0];
 
-            new_fn += SUPPORT_CACHE && this.cache ? (
+            new_fn += SUPPORT_CACHE && this.cache && !observable ? (
 
-                SUPPORT_CACHE_HELPERS && !observable ?
+                SUPPORT_CACHE_HELPERS ?
 
                         ";v=" + class_name + ";if(self._class!==v){self._class=v;self.className=v}"
                     :
                         ";v=" + class_name + ";if(s._class" + path_length + "!==v){s._class" + path_length + "=v;self.className=v}"
                 ):(
-                    class_name || !observable ?
+                    class_name ?
 
                         ";self.className=" + class_name
                     :
@@ -1885,15 +2132,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 let observable = SUPPORT_REACTIVE && value[1];
                 value = "" + value[0];
 
-                new_fn += SUPPORT_CACHE && this.cache ? (
+                new_fn += SUPPORT_CACHE && this.cache && !observable ? (
 
-                    SUPPORT_CACHE_HELPERS && !observable ?
+                    SUPPORT_CACHE_HELPERS ?
 
                             ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self.setAttribute('" + key + "',v)}"
                         :
                             ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}"
                     ):(
-                        value || !observable ?
+                        value ?
 
                         ";self.setAttribute('" + key + "'," + value + ")"
                     :
@@ -1926,15 +2173,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             let observable = SUPPORT_REACTIVE && style[1];
             style = style[0];
 
-            new_fn += SUPPORT_CACHE && this.cache ? (
+            new_fn += SUPPORT_CACHE && this.cache && !observable ? (
 
-                SUPPORT_CACHE_HELPERS && !observable ?
+                SUPPORT_CACHE_HELPERS ?
 
                         ";v=" + style + ";if(self._css!==v){self._css=v;(self._style||(self._style=self.style)).cssText=v}"
                     :
                         ";v=" + style + ";if(s._css" + path_length + "!==v){s._css" + path_length + "=v;(self._style||(self._style=self.style)).cssText=v}"
                 ):(
-                    style || !observable ?
+                    style ?
 
                         ";self.style.cssText=" + style
                     :
@@ -2015,15 +2262,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 this.vpath[path_length] = path + "|";
                 dom_path[path_length] = text_node;
 
-                const text_fn = SUPPORT_CACHE && this.cache ? (
+                const text_fn = SUPPORT_CACHE && this.cache && !observable ? (
 
-                    SUPPORT_CACHE_HELPERS && !observable ?
+                    SUPPORT_CACHE_HELPERS ?
 
                             ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}"
                         :
                             ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}"
                     ):(
-                        text || !observable ?
+                        text ?
 
                             ";self.nodeValue=" + text
                         :
@@ -2057,15 +2304,15 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 let observable = SUPPORT_REACTIVE && html[1];
                 html = "" + html[0];
 
-                new_fn += SUPPORT_CACHE && this.cache ? (
+                new_fn += SUPPORT_CACHE && this.cache && !observable ? (
 
-                    SUPPORT_CACHE_HELPERS && !observable ?
+                    SUPPORT_CACHE_HELPERS ?
 
                             ";v=" + html + ";if(self._html!==v){self._html=v;self.innerHTML=v}"
                         :
                             ";v=" + html + ";if(s._html" + path_length + "!==v){s._html" + path_length + "=v;self.innerHTML=v}"
                     ):(
-                        html || !observable ?
+                        html ?
 
                             ";self.innerHTML=" + html
                         :

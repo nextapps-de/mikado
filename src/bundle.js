@@ -51,36 +51,31 @@ if(SUPPORT_CACHE && SUPPORT_CACHE_HELPERS){
     Mikado["removeAttribute"] = removeAttribute;
 }
 
-(function(){
+const name = "Mikado";
+const root = window;
+let prop;
 
-    const name = "Mikado";
-    const factory = Mikado;
-    const root = this || window;
-    let prop;
+// AMD (RequireJS)
+if((prop = root["define"]) && prop["amd"]){
 
-    // AMD (RequireJS)
-    if((prop = root["define"]) && prop["amd"]){
+    prop([], function(){
 
-        prop([], function(){
+        return Mikado;
+    });
+}
+// Closure (Xone)
+// else if((prop = root["modules"])){
+//
+//     prop[name.toLowerCase()] = Mikado;
+// }
+// CommonJS (Node.js)
+else if(typeof root["exports"] === "object"){
 
-            return factory;
-        });
-    }
-    // Closure (Xone)
-    else if((prop = root["modules"])){
+    /** @export */
+    root["module"].exports = Mikado;
+}
+// Global (window)
+else{
 
-        prop[name.toLowerCase()] = factory;
-    }
-    // CommonJS (Node.js)
-    else if(typeof root["exports"] === "object"){
-
-        /** @export */
-        root["module"].exports = factory;
-    }
-    // Global (window)
-    else{
-
-        root[name] = factory;
-    }
-
-}());
+    root[name] = Mikado;
+}

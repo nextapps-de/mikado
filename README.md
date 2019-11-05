@@ -808,19 +808,13 @@ Global helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>pool</b></td>
-        <td>When enabled, a shared pool will be used. Requires <b>reuse</b> also to be enabled.</td>
+        <td>Set it to true to use both pools: Recycle Pool + Keyed Pool (autoscale), or set it to false to fully disable pooling, or set it to either one of both: "queue" or "key" to enable just one of them respectively.</td>
         <td>true</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>size</b></td>
         <td>Sets the maximum size of the shared pool. When not set or false it uses "auto scaling".</td>
-        <td>false</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><b>keep</b></td>
-        <td>When enabled, Mikado uses an exclusive shared keyed pool. Requires <b>pool</b> to be false.</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -1382,7 +1376,7 @@ var view = Mikado.new(template, { pool: true });
 This will switch Mikado into a "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
 
 <a name="explicit-keyed"></a>
-#### 2. Explicit Keyed (Non-Shared)
+#### 2. Explicit Keyed (Non-Pool)
 
 A keyed strategy limits re-usability of components based on items with same ID. It just requires an __unique identifier__ on each rendered item (e.g. the ID).
 
@@ -1397,13 +1391,13 @@ Add the attribute ___key___ to the ___root element___ of a template (or the root
 To make them explicitly keyed also disable reusing:
 
 ```js
-var view = Mikado.new(template, { reuse: false });
+var view = Mikado.new(template, { reuse: false, pool: false });
 ```
 
 This will switch Mikado into a "explicit keyed" mode (non-shared).
 
 <a name="explicit-shared-keyed"></a>
-#### 3. Explicit Keyed (Shared)
+#### 3. Explicit Keyed (Shared Pool)
 
 This is a special mode which uses the shared keyed index exclusively (without pooling). This will give you the absolute maximum performance, but it has a limit you should keep in mind when using this mode. The exclusive keyed mode is unbounded. Just use this mode on templates where the amount of incoming data is supposed to be limited (e.g. in a common scenario: pagination through a set of x items, like a todo list). Otherwise you will get no performance gain and also the memory allocation increases constantly (unbounded).
 
@@ -1417,7 +1411,7 @@ This is a special mode which uses the shared keyed index exclusively (without po
 along with these options:
 
 ```js
-var view = Mikado.new(template, { reuse: false, keep: true });
+var view = Mikado.new(template, { reuse: false, pool: "key" });
 ```
 
 This will switch Mikado into a "explicit keyed" mode (shared).
@@ -1458,7 +1452,7 @@ You can also use the same strategy from 3. for hybrid mode. But it has the same 
 along with these options:
 
 ```js
-var view = Mikado.new(template, { pool: false, keep: true });
+var view = Mikado.new(template, { pool: "key" });
 ```
 
 This will switch Mikado into a "exclusive-shared-keyed" mode.
