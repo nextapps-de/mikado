@@ -37,12 +37,13 @@ __Benchmark:__
 
 __Demo:__
 
-1. <a href="demo/basic/basic.html">Basic Example</a>
-1. <a href="demo/basic/demo.html">Basic Example + Events (Classic Javascript)</a>
-2. <a href="demo/basic/demo.es6.html">Basic Example + Events (ES6 Modules)</a>
-3. <a href="demo/basic/compiler.html">Runtime Compiler</a>
-4. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
-5. <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">js-framework-benchmark</a>
+1. <a href="demo/basic/basic.html">Basic Example + Runtime Compiler (HTML5 Template)</a>
+2. <a href="demo/basic/compiler.html">Basic Example + Runtime Compiler (String Template)</a>
+3. <a href="demo/basic/demo.html">Basic Example + Events (ES5)</a>
+4. <a href="demo/basic/demo.es6.html">Basic Example + Events (ES6 Modules)</a>
+5. <a href="demo/basic/demo.dev.html">Basic Example + Events (Development Sources)</a>
+6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
+7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
 
 #### Comming Soon
 `new` webpack loader to bundle templates<br>
@@ -69,6 +70,7 @@ Guide for new developers (the most simple example, just takes 3 minutes):
 4. <a href="#api">API Overview</a>
 5. <a href="#options">Options</a>
 6. <a href="#compiler">Template Compiler</a>
+    - <a href="#xss">XSS Security</a>
     - <a href="#mikado-compile">Using Dedicated Compiler</a>
     - <a href="#compiler-html5">Using HTML5 Templates</a>
     - <a href="#compiler-string">Using Template String</a>
@@ -824,6 +826,26 @@ Global helpers (optional, not included in mikado.light.js):
         <td>true</td>
     </tr>
 </table>
+
+<a name="compiler"></a>
+## Compile Templates
+
+<a name="xss"></a>
+#### XSS Security
+
+Whenever you want to load and/or compile templates during runtime on client side keep this rule in mind:
+> __Never load templates from an external resource you did not own (or thrust)!__
+
+To prevent XSS there are some options:
+1. use templates provided by yourself (recommended)
+2. load external templates from sources you are thrust
+3. ___Coming Soon:___ bundle all external templates during build and pass an external sanitizer (e.g. a node module) to the compiler options
+4. ___Coming Soon:___ use the `mikado-server` as a gateway which provides a built-in sanitizer for external templates
+5. ___Coming Soon:___ use a sanitizer in the client side and pass this along the option field `sanitize`
+
+Sanitize external resources comes with some big drawbacks accordingly to this <a href="https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md">specification</a>:
+- Templates supports just a small subset of tags when using `html` as a content type
+- Templates could __not__ include any javascript expressions (just supports basic template expression accordingly to mustache or handlebars)
 
 <a name="compiler"></a>
 #### Compiler Methods

@@ -4,23 +4,24 @@
 </head>
 <body>
 <div id="root"></div>
-<template id="my-template">
-    <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}">
-        <div class="{{data.class}}" style="padding-right: 10px;">
-            <div class="title" click="test">{{data.title}}</div>
-            <div class="content">{{data.content}}</div>
-            <div class="footer">{{data.footer}}</div>
-        </div>
-    </section>
-</template>
 <script src="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js"></script>
-<script src="data.js"></script>
+<script src="data/data.js"></script>
 <script>
 
     (function(){
 
+        const my_template = `
+            <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{data.index}}">
+                <div class="{{data.class}}" style="padding-right: 10px;">
+                    <div class="title" click="test">{{data.title}}</div>
+                    <div class="content">{{data.content}}</div>
+                    <div class="footer">{{data.footer}}</div>
+                </div>
+            </section>
+        `;
+
         const root = document.getElementById("root");
-        const template = Mikado.compile("my-template");
+        const template = Mikado.compile(my_template);
         const mikado = new Mikado(template);
 
         // register route for the click event
