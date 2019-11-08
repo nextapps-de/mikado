@@ -1,8 +1,8 @@
 # Concepts of reconcile
 
-I want to share some of my concepts how to find the shortest path to re-arrange dom nodes for re-using in keyed mode. I don't know if they already exist, but the implementation which I have seen are too complicated for what they try to do. My first thought was, that could be done simpler. So I start from scratch with pen and paper.
+I want to share some of my concepts on how to find the shortest path to re-arrange dom nodes for re-using in keyed mode. I don't know if they already exist, but the implementations which I have seen are too complicated for what they try to do. My first thought was, that it could be done simpler. So I start from scratch with a pen and paper.
 
-These concept are just a basic start and of course do not provide all the edge cases. Also the 3 examples are very basic (no inserts, no removes) to make things easier to understand.
+These concepts are just a basic start and of course, do not provide all the edge cases. Also, the 3 examples are very basic (no inserts, no removes) to make things easier to understand.
 
 ## 1. Offset List
 
