@@ -1,7 +1,7 @@
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
 <h3>New generation template engine. Super-lightweight, outstanding performance, no dependencies.</h3>
 
-Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high performance applications.
+Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high-performance applications.
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
@@ -45,15 +45,15 @@ __Demo:__
 6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
 
-#### Comming Soon
+#### Coming Soon
 `new` webpack loader to bundle templates<br>
 `add` file endings for templates are customizable (e.g use ___.shtml___)<br>
 
 #### How to learn Mikado?
 
-Thanks to the reversed engineering Mikado provides you one of the most simple to learn idiomatic style which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. __It will take 3 minutes to become productive.__ Don't let confuse you about the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of other framework documentations. You will do not need this details to start with. But when you would like to know more you get a chance to go deeper.
+Thanks to the reversed engineering, Mikado provides you one of the most simple to learn idiomatic styles which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. __It will take 3 minutes to become productive.__ Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of the other framework documentations. You will do not need these details to start with. But when you would like to know more you get a chance to go deeper.
 
-Also all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no anything external is required. You can start out of the box seamlessly. No pain you might know from other frameworks.
+Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required. You can begin seamlessly without the pain you might know from other frameworks.
 
 Guide for new developers (the most simple example, just takes 3 minutes):
 - Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
