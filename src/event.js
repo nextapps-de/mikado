@@ -106,7 +106,7 @@ if(SUPPORT_EVENTS){
 
     Mikado["dispatch"] = Mikado.prototype.dispatch = function(id, target, event, event_target){
 
-        listener[id](target, event, event_target);
+        listener[id].call(this, target, event, event_target);
         return this;
     };
 
