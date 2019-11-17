@@ -1,0 +1,27 @@
+<html lang="en">
+<body>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script src="./dist/mikado.light.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./bench.js";
+    import template from "./template/keyed.es6.js";
+
+    const mikado = new Mikado(root, template, {
+
+        "store": false,
+        "reuse": true,
+        "pool": "key"
+    });
+
+    suite["mikado"] = function(items){
+
+        mikado.render(items);
+    };
+
+</script>
+</body>
+</html>
