@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.54",
+  "version": "0.7.55",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -41,7 +41,7 @@
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug && npm run build:module",
     "update": "npm install google-closure-compiler@nightly && npm install babel-cli && npm install babel-plugin-minify-constant-folding && npm install babel-plugin-minify-dead-code-elimination && npm install babel-plugin-minify-flip-comparisons && npm install babel-plugin-minify-guarded-expressions && npm install babel-plugin-minify-infinity && npm install babel-plugin-minify-mangle-names && npm install babel-plugin-minify-replace && npm install babel-plugin-minify-simplify && npm install babel-plugin-minify-type-constructors && npm install babel-plugin-transform-member-expression-literals && npm install babel-plugin-transform-merge-sibling-variables && npm install babel-plugin-transform-minify-booleans && npm install babel-plugin-transform-property-literals && npm install babel-plugin-transform-simplify-comparison-operators && npm install babel-plugin-transform-undefined-to-void",
-    "test": "npm run build:pre && cd test && npm install && npx mikado-compile template.html -f && npx mikado-compile proxy.html -f && npx mikado-compile keyed.html -f && npm run test"
+    "test": "npm run build:pre && npm run build:light && cd test && npm install && npx mikado-compile template.html -f && npx mikado-compile proxy.html -f && npx mikado-compile keyed.html -f && npm run test"
   },
   "files": [
     ".babelrc",

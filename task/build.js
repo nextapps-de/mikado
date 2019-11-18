@@ -186,6 +186,11 @@ exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parame
     else{
 
         fs.writeFileSync(filename, build);
+
+        if(options["RELEASE"] === "light"){
+
+            fs.writeFileSync("test/bench/mikado-new/mikado.light.js", build);
+        }
     }
 
     console.log("Build Complete.");

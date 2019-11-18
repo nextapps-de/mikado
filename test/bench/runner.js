@@ -25,7 +25,7 @@ ws.config({
             browser.close();
             ws.stop();
 
-            if(diff > 20){
+            if(diff > 5){
 
                 try{
 

@@ -5,7 +5,7 @@
     const iframe = document.getElementById("iframe");
 
     const keep = true;
-    const duration = 0.1;
+    const duration = 1;
 
     const hash = window.location.hash;
     const strict = hash.indexOf("strict") !== -1;
