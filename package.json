@@ -21,6 +21,7 @@
     "email": "info@nextapps.de"
   },
   "main": "src/mikado.js",
+  "module": "dist/module/mikado.js",
   "browser": "src/bundle.js",
   "preferGlobal": false,
   "bin": {
