@@ -34,7 +34,7 @@ if(SUPPORT_EVENTS){
 
                 if(id){
 
-                    const tmp = id.indexOf(':');
+                    const tmp = id.indexOf(":");
 
                     if(tmp !== -1){
 

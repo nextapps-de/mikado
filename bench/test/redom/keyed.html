@@ -63,7 +63,7 @@
     class App {
         constructor ( store ) {
             this.store = store;
-            this.el = this.table = list('div', Item, null, { store });
+            this.el = this.table = list('div', Item, 'id', { store });
         }
         render () {
             this.table.update(this.store);
@@ -75,12 +75,6 @@
     mount(root, app);
 
     suite["redom"] = function(items){
-
-        if(items.length){
-
-            app.store = [];
-            app.render();
-        }
 
         app.store = items;
         app.render();

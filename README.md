@@ -420,18 +420,18 @@ The values represent operations per second, each benchmark task has to process a
     <tr>
         <td><sub>mikado</sub></td>
         <td align=right><sub>3</sub></td>
-        <td align=right><sub>27</sub></td>
-        <td align=right><sub>18745</sub></td>
-        <td align=right><sub>8124</sub></td>
-        <td align=right><sub>92669</sub></td>
-        <td align=right><sub>49554</sub></td>
-        <td align=right><sub>299140</sub></td>
-        <td align=right><sub>35254</sub></td>
-        <td align=right><sub>27563</sub></td>
+        <td align=right><sub>22</sub></td>
+        <td align=right><sub>19301</sub></td>
+        <td align=right><sub>8535</sub></td>
+        <td align=right><sub>206747</sub></td>
+        <td align=right><sub>51470</sub></td>
+        <td align=right><sub>220010</sub></td>
+        <td align=right><sub>35346</sub></td>
+        <td align=right><sub>27945</sub></td>
         <td align=right><sub>31265</sub></td>
-        <td align=right><sub>25276</sub></td>
-        <td align=right><b><sub>992</sub></b></td>
-        <td align=right><b><sub>57133</sub></b></td>
+        <td align=right><sub>26378</sub></td>
+        <td align=right><b><sub>996</sub></b></td>
+        <td align=right><b><sub>54089</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -447,8 +447,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>19278</sub></td>
         <td align=right><sub>16526</sub></td>
         <td align=right><sub>26216</sub></td>
-        <td align=right><b><sub>564</sub></b></td>
-        <td align=right><b><sub>13997</sub></b></td>
+        <td align=right><b><sub>537</sub></b></td>
+        <td align=right><b><sub>12803</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -464,8 +464,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>7487</sub></td>
         <td align=right><sub>2470</sub></td>
         <td align=right><sub>15227</sub></td>
-        <td align=right><b><sub>156</sub></b></td>
-        <td align=right><b><sub>4014</sub></b></td>
+        <td align=right><b><sub>149</sub></b></td>
+        <td align=right><b><sub>3587</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -481,8 +481,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>7443</sub></td>
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
-        <td align=right><b><sub>197</sub></b></td>
-        <td align=right><b><sub>2934</sub></b></td>
+        <td align=right><b><sub>191</sub></b></td>
+        <td align=right><b><sub>2647</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -498,8 +498,25 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>6614</sub></td>
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
-        <td align=right><b><sub>176</sub></b></td>
-        <td align=right><b><sub>2498</sub></b></td>
+        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>2256</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align=right><sub>2.9</sub></td>
+        <td align=right><sub>522</sub></td>
+        <td align=right><sub>421</sub></td>
+        <td align=right><sub>411</sub></td>
+        <td align=right><sub>4146</sub></td>
+        <td align=right><sub>3719</sub></td>
+        <td align=right><sub>4215</sub></td>
+        <td align=right><sub>761</sub></td>
+        <td align=right><sub>5750</sub></td>
+        <td align=right><sub>1380</sub></td>
+        <td align=right><sub>11744</sub></td>
+        <td align=right><b><sub>190</sub></b></td>
+        <td align=right><b><sub>1954</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -515,8 +532,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>2049</sub></td>
         <td align=right><sub>1464</sub></td>
         <td align=right><sub>24931</sub></td>
-        <td align=right><b><sub>215</sub></b></td>
-        <td align=right><b><sub>1321</sub></b></td>
+        <td align=right><b><sub>211</sub></b></td>
+        <td align=right><b><sub>1250</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
@@ -531,8 +548,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>1769</sub></td>
         <td align=right><sub>1186</sub></td>
         <td align=right><sub>27131</sub></td>
-        <td align=right><b><sub>157</sub></b></td>
-        <td align=right><b><sub>1172</sub></b></td>
+        <td align=right><b><sub>154</sub></b></td>
+        <td align=right><b><sub>1107</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
@@ -547,8 +564,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>1560</sub></td>
         <td align=right><sub>1187</sub></td>
         <td align=right><sub>23713</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
-        <td align=right><b><sub>1041</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
+        <td align=right><b><sub>987</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -564,8 +581,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>1577</sub></td>
         <td align=right><sub>1096</sub></td>
         <td align=right><sub>18047</sub></td>
-        <td align=right><b><sub>162</sub></b></td>
-        <td align=right><b><sub>994</sub></b></td>
+        <td align=right><b><sub>159</sub></b></td>
+        <td align=right><b><sub>941</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -581,25 +598,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>1129</sub></td>
         <td align=right><sub>860</sub></td>
         <td align=right><sub>5520</sub></td>
-        <td align=right><b><sub>86</sub></b></td>
-        <td align=right><b><sub>750</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>1090</sub></td>
-        <td align=right><sub>449</sub></td>
-        <td align=right><sub>441</sub></td>
-        <td align=right><sub>450</sub></td>
-        <td align=right><sub>451</sub></td>
-        <td align=right><sub>452</sub></td>
-        <td align=right><sub>468</sub></td>
-        <td align=right><sub>864</sub></td>
-        <td align=right><sub>603</sub></td>
-        <td align=right><sub>11765</sub></td>
-        <td align=right><b><sub>159</sub></b></td>
-        <td align=right><b><sub>682</sub></b></td>
+        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>708</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -615,8 +615,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>761</sub></td>
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4964</sub></td>
-        <td align=right><b><sub>81</sub></b></td>
-        <td align=right><b><sub>514</sub></b></td>
+        <td align=right><b><sub>79</sub></b></td>
+        <td align=right><b><sub>487</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -632,8 +632,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>298</sub></td>
         <td align=right><sub>212</sub></td>
         <td align=right><sub>1944</sub></td>
-        <td align=right><b><sub>37</sub></b></td>
-        <td align=right><b><sub>213</sub></b></td>
+        <td align=right><b><sub>36</sub></b></td>
+        <td align=right><b><sub>202</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -649,8 +649,8 @@ The values represent operations per second, each benchmark task has to process a
         <td align=right><sub>130</sub></td>
         <td align=right><sub>103</sub></td>
         <td align=right><sub>1162</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
-        <td align=right><b><sub>167</sub></b></td>
+        <td align=right><b><sub>45</sub></b></td>
+        <td align=right><b><sub>161</sub></b></td>
     </tr>
 </table>
 
@@ -842,7 +842,7 @@ Global helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>prefetch</b></td>
-        <td>Prefetch/prebuilt a template on page load. Disable to save memory an speed up page start.</td>
+        <td>Prefetch/prebuilt a template on page load. Disable to save memory a speed up page start.</td>
         <td>true</td>
     </tr>
 </table>
@@ -936,7 +936,7 @@ Sanitize external resources comes with some big drawbacks accordingly to this <a
 
 ### 1. Variant: Using Dedicated Compiler (Recommended)
 
-Define an HTML-like template and use double curly brackets to mark dynamic expressions which should be calculated during runtime:
+Define a HTML-like template and use double curly brackets to mark dynamic expressions which should be calculated during runtime:
 
 ```html
 <table>
@@ -1470,7 +1470,7 @@ along with these options:
 var view = Mikado.new(template, { pool: true });
 ```
 
-This will switch Mikado into an "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
+This will switch Mikado into a "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
 
 <a name="explicit-keyed"></a>
 
@@ -1537,7 +1537,7 @@ along with these options:
 var view = Mikado.new(template, { pool: true });
 ```
 
-This will switch Mikado into an "cross-shared-keyed" mode.
+This will switch Mikado into a "cross-shared-keyed" mode.
 
 <a name="shared-keyed"></a>
 
@@ -2099,7 +2099,7 @@ You have 2 options in this situation:
 2. using the <a href="#cache-helpers">caching helpers</a> which Mikado provides you exactly to this purpose.
 
 <!--
-Do not worry, there exist an rescue method to force re-sync:
+Do not worry, there exist a rescue method to force re-sync:
 ```js
 view.sync(); // re-sync dom nodes
 ```

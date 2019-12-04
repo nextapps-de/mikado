@@ -7,34 +7,36 @@
  */
 
 /*
-    Modes (keyed / non-keyed):
+    Modes Keyed:
 
-    1. keyed, non-reusing + live pool
+    1. keyed, non-reusing + live pool (explicit)
         key + !reuse
 
-    2. keyed, non-reusing + exclusive pool
-        (key + keep) + !reuse
+    2. keyed, non-reusing + exclusive pool (explicit)
+        (key + pool-key) + !reuse
 
-    3. keyed, reusing + live pool
+    3. keyed, reusing + live pool (hybrid)
         key + reuse
 
-    4. keyed, reusing + exclusive pool
-        (key + keep) + reuse
+    4. keyed, reusing + exclusive pool (hybrid)
+        (key + pool-key) + reuse
 
-    5. keyed, reusing + cross pool
+    5. keyed, reusing + cross pool (hybrid)
         key + (reuse + pool)
 
-    ----------------------------
+    ------------------------------------
+
+    Modes Non-Keyed:
 
     1. non-keyed, non-reusing (strict)
         !key + !reuse
 
-    2. non-keyed, reusing
+    2. non-keyed, reusing (recycle)
         !key + reuse
 
-    3. non-keyed, reusing + cross pool
+    3. non-keyed, reusing + cross pool (recycle)
         !key + (reuse + pool)
- */
+*/
 
 import "./event.js";
 import "./helper.js";
@@ -1195,238 +1197,6 @@ function splice(arr, pos_old, pos_new, insert){
     arr[pos_new] = tmp;
 }
 
-// Mikado.prototype.reconcile = function(data, view, x){
-//
-//     const index = this.live;
-//     const a = this.dom; //Object.keys(index);
-//     const b = data;
-//
-//     let end = b.length;
-//     //let moves = [];
-//     let loops = 0;
-//     let used = {};
-//     //let clone = a.slice(0);
-//     let length = a.length;
-//
-//     if(!end){
-//
-//         return this.clear();
-//     }
-//
-//     for(; x < end; x++){
-//
-//         loops++;
-//
-//         used[b[x].id] = 1;
-//
-//         const current_b = b[x].id;
-//
-//         if((x < length) && index[current_b]){
-//
-//             const current_a = a[x]["_key"];
-//
-//             if(current_b !== current_a){
-//
-//                 for(let y = x + 1; y < length; y++){
-//
-//                     loops++;
-//
-//                     if((current_b === a[y]["_key"]) /*&& (x <= a.length)*/){
-//
-//                         //if(y === start) start++;
-//                         //else
-//                         // if(y === end - 1) end--;
-//
-//                         let tmp, from;
-//
-//                         if((y === x + 1) /*|| (current_a === b[y])*/){
-//
-//                             tmp = null;
-//                         }
-//                         else{
-//
-//                             if(y >= length - 1){
-//
-//                                 tmp = a.pop();
-//                             }
-//                             else{
-//
-//                                 tmp = a.splice(y, 1)[0];
-//                             }
-//
-//                             length--;
-//                             from = y;
-//                             //console.log(a);
-//                         }
-//
-//                         if(tmp && (x < (end - 1)) && (current_a === b[x + 1].id)){
-//
-//                             //this.arrange(this.dom[x + 1] || null, tmp, data[x], view, x);
-//                             this.root.insertBefore(tmp, a[x + 1] || null);
-//                             this.update(tmp, data[x], view, x);
-//
-//                             if(x >= length - 1){
-//
-//                                 a.push(tmp);
-//                                 //tmp = null;
-//                             }
-//                             else{
-//
-//                                 //tmp =
-//                                 a.splice(x, 0, tmp);//[0];
-//                                 //tmp = null;
-//                             }
-//
-//                             length++;
-//
-//                             //console.log(a);
-//
-//                             //moves.push(["m", y, x]);
-//                             //console.log((y) + " > " + (x ));
-//                         }
-//                         else{
-//
-//                             if(tmp){
-//
-//                                 //this.arrange(this.dom[x] || null, tmp, data[x], view, x);
-//                                 this.root.insertBefore(tmp, a[x] || null);
-//                                 this.update(tmp, data[x], view, x);
-//
-//                                 //if(x === a.length - 1){
-//
-//                                 //while(true){
-//
-//                                 const tmp2 = a[x];
-//                                 a[x] = tmp;
-//                                 //let tmp2 = a.pop();
-//                                 //a.push(tmp);
-//                                 tmp = tmp2;
-//                                 //}
-//
-//                                 // }
-//                                 // else{
-//                                 //
-//                                 //     tmp = a.splice(x, 1, tmp)[0];
-//                                 // }
-//
-//                                 //console.log(a);
-//
-//                                 //moves.push(["m", from, x]);
-//                                 //console.log((from) + " > " + (x));
-//
-//                                 from = x + 1;
-//                             }
-//                             else{
-//
-//                                 if(x >= length - 1){
-//
-//                                     tmp = a.pop();
-//                                 }
-//                                 else{
-//
-//                                     tmp = a.splice(x, 1)[0];
-//                                 }
-//
-//                                 length--;
-//
-//                                 //console.log(a);
-//
-//                                 from = x;
-//                             }
-//
-//                             for(let z = x + 1; z < end; z++){
-//
-//                                 loops++;
-//
-//                                 if(tmp["_key"] === b[z].id){
-//
-//                                     //if(z === start) start++;
-//                                     //else
-//                                     //if(z === end - 1) end--;
-//
-//                                     //this.arrange(this.dom[z + 1] || null, tmp, data[z], view, z);
-//                                     this.root.insertBefore(tmp, a[z + 1] || null);
-//                                     this.update(tmp, data[z], view, x);
-//
-//                                     if(z >= length - 1){
-//
-//                                         a.push(tmp);
-//                                     }
-//                                     else{
-//
-//                                         a.splice(z, 0, tmp);
-//                                     }
-//
-//                                     length++;
-//
-//                                     //console.log(a);
-//                                     //console.log("5");
-//
-//                                     //moves.push(["m", from, z]);
-//                                     //console.log((from) + " > " + (z));
-//                                     break;
-//                                 }
-//                                 // else if(z === end - 1){
-//                                 //
-//                                 //     //a.splice(from, 1);
-//                                 //     moves.push(["r", from]);
-//                                 //     //console.log("r: " + (from));
-//                                 // }
-//                             }
-//                         }
-//
-//                         break;
-//                     }
-//
-//                     //x++;
-//                 }
-//             }
-//             else{
-//
-//                 this.update(a[x], data[x], view, x);
-//             }
-//         }
-//         else{
-//
-//             const tmp = this.create(data[x], view, x);
-//
-//             tmp["_idx"] = x;
-//
-//             //this.add(data[x], view, x);
-//             //const tmp = this.dom[x];
-//             this.root.insertBefore(tmp, a[x + 1] || null);
-//             this.update(tmp, data[x], view, x);
-//
-//             if(x >= length - 1){
-//
-//                 a.push(tmp);
-//             }
-//             else{
-//
-//                 a.splice(x, 0, tmp);
-//             }
-//
-//             length++;
-//
-//             // console.log(a);
-//             // console.log("6");
-//             // moves.push(["n", x, current_b]);
-//         }
-//     }
-//
-//     for(let i = 0; i < a.length; i++){
-//
-//         if(!used[a[i]["_key"]]){
-//
-//             this.remove(a[i]);
-//
-//             //a.splice(i--, 1);
-//         }
-//     }
-//
-//     return this;
-// };
-
 /**
  * @param {!Object|Array<Object>=} data
  * @param {Object|number=} view
@@ -2279,7 +2049,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                 concat_path(has_update, text_fn, path_length, SUPPORT_CACHE && this.cache);
 
-                if(observable){
+                if(SUPPORT_REACTIVE && observable){
 
                     init_proxy(this, text, ["_text", path_length]);
                     has_observe++;

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.5
+ * Mikado.js v0.7.56
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -93,7 +93,7 @@ F.route = F.prototype.route = function(a, b) {
   return this;
 };
 F.dispatch = F.prototype.dispatch = function(a, b, c, d) {
-  D[a](b, c, d);
+  D[a].call(this, b, c, d);
   return this;
 };
 var G, H, aa;

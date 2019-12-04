@@ -41,7 +41,7 @@ if(USE_POLYFILL){
         window["requestAnimationFrame"] || (window["requestAnimationFrame"] = window.setTimeout);
         window["cancelAnimationFrame"] || (window["cancelAnimationFrame"] = window.clearTimeout);
 
-        window["Promise"] || (window["Promise"] = function(){
+        window["Promise"] || (window["Promise"] = (function(){
 
             /**
              * @param {Function} fn
@@ -74,6 +74,6 @@ if(USE_POLYFILL){
             };
 
             return Promise;
-        }());
+        }()));
     }
 }

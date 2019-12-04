@@ -70,7 +70,7 @@ function format_number(num, places, decimal, separator){
 
     while(i--){
 
-        o = (i === 0 ? "" : ((L - i) % 3 ? "" : separator || ",")) + s.charAt(i) + o
+        o = (i === 0 ? "" : ((L - i) % 3 ? "" : separator || ",")) + s.charAt(i) + o;
     }
 
     return (num < 0 ? "-" : "") + o + (f ? (decimal || ".") + f : "");

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.55",
+  "version": "0.7.56",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -41,7 +41,7 @@
     "build:module": "babel src -d dist/module && exit 0",
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug && npm run build:module",
-    "update": "npm install google-closure-compiler@nightly && npm install babel-cli && npm install babel-plugin-minify-constant-folding && npm install babel-plugin-minify-dead-code-elimination && npm install babel-plugin-minify-flip-comparisons && npm install babel-plugin-minify-guarded-expressions && npm install babel-plugin-minify-infinity && npm install babel-plugin-minify-mangle-names && npm install babel-plugin-minify-replace && npm install babel-plugin-minify-simplify && npm install babel-plugin-minify-type-constructors && npm install babel-plugin-transform-member-expression-literals && npm install babel-plugin-transform-merge-sibling-variables && npm install babel-plugin-transform-minify-booleans && npm install babel-plugin-transform-property-literals && npm install babel-plugin-transform-simplify-comparison-operators && npm install babel-plugin-transform-undefined-to-void",
+    "update": "npm install google-closure-compiler@nightly && npm install babel-cli@latest && npm install babel-plugin-conditional-compile@latest && npm install babel-plugin-minify-constant-folding@latest && npm install babel-plugin-minify-dead-code-elimination@latest && npm install babel-plugin-minify-flip-comparisons@latest && npm install babel-plugin-minify-guarded-expressions@latest && npm install babel-plugin-minify-infinity@latest && npm install babel-plugin-minify-mangle-names@latest && npm install babel-plugin-minify-replace@latest && npm install babel-plugin-minify-simplify@latest && npm install babel-plugin-minify-type-constructors@latest && npm install babel-plugin-transform-member-expression-literals@latest && npm install babel-plugin-transform-merge-sibling-variables@latest && npm install babel-plugin-transform-minify-booleans@latest && npm install babel-plugin-transform-property-literals@latest && npm install babel-plugin-transform-simplify-comparison-operators@latest && npm install babel-plugin-transform-undefined-to-void@latest",
     "test": "npm run build:pre && npm run build:light && cd test && npm install && npx mikado-compile template.html -f && npx mikado-compile proxy.html -f && npx mikado-compile keyed.html -f && npm run test"
   },
   "files": [
@@ -73,7 +73,7 @@
     "babel-plugin-transform-property-literals": "^6.9.4",
     "babel-plugin-transform-simplify-comparison-operators": "^6.9.4",
     "babel-plugin-transform-undefined-to-void": "^6.9.4",
-    "google-closure-compiler": "^20191024.0.0-nightly",
+    "google-closure-compiler": "^20191204.0.0-nightly",
     "mikado-compile": "^0.7.53"
   }
 }

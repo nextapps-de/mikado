@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.5
+ * Mikado.js v0.7.56
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -158,7 +158,7 @@ if (SUPPORT_EVENTS) {
     return this;
   };
   Mikado$$module$tmp$mikado["dispatch"] = Mikado$$module$tmp$mikado.prototype.dispatch = function(id, target, event, event_target) {
-    listener[id](target, event, event_target);
+    listener[id].call(this, target, event, event_target);
     return this;
   };
   var touch_x;
@@ -1894,7 +1894,7 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
             dom_path[path_length] = text_node;
             var text_fn$11 = SUPPORT_CACHE && this.cache && !observable$10 ? SUPPORT_CACHE_HELPERS ? ";v=" + text + ";if(self._text!==v){self._text=v;self.nodeValue=v}" : ";v=" + text + ";if(s._text" + path_length + "!==v){s._text" + path_length + "=v;self.nodeValue=v}" : text ? ";self.nodeValue=" + text : "";
             concat_path$$module$tmp$mikado(has_update, text_fn$11, path_length, SUPPORT_CACHE && this.cache);
-            if (observable$10) {
+            if (SUPPORT_REACTIVE && observable$10) {
               init_proxy$$module$tmp$mikado(this, text, ["_text", path_length]);
               has_observe++;
             }

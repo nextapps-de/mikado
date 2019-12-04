@@ -67,5 +67,5 @@ if(SUPPORT_STORAGE){
         localStorage.removeItem(id || this.template/*this.id*/);
 
         return this;
-    }
+    };
 }
