@@ -674,7 +674,7 @@ Constructor:
 
 Global methods:
 
-- <a href="#mikado.new">Mikado.**new**(\<root\>, template, \<options\>)</a> : view
+- <a href="#mikado.new">Mikado(\<root\>, template, \<options\>)</a> : view
 - <a href="#mikado.once">Mikado.**once**(root, template, \<data\>, \<payload\>, \<callback\>)</a>
 - <a href="#mikado.register">Mikado.**register**(template)</a>
 - <a href="#mikado.unload">Mikado.**unregister**(template)</a>
@@ -1016,7 +1016,7 @@ var tpl = Mikado.compile(document.getElementById("user-list"));
 Create a mikado view:
 
 ```js
-var view = Mikado.new(tpl);
+var view = new Mikado(tpl);
 ```
 
 <a name="compiler-string"></a>
@@ -1047,7 +1047,7 @@ var tpl = Mikado.compile(template);
 Create a mikado view:
 
 ```js
-var view = Mikado.new(tpl);
+var view = new Mikado(tpl);
 ```
 
 <a name="started"></a>
@@ -1079,7 +1079,7 @@ Load library and initialize template (ES5):
 <script src="mikado.min.js"></script>
 <script src="user/list.js"></script>
 <script>
-  var view = Mikado.new("template");
+  var view = Mikado("template");
 </script>
 ```
 
@@ -1091,7 +1091,7 @@ Load library and initialize template (ES6):
 <script type="module">
   import Mikado from "./mikado.js";
   import template from "./user/list.es6.js";
-  var view = Mikado.new(template);
+  var view = Mikado(template);
 </script>
 ```
 
@@ -1105,7 +1105,7 @@ view.render(data);
 You can also chain methods:
 
 ```js
-var view = Mikado.new(template)
+var view = Mikado(template)
   .mount(document.body)
   .render(data);
 ```
@@ -1324,7 +1324,7 @@ view.render(data, payload, function() {
 To render asynchronously by using promises you need to create the view instance with the **_async_** option flag:
 
 ```js
-view = Mikado.new(template, { async: true });
+view = Mikado(template, { async: true });
 
 view.render(data, payload).then(function() {
   console.log("finished.");
@@ -1467,7 +1467,7 @@ Just provide a template as normal:
 along with these options:
 
 ```js
-var view = Mikado.new(template, { pool: true });
+var view = Mikado(template, { pool: true });
 ```
 
 This will switch Mikado into a "non-keyed" mode where already rendered components will be re-used. Using the pool is optional.
@@ -1490,7 +1490,7 @@ Add the attribute **_key_** to the **_root element_** of a template (or the root
 To make them explicitly keyed also disable reusing:
 
 ```js
-var view = Mikado.new(template, { reuse: false, pool: false });
+var view = Mikado(template, { reuse: false, pool: false });
 ```
 
 This will switch Mikado into an "explicit keyed" mode (non-shared).
@@ -1511,7 +1511,7 @@ This is a special mode that uses the shared keyed index exclusively (without poo
 along with these options:
 
 ```js
-var view = Mikado.new(template, { reuse: false, pool: "key" });
+var view = Mikado(template, { reuse: false, pool: "key" });
 ```
 
 This will switch Mikado into an "explicit keyed" mode (shared).
@@ -1534,7 +1534,7 @@ Add the attribute **_key_** to the **_root element_** of a template:
 along with these options:
 
 ```js
-var view = Mikado.new(template, { pool: true });
+var view = Mikado(template, { pool: true });
 ```
 
 This will switch Mikado into a "cross-shared-keyed" mode.
@@ -1555,7 +1555,7 @@ You can also use the same strategy from 3. for hybrid mode. But it has the same 
 along with these options:
 
 ```js
-var view = Mikado.new(template, { pool: "key" });
+var view = Mikado(template, { pool: "key" });
 ```
 
 This will switch Mikado into an "exclusive-shared-keyed" mode.
@@ -1659,14 +1659,14 @@ view.reconcile(items);
 Create a view from a template with options:
 
 ```js
-var view = Mikado.new(template, options);
+var view = Mikado(template, options);
 ```
 
 <a name="mikado.new"></a>
 Create view from a template with options and also mount it to a target element:
 
 ```js
-var view = Mikado.new(root, template, options);
+var view = Mikado(root, template, options);
 ```
 
 <a name="view.mount"></a>
@@ -2530,7 +2530,7 @@ Mikado.load("https://my-site.com/templates/template.json", false);
 Assign the template to a new Mikado instance, mount and render:
 
 ```js
-var view = Mikado.new("template");
+var view = Mikado("template");
 view.mount(document.body).render(data);
 ```
 
@@ -2580,7 +2580,7 @@ When a template has no dynamic expressions (within curly brackets) which need to
 When a template just needs to be rendered once you can create, mount, render, unload and destroy (full cleanup) as follows:
 
 ```js
-Mikado.new(template)
+Mikado(template)
   .mount(root)
   .render()
   .unload() // unload before destroy!
@@ -2590,7 +2590,7 @@ Mikado.new(template)
 Destroy has a parameter flag to automatically unload before destroy:
 
 ```js
-Mikado.new(root, template)
+Mikado(root, template)
   .render()
   .destroy(true);
 ```
@@ -2687,9 +2687,9 @@ let app;
 if (DEBUG) {
   // development:
   Mikado.load("http://localhost:3000/json/path/to/app.html", false);
-  app = Mikado.new("app");
+  app = Mikado("app");
 } else {
-  app = Mikado.new(tpl_app);
+  app = Mikado(tpl_app);
 }
 
 // same code follows here ...
@@ -2711,7 +2711,7 @@ let tpl_app;
 })();
 
 // same code follows here ...
-const app = Mikado.new(tpl_app);
+const app = Mikado(tpl_app);
 ```
 
 #### Server-Side Rendering (SSR)

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.56 (ES5)
+ * Mikado.js v0.7.57 (ES5)
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
