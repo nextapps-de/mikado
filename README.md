@@ -48,7 +48,7 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 #### Coming Soon
 
 `new` webpack loader to bundle templates<br>
-`add` file endings for templates are customizable (e.g use **_.shtml_**)<br>
+`add` file endings for customizable templates (e.g use **_.shtml_**)<br>
 
 #### How to learn Mikado?
 
