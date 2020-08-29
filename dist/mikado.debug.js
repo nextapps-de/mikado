@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.57
+ * Mikado.js v0.7.58
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -89,7 +89,7 @@ if (SUPPORT_EVENTS) {
         type = "click";
       }
     }
-    window[(add_or_remove ? "add" : "remove") + "EventListener"](type, handler, options || {"passive":true, "capture":true});
+    window[(add_or_remove ? "add" : "remove") + "EventListener"](type, handler, options || false);
   };
   var handler = function(event, type) {
     type || (type = event.type);
@@ -137,24 +137,31 @@ if (SUPPORT_EVENTS) {
       target = event_target["_root_" + type];
     }
     var fn = listener[id];
+    var option = options[id];
     if (fn) {
-      event.preventDefault();
+      if (option["cancel"] !== false) {
+        event.preventDefault();
+      }
       fn(target, event, event_target);
     } else {
       if (DEBUG) {
         console.warn("Missing route '" + id + "' for event '" + type + "'.");
       }
     }
-    event.stopPropagation();
+    if (option["stop"] !== false) {
+      event.stopPropagation();
+    }
   };
   var events = {};
   var listener = {};
-  var body = document.body;
+  var options = {};
+  var body = document.documentElement || document.body.parentNode;
   var has_touch = "ontouchstart" in window;
   var has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
   var tap_fallback;
-  Mikado$$module$tmp$mikado["route"] = Mikado$$module$tmp$mikado.prototype.route = function(id, fn) {
+  Mikado$$module$tmp$mikado["route"] = Mikado$$module$tmp$mikado.prototype.route = function(id, fn, option) {
     listener[id] = fn;
+    options[id] = option || {};
     return this;
   };
   Mikado$$module$tmp$mikado["dispatch"] = Mikado$$module$tmp$mikado.prototype.dispatch = function(id, target, event, event_target) {
@@ -183,21 +190,22 @@ if (SUPPORT_EVENTS) {
     var handler_down = function(event) {
       pointer(event, event["touches"]);
     };
+    var opt = {"passive":false, "capture":true};
     register_tap = function(add_or_remove) {
-      register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, false);
-      register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, false);
+      register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, opt);
+      register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, opt);
     };
   }
   Mikado$$module$tmp$mikado["listen"] = Mikado$$module$tmp$mikado.prototype.listen = function(event, options) {
     if (!events[event]) {
-      register_event(1, event, handler, options || true);
+      register_event(1, event, handler, options);
       events[event] = 1;
     }
     return this;
   };
   Mikado$$module$tmp$mikado["unlisten"] = Mikado$$module$tmp$mikado.prototype.unlisten = function(event, options) {
     if (events[event]) {
-      register_event(0, event, handler, options || true);
+      register_event(0, event, handler, options);
       events[event] = 0;
     }
     return this;
@@ -1158,9 +1166,6 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
     } else {
       factory = 1;
       node = this.factory;
-      if (SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && node && this.cache) {
-        node["_cache"] = {};
-      }
     }
   }
   if (!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe) {
@@ -1169,7 +1174,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   if (factory) {
     node = this.factory.cloneNode(true);
     if (SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache) {
-      node["_cache"] = this.factory["_cache"];
+      node["_cache"] = Object.assign({}, this.factory["_cache"]);
     }
     var tmp;
     if (SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["create"])) {
@@ -1195,7 +1200,7 @@ Mikado$$module$tmp$mikado.prototype.apply = function(root, data, payload, index)
         this.store.view = payload;
       }
     }
-    this.update_path(root["_path"] || this.create_path(root), SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && root["_cache"], data, index, payload);
+    this.update_path(root["_path"] || this.create_path(root), SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && (root["_cache"] || (root["_cache"] = {})), data, index, payload);
     var tmp;
     if (SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["change"])) {
       if (root !== this.factory) {

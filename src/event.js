@@ -4,7 +4,8 @@ if(SUPPORT_EVENTS){
 
     const events = {};
     const listener = {};
-    const body = document.body;
+    const options = {};
+    const body = document.documentElement || document.body.parentNode;
 
     const has_touch = "ontouchstart" in window;
     const has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
@@ -84,10 +85,15 @@ if(SUPPORT_EVENTS){
         }
 
         const fn = listener[id];
+        const option = options[id];
 
         if(fn){
 
-            event.preventDefault();
+            if(option["cancel"] !== false){
+
+                event.preventDefault();
+            }
+
             fn(target, event, event_target);
         }
         else if(DEBUG){
@@ -95,12 +101,22 @@ if(SUPPORT_EVENTS){
             console.warn("Missing route '" + id + "' for event '" + type + "'.");
         }
 
-        event.stopPropagation();
+        if(option["stop"] !== false){
+
+            event.stopPropagation();
+        }
     }
 
-    Mikado["route"] = Mikado.prototype.route = function(id, fn){
+    /**
+     * @param id
+     * @param fn
+     * @param {Boolean|Object=} option
+     */
+
+    Mikado["route"] = Mikado.prototype.route = function(id, fn, option){
 
         listener[id] = fn;
+        options[id] = option || {};
         return this;
     };
 
@@ -145,11 +161,17 @@ if(SUPPORT_EVENTS){
             touch_y = event["clientY"];
         }
 
+        const opt = {
+
+            "passive": false, // Note: the default click behavior should not force passive handling
+            "capture": true
+        };
+
         register_tap = function(add_or_remove){
 
-            register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, false);
+            register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, opt);
             //register_event(add_or_remove, "touchmove", handler_move, false);
-            register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, false);
+            register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, opt);
         };
     }
 
@@ -162,7 +184,7 @@ if(SUPPORT_EVENTS){
 
         if(!events[event]){
 
-            register_event(1, event, handler, options || true);
+            register_event(1, event, handler, options);
             events[event] = 1;
         }
 
@@ -179,7 +201,7 @@ if(SUPPORT_EVENTS){
 
         if(events[event]){
 
-            register_event(0, event, handler, options || true);
+            register_event(0, event, handler, options);
             events[event] = 0;
         }
 
@@ -212,10 +234,7 @@ if(SUPPORT_EVENTS){
         window[(add_or_remove ? "add": "remove") + "EventListener"](
             type,
             handler,
-            options || {
-                "passive": true,
-                "capture": true
-            }
+            options || false
         );
     }
 }

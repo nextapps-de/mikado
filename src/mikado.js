@@ -603,10 +603,10 @@ Mikado.prototype.create = function(data, view, index){
         factory = 1;
         node = this.factory;
 
-        if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && node && this.cache){
-
-            node["_cache"] = {};
-        }
+        // if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && node && this.cache){
+        //
+        //     node["_cache"] = {};
+        // }
     }
 
     if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe){
@@ -620,7 +620,7 @@ Mikado.prototype.create = function(data, view, index){
 
         if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache){
 
-            node["_cache"] = this.factory["_cache"];
+            node["_cache"] = Object.assign({}, this.factory["_cache"]);
             // NOTE: how often a cache from factory could be re-used VS. overhead from Object.assign
             //node["_cache"] = Object.assign({}, this.factory["_cache"]);
         }
@@ -673,7 +673,8 @@ Mikado.prototype.apply = function(root, data, payload, index){
 
         //root || (root = this.factory);
 
-        this.update_path(root["_path"] || this.create_path(root), SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && root["_cache"], data, index, payload);
+        // TODO: find out why root["_cache"] does not exist sometimes when looping partials
+        this.update_path(root["_path"] || this.create_path(root), SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && (root["_cache"] || (root["_cache"] = {})), data, index, payload);
 
         let tmp;
 
@@ -2347,3 +2348,11 @@ function reverse(arr){
 
     return arr;
 }
+
+// NOTE: default export required by template partial rendering (inline script)
+
+/** @export */
+Mikado.prototype.mount;
+
+/** @export */
+Mikado.prototype.render;
