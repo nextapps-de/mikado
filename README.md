@@ -54,15 +54,15 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 
 Thanks to the reversed engineering, Mikado provides you one of the most simple to learn idiomatic styles which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of the other framework documentations. You will do not need these details to start with. But when you would like to know more you get a chance to go deeper.
 
-Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required. You can begin seamlessly without the pain you might know from other frameworks.
+Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required. You can start seamlessly without the pain you might know from other frameworks.
 
 Guide for new developers (the most simple example, just takes 3 minutes):
 
 - Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
 - Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
 - Compile the template, then create a Mikado instance by passing in the root node and the compiled template
-  - `Mikado(root, template)`
-- Just use `.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
+  - `var view = Mikado(root, template)`
+- Just use `view.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
 - <a href="demo/basic/basic.html">Final Source Code</a>
 
 ## Table of contents
@@ -73,8 +73,7 @@ Guide for new developers (the most simple example, just takes 3 minutes):
 4. <a href="#api">API Overview</a>
 5. <a href="#options">Options</a>
 6. <a href="#compiler">Template Compiler</a>
-   - <a href="#xss">XSS Security</a>
-   - <a href="#mikado-compile">Using Dedicated Compiler</a>
+   - <a href="#mikado-compile">Using Dedicated Compiler</a><!-- - <a href="#xss">XSS Security</a> -->
    - <a href="#compiler-html5">Using HTML5 Templates</a>
    - <a href="#compiler-string">Using Template String</a>
 7. <a href="#conventions">Rules and Conventions</a>
@@ -658,10 +657,6 @@ The file size and memory gets less relevance. The maximum possible **_index_** i
 
 Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
 
-##### Worst Case Scenario
-
-Mikado has no specific worst-case scenario. The replace test could be named like this, but that is always the worst-case scenario for every lib. This test simply couldn't use most of the runtime optimizations.
-
 <a name="api"></a>
 
 ## API Overview
@@ -684,9 +679,9 @@ Global methods (not included in mikado.light.js):
 - <a href="#mikado.compile">Mikado.**compile**(\<template | string\>)</a>
 - <a href="#mikado.load">Mikado.**load**(url, \<callback\>)</a>
 - <a href="#mikado.unload">Mikado.**unload**(template)</a>
-- <a href="#mikado.route">mikado.**route**(name, handler)</a>
-- <a href="#mikado.listen">mikado.**listen**(event)</a>
-- <a href="#mikado.unlisten">mikado.**unlisten**(event)</a>
+- <a href="#mikado.route">mikado.**route**(name, handler, \<options\>)</a>
+- <a href="#mikado.listen">mikado.**listen**(event, \<options\>)</a>
+- <a href="#mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
 - <a href="#mikado.dispatch">mikado.**dispatch**(name, \<target\>, \<event\>, \<self\>)</a>
 
 Instance methods:
@@ -719,9 +714,9 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.import">view.**import**()</a>
 - <a href="#view.export">view.**export**()</a>
 - <a href="#view.load">view.**load**(url, \<callback\>)</a>
-- <a href="#view.route">view.**route**(name, handler)</a>
-- <a href="#view.listen">view.**listen**(event)</a>
-- <a href="#view.unlisten">view.**unlisten**(event)</a>
+- <a href="#view.route">view.**route**(name, handler, \<options\>)</a>
+- <a href="#view.listen">view.**listen**(event, \<options\>)</a>
+- <a href="#view.unlisten">view.**unlisten**(event, \<options\>)</a>
 - <a href="#view.dispatch">view.**dispatch**(name, \<target\>, \<event\>, \<self\>)</a>
 
 DOM manipulation helpers (optional, not included in mikado.light.js):
@@ -851,6 +846,7 @@ Global helpers (optional, not included in mikado.light.js):
 
 ## Compile Templates
 
+<!--
 <a name="xss"></a>
 
 #### XSS Security
@@ -871,6 +867,7 @@ Sanitize external resources comes with some big drawbacks accordingly to this <a
 
 - Templates support just a small subset of tags when using `HTML` as a content type
 - Templates could **not** include any javascript expressions (just supports basic template expression accordingly to mustache or handlebars)
+-->
 
 <a name="compiler"></a>
 
@@ -1392,6 +1389,22 @@ Routes are stored globally, so you can share routes through all Mikado instances
     </tr>
 </table>
 
+#### Event Options
+
+By default, every event which is delegated to a route will be canceled (event.preventDefault) and also will stop capturing/bubbling (event.stopPropagation). To control this behavior you can configure for each route:
+
+```js
+Mikado.route("handler", function(target, event){
+  console.log("Clicked");
+},{
+  cancel: false,
+  stop: false 
+});
+```
+
+`cancel` prevents default behavior for this event (default: "true")<br>
+`stop` stop capturing/bubbling the event after matched (default: "true")
+
 <a name="view.listen"></a><a name="view.unlisten"></a>
 
 #### Explicit Register/Unregister
@@ -1417,6 +1430,17 @@ Mikado.listen("click");
 ```
 
 Because events register when creating the template factory under the hood. When no template was created which includes the same type of event, a global listener does not exist. For that reason, you have to explicitly register the listener once.
+
+The default event capture option flag would be set to `false` by default. When you need to configure event capturing and passive listener just do:
+
+> Please make sure this call runs before passing the template for creating a new mikado instance.
+
+```js
+Mikado.listen("touchmove", {
+    passive: true,
+    capture: true 
+});
+```
 
 Same way you could also unregister events:
 
@@ -1964,6 +1988,8 @@ Manual changes on the DOM may require <a href="#view.sync">re-syncing</a>. To pr
 
 > All helpers could be used by index or by node as passed parameters.
 
+Helpers let you apply simple transformations without running through the whole render roundtrip of the full template. Super-advanced-fine-grained reconciliation isn't the holy grail, it is just for your laziness.
+
 <a name="view.move"></a>
 Move a data item/node to a specific index:
 
@@ -2018,11 +2044,13 @@ Swap two data items/nodes:
 view.swap(node_a, node_b);
 ```
 
+<!-- 
 #### Some notes about helpers
 
-Helpers are missing in most of all the other libs. It is just a pain when you want to apply a simple transformation but the lib forces you to run through the whole roundtrip. Super-advanced-fine-grained reconciliation isn't the holy grail, it is just for your laziness. Luckily Mikado provides you the <a href="#benchmark">most effective reconcile</a> today, so that shouldn't be a problem.
+Helpers let you apply simple transformations without running through the whole render roundtrip of the full template. Super-advanced-fine-grained reconciliation isn't the holy grail, it is just for your laziness. <!--Mikado provides you the <a href="#benchmark">most effective reconcile</a> today, so that shouldn't be a problem.
 
 Let's come to the most absurd part. Especially data-driven reconciliation often becomes absolutely nonsense when you dealing with **internal data** and you start to apply changes by hand like `data.push(item)` instead of simply doing this `view.add(item)`, or `var data = store(); data[0] = item; store(data);` instead of simply doing this `view.replace(0, item)`, the latter does not need reconciliation at all and performs faster by a huge factor and also it says what it does. Now take the helper methods and imagine you would apply them via data-driven. You will end up by start coding creepy things like `data.splice(index_a, 0, data.splice(index_b, 1)[0])`. You should use helpers and don't suffer from pain, as well as the decrease in the performance of your application. Your users will thank you.
+-->
 
 <a name="cache"></a>
 
@@ -2097,6 +2125,7 @@ You have 2 options in this situation:
 
 1. do not manually change dom properties or states (instead change all through rendering templates)
 2. using the <a href="#cache-helpers">caching helpers</a> which Mikado provides you exactly to this purpose.
+3. using <a href="#view.sync">view.sync()</a> as a fallback
 
 <!--
 Do not worry, there exist a rescue method to force re-sync:
