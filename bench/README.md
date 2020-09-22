@@ -28,7 +28,7 @@ There are 3 kinds of test scenarios:
     </tr>
 </table>
 
-Weather a library provides optimizations to one of these modes or not, it is fair to compare each of them in a different scenario.
+Whether a library provides optimizations to one of these modes or not, it is fair to compare each of them in a different scenario.
 
 When the option "keep best run" is enabled it will replace the better result with the old one (separately for each test). When disabled, it will summarize the results for each test.
 
