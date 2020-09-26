@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.58
+ * Mikado.js v0.7.6
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1139,6 +1139,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   var node;
   var pool;
   var factory;
+  var cache;
   var found;
   if (SUPPORT_POOLS && keyed && ((pool = this.key_pool) && (node = pool[key]))) {
     found = 1;
@@ -1172,10 +1173,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
     this.apply(node, data, view, index);
   }
   if (factory) {
-    node = this.factory.cloneNode(true);
-    if (SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache) {
-      node["_cache"] = Object.assign({}, this.factory["_cache"]);
-    }
+    node = node.cloneNode(true);
     var tmp;
     if (SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["create"])) {
       tmp(node);
@@ -1836,7 +1834,8 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       if (typeof value === "object") {
         var observable$8 = SUPPORT_REACTIVE && value[1];
         value = "" + value[0];
-        new_fn += SUPPORT_CACHE && this.cache && !observable$8 ? SUPPORT_CACHE_HELPERS ? ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self.setAttribute('" + key + "',v)}" : ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}" : value ? ";self.setAttribute('" + key + "'," + value + ")" : "";
+        new_fn += SUPPORT_CACHE && this.cache && !observable$8 ? SUPPORT_CACHE_HELPERS ? ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self[v||v===0?'setAttribute':'removeAttribute']('" + key + "',v)}" : ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self[v||v===0?'setAttribute':'removeAttribute']('" + key + "',v)}" : value ? ";v=" + value + ";self[v||v===0?'setAttribute':'removeAttribute']('" + 
+        key + "',v)" : "";
         if (observable$8) {
           init_proxy$$module$tmp$mikado(this, value, ["_attr", path_length, key]);
           has_observe++;
@@ -2057,6 +2056,8 @@ function reverse$$module$tmp$mikado(arr) {
   }
   return arr;
 }
+Mikado$$module$tmp$mikado.prototype.mount;
+Mikado$$module$tmp$mikado.prototype.render;
 var module$tmp$mikado = {};
 module$tmp$mikado.default = Mikado$$module$tmp$mikado;
 Mikado$$module$tmp$mikado.prototype.load;

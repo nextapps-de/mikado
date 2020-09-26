@@ -540,7 +540,7 @@ Mikado.prototype.create = function(data, view, index){
 
     let keyed = SUPPORT_KEYED && this.key;
     const key = keyed && data[keyed];
-    let node, pool, factory, found;
+    let node, pool, factory, cache, found;
 
     // 1. keyed pools (live + shared)
     if(SUPPORT_POOLS && keyed && (
@@ -600,12 +600,11 @@ Mikado.prototype.create = function(data, view, index){
     }
     else{
 
-        factory = 1;
-        node = this.factory;
+        node = factory = this.factory || (this.factory = this.parse(templates[this.template]));
 
-        // if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && node && this.cache){
+        // if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache){
         //
-        //     node["_cache"] = {};
+        //     node["_cache"] = cache = {};
         // }
     }
 
@@ -616,14 +615,16 @@ Mikado.prototype.create = function(data, view, index){
 
     if(factory){
 
-        node = this.factory.cloneNode(true);
+        node = node.cloneNode(true);
 
+        /*
         if(SUPPORT_CACHE && !SUPPORT_CACHE_HELPERS && this.cache){
 
-            node["_cache"] = Object.assign({}, this.factory["_cache"]);
+            node["_cache"] = {};
             // NOTE: how often a cache from factory could be re-used VS. overhead from Object.assign
             //node["_cache"] = Object.assign({}, this.factory["_cache"]);
         }
+        */
 
         let tmp;
 
@@ -650,7 +651,7 @@ Mikado.prototype.create = function(data, view, index){
 
 Mikado.prototype.apply = function(root, data, payload, index){
 
-    this.factory || (this.factory = root = this.parse(templates[this.template]));
+    //this.factory || (this.factory = root = this.parse(templates[this.template]));
 
     if(this.static){
 
@@ -1907,13 +1908,13 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
 
                     SUPPORT_CACHE_HELPERS ?
 
-                            ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self.setAttribute('" + key + "',v)}"
+                            ";v=" + value + ";var _a=self._attr||(self._attr={});if(_a['" + key + "']!==v){_a['" + key + "']=v;self[v||v===0?'setAttribute':'removeAttribute']('" + key + "',v)}"
                         :
-                            ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self.setAttribute('" + key + "',v)}"
+                            ";v=" + value + ";if(s['_attr_" + key + path_length + "']!==v){s['_attr_" + key + path_length + "']=v;self[v||v===0?'setAttribute':'removeAttribute']('" + key + "',v)}"
                     ):(
                         value ?
 
-                        ";self.setAttribute('" + key + "'," + value + ")"
+                        ";v=" + value + ";self[v||v===0?'setAttribute':'removeAttribute']('" + key + "',v)"
                     :
                         ""
                 );
