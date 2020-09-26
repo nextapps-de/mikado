@@ -586,7 +586,7 @@ function Observer$$module$tmp$array(array) {
       }
     }
     this.length = length;
-    this.proto = {splice:proto$$module$tmp$array.splice.bind(this), pop:proto$$module$tmp$array.pop.bind(this), shift:proto$$module$tmp$array.shift.bind(this), unshift:proto$$module$tmp$array.unshift.bind(this), push:proto$$module$tmp$array.push.bind(this)};
+    this.proto = {splice:proto$$module$tmp$array.splice.bind(this), pop:proto$$module$tmp$array.pop.bind(this), shift:proto$$module$tmp$array.shift.bind(this), unshift:proto$$module$tmp$array.unshift.bind(this), push:proto$$module$tmp$array.push.bind(this), };
     return new Proxy(this, handler$$module$tmp$array);
   } else {
     this.proto = array || [];
@@ -1165,8 +1165,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
         pool[node["_key"]] = null;
       }
     } else {
-      factory = 1;
-      node = this.factory;
+      node = factory = this.factory || (this.factory = this.parse(templates$$module$tmp$mikado[this.template]));
     }
   }
   if (!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe) {
@@ -1186,7 +1185,6 @@ Mikado$$module$tmp$mikado.prototype.create = function(data, view, index) {
   return node;
 };
 Mikado$$module$tmp$mikado.prototype.apply = function(root, data, payload, index) {
-  this.factory || (this.factory = root = this.parse(templates$$module$tmp$mikado[this.template]));
   if (this.static) {
     if (DEBUG) {
       console.warn("The template '" + this.template + "' is a static template and should not be refreshed.");
