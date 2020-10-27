@@ -226,12 +226,14 @@ if(SUPPORT_POOLS && ((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_H
 
 Mikado.prototype.index = function(node){
 
-    for(let i = 0, length = this.length; i < length; i++){
+    // for(let i = 0, length = this.length; i < length; i++){
+    //
+    //     if(this.dom[i] === node) return i;
+    // }
+    //
+    // return -1;
 
-        if(this.dom[i] === node) return i;
-    }
-
-    return -1;
+    return this.dom.indexOf(node);
 };
 
 Mikado.prototype.node = function(index){
@@ -267,6 +269,8 @@ if(SUPPORT_STORAGE){
 
                 return this.live[key];
             }
+
+            // TODO: find by indexOf when storage is available
 
             for(let i = 0; i < this.length; i++){
 

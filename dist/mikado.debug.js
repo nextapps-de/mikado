@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.6
+ * Mikado.js v0.7.62
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -942,12 +942,7 @@ if (SUPPORT_POOLS && (SUPPORT_HELPERS === true || SUPPORT_HELPERS && SUPPORT_HEL
   };
 }
 Mikado$$module$tmp$mikado.prototype.index = function(node) {
-  for (var i = 0, length = this.length; i < length; i++) {
-    if (this.dom[i] === node) {
-      return i;
-    }
-  }
-  return -1;
+  return this.dom.indexOf(node);
 };
 Mikado$$module$tmp$mikado.prototype.node = function(index) {
   return this.dom[index];

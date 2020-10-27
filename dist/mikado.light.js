@@ -1,12 +1,12 @@
 /**!
- * Mikado.js v0.7.6 (Light)
+ * Mikado.js v0.7.62 (Light)
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
  * https://github.com/nextapps-de/mikado
  */
 (function(){'use strict';var q;var w={},z={},A={},B={},C={};function D(a,b,c){if(!(this instanceof D))return new D(a,b,c);a.nodeType||(c=b,b=a,a=null);a?this.mount(a):(this.b=this.f=null,this.length=0);this.init(b,c)}var E=D.register=function(a,b){b||(b=a,a=b.n);z[a]=b;return D};D.prototype.mount=function(a){if(this.b!==a){this.key&&this.b&&(this.b._o=this.l,this.l=a._o||{});this.b=a;F(this);var b;if(!(b=a._d)){b=a.children;for(var c=b.length,d=Array(c),f=0,e;f<c;f++)e=b[f],d[f]=e;b=a._d=d}this.f=b;this.length=this.f.length}return this};
-D.prototype.index=function(a){for(var b=0,c=this.length;b<c;b++)if(this.f[b]===a)return b;return-1};D.prototype.node=function(a){return this.f[a]};
+D.prototype.index=function(a){return this.f.indexOf(a)};D.prototype.node=function(a){return this.f[a]};
 D.prototype.init=function(a,b){"string"===typeof a?a=z[a]:(b||!a||a.n||(b=a,a=null),a?a.n&&E(a):a=z[this.u]);b||(b=this.D||{});this.C=!1!==b.reuse;this.state=b.state||w;this.cache=!1!==b.cache;this.D=b;var c=a.n;this.u!==c&&(this.u=c,this.m=a.d,this.A=this.g=null,this.B=!1!==b.prefetch&&G(this,a),F(this),this.l=(this.key=a.k)&&{},a=b.pool,this.v=this.C&&!1!==a&&"key"!==a&&(B[c]||(B[c]=[])),this.o=this.key&&!1!==a&&"queue"!==a&&(C[c]||(C[c]={})),this.size=this.v&&b.size);return this};
 D.once=function(a,b,c,d,f){var e=new D(a,b);"function"===typeof d&&(f=d,d=null);if(f){var g=f;f=function(){e.destroy(1);g()}}e.render(c,d,f);f||e.destroy(1);return D};function F(a){if(a.b){var b=a.b._t;b!==a.u&&(a.b._t=a.u,b&&(a.l={},a.remove(0,a.length)))}}q=D.prototype;
 q.create=function(a,b,c){var d=this.key,f=d&&a[d],e,g,l;if(d&&(g=this.o)&&(e=g[f]))if(g){if(g[f]=null,g=this.v){var h=e._n;e._n=null;var p=g.pop();p!==e&&(p._n=h,g[h]=p)}}else d=0;else(e=this.v)&&e.length?(e=e.pop(),g&&(e._n=null,g[e._k]=null)):e=l=this.B||(this.B=G(this,z[this.u]));this.apply(e,a,b,c);l&&(e=e.cloneNode(!0));d&&(e._k=f,this.l[f]=e);return e};q.apply=function(a,b,c,d){if(!this.m)return this.A(a._p||H(this,a),a.$||(a.$={}),b,d,c),this};

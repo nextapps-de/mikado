@@ -3400,6 +3400,7 @@ This library was built by reversed engineering with these primary goals as its b
 3. providing the best overall performance
 4. can be flexibly integrated into every stack
 
+<!--
 ## Milestones
 
 There are some features in the draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
@@ -3425,6 +3426,7 @@ There are some features in the draft and it points out that those features requi
         <td>A reboot of <a href="https://github.com/nextapps-de/xone">Xone</a> on top of Mikado. Xone is a full-stack mobile application SDK which seamlessly runs in browser and also supports Cordova and NativeScript from the same codebase.</td>
     </tr>
 </table>
+-->
 
 <a name="builds" id="builds"></a>
 
