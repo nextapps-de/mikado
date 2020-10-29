@@ -23,7 +23,7 @@ export default function Observer(array){
 
     // TODO: hide references
     this.mikado = null;
-    this.view = null;
+    //this.view = null;
 
     const length = array ? array.length : 0;
 
@@ -139,7 +139,7 @@ const handler = {
                         return true;
                     }
 
-                    const view = target.view;
+                    const view = mikado.view;
 
                     if(prop >= mikado_length){
 
@@ -176,6 +176,7 @@ const handler = {
                         // }
 
                         // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
+                        // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
                         if(mikado.reuse || (replace_key && (node["_key"] === value[replace_key]))){
 
                             mikado.update(node, value, view, prop);
@@ -211,20 +212,22 @@ const handler = {
     }
 };
 
-if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap") !== -1)){
+// NOTE: replaced by the transaction feature for reactive data
 
-    Observer.prototype.swap = function(a, b){
-
-        skip = true;
-        this.mikado.swap(a, b, this.view);
-        //const self = proxy ? this : this.proto;
-        // const tmp = self[b];
-        // self[b] = self[a];
-        // self[a] = tmp;
-        skip = false;
-        return this;
-    };
-}
+// if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap") !== -1)){
+//
+//     Observer.prototype.swap = function(a, b){
+//
+//         skip = true;
+//         this.mikado.swap(a, b, this.view);
+//         //const self = proxy ? this : this.proto;
+//         // const tmp = self[b];
+//         // self[b] = self[a];
+//         // self[a] = tmp;
+//         skip = false;
+//         return this;
+//     };
+// }
 
 Observer.prototype.set = function(array){
     
@@ -255,7 +258,7 @@ Observer.prototype.splice = function(start, count, insert){
 
     const tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
 
-    insert && this.mikado.add(insert, start, this.view);
+    insert && this.mikado.add(insert, start, this.mikado.view);
 
     //this.length += (insert ? 1 : 0) - count;
     skip = false;
@@ -265,7 +268,7 @@ Observer.prototype.splice = function(start, count, insert){
 Observer.prototype.push = function(data){
 
     skip = true;
-    this.mikado.add(data, this.view);
+    this.mikado.add(data, this.mikado.view);
     if(!this.mikado.proxy) this[this.length] = data;
     if(proxy) this.length++;
     skip = false;
@@ -274,7 +277,7 @@ Observer.prototype.push = function(data){
 Observer.prototype.unshift = function(data){
 
     skip = true;
-    this.mikado.add(data, 0, this.view);
+    this.mikado.add(data, 0, this.mikado.view);
     this.proto.unshift(data);
     skip = false;
 };

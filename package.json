@@ -1,11 +1,11 @@
 {
   "public": true,
   "name": "mikado",
-  "description": "Web's fastest templating engine.",
+  "description": "Web's fastest template library to build user interfaces.",
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.62",
+  "version": "0.7.64",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -25,14 +25,13 @@
   "browser": "src/bundle.js",
   "preferGlobal": false,
   "bin": {
-    "mikado": "./task/cli.js"
+    "mikado": "task/cli.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nextapps-de/mikado.git"
   },
   "scripts": {
-    "compile": "node task/compile && echo Compile Complete. && exit 0",
     "build": "node task/build RELEASE=min USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
     "build:light": "node task/build RELEASE=light USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
     "build:es5": "node task/build RELEASE=es5 USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
@@ -54,10 +53,12 @@
     "LICENSE"
   ],
   "readme": "README.md",
-  "dependencies": {},
+  "dependencies": {
+    "mikado-compile": "^0.7.58"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-plugin-conditional-compile": "0.0.5",
+    "babel-plugin-conditional-compile": "^0.0.5",
     "babel-plugin-minify-constant-folding": "^0.5.0",
     "babel-plugin-minify-dead-code-elimination": "^0.5.1",
     "babel-plugin-minify-flip-comparisons": "^0.4.3",
@@ -73,7 +74,6 @@
     "babel-plugin-transform-property-literals": "^6.9.4",
     "babel-plugin-transform-simplify-comparison-operators": "^6.9.4",
     "babel-plugin-transform-undefined-to-void": "^6.9.4",
-    "google-closure-compiler": "^20200925.0.0-nightly",
-    "mikado-compile": "^0.7.58"
+    "google-closure-compiler": "^20201006.0.0"
   }
 }

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.62
+ * Mikado.js v0.7.64
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -277,7 +277,7 @@ function O(a) {
   if (a instanceof O) {
     return a;
   }
-  this.view = this.mikado = null;
+  this.mikado = null;
   var b = a ? a.length : 0;
   if (M) {
     if (b) {
@@ -320,7 +320,7 @@ var Q = !1, na = {set:function(a, b, c) {
         if (e.stealth && a[b] === c) {
           return Q = !1, !0;
         }
-        d = a.view;
+        d = e.view;
         b >= g ? (e.add(c, d), a.length++) : b < g && (f = e.key, g = e.dom[b], e.reuse || f && g._key === c[f] ? e.update(g, c, d, b) : e.replace(g, c, d, b));
         if (e.proxy) {
           return Q = !1, !0;
@@ -334,12 +334,6 @@ var Q = !1, na = {set:function(a, b, c) {
   (M ? a : a.proto)[b] = c;
   return !0;
 }};
-O.prototype.swap = function(a, b) {
-  Q = !0;
-  this.mikado.swap(a, b, this.view);
-  Q = !1;
-  return this;
-};
 O.prototype.set = function(a) {
   this.splice();
   return this.concat(a);
@@ -350,20 +344,20 @@ O.prototype.splice = function(a, b, c) {
   "undefined" === typeof b && (b = this.length - a, 0 > b && (b = 0));
   b && this.mikado.remove(a, b);
   b = c ? this.proto.splice(a, b, c) : this.proto.splice(a, b);
-  c && this.mikado.add(c, a, this.view);
+  c && this.mikado.add(c, a, this.mikado.view);
   Q = !1;
   return b;
 };
 O.prototype.push = function(a) {
   Q = !0;
-  this.mikado.add(a, this.view);
+  this.mikado.add(a, this.mikado.view);
   this.mikado.proxy || (this[this.length] = a);
   M && this.length++;
   Q = !1;
 };
 O.prototype.unshift = function(a) {
   Q = !0;
-  this.mikado.add(a, 0, this.view);
+  this.mikado.add(a, 0, this.mikado.view);
   this.proto.unshift(a);
   Q = !1;
 };
@@ -654,7 +648,6 @@ F.prototype.create = function(a, b, c) {
 F.prototype.apply = function(a, b, c, d) {
   if (!this.static) {
     b || (b = this.store ? this.store[d] : a._data);
-    c && this.observe && (this.store.view = c);
     this.update_path(a._path || this.create_path(a), !1, b, d, c);
     var e;
     (e = this.on) && (e = e.change) && a !== this.factory && e(a);
@@ -886,16 +879,36 @@ F.prototype.checkout = function(a) {
 };
 F.prototype.replace = function(a, b, c, d) {
   "undefined" === typeof d && ("number" === typeof a ? (d = a, a = this.dom[d]) : d = this.index(a));
+  var e;
+  if (this.key && (e = this.live[b[this.key]])) {
+    this.stealth || b._proxy || this.apply(a, b, c, d);
+    if (e !== a) {
+      c = this.index(e);
+      if (this.store) {
+        this.skip = 1;
+        var f = this.store[d];
+        this.store[d] = b;
+        this.store[c] = f;
+        this.skip = 0;
+      }
+      this.dom[d] = e;
+      this.dom[c] = a;
+      c < d && (b = a, a = e, e = b);
+      b = a.nextElementSibling;
+      this.root.insertBefore(a, e);
+      b !== e && this.root.insertBefore(e, b);
+    }
+    return this;
+  }
   this.add(b, c, d, a);
   this.checkout(a);
-  var e;
-  (e = this.on) && (e = e.remove) && e(a);
+  (e = this.on) && (e = e.replace) && e(a);
   return this;
 };
 F.prototype.update = function(a, b, c, d) {
   "undefined" === typeof d && ("number" === typeof a ? (d = a, a = this.dom[a]) : d = this.index(a));
   if (this.proxy) {
-    if (this.stealth && (this.store ? this.store[d] : a._data) === b) {
+    if (this.stealth && this.store[d] === b) {
       return this;
     }
     b._proxy || (b = ra(b, a._path || this.create_path(a), this.proxy));

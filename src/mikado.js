@@ -6,6 +6,12 @@
  * https://github.com/nextapps-de/mikado
  */
 
+/* TODO
+    - shared routes: Mikado.route() / private route: view.router()
+    - support dispatch parameters
+    - support dataset cache
+*/
+
 /*
     Modes Keyed:
 
@@ -670,10 +676,10 @@ Mikado.prototype.apply = function(root, data, payload, index){
 
             data || (data = this.store ? this.store[index] : root["_data"]);
 
-            if(SUPPORT_REACTIVE && payload && this.observe){
-
-                this.store.view = payload;
-            }
+            // if(SUPPORT_REACTIVE && payload && this.observe){
+            //
+            //     this.store.view = payload;
+            // }
         }
 
         //root || (root = this.factory);
@@ -1589,12 +1595,61 @@ Mikado.prototype.replace = function(node, data, view, index){
         }
     }
 
-    this.add(data, view, index, node);
-    this.checkout(node);
-
     let tmp;
 
-    if(SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["remove"])){
+    // handle key matches in live pool (having two instances of the same component with the same key on the same view model isn't allowed)
+    // TODO: provide transaction feature to optimize reconciling when proxy index access modifies in a batch
+
+    if(SUPPORT_KEYED && this.key && (tmp = this.live[data[this.key]])){
+
+        if(!SUPPORT_REACTIVE || !(this.stealth || data["_proxy"])){
+
+            this.apply(node, data, view, index);
+        }
+
+        if(tmp !== node){
+
+            let index_b = this.index(tmp);
+
+            if(SUPPORT_STORAGE && this.store){
+
+                if(SUPPORT_REACTIVE) this.skip = 1;
+                let tmp2 = this.store[index];
+                this.store[index] = data;
+                this.store[index_b] = tmp2;
+                if(SUPPORT_REACTIVE) this.skip = 0;
+            }
+
+            this.dom[index] = tmp;
+            this.dom[index_b] = node;
+
+            if(index_b < index){
+
+                let tmp2 = node;
+                node = tmp;
+                tmp = tmp2;
+            }
+
+            const prev = node.nextElementSibling;
+
+            this.root.insertBefore(node, tmp);
+
+            if(prev !== tmp){
+
+                this.root.insertBefore(tmp, prev);
+            }
+        }
+
+        return this;
+    }
+    else{
+
+        this.add(data, view, index, node);
+    }
+
+    this.checkout(node);
+
+    if(SUPPORT_CALLBACKS && (tmp = this.on) && (tmp = tmp["replace"])){
 
         tmp(node);
     }
@@ -1603,6 +1658,8 @@ Mikado.prototype.replace = function(node, data, view, index){
 
     return this;
 };
+
+// TODO: handle key collision and take live pool into account (move live pool handler from replace to update)
 
 /**
  * @param {Element|number} node
@@ -1640,7 +1697,7 @@ Mikado.prototype.update = function(node, data, view, index){
 
         if(SUPPORT_REACTIVE && this.proxy){
 
-            if(this.stealth && ((this.store ? this.store[index] : node["_data"]) === data)){
+            if(this.stealth && ((/*this.store ?*/ this.store[index] /*: node["_data"]*/) === data)){
 
                 return this;
             }
@@ -1667,6 +1724,7 @@ Mikado.prototype.update = function(node, data, view, index){
 
         if(ref !== tmp){
 
+            // TODO: checkout node (apply pool transitions)
             // remove from keyed live-pool
             this.live[ref] = null;
 

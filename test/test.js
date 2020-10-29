@@ -2190,7 +2190,10 @@
             var store = Mikado.array(items);
             mikado = Mikado(root_1, "proxy", { store: store, loose: false }).render();
 
-            store.swap(0, 4);
+            //store.swap(0, 4);
+            var tmp = store[0];
+            store[0] = store[4];
+            store[4] = tmp;
 
             expect(store[0]).to.eql(data[4]);
             expect(root_1.children[0].dataset.id).to.equal(store[0]["id"]);
