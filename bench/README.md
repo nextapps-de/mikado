@@ -32,7 +32,6 @@ Whether a library provides optimizations to one of these modes or not, it is fai
 
 When the option "keep best run" is enabled it will replace the better result with the old one (separately for each test). When disabled, it will summarize the results for each test.
 
-
 #### Keyed
 
 <table>

@@ -1,5 +1,5 @@
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
-<h3>New generation template engine. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Modern template engine based on living standards. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high-performance applications.
 
@@ -20,6 +20,7 @@ Rendering has by far the most impact on application performance. Mikado takes te
 <a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; <!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;-->
 <a href="CHANGELOG.md">Changelog</a>
 
+<!--
 **Services:**
 
 Mikado Runtime (Render Templates)<br>`npm install mikado`
@@ -27,8 +28,7 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 <a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> (Compile Templates)<br>`npm install mikado-compile`
 
 <a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> (Serve Templates)<br>`npm install mikado-server`
-
-<!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware</a> (Server-Side Rendering) _\*WIP\*_<br>`npm install mikado-express`-->
+-->
 
 **Benchmark:**
 
@@ -45,23 +45,25 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
 
+<!--
 #### Coming Soon
 
 `new` webpack loader to bundle templates<br>
 `add` file endings for templates are customizable (e.g use **_.shtml_**)<br>
+-->
 
-#### How to learn Mikado?
+#### First Steps
 
-Thanks to the reversed engineering, Mikado provides you one of the most simple to learn idiomatic styles which are based on living standards. You do not have to learn a new language, you just need some basic skills you already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details, which are just missing in most of the other framework documentations. You will do not need these details to start with. But when you would like to know more you get a chance to go deeper.
+Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars". You do not have to learn a new language, you just need some basic skills you already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details. You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
 
-Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required. You can start seamlessly without the pain you might know from other frameworks.
+Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required.
 
 Guide for new developers (the most simple example, just takes 3 minutes):
 
 - Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
 - Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
-- Compile the template, then create a Mikado instance by passing in the root node and the compiled template
-  - `var view = Mikado(root, template)`
+- Compile the template, then create a Mikado instance by passing in the compiled template and mount the root to this new created instance
+  - `var view = new Mikado(template).mount(root);`
 - Just use `view.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
 - <a href="demo/basic/basic.html">Final Source Code</a>
 
@@ -939,11 +941,11 @@ Define a HTML-like template and use double curly brackets to mark dynamic expres
 <table>
   <tr>
     <td>User:</td>
-    <td>{{data.user}}</td>
+    <td>{{ data.user }}</td>
   </tr>
   <tr>
     <td>Tweets:</td>
-    <td>{{data.tweets.length}}</td>
+    <td>{{ data.tweets.length }}</td>
   </tr>
 </table>
 ```
@@ -952,13 +954,15 @@ Save this template e.g. to _user/list.html_
 
 > The preserved keyword **_data_** is a reference to a passed data item. You can access the whole nested object.
 
-Mikado comes up with a template compiler which has to be run through Node.js and provides a command-line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
+Mikado comes up with a template compiler ("mikado-compile") which has to be run through Node.js and provides a command-line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
 
+<!--
 Install Mikado Compiler via NPM:
 
 ```npm
 npm install mikado-compile
 ```
+-->
 
 Compile the template through the command line by:
 
@@ -966,7 +970,7 @@ Compile the template through the command line by:
 npx mikado-compile user/list.html
 ```
 
-> **Notation:** npx mikado-compile _{{input}} {{destination}}_
+> **Notation:** npx mikado-compile _{ input } { destination }_
 
 <!--
 Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
@@ -990,11 +994,11 @@ Define in HTML:
   <table>
     <tr>
       <td>User:</td>
-      <td>{{data.user}}</td>
+      <td>{{ data.user }}</td>
     </tr>
     <tr>
       <td>Tweets:</td>
-      <td>{{data.tweets.length}}</td>
+      <td>{{ data.tweets.length }}</td>
     </tr>
   </table>
 </template>
@@ -1003,11 +1007,14 @@ Define in HTML:
 Use runtime compiler:
 
 ```js
-var tpl = Mikado.compile("user-list");
+var tpl = Mikado.compile(document.getElementById("user-list"));
 ```
 
+
+Alternatively (supports just templates/elements with IDs):
+
 ```js
-var tpl = Mikado.compile(document.getElementById("user-list"));
+var tpl = Mikado.compile("user-list");
 ```
 
 Create a mikado view:
@@ -1026,11 +1033,11 @@ Define HTML as string:
 const template = `<table>
         <tr>
             <td>User:</td>
-            <td>{{data.user}}</td>
+            <td>{{ data.user }}</td>
         </tr>
         <tr>
             <td>Tweets:</td>
-            <td>{{data.tweets.length}}</td>
+            <td>{{ data.tweets.length }}</td>
         </tr>
     </table>`;
 ```
@@ -1102,9 +1109,7 @@ view.render(data);
 You can also chain methods:
 
 ```js
-var view = Mikado(template)
-  .mount(document.body)
-  .render(data);
+Mikado(template).mount(document.body).render(data);
 ```
 
 <a name="conventions"></a>
@@ -1180,12 +1185,12 @@ This example does not have this issue, because text nodes and child nodes are no
 A bit more complex template:
 
 ```html
-<section id="{{data.id}}" class="{{this.state.theme}}" data-index="{{index}}">
-  {{@var is_today = data.date === view.today}}
-  <div class="{{data.class}} {{is_today ? 'on' : 'off'}}">
-    <div class="title" style="font-size: 2em">{{data.title.toUpperCase()}}</div>
-    <div class="content {{index % 2 ? 'odd' : 'even'}}">{{#data.content}}</div>
-    <div class="footer">{{view.parseFooter(data)}}</div>
+<section id="{{ data.id }}" class="{{ this.state.theme }}" data-index="{{ index }}">
+  {{@ var is_today = data.date === view.today }}
+  <div class="{{ data.class }} {{ is_today ? 'on' : 'off' }}">
+    <div class="title" style="font-size: 2em">{{ data.title.toUpperCase() }}</div>
+    <div class="content {{ index % 2 ? 'odd' : 'even' }}">{{# data.content }}</div>
+    <div class="footer">{{ view.parseFooter(data) }}</div>
   </div>
 </section>
 ```
@@ -1254,18 +1259,21 @@ Within a template you have access to the following identifiers:
 
 You cannot change the naming of those preserved keywords.
 
-It is recommended to pass custom functions via the _view_ object (see example above). You can also nest more complex computations inline as an IIFE and return the result.
+It is recommended to pass custom functions via the _view_ object (see example above "view.parseFooter"). Alternatively you can also nest more complex computations inline as an IIFE and return the result.
 
 ```html
 <div class="date">
-  {{ (function(){ var date = new Date(); // ... return date.toLocaleString();
+  {{ (function(){ 
+    var date = new Date();
+    // perform some code ...
+    return date.toLocaleString();
   }()) }}
 </div>
 ```
 
 Alternatively of accessing _data_, _view_, _index_ and _this.state_, you can also access variables from the global namespace.
 
-To finish, the example above provides one single object or an array of **_data_** item:
+To finish the example from above you need one single object or an array of **_data_** items:
 
 ```js
 var data = [
@@ -1335,10 +1343,10 @@ view.render(data, payload).then(function() {
 Let's take this example:
 
 ```html
-<table data-id="{{data.id}}" root>
+<table data-id="{{ data.id }}" root>
   <tr>
     <td>User:</td>
-    <td click="show-user">{{data.user}}</td>
+    <td click="show-user">{{ data.user }}</td>
     <td><a click="delete-user:root">Delete</a></td>
   </tr>
 </table>
@@ -1507,7 +1515,7 @@ Add the attribute **_key_** to the **_root element_** of a template (or the root
 ```html
 <div key="data.id">
   <div>User:</div>
-  <div>{{data.name}}</div>
+  <div>{{ data.name }}</div>
 </div>
 ```
 
@@ -1528,7 +1536,7 @@ This is a special mode that uses the shared keyed index exclusively (without poo
 ```html
 <div key="data.id">
   <div>User:</div>
-  <div>{{data.name}}</div>
+  <div>{{ data.name }}</div>
 </div>
 ```
 
@@ -1551,7 +1559,7 @@ Add the attribute **_key_** to the **_root element_** of a template:
 ```html
 <div key="data.id">
   <div>User:</div>
-  <div>{{data.name}}</div>
+  <div>{{ data.name }}</div>
 </div>
 ```
 
@@ -1572,7 +1580,7 @@ You can also use the same strategy from 3. for hybrid mode. But it has the same 
 ```html
 <div key="data.id">
   <div>User:</div>
-  <div>{{data.name}}</div>
+  <div>{{ data.name }}</div>
 </div>
 ```
 
@@ -2060,13 +2068,13 @@ Caching of DOM properties can greatly increase performance (up to 20x). There ar
 
 > **Recommendation:** enable caching when some of your data will stay unchanged from one to another render task. Disable caching when changes on data requires a fully re-render more often.
 
-Caching is by default enabled, this may change in future, so best is to explicitly set this flag when initializing:
+Caching is by default enabled, this may change in the future, so best is to explicitly set this flag when initializing:
 
 ```js
 var view = new Mikado(template, { cache: true });
 ```
 
-We strongly recommended to read the next section to understand how caching is working.
+We strongly recommended reading the next section to understand how caching is working.
 
 #### The Concept
 
@@ -2094,7 +2102,7 @@ This time, the property will be changed. That specific part now executes more th
 
 > When caching is enabled it automatically applies for all dynamic expressions within a template by default.
 
-So whenever you like to change one of the nodes attributes or contents (e.g. style, class, properties, dataset, etc) you just wrap this as an expression within the template and it will apply automatically.
+So whenever you like to change one of the nodes attributes or contents (e.g. style, class, properties, dataset, text contents, etc) you just wrap this as an expression within the template and it will apply automatically.
 
 For example, when you would like to also change the classname, then just wrap in as an expression:
 
@@ -2123,7 +2131,7 @@ This time the change will not apply. Because the internal cache assumes that the
 
 You have 2 options in this situation:
 
-1. do not manually change dom properties or states (instead change all through rendering templates)
+1. do not manually change dom properties or states which are part of a template expression (instead change all through rendering templates)
 2. using the <a href="#cache-helpers">caching helpers</a> which Mikado provides you exactly to this purpose.
 3. using <a href="#view.sync">view.sync()</a> as a fallback
 
@@ -2139,13 +2147,13 @@ view.sync(true); // re-sync dom nodes and properties
 
 Please keep in mind that manual changes to the DOM has its limits:
 
-> Generally, do not **manually change** dom properties or states which are **not covered by the template**. Changes that aren't covered by the template may get lost when re-rendering (in a few situations this will not be an issue).
+> Generally, do not **manually change** dom properties or states which are **part of a template expression**. Changes that aren't covered by the template may get lost when re-rendering (this must not be an issue). Also use "keyed" mode to keep your changes on the corresponding template entry (disables recycling). 
 
 <a name="cache-helpers"></a>
 
-#### Caching Helpers
+#### Caching Helpers (optional)
 
-> Caching helpers will help you to bypass manual changes to the DOM without going out of sync.
+> Caching helpers let you bypass manual changes to the DOM easily without going out of sync.
 
 You can also use these helpers for all changes to any DOM node independent of it is part of the template or not. Generally, these helpers increase every DOM access.
 
@@ -2277,7 +2285,7 @@ view.sort(function(data_a, data_b){
 
 ## Stores
 
-Mikado provides 4 different types of stores. It is very useful to understand how they are handled.
+Mikado provides 4 different types of stores. It is very useful to understand how they are processed internally.
 
 #### 1. Internal Store
 
@@ -2342,7 +2350,7 @@ view.store = store = [];
 
 #### 2. Loose Store (Default)
 
-When **_loose_** is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs slightly faster and has a lower memory footprint but you will also lose any data at the moment when the corresponding dom element was also removed from the screen (render stack). In most situations, this is the expected behavior, but it depends on your application.
+When **_loose_** is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs slightly faster and has a lower memory footprint but you will also lose any data at the moment when the corresponding dom element was also removed from the screen/dom (render stack). Often, this is the expected behavior, but it depends on your application.
 
 Initialize a loose store:
 
@@ -2394,7 +2402,7 @@ var view = new Mikado(root, template, {
 
 This is also an external store with all its attributes described above. Additionally, this store reacts when indices get changed (applies changes to DOM automatically). That makes reconciliation unnecessary but also has a noticeable extra cost for all other kinds of updates. The main reason why this store is slower in the benchmark by a large margin is, that this store cannot apply a bulk of updates through a loop. It reacts at the moment the data was assigned/removed from an index. Still, this store could perform faster than all other ones depending on your application / current view.
 
-The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you do not need calling any of Mikados methods anymore like render/reconcile/update/add/append/remove. All these methods get redundant because the view is completely synchronized along with the whole state of your store. This combination and how they are integrated into Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#modes">astronomical</a>.
+The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you did not need calling any of Mikados methods again like render/reconcile/update/add/append/remove. All these methods gets redundant/obsolete because the view is completely synchronized along with the whole state of your store. This combination and how they are integrated into Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#modes">astronomical</a>.
 
 Read the documentation about this kind of store <a href="#observable">here</a>.
 
@@ -2953,8 +2961,7 @@ As well as try to assign computations outside a loop:
 
 ```html
 <main>
-  {{@ var result = data.tweets.length && (function(){ return "some big
-  computation"; }()) }}
+  {{@ var result = (function(){ return "some big computation"; }()) }}
   <tweets for="data.tweets">
     <section>{{ result }}</section>
   </tweets>
@@ -3220,8 +3227,8 @@ console.log(array instanceof Array); // -> false
 
 The proxy feature theoretically allows those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase.
 
+<!--
 <a name="bind" id="bind"></a>
-
 ## Bind Input Elements
 
 _WIP (release when reaching 2500 Github stars)_
@@ -3238,6 +3245,7 @@ The attribute **_bind_** provides you a 2-way-binding of input elements with you
 ```
 
 When data is changed, the input elements will automatically update, as well as other turn around, when the input elements get new data the store will automatically update.
+-->
 
 <a name="best-practices"></a>
 
@@ -3387,9 +3395,11 @@ Pooling just extends concepts which already exist/used:
 1. The queued pool extends the feature of "recycling" (reusing) nodes
 2. The keyed pool extends the feature of keeping components which are referential keyed
 
+<!--
 _"Does pooling have any advantages?"_ Yes, Otherwise recycling or keyed wouldn't have any advantage at all. So semantically there is nothing changed when using pools.
 
 _"How does pooling improve performance?"_ the benchmark suite from here gets a benefit in 4 from 11 test cases by using pools (create, replace, append, toggle). In all other tests, pooling has no effect, except it has an extra cost because of applying pool transitions. But that isn't the main essence behind pools. Everyone who is thinking pooling exist to just boost this benchmark did not understand this <a href="#concept">concept</a>. The most important capability of Mikados pools isn't covered by any of these tests yet. Because the true advantage comes in when using partials, includes, and partial loops. But those aren't strictly compared anywhere. If there was a benchmark that measures the performance of partial loops and **mixin them in different contexts** (by example) I'm pretty sure, that Mikado gains an astronomical performance factor over all others. Sadly I haven't the time to provide such a comparison. In the future someone might be releasing a benchmark that covers this case, I would go in immediately.
+-->
 
 ## Motivation
 
@@ -3547,8 +3557,6 @@ The destination folder of the build is: _/dist/_
         <td>Target language</td>
     </tr>
 </table>
-
-<!-- Crafted for the next decade of high performance applications. Forgot everything you may ever heard about web templating performance. -->
 
 ---
 
