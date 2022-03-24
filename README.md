@@ -78,17 +78,17 @@ Guide for new developers (the most simple example, just takes 3 minutes):
    - <a href="#mikado-compile">Using Dedicated Compiler</a><!-- - <a href="#xss">XSS Security</a> -->
    - <a href="#compiler-html5">Using HTML5 Templates</a>
    - <a href="#compiler-string">Using Template String</a>
-7. <a href="#conventions">Rules and Conventions</a>
-8. <a href="#started">Basic Example</a>
-9. <a href="#advanced_example">Advanced Example</a>
+7. <a href="#started">Basic Example</a>
+8. <a href="#conventions">Rules and Conventions</a>
+9. <a href="#advanced-example">Advanced Example</a>
 10. <a href="#event">Event Bindings</a>
     - <a href="#view.listen">Explicit Register/Unregister</a>
-11. <a href="#keyed">Keyed / Non-Keyed Modes</a>
+11. <a href="#modes">Keyed / Non-Keyed Modes</a>
     - <a href="#non-keyed">Non-Keyed</a>
     - <a href="#explicit-keyed">Explicit Keyed (Non-Shared)</a>
+    - <a href="#explicit-shared-keyed">Explicit Keyed (Shared)</a>
     - <a href="#cross-shared">Cross-Shared Keyed</a>
     - <a href="#shared-keyed">Exclusive-Shared Keyed</a>
-    - <a href="#explicit-shared-keyed">Explicit Keyed (Shared)</a>
 12. <a href="#reuse">Non-Reusing</a>
     - <a href="#refresh">Render vs. Refresh vs. Reconcile</a>
 13. Usage:
@@ -97,19 +97,19 @@ Guide for new developers (the most simple example, just takes 3 minutes):
     - <a href="#modify_views">Modify Views</a>
     - <a href="#helpers">Useful Helpers</a>
     - <a href="#manipulate">Manipulate Views</a>
-    - <a href="#cache-helpers">Caching Helpers</a>
 14. <a href="#cache">DOM State Caching</a>
-15. Stores:
-    - <a href="#store">Internal Store</a>
-    - <a href="#options.loose">Loose Store</a>
-    - <a href="#extern">Extern/Custom Store</a>
-    - <a href="#extern">Reactive Store</a>
-    - <a href="#export">Export / Import Stores</a>
+    - <a href="#cache-helpers">Caching Helpers</a>
+15. <a href="#store">Stores</a>
+    - <a href="#store-internal">Internal Store</a>
+    - <a href="#store-loose">Loose Store</a>
+    - <a href="#store-extern">Extern/Custom Store</a>
+    - <a href="#store-reactive">Reactive Store (Observable Array)</a>
+    - <a href="#store-export">Export / Import Stores</a>
 16. <a href="#view.state">State</a>
 17. <a href="#callbacks">Callbacks</a>
 18. <a href="#load">Transport / Load Templates</a>
 19. <a href="#static">Static Templates</a>
-    - <a href="#mikado.once">Once (One-time rendering)</a>
+    - <a href="#Mikado.once">Once (One-time rendering)</a>
 20. <a href="#compiler-service">Compiler Service / Live Templates</a>
     - <a href="#localdev">Local Development</a>
 21. Template Features:
@@ -122,10 +122,10 @@ Guide for new developers (the most simple example, just takes 3 minutes):
     - <a href="#stealth">Stealth Mode</a>
     - <a href="#observable">Observable Array (Virtual NodeList)</a>
 23. <a href="#best-practices">Best Practices</a>
-24. <a href="#memory">Memory Optimizations</a>
-25. <a href="#reconcile">About Reconcile (Diffing)</a>
-26. <a href="#concept">Concept of Shared Pools</a>
-27. <a href="#builds">Custom Builds</a>
+    - <a href="#memory">Memory Optimizations</a>
+24. <a href="#reconcile">About Reconcile (Diffing)</a>
+25. <a href="#concept">Concept of Shared Pools</a>
+26. <a href="#builds">Custom Builds</a>
 
 <a name="get-latest"></a>
 
@@ -264,7 +264,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#keyed">Keyed/Non-Keyed</a>
+            <a href="#modes">Keyed/Non-Keyed</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -320,7 +320,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#observe">Virtual NodeList (Array)</a>
+            <a href="#observable">Virtual NodeList (Array)</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -328,7 +328,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#async">Asynchronous Render</a>
+            Asynchronous Render
         </td>
         <td>✓</td>
         <td>-</td>
@@ -667,24 +667,24 @@ Most of these methods are optional, you can just use **_.render()_** to apply al
 
 Constructor:
 
-- new <a href="#mikado.new">**Mikado**(\<root\>, template, \<options\>)</a> : view
+- new <a href="#Mikado.new">**Mikado**(\<root\>, template, \<options\>)</a> : view
 
 Global methods:
 
-- <a href="#mikado.new">Mikado(\<root\>, template, \<options\>)</a> : view
-- <a href="#mikado.once">Mikado.**once**(root, template, \<data\>, \<payload\>, \<callback\>)</a>
-- <a href="#mikado.register">Mikado.**register**(template)</a>
-- <a href="#mikado.unload">Mikado.**unregister**(template)</a>
+- <a href="#Mikado.new">Mikado(\<root\>, template, \<options\>)</a> : view
+- <a href="#Mikado.once">Mikado.**once**(root, template, \<data\>, \<payload\>, \<callback\>)</a>
+- Mikado.**register**(template)
+- Mikado.**unregister**(template)
 
 Global methods (not included in mikado.light.js):
 
-- <a href="#mikado.compile">Mikado.**compile**(\<template | string\>)</a>
-- <a href="#mikado.load">Mikado.**load**(url, \<callback\>)</a>
-- <a href="#mikado.unload">Mikado.**unload**(template)</a>
-- <a href="#mikado.route">mikado.**route**(name, handler, \<options\>)</a>
-- <a href="#mikado.listen">mikado.**listen**(event, \<options\>)</a>
-- <a href="#mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
-- <a href="#mikado.dispatch">mikado.**dispatch**(name, \<target\>, \<event\>, \<self\>)</a>
+- <a href="#Mikado.compile">Mikado.**compile**(\<template | string\>)</a>
+- <a href="#Mikado.load">Mikado.**load**(url, \<callback\>)</a>
+- <a href="#Mikado.unload">Mikado.**unload**(template)</a>
+- <a href="#Mikado.route">mikado.**route**(name, handler, \<options\>)</a>
+- <a href="#Mikado.listen">mikado.**listen**(event, \<options\>)</a>
+- <a href="#Mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
+- mikado.**dispatch**(name, \<target\>, \<event\>, \<self\>)
 
 Instance methods:
 
@@ -752,17 +752,17 @@ Global helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.getHTML">Mikado.**getHTML**(node)</a>
 - <a href="#Mikado.setClass">Mikado.**setClass**(node, class)</a>
 - <a href="#Mikado.getClass">Mikado.**getClass**(node)</a>
-- <a href="#Mikado.hasClass">Mikado.**hasClass**(node, class)</a>
-- <a href="#Mikado.removeClass">Mikado.**removeClass**(node, class)</a>
-- <a href="#Mikado.toggleClass">Mikado.**toggleClass**(node, class)</a>
+- Mikado.**hasClass**(node, class)
+- Mikado.**removeClass**(node, class)
+- Mikado.**toggleClass**(node, class)
 - ~~Mikado.**setStyle**(node, property, value)~~
 - ~~Mikado.**getStyle**(node, property~~
 - <a href="#Mikado.setCSS">Mikado.**setCSS**(node, css)</a>
 - <a href="#Mikado.getCSS">Mikado.**getCSS**(node)</a>
 - <a href="#Mikado.setAttribute">Mikado.**setAttribute**(node, attr, value)</a>
 - <a href="#Mikado.getAttribute">Mikado.**getAttribute**(node, attr)</a>
-- <a href="#Mikado.hasAttribute">Mikado.**hasAttribute**(node, attr)</a>
-- <a href="#Mikado.removeAttribute">Mikado.**removeAttribute**(node, attr)</a>
+- Mikado.**hasAttribute**(node, attr)
+- Mikado.**removeAttribute**(node, attr)
 
 <a name="options"></a>
 
@@ -1004,6 +1004,7 @@ Define in HTML:
 </template>
 ```
 
+<a name="Mikado.compile"></a>
 Use runtime compiler:
 
 ```js
@@ -1178,7 +1179,7 @@ This example does not have this issue, because text nodes and child nodes are no
 </main>
 ```
 
-<a name="advanced_example"></a>
+<a name="view"></a><a name="advanced-example"></a>
 
 ## Advanced Example
 
@@ -1336,7 +1337,7 @@ view.render(data, payload).then(function() {
 });
 ```
 
-<a name="event"></a>
+<a name="event"></a><a name="view.route"></a>
 
 ## Event Bindings
 
@@ -1397,6 +1398,8 @@ Routes are stored globally, so you can share routes through all Mikado instances
     </tr>
 </table>
 
+<a name="Mikado.route"></a>
+
 #### Event Options
 
 By default, every event which is delegated to a route will be canceled (event.preventDefault) and also will stop capturing/bubbling (event.stopPropagation). To control this behavior you can configure for each route:
@@ -1413,7 +1416,7 @@ Mikado.route("handler", function(target, event){
 `cancel` prevents default behavior for this event (default: "true")<br>
 `stop` stop capturing/bubbling the event after matched (default: "true")
 
-<a name="view.listen"></a><a name="view.unlisten"></a>
+<a name="Mikado.listen"></a><a name="Mikado.unlisten"></a><a name="view.listen"></a><a name="view.unlisten"></a>
 
 #### Explicit Register/Unregister
 
@@ -1472,7 +1475,7 @@ Manually dispatch an event and pass parameters:
 view.dispatch("handler", target, event, self);
 ```
 
-<a name="keyed"></a>
+<a name="modes"></a>
 
 ## Keyed/Non-Keyed Modes
 
@@ -1687,14 +1690,13 @@ view.reconcile(items);
 
 ## Create, Initialize, Destroy Views
 
-<a name="mikado.new"></a>
+<a name="Mikado.new"></a>
 Create a view from a template with options:
 
 ```js
 var view = Mikado(template, options);
 ```
 
-<a name="mikado.new"></a>
 Create view from a template with options and also mount it to a target element:
 
 ```js
@@ -1916,7 +1918,7 @@ view.purge(template);
 ```
 -->
 
-<a name="helpers"></a>
+<a name="helpers"></a><a name="view.length"></a>
 
 ### Useful Helpers
 
@@ -2157,7 +2159,7 @@ Please keep in mind that manual changes to the DOM has its limits:
 
 You can also use these helpers for all changes to any DOM node independent of it is part of the template or not. Generally, these helpers increase every DOM access.
 
-<a name="view.setAttribute"></a>
+<a name="Mikado.setAttribute"></a>
 Set attribute of a node (will not replace old attributes):
 
 ```js
@@ -2287,6 +2289,8 @@ view.sort(function(data_a, data_b){
 
 Mikado provides 4 different types of stores. It is very useful to understand how they are processed internally.
 
+<a name="store-internal"></a>
+
 #### 1. Internal Store
 
 An internal store gets updated automatically by Mikado. This comes with a small extra cost. Use this store when you need a reference to the data store as an array of items that are currently rendered.
@@ -2324,6 +2328,7 @@ Or force an update to a specific node:
 view.refresh(node);
 ```
 
+<a name="view.store"></a>
 Access to the store:
 
 ```js
@@ -2346,7 +2351,7 @@ var store = view.store;
 view.store = store = [];
 ```
 
-<a name="options.loose"></a>
+<a name="store-loose"></a>
 
 #### 2. Loose Store (Default)
 
@@ -2368,7 +2373,7 @@ var item = view.data(index);
 var item = view.data(node);
 ```
 
-<a name="extern"></a>
+<a name="store-extern"></a>
 
 #### 3. External/Custom Store
 
@@ -2398,6 +2403,8 @@ var view = new Mikado(root, template, {
 });
 ```
 
+<a name="store-reactive"></a>
+
 #### 4. Reactive Store (Observable Array)
 
 This is also an external store with all its attributes described above. Additionally, this store reacts when indices get changed (applies changes to DOM automatically). That makes reconciliation unnecessary but also has a noticeable extra cost for all other kinds of updates. The main reason why this store is slower in the benchmark by a large margin is, that this store cannot apply a bulk of updates through a loop. It reacts at the moment the data was assigned/removed from an index. Still, this store could perform faster than all other ones depending on your application / current view.
@@ -2406,7 +2413,7 @@ The reactive store could also be used in a combination with the <a href="#proxy"
 
 Read the documentation about this kind of store <a href="#observable">here</a>.
 
-<a name="export"></a>
+<a name="store-export"></a>
 
 #### Export / Import Views
 
@@ -2432,7 +2439,7 @@ You cannot export several instances of the same template which holds different d
 
 ## State
 
-State pretty much acts like passing a <a href="#view.view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. The state is directly assigned to each Mikado instance and does not have to pass during rendering. This all differ from using view payloads.
+State pretty much acts like passing a <a href="#view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. The state is directly assigned to each Mikado instance and does not have to pass during rendering. This all differ from using view payloads.
 
 Define state properties:
 
@@ -2524,7 +2531,7 @@ var view = new Mikado(root, template, {
     </tr>
 </table>
 
-<a name="load"></a>
+<a name="load"></a><a name="Mikado.load"></a>
 
 ## Transport / Load Templates
 
@@ -2571,6 +2578,8 @@ var view = Mikado("template");
 view.mount(document.body).render(data);
 ```
 
+<a name="view.load"></a>
+
 **.load()** loads and initialize a new template to an existing Mikado instance:
 
 ```js
@@ -2610,7 +2619,7 @@ view
 
 When a template has no dynamic expressions (within curly brackets) which need to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing data.
 
-<a name="mikado.once"></a>
+<a name="Mikado.once"></a><a name="Mikado.unload"></a>
 
 #### Once (One-time rendering)
 
@@ -2686,7 +2695,7 @@ Types:
 <table>
     <tr>
         <td><b>json</b></td>
-        <td>Assign them manually via <a href="#mikado.register">Mikado.register</a> or just render the template <a href="#mikado.once">once</a>.</td>
+        <td>Assign them manually via <a href="#Mikado.register">Mikado.register</a> or just render the template <a href="#Mikado.once">once</a>.</td>
     </tr>
     <tr></tr>
     <tr>
