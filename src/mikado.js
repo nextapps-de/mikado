@@ -1934,7 +1934,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path, namespaceURI){
         }
         else{
 
-            if(node.className.baseVal === undefined){
+            if(node.className["baseVal"] === undefined){
                 node.className = class_name;
             }else{
                 node.setAttribute("class", class_name);
