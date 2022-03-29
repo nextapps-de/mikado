@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.7.64
+ * Mikado.js v0.7.64-svg
  * Copyright 2019 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1760,7 +1760,7 @@ function resolve$$module$tmp$mikado(root, path, cache) {
 var tmp_fn$$module$tmp$mikado;
 var last_conditional$$module$tmp$mikado;
 var root_node$$module$tmp$mikado;
-Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path) {
+Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path, namespaceURI) {
   if (SUPPORT_POOLS && !index) {
     var cache = factory_pool$$module$tmp$mikado[tpl["n"] + (SUPPORT_CACHE && this.cache ? "_cache" : "")];
     if (cache) {
@@ -1779,7 +1779,18 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       return cache.node;
     }
   }
-  var node = document.createElement(tpl["t"] || "div");
+  var style = tpl["s"];
+  var child = tpl["i"];
+  var text = tpl["x"];
+  var html = tpl["h"];
+  var attr = tpl["a"];
+  var events = SUPPORT_EVENTS && tpl["e"];
+  var class_name = tpl["c"];
+  var js = tpl["j"];
+  if (attr && attr["xmlns"]) {
+    namespaceURI = attr["xmlns"];
+  }
+  var node = namespaceURI ? document.createElementNS(namespaceURI, tpl["t"] || "div") : document.createElement(tpl["t"] || "div");
   if (!index) {
     index = 0;
     path = "&";
@@ -1791,14 +1802,6 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
     }
     root_node$$module$tmp$mikado = node;
   }
-  var style = tpl["s"];
-  var child = tpl["i"];
-  var text = tpl["x"];
-  var html = tpl["h"];
-  var attr = tpl["a"];
-  var events = SUPPORT_EVENTS && tpl["e"];
-  var class_name = tpl["c"];
-  var js = tpl["j"];
   var path_length = this.vpath.length;
   var has_update = 0;
   var has_observe = 0;
@@ -1824,7 +1827,11 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
       }
       has_update++;
     } else {
-      node.className = class_name;
+      if (node.className["baseVal"] === undefined) {
+        node.className = class_name;
+      } else {
+        node.setAttribute("class", class_name);
+      }
     }
   }
   if (attr || events) {
@@ -1966,13 +1973,13 @@ Mikado$$module$tmp$mikado.prototype.parse = function(tpl, index, path, dom_path)
         if (SUPPORT_TEMPLATE_EXTENSION && (include = current["+"])) {
           current = templates$$module$tmp$mikado[include];
         }
-        node.appendChild(this.parse(current, index + i$15 + 1, path + tmp$14, dom_path));
+        node.appendChild(this.parse(current, index + i$15 + 1, path + tmp$14, dom_path, namespaceURI));
       }
     } else {
       if (SUPPORT_TEMPLATE_EXTENSION && (include = child["+"])) {
         child = templates$$module$tmp$mikado[include];
       }
-      node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
+      node.appendChild(this.parse(child, index + 1, path + ">", dom_path, namespaceURI));
     }
   }
   if (SUPPORT_TEMPLATE_EXTENSION && tpl["f"]) {
@@ -2217,7 +2224,7 @@ function compile$$module$tmp$compile(node, recursive) {
     for (var i = 0; i < attributes.length; i++) {
       var attr_name = attributes[i].nodeName;
       if (attr_name === "class") {
-        handle_value$$module$tmp$compile(template, "c", node.className);
+        handle_value$$module$tmp$compile(template, "c", node.className["baseVal"] === undefined ? node.className : node.className["baseVal"]);
       } else {
         var attr_value = node.getAttribute(attr_name);
         if (attr_name === "style") {
