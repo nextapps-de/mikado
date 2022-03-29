@@ -1,0 +1,19 @@
+<html lang="en">
+
+<head>
+    <title>Mikado</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script src="../../src/config.js"></script>
+    <script type="module">
+        import Mikado from "../../src/mikado.js";
+        Mikado.load("template/template.json", false);
+
+        const root = document.getElementById("root");
+        Mikado.once(root, "template");
+    </script>
+</body>
+
+</html>
