@@ -1,3 +1,6 @@
+<h3>Mikado v0.8.0 Revision is Work in Progress!</h3>
+A bunch of improvements will be coming which was adressed over 3 years of using Mikado in production applications. Targeting simpler usage and integration, more template capabilities, advanced support for the reactive paradigm, a rework of the pooling strategy, enhanced template compiler which is almost fully compatible to the current generation, and of course tons of improvements to make this library even more robust. Further updates are coming soon.
+<h1></h1>
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
 <h3>Modern template engine based on living standards. Super-lightweight, outstanding performance, no dependencies.</h3>
 
