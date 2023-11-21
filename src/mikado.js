@@ -1827,10 +1827,11 @@ let root_node;
  * @param {number=} index
  * @param {string=} path
  * @param {Array=} dom_path
+ * @param {string=} namespaceURI
  * @returns {Element}
  */
 
-Mikado.prototype.parse = function(tpl, index, path, dom_path){
+Mikado.prototype.parse = function(tpl, index, path, dom_path, namespaceURI){
 
     //profiler_start("parse");
 
@@ -1852,7 +1853,22 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
     }
 
-    const node = document.createElement(tpl["t"] || "div");
+    let style = tpl["s"];
+    let child = tpl["i"];
+    let text = tpl["x"];
+    let html = tpl["h"];
+    const attr = tpl["a"];
+    const events = SUPPORT_EVENTS && tpl["e"];
+    let class_name = tpl["c"];
+    const js = tpl["j"];
+
+    if(attr && attr["xmlns"]){
+        namespaceURI = attr["xmlns"];
+    }
+
+    const node = namespaceURI ?
+        document.createElementNS(namespaceURI, tpl["t"] || "div")
+        : document.createElement(tpl["t"] || "div");
 
     if(!index){
 
@@ -1865,14 +1881,6 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         root_node = node;
     }
 
-    let style = tpl["s"];
-    let child = tpl["i"];
-    let text = tpl["x"];
-    let html = tpl["h"];
-    const attr = tpl["a"];
-    const events = SUPPORT_EVENTS && tpl["e"];
-    let class_name = tpl["c"];
-    const js = tpl["j"];
     let path_length = this.vpath.length;
     let has_update = 0;
     let has_observe = 0;
@@ -1926,7 +1934,11 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
         }
         else{
 
-            node.className = class_name;
+            if(node.className["baseVal"] === undefined){
+                node.className = class_name;
+            }else{
+                node.setAttribute("class", class_name);
+            }
         }
     }
 
@@ -2213,7 +2225,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
                 }
 
                 // process child recursively
-                node.appendChild(this.parse(current, index + i + 1, path + tmp, dom_path));
+                node.appendChild(this.parse(current, index + i + 1, path + tmp, dom_path, namespaceURI));
             }
         }
         else{
@@ -2225,7 +2237,7 @@ Mikado.prototype.parse = function(tpl, index, path, dom_path){
             }
 
             // process child recursively
-            node.appendChild(this.parse(child, index + 1, path + ">", dom_path));
+            node.appendChild(this.parse(child, index + 1, path + ">", dom_path, namespaceURI));
         }
     }
 

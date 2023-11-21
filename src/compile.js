@@ -152,7 +152,10 @@ export default function compile(node, recursive){
 
             if(attr_name === "class"){
 
-                handle_value(template, "c", node.className);
+                handle_value(template, "c",
+                    node.className["baseVal"] === undefined ?
+                        node.className
+                        : node.className["baseVal"]);
             }
             else{
 
