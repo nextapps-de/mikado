@@ -85,6 +85,7 @@ To be honest, the codebase partially looks like hell, actually. Unfortunately it
         <td>+27%</td>
     </tr>
 </table>
+* operations per second, higher values are better
 
 <h1></h1>
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
