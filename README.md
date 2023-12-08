@@ -6,6 +6,86 @@ The next big improvement is how templates are compiled and rendered within the c
 
 To be honest, the codebase partially looks like hell, actually. Unfortunately it still needs some effort to provide you a solid and clean code base, that's why you probably need to wait until start of next year.
 
+**Benchmark Comparison (Keyed Test)**
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Benchmark Test</td>
+        <td>Mikado v0.7.64</td>
+        <td>Mikado v1.0.117</td>
+        <td>Comparison</td>
+    </tr>
+    <tr>
+        <td>create</td>
+        <td>48700</td>
+        <td>54245</td>
+        <td>+11%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>replace</td>
+        <td>22450</td>
+        <td>25072</td>
+        <td>+11%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>update</td>
+        <td>171685</td>
+        <td>204288</td>
+        <td>+19%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>arrange</td>
+        <td>119356</td>
+        <td>138082</td>
+        <td>+15%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>repaint</td>
+        <td>338373</td>
+        <td>519450</td>
+        <td>+53%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>append</td>
+        <td>90115</td>
+        <td>95810</td>
+        <td>+6%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>remove</td>
+        <td>80536</td>
+        <td>97991</td>
+        <td>+21%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>toggle</td>
+        <td>86786</td>
+        <td>96655</td>
+        <td>+11%</td>
+    </tr>
+    <tr></tr>
+      <tr>
+        <td>clear</td>
+        <td>82539</td>
+        <td>88016</td>
+        <td>+6%</td>
+    </tr>
+    <tr>
+        <td>total</td>
+        <td>1040540</td>
+        <td>1319609</td>
+        <td>+27%</td>
+    </tr>
+</table>
+
 <h1></h1>
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
 <h3>Modern template engine based on living standards. Super-lightweight, outstanding performance, no dependencies.</h3>
