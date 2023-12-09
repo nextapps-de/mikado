@@ -13,7 +13,7 @@ To be honest, the codebase partially looks like hell, actually. Unfortunately it
     <tr>
         <td>Benchmark Test</td>
         <td>Mikado v0.7.64</td>
-        <td>Mikado v1.0.117</td>
+        <td>Mikado v0.8.117</td>
         <td>Comparison</td>
     </tr>
     <tr>
