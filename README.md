@@ -1,12 +1,13 @@
-<h3>Mikado Update</h3>
+<h2>Mikado 0.8.x</h3>
 
-Mikado 0.8.1-Preview: <a href="https://github.com/nextapps-de/mikado/tree/0.8-preview">https://github.com/nextapps-de/mikado/tree/0.8-preview</a>
+Mikado 0.8.x-Preview + Migration Guide: <a href="https://github.com/nextapps-de/mikado/tree/0.8-preview">https://github.com/nextapps-de/mikado/tree/0.8-preview</a>
 
-I have good news! A new video streaming platform which was build on top of the new Mikado is going live soon after 6 months of hard work. The biggest challenge was the requirement of server-side rendered content while providing a full PWA app experience at the same time. The new Mikado version is supporting a full **server-side rendering** approach by using **partial hydration** to inject templates during runtime progressively. Server and client are sharing the same template definitions written in HTML. The server side approach will also come along a middleware render engine for Express.
+I have a Christmas gift for you!
 
-The next big improvement is how templates are compiled and rendered within the client. The compiler becomes the main core of the library and is providing almost self-contained templates as functions instead of json definitions (since this was meant to be the old workaround for server-side templates). This will cover the requirements for Content-Security-Policy XSS caused by dynamically create functions from string during runtime. Also, it finally provides a layer for extensions thanks to the new architecture.
+A whole new generation of Mikado is ready to ship. Read the <a href="https://github.com/nextapps-de/mikado/blob/0.8-preview/CHANGELOG.md">Changelog</a> to get a short list of most important improvements. The new version is supporting a full `server-side rendering` approach by using `partial hydration` to inject templates during runtime progressively. Server and client are sharing the same template definitions written in HTML. The server side approach will also come with the `fastest middleware render engine for Express` you can get today which performs up to 10x faster than "Marko". Actually Mikado is the only library which breaks both limits, on client-side and server-side. Benchmarks are listed on the preview page above.
 
-To be honest, the codebase partially looks like hell, actually. Unfortunately it still needs some effort to provide you a solid and clean code base, that's why you probably need to wait until start of next year.
+Thanks for your patience, wish you a merry Christmas,<br>
+Thomas
 
 **Benchmark Comparison (Keyed Test)**
 
