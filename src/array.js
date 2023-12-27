@@ -1,7 +1,40 @@
+// COMPILER BLOCK -->
+import {
+    SUPPORT_DOM_HELPERS,
+    DEBUG,
+    SUPPORT_CACHE,
+    SUPPORT_KEYED,
+    SUPPORT_POOLS,
+    SUPPORT_STORAGE,
+    SUPPORT_TEMPLATE_EXTENSION,
+    SUPPORT_CALLBACKS,
+    SUPPORT_ASYNC,
+    SUPPORT_REACTIVE,
+    SUPPORT_EVENTS,
+
+    MIKADO_DOM,
+    MIKADO_LIVE_POOL,
+    MIKADO_CLASS,
+    MIKADO_TPL_KEY,
+    //MIKADO_TPL_INDEX,
+    MIKADO_TPL_PATH,
+    MIKADO_NODE_CACHE,
+    MIKADO_PROXY
+} from "./config.js";
+// <-- COMPILER BLOCK
+import Mikado, { apply_proxy } from "./mikado.js";
+
 const proto = Array.prototype;
 const proxy = window["Proxy"];
+let skip = false;
 
-let size = 0;
+function debug(mikado){
+
+    if(!mikado){
+
+        throw new Error("The observable array was not assigned to a Mikado instance. You need to pass in the observable array when initiating a Mikado instance.");
+    }
+}
 
 /**
  * @param {Array|Observer=} array
@@ -11,19 +44,17 @@ let size = 0;
 
 export default function Observer(array){
 
-    if(!(this instanceof Observer)){
-
-        return new Observer(array);
-    }
-
     if(array instanceof Observer){
 
         return array;
     }
 
-    // TODO: hide references
+    if(!(this instanceof Observer)){
+
+        return new Observer(array);
+    }
+
     this.mikado = null;
-    //this.view = null;
 
     const length = array ? array.length : 0;
 
@@ -57,20 +88,34 @@ export default function Observer(array){
 
         for(let i = 0; i <= length; i++){
 
-            define(this, i);
+            this.define(i);
         }
 
-        size = length;
-
-        define(this, "length");
+        //size = length;
+        this.define("length");
     }
 }
 
-function define(self, _key){
+/**
+ * @param {Mikado=} mikado
+ * @const
+ */
 
-    const key = _key;
+Observer.prototype.mount = function(mikado){
 
-    Object.defineProperty(self, key, {
+    this.mikado = mikado;
+    return this;
+}
+
+/**
+ * @param key
+ * @private
+ * @const
+ */
+
+Observer.prototype.define = function(key){
+
+    Object.defineProperty(this, key, {
 
         get: /** @this {Observer} */ function(){
 
@@ -80,20 +125,33 @@ function define(self, _key){
 
             if(typeof key === "number"){
 
-                if(key === size){
+                if(key === this.length){
 
-                    define(this, ++size);
+                    // create pointer +1 of array length to trigger array growth
+                    this.define(key + 1);
                 }
 
                 handler.set(this, key, val);
             }
         }
     });
+
+    return this;
 }
 
-let skip = false;
-
 const handler = {
+
+    // get: function(target, prop){
+    //
+    //     return target[prop];
+    // },
+
+    /**
+     * @param {Observer} target
+     * @param prop
+     * @param value
+     * @return {boolean}
+     */
 
     set: function(target, prop, value){
 
@@ -114,17 +172,19 @@ const handler = {
             }
         }
 
+        const mikado = target.mikado;
+
         if(!skip){
 
             skip = true;
 
-            const mikado = target.mikado;
-
-            if(mikado && !mikado.skip){
+            if(mikado /*&& !mikado.skip*/){
 
                 const target_length = target.length;
 
                 if(index_by_number){
+
+                    DEBUG && debug(mikado);
 
                     const mikado_length = mikado.length;
 
@@ -133,23 +193,23 @@ const handler = {
                         target.length = mikado_length;
                     }
 
-                    if(mikado.stealth && (target[prop] === value)){
+                    // if(mikado.stealth && (target[prop] === value)){
+                    //
+                    //     skip = false;
+                    //     return true;
+                    // }
 
-                        skip = false;
-                        return true;
-                    }
-
-                    const view = mikado.view;
+                    //const view = mikado.view;
+                    let node;
 
                     if(prop >= mikado_length){
 
-                        mikado.add(value, view);
+                        mikado.add(value/*, view*/);
                         target.length++;
                     }
                     else if(prop < mikado_length){
 
-                        const replace_key = SUPPORT_POOLS && mikado.key;
-                        const node = mikado.dom[prop];
+                        node = mikado.dom[prop];
 
                         // let tmp, key;
 
@@ -177,20 +237,15 @@ const handler = {
 
                         // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
                         // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
-                        if(mikado.reuse || (replace_key && (node["_key"] === value[replace_key]))){
 
-                            mikado.update(node, value, view, prop);
+                        if(mikado.recycle || (mikado.key && (node[MIKADO_TPL_KEY] === value[mikado.key]))){
+
+                            mikado.update(node, value, null, prop);
                         }
                         else{
 
-                            mikado.replace(node, value, view, prop);
+                            mikado.replace(node, value, null, prop);
                         }
-                    }
-
-                    if(mikado.proxy){
-
-                        skip = false;
-                        return true;
                     }
                 }
                 else{
@@ -205,14 +260,17 @@ const handler = {
             skip = false;
         }
 
+        if(index_by_number && mikado.proxy && !value[MIKADO_PROXY]){
+
+            value = apply_proxy.call(mikado, mikado.dom[prop], value);
+        }
+
         (proxy ? target : target.proto)[prop] = value;
 
         // accept changes:
         return true;
     }
 };
-
-// NOTE: replaced by the transaction feature for reactive data
 
 // if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap") !== -1)){
 //
@@ -244,6 +302,8 @@ Observer.prototype.set = function(array){
 
 Observer.prototype.splice = function(start, count, insert){
 
+    DEBUG && debug(this.mikado);
+
     skip = true;
 
     start || (start = 0);
@@ -254,11 +314,11 @@ Observer.prototype.splice = function(start, count, insert){
         if(count < 0) count = 0;
     }
 
-    count && this.mikado.remove(start, count);
+    count && this.mikado.remove(/** @type {number} */ (start), count);
 
     const tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
 
-    insert && this.mikado.add(insert, start, this.mikado.view);
+    insert && this.mikado.add(insert, start/*, this.mikado.view*/);
 
     //this.length += (insert ? 1 : 0) - count;
     skip = false;
@@ -267,22 +327,28 @@ Observer.prototype.splice = function(start, count, insert){
 
 Observer.prototype.push = function(data){
 
+    DEBUG && debug(this.mikado);
+
     skip = true;
-    this.mikado.add(data, this.mikado.view);
-    if(!this.mikado.proxy) this[this.length] = data;
+    this.mikado.add(data/*, this.mikado.view*/);
+    /*if(!this.mikado.proxy)*/ this[this.length] = data;
     if(proxy) this.length++;
     skip = false;
 };
 
 Observer.prototype.unshift = function(data){
 
+    DEBUG && debug(this.mikado);
+
     skip = true;
-    this.mikado.add(data, 0, this.mikado.view);
+    this.mikado.add(data, 0/*, this.mikado.view*/);
     this.proto.unshift(data);
     skip = false;
 };
 
 Observer.prototype.pop = function(){
+
+    DEBUG && debug(this.mikado);
 
     skip = true;
     this.mikado.remove(this.length - 1);
@@ -292,6 +358,8 @@ Observer.prototype.pop = function(){
 };
 
 Observer.prototype.shift = function(){
+
+    DEBUG && debug(this.mikado);
 
     skip = true;
     this.mikado.remove(0);
@@ -418,3 +486,23 @@ Observer.prototype.forEach = function(fn){
         fn(this[i]);
     }
 };
+
+Observer.prototype.transaction = function(fn){
+
+    DEBUG && debug(this.mikado);
+
+    skip = true;
+    fn();
+
+    if(this.mikado.async){
+
+        this.mikado.render(this).then(function(){
+            skip = false;
+        });
+    }
+    else{
+
+        this.mikado.render(this);
+        skip = false;
+    }
+}

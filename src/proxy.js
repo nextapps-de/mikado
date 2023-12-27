@@ -1,4 +1,40 @@
-const proxy = SUPPORT_REACTIVE && !window["Proxy"] && (function(){
+// COMPILER BLOCK -->
+import { Cache, NodeCache } from "./factory.js";
+import {
+    SUPPORT_DOM_HELPERS,
+    DEBUG,
+    SUPPORT_CACHE,
+    SUPPORT_KEYED,
+    SUPPORT_POOLS,
+    SUPPORT_STORAGE,
+    SUPPORT_TEMPLATE_EXTENSION,
+    SUPPORT_CALLBACKS,
+    SUPPORT_ASYNC,
+    SUPPORT_REACTIVE,
+    SUPPORT_EVENTS,
+
+    MIKADO_DOM,
+    MIKADO_LIVE_POOL,
+    MIKADO_CLASS,
+    MIKADO_TPL_KEY,
+    //MIKADO_TPL_INDEX,
+    MIKADO_TPL_PATH,
+    MIKADO_NODE_CACHE,
+    MIKADO_PROXY
+} from "./config.js";
+// <-- COMPILER BLOCK
+
+/**
+ * @typedef {{
+ *   path: Array<Cache>,
+ *   handler: Object<string, Array<string, number>>,
+ *   get: Function,
+ *   set: Function
+ * }}
+ */
+let ProxyHandler;
+
+const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
     /**
      * @param obj
@@ -8,29 +44,27 @@ const proxy = SUPPORT_REACTIVE && !window["Proxy"] && (function(){
 
     function Proxy(obj, proxy){
 
-        // TODO: hide references
+        /** @private @const {Array<Cache>} */
         this.path = proxy.path;
+        /** @private @const {Object<string, Array<string, number>>} */
         this.handler = proxy.handler;
 
-        const keys = Object.keys(obj);
+        for(const key in obj){
 
-        for(let i = 0, length = keys.length; i < length; i++){
-
-            const key = keys[i];
             this.define(obj, key, obj[key]);
         }
+
+        // proxy check (visible)
+        obj[MIKADO_PROXY] = true;
 
         return obj;
     }
 
-    // hide proxy check
-    Proxy.prototype["_proxy"] = true;
+    //Proxy.prototype["_proxy"] = true;
 
     Proxy.prototype.define = function(obj, key, val){
 
-        const self = this;
-        //const key = _key;
-        //let val = _val;
+        const self = /** @type {!ProxyHandler} */ (this);
 
         Object.defineProperty(obj, key, {
 
@@ -40,92 +74,88 @@ const proxy = SUPPORT_REACTIVE && !window["Proxy"] && (function(){
             },
             set: function(newVal){
 
-                if(val !== newVal){
+                //if(val !== newVal){
 
-                    proxy_loop(self.handler, self.path, key, newVal);
-                    val = newVal;
-                }
+                    proxy_loop.call(self, val = newVal, key);
+                //}
             }
         });
     };
 
     return Proxy;
-}());
-
-// TODO: synchronize with Cache
-const proxy_setter = {
-
-    "_text": function(target, text){
-
-        target.nodeValue = text;
-    },
-    "_html": function(target, html){
-
-        target.innerHTML = html;
-    },
-    "_class": function(target, class_name){
-
-        target.className = class_name;
-    },
-    "_css": function(target, css){
-
-        (target["_style"] || (target["_style"] = target.style)).cssText = css;
-    },
-    "_attr": function(target, value, attr){
-
-        target.setAttribute(attr, value);
-    }
-};
+}()));
 
 // Handler holds multiple dynamic expressions which references to the same data field
 // {"title": [["text", node, value, attr], [...]]}
 
-export default function create_proxy(obj, path, handler){
+/**
+ * @param {Object} obj
+ * @param {Array<Cache>} path
+ * @param {Object<string, Array<string, number>>} handler
+ * @return {Proxy}
+ */
 
-    return new (proxy || Proxy)(obj, /** @type {!ProxyHandler} */ ({
+export default function proxy_create(obj, path, handler){
+
+    /** @type {!ProxyHandler} */
+    const proxy_handler = {
 
         path: path,
         handler: handler,
         get: proxy_get,
         set: proxy_set
-    }));
+    };
+
+    return new proxy(obj, proxy_handler);
 }
 
 function proxy_get(target, prop){
 
-    // hide proxy check
-    return (prop === "_proxy") || target[prop];
+    // proxy check (hidden)
+    return (prop === MIKADO_PROXY) || target[prop];
 }
 
 /**
- * @param target
- * @param prop
- * @param value
+ * @param {Object} target
+ * @param {string} prop
+ * @param {*} value
  * @this {ProxyHandler}
  */
 
 function proxy_set(target, prop, value){
 
-    if(target[prop] !== value){
+    //if(target[prop] !== value){
 
-        proxy_loop(this.handler, this.path, prop, value);
+        proxy_loop.call(this, value, prop);
         target[prop] = value;
-    }
+    //}
 
     // accept changes:
     return true;
 }
 
-function proxy_loop(handler, path, prop, value){
+/**
+ * @param {*} value
+ * @param {string} prop
+ * @this {ProxyHandler}
+ */
 
-    const exp = handler["data." + prop];
+function proxy_loop(value, prop){
+
+    const exp = this.handler[prop];
 
     if(exp){
 
-        for(let i = 0, length = exp.length, tmp; i < length; i++){
+        for(let i = 0; i < exp.length; i++){
 
-            tmp = exp[i];
-            proxy_setter[tmp[0]](path[tmp[1]], value, tmp[2] || prop);
+            const tmp = exp[i];
+            const fn = tmp[0];
+            const cache = /** @type {Cache} */ (this.path[tmp[1]]);
+
+            if(!cache.c || cache.c[fn + (tmp[2] || "")] !== value){
+
+                cache[fn](tmp[2] || value, value);
+            }
         }
     }
 }

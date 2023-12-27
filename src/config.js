@@ -1,95 +1,49 @@
-/**
- * @define {boolean}
- */
+/** @define {string} */
+export const RELEASE = "custom";
+/** @define {boolean} */
+export const DEBUG = true;
+/** @define {boolean} */
+export const SUPPORT_CACHE = true;
+/** @define {boolean} */
+export const SUPPORT_CACHE_HELPERS = true;
+/** @define {boolean} */
+export const SUPPORT_DOM_HELPERS = true;
+/** @define {boolean} */
+export const SUPPORT_KEYED = true;
+/** @define {boolean} */
+export const SUPPORT_POOLS = true;
+/** @define {boolean} */
+export const SUPPORT_STORAGE = true;
+/** @define {boolean} */
+export const SUPPORT_TEMPLATE_EXTENSION = true;
+/** @define {boolean} */
+export const SUPPORT_CALLBACKS = true;
+/** @define {boolean} */
+export const SUPPORT_ASYNC = true;
+/** @define {boolean} */
+export const REACTIVE_ONLY = false;
+/** @define {boolean} */
+export const SUPPORT_REACTIVE = REACTIVE_ONLY || true;
+/** @define {boolean} */
+export const SUPPORT_COMPILE = false;
+/** @define {boolean} */
+export const SUPPORT_EVENTS = true;
+/** @define {boolean} */
+export const SUPPORT_TRANSPORT = true;
 
-const DEBUG = true;
-
-/**
- * @define {boolean}
- */
-
-const USE_POLYFILL = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_CACHE = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_EVENTS = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_STORAGE = true;
-
-/**
- * @define {boolean|string}
- */
-
-const SUPPORT_HELPERS = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_CACHE_HELPERS = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_ASYNC = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_TRANSPORT = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_TEMPLATE_EXTENSION = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_REACTIVE = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_KEYED = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_POOLS = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_CALLBACKS = true;
-
-/**
- * @define {boolean}
- */
-
-const SUPPORT_COMPILE = true;
-
-/**
- * @define {string}
- */
-
-const RELEASE = "browser";
+/** @define {string} */
+export const MIKADO_NODE_CACHE = "_mkc";
+/** @define {string} */
+export const MIKADO_DOM = "_mkd";
+/** @define {string} */
+export const MIKADO_CLASS = "_mki";
+/** @define {string} */
+export const MIKADO_TPL_KEY = "_mkk";
+/** @define {string} */
+export const MIKADO_LIVE_POOL = "_mkl";
+/** @define {string} */
+export const MIKADO_TPL_PATH = "_mkp";
+/** @define {string} */
+export const MIKADO_PROXY = "_mkx";
+/** @define {string} */
+export const MIKADO_EVENT_CACHE = "_mke";

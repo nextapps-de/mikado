@@ -2,9 +2,9 @@ const child_process = require('child_process');
 const fs = require('fs');
 
 console.log("Start build .....");
-console.log();
+//console.log("----------------------");
 
-fs.existsSync("log") || fs.mkdirSync("log");
+//fs.existsSync("log") || fs.mkdirSync("log");
 fs.existsSync("tmp") || fs.mkdirSync("tmp");
 fs.existsSync("dist") || fs.mkdirSync("dist");
 
@@ -29,23 +29,21 @@ var options = (function(argv){
 
                 language_out = val;
             }
-            /*
-            else if(index === "USE_POLYFILL"){
+            else if(index === "POLYFILL"){
 
-                use_polyfill = val;
+                use_polyfill = val !== "false";
             }
-            */
             else{
 
-                flag_str += " --define='" + index + "=" + val + "'";
+                if(val === "false") val = false;
+
+                //flag_str += " --define='" + index + "=" + val + "'";
                 arr[index] = val;
             }
-
-            if(count > 3) console.log(index + ': ' + val);
         }
     });
 
-    console.log('RELEASE: ' + (arr['RELEASE'] || 'custom'));
+    console.log('Bundle: ' + (arr['RELEASE'] || 'custom') + (arr['DEBUG'] ?  ":debug" : ""));
 
     return arr;
 
@@ -53,7 +51,7 @@ var options = (function(argv){
 
 const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "--light");
 const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
-const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
+//const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
 
 let parameter = (function(opt){
 
@@ -70,7 +68,7 @@ let parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: options["RELEASE"] === "pre" ? "SIMPLE" : (options["RELEASE"] === "debug" ? "WHITESPACE" : "ADVANCED_OPTIMIZATIONS"), //"SIMPLE"
+    compilation_level: /*options["DEBUG"] ? "SIMPLE" :*/ "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
     use_types_for_optimization: true,
     //new_type_inf: true,
     //jscomp_warning: "newCheckTypes",
@@ -78,39 +76,46 @@ let parameter = (function(opt){
     //jscomp_error: "newCheckTypesExtraChecks",
     generate_exports: true,
     export_local_property_definitions: true,
-    language_in: "ECMASCRIPT6_STRICT",
-    language_out: language_out || "ECMASCRIPT5_STRICT",
+    language_in: "ECMASCRIPT_2015",
+    language_out: language_out || "ECMASCRIPT_2020",
     process_closure_primitives: true,
     summary_detail_level: 3,
     warning_level: "VERBOSE",
-    emit_use_strict: true,
+    //emit_use_strict: true,
 
-    output_manifest: "log/manifest.log",
-    output_module_dependencies: "log/module_dependencies.log",
-    property_renaming_report: "log/property_renaming.log",
-    create_source_map: "log/source_map.log",
-    variable_renaming_report: "log/variable_renaming.log",
+    //output_manifest: "log/manifest.log",
+    //output_module_dependencies: "log/module_dependencies.log",
+    //property_renaming_report: "log/property_renaming.log",
+    //create_source_map: "log/source_map.log",
+    //variable_renaming_report: "log/variable_renaming.log",
     strict_mode_input: true,
-    assume_function_wrapper: true,
+    //assume_function_wrapper: true,
 
-    transform_amd_modules: true,
+    //chunk_output_type: "ES_MODULES",
+
+    //transform_amd_modules: true,
     process_common_js_modules: true,
     module_resolution: "BROWSER",
     //dependency_mode: "SORT_ONLY",
     //js_module_root: "./",
     entry_point: "./tmp/bundle.js",
     //manage_closure_dependencies: true,
-    dependency_mode: "PRUNE_LEGACY",
-    rewrite_polyfills: use_polyfill || false,
+    dependency_mode: "PRUNE",
+    rewrite_polyfills: use_polyfill || false
 
-    isolation_mode: "IIFE"
-    //output_wrapper: "(function(){%output%}());"
+    //isolation_mode: "IIFE"
+    //output_wrapper: "%output%"
 
     //formatting: "PRETTY_PRINT"
 });
 
-if(options["RELEASE"] === "pre" || options["RELEASE"] === "debug"){
+if(options["DEBUG"]){
     parameter += ' --formatting=PRETTY_PRINT';
+}
+
+if(options["RELEASE"] !== "bundle.module" && options["RELEASE"] !== "light.module"){
+    parameter += ' --isolation_mode=IIFE';
+    parameter += ' --emit_use_strict=true';
 }
 
 const custom = (!options["RELEASE"] || (options["RELEASE"] === "custom"));
@@ -129,70 +134,92 @@ const files = [
     "helper.js",
     "type.js",
     "cache.js",
-    "export.js",
-    "store.js",
+    "factory.js",
+    "sanitize.js",
+    //"export.js",
+    //"store.js",
     "proxy.js",
     "array.js",
-    "compile.js",
-    "polyfill.js"
+    //"compile.js",
+    //"polyfill.js"
 ];
 
-const prename = require('./prename.json');
+//const prename = require('./prename.json');
 
 files.forEach(function(file){
 
     let src = String(fs.readFileSync("src/" + file));
 
-    if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
+    if(file === "config.js"){
 
-        for(let key in prename){
+        for(let opt in options){
 
-            if(prename.hasOwnProperty(key)){
-
-                src = src.replace(new RegExp(key, "g"), prename[key]);
-            }
+            src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
         }
     }
+
+    // if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
+    //
+    //     for(let key in prename){
+    //
+    //         if(prename.hasOwnProperty(key)){
+    //
+    //             src = src.replace(new RegExp(key, "g"), prename[key]);
+    //         }
+    //     }
+    // }
 
     fs.writeFileSync("tmp/" + file, src);
 });
 
-var filename = "dist/mikado." + (options["RELEASE"] || "custom") + ".js";
+//console.log("----------------------");
 
-exec("java -jar node_modules/google-closure-compiler-java/compiler.jar" + parameter + " --js='tmp/**.js'" + flag_str + " --js_output_file='" + filename + "' && exit 0", function(){
+var filename = "dist/mikado." + (options["RELEASE"] || "custom") + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
+
+const executable = process.platform === "win32" ?  "\"node_modules/google-closure-compiler-windows/compiler.exe\"" :
+                   process.platform === "darwin" ? "\"node_modules/google-closure-compiler-osx/compiler\"" :
+                                                   "java -jar node_modules/google-closure-compiler-java/compiler.jar"
+
+exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_file='" + filename + "' && exit 0", function(){
 
     let build = fs.readFileSync(filename);
     let preserve = fs.readFileSync("src/mikado.js", "utf8");
 
     const package_json = require("../package.json");
-    const postname = require('./postname.json');
+    //const postname = require('./postname.json');
 
-    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + (light_version ? " (Light)" : es5_version ? " (ES5)" : ""));
+    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + " (" + (light_version ? "Light" + (options["RELEASE"] === "light.module" ? "/Module" : "") : es5_version ? "ES5" : "Bundle" + (options["RELEASE"] === "bundle.module" ? "/Module" : "")) + (options["DEBUG"] ? "/Debug" : "") + ")" );
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
 
-    for(let key in postname){
+    // for(let key in postname){
+    //
+    //     if(postname.hasOwnProperty(key)){
+    //
+    //         build = build.replace(new RegExp(key, "g"), postname[key]);
+    //     }
+    // }
 
-        if(postname.hasOwnProperty(key)){
+    // if(options["RELEASE"] === "pre"){
+    //
+    //     fs.existsSync("test/dist") || fs.mkdirSync("test/dist");
+    //     fs.writeFileSync("test/" + filename, build);
+    // }
+    // else{
 
-            build = build.replace(new RegExp(key, "g"), postname[key]);
+        if(options["RELEASE"] === "bundle.module" || options["RELEASE"] === "light.module"){
+
+            build = build.replace(/window\.Mikado(\s+)?=(\s+)?/, "export default ");
         }
-    }
-
-    if(options["RELEASE"] === "pre"){
-
-        fs.existsSync("test/dist") || fs.mkdirSync("test/dist");
-        fs.writeFileSync("test/" + filename, build);
-    }
-    else{
 
         fs.writeFileSync(filename, build);
 
-        if(options["RELEASE"] === "light"){
+        // if(options["RELEASE"] === "light"){
+        //
+        //     fs.writeFileSync("test/bench/mikado-new/mikado.light.js", build);
+        // }
+    //}
 
-            fs.writeFileSync("test/bench/mikado-new/mikado.light.js", build);
-        }
-    }
-
+    console.log("Saved to " + filename);
     console.log("Build Complete.");
 });
 

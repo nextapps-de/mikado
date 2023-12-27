@@ -1,0 +1,56 @@
+{
+  "plugins": [
+    ["conditional-compile", {
+      "dropDebugger": true,
+      "define": {
+        "RELEASE": "module",
+        "DEBUG": true,
+        "POLYFILL": true,
+        "REACTIVE_ONLY": false,
+        "SUPPORT_CACHE": true,
+        "SUPPORT_EVENTS": true,
+        "SUPPORT_STORAGE": true,
+        "SUPPORT_DOM_HELPERS": true,
+        "SUPPORT_CACHE_HELPERS": true,
+        "SUPPORT_ASYNC": true,
+        "SUPPORT_TRANSPORT": true,
+        "SUPPORT_TEMPLATE_EXTENSION": true,
+        "SUPPORT_REACTIVE": true,
+        "SUPPORT_KEYED": true,
+        "SUPPORT_POOLS": true,
+        "SUPPORT_CALLBACKS": true,
+        "SUPPORT_COMPILE": true,
+
+        "MIKADO_DOM": "_mkd",
+        "MIKADO_LIVE_POOL": "_mkl",
+        "MIKADO_CLASS": "_mki",
+        "MIKADO_TPL_KEY": "_mkk",
+        "MIKADO_PROXY": "_mkx",
+        "MIKADO_TPL_PATH": "_mkp",
+        "MIKADO_NODE_CACHE": "_mkc",
+        "MIKADO_EVENT_CACHE": "_mke"
+      }
+    }],
+    "babel-plugin-minify-constant-folding",
+    "babel-plugin-minify-dead-code-elimination",
+    "babel-plugin-minify-flip-comparisons",
+    "babel-plugin-minify-guarded-expressions",
+    "babel-plugin-minify-infinity",
+    "babel-plugin-minify-replace",
+    "babel-plugin-minify-type-constructors",
+    "babel-plugin-transform-member-expression-literals",
+    "babel-plugin-transform-merge-sibling-variables",
+    "babel-plugin-transform-minify-booleans",
+    "babel-plugin-transform-property-literals",
+    "babel-plugin-transform-simplify-comparison-operators",
+    "babel-plugin-transform-undefined-to-void"
+  ],
+  "ignore": [
+    "bundle.js",
+    "config.js",
+    "type.js"
+  ],
+  "minified": false,
+  "compact": false,
+  "comments": true
+}

@@ -1,7 +1,0 @@
-{
-  "private": true,
-  "dependencies": {
-    "s-js": "^0.4.9",
-    "surplus": "^0.5.3"
-  }
-}

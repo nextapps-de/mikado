@@ -1,105 +1,20 @@
-<h2>Mikado 0.8.x</h3>
-
-Mikado 0.8.x-Preview + Migration Guide: <a href="https://github.com/nextapps-de/mikado/tree/0.8-preview">https://github.com/nextapps-de/mikado/tree/0.8-preview</a>
-
-I have a Christmas gift for you!
-
-A whole new generation of Mikado is ready to ship. Read the <a href="https://github.com/nextapps-de/mikado/blob/0.8-preview/CHANGELOG.md">Changelog</a> to get a short list of most important improvements. The new version is supporting a full `server-side rendering` approach by using `partial hydration` to inject templates during runtime progressively. Server and client are sharing the same template definitions written in HTML. The server side approach will also come with the `fastest middleware render engine for Express` you can get today which performs up to 10x faster than "Marko". Actually Mikado is the only library which breaks both limits, on client-side and server-side. Benchmarks are listed on the preview page above.
-
-Thanks for your patience, wish you a merry Christmas,<br>
-Thomas
-
-**Benchmark Comparison (Keyed Test)**
-
-<table>
-    <tr></tr>
-    <tr>
-        <td>Benchmark Test</td>
-        <td>Mikado v0.7.64</td>
-        <td>Mikado v0.8.117</td>
-        <td>Comparison</td>
-    </tr>
-    <tr>
-        <td>create</td>
-        <td>48700</td>
-        <td>54245</td>
-        <td>+11%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>replace</td>
-        <td>22450</td>
-        <td>25072</td>
-        <td>+11%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>update</td>
-        <td>171685</td>
-        <td>204288</td>
-        <td>+19%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>arrange</td>
-        <td>119356</td>
-        <td>138082</td>
-        <td>+15%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>repaint</td>
-        <td>338373</td>
-        <td>519450</td>
-        <td>+53%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>append</td>
-        <td>90115</td>
-        <td>95810</td>
-        <td>+6%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>remove</td>
-        <td>80536</td>
-        <td>97991</td>
-        <td>+21%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>toggle</td>
-        <td>86786</td>
-        <td>96655</td>
-        <td>+11%</td>
-    </tr>
-    <tr></tr>
-      <tr>
-        <td>clear</td>
-        <td>82539</td>
-        <td>88016</td>
-        <td>+6%</td>
-    </tr>
-    <tr>
-        <td>total</td>
-        <td>1040540</td>
-        <td>1319609</td>
-        <td>+27%</td>
-    </tr>
-</table>
-* operations per second, higher values are better
-
 <h1></h1>
-<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
-<h3>Modern template engine based on living standards. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="320px"><p></p></h1>
+<h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also provides the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
 
-Rendering has by far the most impact on application performance. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you keyed, non-keyed and also reactive paradigm switchable out of the box. Let's start building the next generation of high-performance applications.
+Rendering has by far the most <u>impact</u> on application performance, especially <u>on mobile devices</u>. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you <u>keyed</u>, <u>non-keyed</u> and also <u>reactive paradigm</u> switchable out of the box.
+On top, it also provides a <u>server-side-rendering</u> approach on an extreme performance level along full support for <u>partial hydration</u> to inject templates progressively during the client's runtime.
+Server and client are sharing the same template definitions simply written in <u>HTML-like markup</u>.
+The server side approach will also come with the <u>fastest middleware render engine for Express</u> you can get today.
+Mikado is the only library which cuts both edges, on client-side and server-side.
+
+<!--
+<a target="_blank" href="https://coveralls.io/github/nextapps-de/mikado?branch=master"><img src="https://coveralls.io/repos/github/nextapps-de/mikado/badge.svg?branch=master"></a>
+<a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
+<a target="_blank" href="https://www.codacy.com/app/ts-thomas/Mikado?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nextapps-de/mikado&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a896e010f6b4429aa7bc9a89550320a7"/></a>
+-->
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
-<a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
-<a target="_blank" href="https://coveralls.io/github/nextapps-de/mikado?branch=master"><img src="https://coveralls.io/repos/github/nextapps-de/mikado/badge.svg?branch=master"></a>
-<a target="_blank" href="https://www.codacy.com/app/ts-thomas/Mikado?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nextapps-de/mikado&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a896e010f6b4429aa7bc9a89550320a7"/></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
@@ -110,24 +25,41 @@ Rendering has by far the most impact on application performance. Mikado takes te
 <a href="#benchmark">Benchmark</a> &ensp;&bull;&ensp;
 <a href="#builds">Custom Builds</a> &ensp;&bull;&ensp;
 <a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
-<a href="https://github.com/nextapps-de/mikado-server">Template Server</a> &ensp;&bull;&ensp; <!--<a href="https://github.com/nextapps-de/mikado-express">Express Middleware (SSR)</a> &ensp;&bull;&ensp;-->
+<a href="#ssr">Server-Side-Rendering</a> &ensp;&bull;&ensp;
+<a href="#express">Express Render Engine</a> &ensp;&bull;&ensp;
 <a href="CHANGELOG.md">Changelog</a>
 
-<!--
-**Services:**
-
-Mikado Runtime (Render Templates)<br>`npm install mikado`
-
-<a href="https://github.com/nextapps-de/mikado-compile">Mikado Compiler</a> (Compile Templates)<br>`npm install mikado-compile`
-
-<a href="https://github.com/nextapps-de/mikado-server">Mikado Server</a> (Serve Templates)<br>`npm install mikado-server`
--->
+When you come from previous version: <a href="doc/migrate-0.8.md">Migration 0.8.x</a>
 
 **Benchmark:**
 
-- https://krausest.github.io/js-framework-benchmark/current.html
 - <a href="#benchmark">Stress Test Benchmark</a>
+- https://krausest.github.io/js-framework-benchmark/current.html
 
+## Support this Project
+
+Mikado was getting so much positive feedback and also feature requests. Help keeping Mikado active by a personal donation.
+
+<a href="https://opencollective.com/mikado/donate" target="_blank" style="margin-right: 10px">
+    <img src="https://opencollective.com/webpack/donate/button@2x.png?color=blue" height="32" alt="Donate using Open Collective">
+</a>
+<a href="https://github.com/sponsors/ts-thomas/" target="_blank" style="margin-right: 10px">
+    <img src="https://camo.githubusercontent.com/b932f45963b659dfeb86b77ff29a9eaebe25a734d63a17a176aa82bf34845cf2/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f6c6162656c3d53706f6e736f72266d6573736167653d254532253944254134266c6f676f3d47697448756226636f6c6f723d253233666538653836" height="32" alt="Donate using Github Sponsors">
+</a>
+<a href="https://liberapay.com/ts-thomas/donate" target="_blank" style="margin-right: 10px">
+    <img src="https://liberapay.com/assets/widgets/donate.svg" height="32" alt="Donate using Liberapay">
+</a>
+<a href="https://www.patreon.com/user?u=96245532" target="_blank" style="margin-right: 10px">
+    <img src="https://s3-us-west-1.amazonaws.com/widget-images/become-patron-widget-medium%402x.png" height="32" alt="Donate using Patreon">
+</a>
+<a href="https://salt.bountysource.com/teams/ts-thomas" target="_blank" style="margin-right: 10px">
+    <img src="https://cdn.worldvectorlogo.com/logos/bountysource.svg" height="32" alt="Donate using Bountysource">
+</a>
+<a href="https://www.paypal.com/donate/?hosted_button_id=GEVR88FC9BWRW" target="_blank">
+    <img src="https://www.paypalobjects.com/webstatic/de_DE/i/de-pp-logo-200px.png" height="32" alt="Donate using PayPal">
+</a>
+
+<!--
 **Demo:**
 
 1. <a href="demo/basic/basic.html">Basic Example + Runtime Compiler (HTML5 Template)</a>
@@ -137,28 +69,27 @@ Mikado Runtime (Render Templates)<br>`npm install mikado`
 5. <a href="demo/basic/demo.dev.html">Basic Example + Events (Development Sources)</a>
 6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
-
-<!--
-#### Coming Soon
-
-`new` webpack loader to bundle templates<br>
-`add` file endings for templates are customizable (e.g use **_.shtml_**)<br>
 -->
 
+<!--
 #### First Steps
 
-Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars". You do not have to learn a new language, you just need some basic skills you already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details. You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
+Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars". You do not have to learn a new language, you just need some basic skills you probably already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details. You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
 
 Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required.
 
-Guide for new developers (the most simple example, just takes 3 minutes):
+A Guide for new developers (the most simple example, just takes 3 minutes):
 
-- Load this <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
-- Provide a basic <a href="#compiler-html5">template</a> as native HTML5 template
-- Compile the template, then create a Mikado instance by passing in the compiled template and mount the root to this new created instance
-  - `var view = new Mikado(template).mount(root);`
+- Load a <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
+- Write and <a href="#compiler">compile</a> a simple template
+- Load the "es5" version of the compiled template through a script tag resource
+- Create a Mikado instance by passing in the name of the template and mount the root to this new created instance
+  - `const view = new Mikado("template").mount(root);`
 - Just use `view.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
-- <a href="demo/basic/basic.html">Final Source Code</a>
+- That's it!
+
+<a href="demo/basic/basic.html">Final Source Code</a>
+-->
 
 ## Table of contents
 
@@ -171,17 +102,17 @@ Guide for new developers (the most simple example, just takes 3 minutes):
    - <a href="#mikado-compile">Using Dedicated Compiler</a><!-- - <a href="#xss">XSS Security</a> -->
    - <a href="#compiler-html5">Using HTML5 Templates</a>
    - <a href="#compiler-string">Using Template String</a>
-7. <a href="#started">Basic Example</a>
-8. <a href="#conventions">Rules and Conventions</a>
-9. <a href="#advanced-example">Advanced Example</a>
+7. <a href="#conventions">Rules and Conventions</a>
+8. <a href="#started">Basic Example</a>
+9. <a href="#advanced_example">Advanced Example</a>
 10. <a href="#event">Event Bindings</a>
     - <a href="#view.listen">Explicit Register/Unregister</a>
-11. <a href="#modes">Keyed / Non-Keyed Modes</a>
+11. <a href="#keyed">Keyed / Non-Keyed Modes</a>
     - <a href="#non-keyed">Non-Keyed</a>
     - <a href="#explicit-keyed">Explicit Keyed (Non-Shared)</a>
-    - <a href="#explicit-shared-keyed">Explicit Keyed (Shared)</a>
     - <a href="#cross-shared">Cross-Shared Keyed</a>
     - <a href="#shared-keyed">Exclusive-Shared Keyed</a>
+    - <a href="#explicit-shared-keyed">Explicit Keyed (Shared)</a>
 12. <a href="#reuse">Non-Reusing</a>
     - <a href="#refresh">Render vs. Refresh vs. Reconcile</a>
 13. Usage:
@@ -190,19 +121,19 @@ Guide for new developers (the most simple example, just takes 3 minutes):
     - <a href="#modify_views">Modify Views</a>
     - <a href="#helpers">Useful Helpers</a>
     - <a href="#manipulate">Manipulate Views</a>
-14. <a href="#cache">DOM State Caching</a>
     - <a href="#cache-helpers">Caching Helpers</a>
-15. <a href="#store">Stores</a>
-    - <a href="#store-internal">Internal Store</a>
-    - <a href="#store-loose">Loose Store</a>
-    - <a href="#store-extern">Extern/Custom Store</a>
-    - <a href="#store-reactive">Reactive Store (Observable Array)</a>
-    - <a href="#store-export">Export / Import Stores</a>
+14. <a href="#cache">DOM State Caching</a>
+15. Stores:
+    - <a href="#store">Internal Store</a>
+    - <a href="#options.loose">Loose Store</a>
+    - <a href="#extern">Extern/Custom Store</a>
+    - <a href="#extern">Reactive Store</a>
+    - <a href="#export">Export / Import Stores</a>
 16. <a href="#view.state">State</a>
 17. <a href="#callbacks">Callbacks</a>
 18. <a href="#load">Transport / Load Templates</a>
 19. <a href="#static">Static Templates</a>
-    - <a href="#Mikado.once">Once (One-time rendering)</a>
+    - <a href="#mikado.once">Once (One-time rendering)</a>
 20. <a href="#compiler-service">Compiler Service / Live Templates</a>
     - <a href="#localdev">Local Development</a>
 21. Template Features:
@@ -215,18 +146,37 @@ Guide for new developers (the most simple example, just takes 3 minutes):
     - <a href="#stealth">Stealth Mode</a>
     - <a href="#observable">Observable Array (Virtual NodeList)</a>
 23. <a href="#best-practices">Best Practices</a>
-    - <a href="#memory">Memory Optimizations</a>
-24. <a href="#reconcile">About Reconcile (Diffing)</a>
-25. <a href="#concept">Concept of Shared Pools</a>
-26. <a href="#builds">Custom Builds</a>
+24. <a href="#memory">Memory Optimizations</a>
+25. <a href="#reconcile">About Reconcile (Diffing)</a>
+26. <a href="#concept">Concept of Shared Pools</a>
+27. <a href="#builds">Custom Builds</a>
 
 <a name="get-latest"></a>
 
 ## Get Latest
 
-### Bundle
+### Bundles
 
-Choose one of these bundles:
+The abbreviations used at the end of the filenames:
+
+- `bundle` All features included, Mikado is available on `window.Mikado`
+- `light` Only basic features are included, Mikado is available on `window.Mikado`
+- `es5` bundle has support for EcmaScript5, Mikado is available on `window.Mikado`
+- `module` bundle is a Javascript module, Mikado is available by `import Mikado from "./mikado.bundle.module.min.js"`
+- `min` bundle is minified
+- `debug` bundle has enabled debug mode (only for development purposes, do not use for production)
+
+> Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including modules).
+
+> When using modules you can choose between 2 versions, `mikado.light.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported `import { register } from "./dist/module/mikado.js"`.
+
+<!--
+If you are interested how to use the "src" folder then check this repo, it uses 3 different compilation techniques which all resolves the compiler flags:
+
+1. Closure Compiler Simple
+2. Closure Compiler Advanced
+3. Babel + Compiler-Plugin
+-->
 
 <table>
     <tr></tr>
@@ -236,46 +186,91 @@ Choose one of these bundles:
         <td>CDN</td>
     </tr>
     <tr>
-        <td>mikado.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js</a></td>
+        <td>mikado.bundle.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.bundle.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>mikado.light.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.light.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.light.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.light.js</a></td>
+        <td>mikado.bundle.min.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.bundle.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>mikado.es5.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.es5.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.es5.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.es5.js</a></td>
+        <td>mikado.bundle.module.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.bundle.module.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.module.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
-        <td>mikado.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/master/dist/mikado.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.debug.js</a></td>
+        <td>mikado.bundle.module.min.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.bundle.module.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.bundle.module.min.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.es5.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.es5.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.es5.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.es5.debug.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.es5.min.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.es5.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.es5.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.es5.min.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.light.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.light.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.debug.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.light.min.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.light.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.min.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.light.module.debug.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.light.module.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.module.debug.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>mikado.light.module.min.js</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/mikado.light.module.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.1/dist/mikado.light.module.min.js</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Javascript Modules</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/module/" target="_blank">Download</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.1/dist/module" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.1/dist/module</a></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>Javascript Modules (Debug)</td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.1/dist/module-debug/" target="_blank">Download</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.1/dist/module-debug" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.1/dist/module-debug</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.custom.js</td>
-        <td><a href="#builds">Custom Build</a></td>
-        <td></td>
+        <td colspan="2"><a href="#builds">Read more about "Custom Build"</a></td>
     </tr>
 </table>
 
-> **Recommended:** To get a specific version just replace `/master/` with one of the version numbers from the release e.g. `/0.6.6/`, or also a commit hash.
-
-The es5-strict version includes all features. The debug version additionally provides debugging information through the console.
+> All debug versions are providing debug information through the console and gives you helpful advices on certain situations.
 
 Example:
 
 ```html
-<script src="dist/mikado.min.js"></script>
+<script src="dist/mikado.bundle.min.js"></script>
 <script>
-  // ....
+  // ... access Mikado
 </script>
 ```
 
@@ -287,17 +282,26 @@ Install Mikado via NPM:
 npm install mikado
 ```
 
-The **_dist_** and **_src_** folders are located in `node_modules/mikado/`.
+The **_dist_** folder are located in `node_modules/mikado/dist/`.
 
-### ES6 Modules
-
-#### Production
-
-The ES6 minified production modules are located in `dist/module/`.
+### Javascript Modules
+ 
+A bundled version exported as a module:
 
 ```html
 <script>
-  import Mikado from "./dist/module/mikado.js";
+  import Mikado from "./dist/mikado.bundle.module.min.js";
+  // bundled access through e.g. Mikado.register()
+</script>
+```
+
+Also, pre-compiled non-bundled production-ready modules are located in `dist/module/`.
+
+```html
+<script>
+  import Mikado, { register } from "./dist/module/mikado.js";
+  // bundled access through Mikado.register does not exist
+  // requires direct access through e.g. register()
 </script>
 ```
 
@@ -305,30 +309,21 @@ You can also load modules via CDN, e.g.:
 
 ```html
 <script>
-  import Mikado from "https://unpkg.com/mikado@0.7.21/dist/module/mikado.js";
+  import Mikado from "https://unpkg.com/mikado@0.8.1/dist/module/mikado.js";
 </script>
 ```
 
-#### Development
-
-Use the modules from the "src" folder for development/debugging. When using the "src" modules you have to load the "src/config.js" via a normal script tag before you load the modules.
-
-```html
-<script src="src/config.js"></script>
-<script>
-  import Mikado from "./src/mikado.js";
-</script>
-```
+> Loading modules via CDN isn't recommended at all, using modules in Javascript commonly expects to build/bundle your app properly.
 
 <a name="feature-comparison"></a>
 
-### Feature Comparison
+### Feature Comparison "Bundle vs. Light"
 
 <table>
     <tr></tr>
     <tr>
         <td>Feature</td>
-        <td>mikado.min.js</td>
+        <td>mikado.bundle.js</td>
         <td>mikado.light.js</td>
     </tr>
     <tr>
@@ -357,7 +352,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#modes">Keyed/Non-Keyed</a>
+            <a href="#keyed">Keyed Recycle</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -365,7 +360,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#reuse">Strict Non-Reusing</a>
+            <a href="#recycle">Non-keyed Recycle</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -381,15 +376,47 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
+            <a href="#hydration">Hydration</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#">Extended Template Expressions</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#conditional">Conditional Branches</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#includes">Includes/Partials/Loops</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
             <a href="#compiler">Runtime Compiler</a>
         </td>
-        <td>✓</td>
+        <td>-</td>
         <td>-</td>
     </tr>
     <tr></tr>
     <tr>
         <td>
-            <a href="#store">Manage Data Store</a>
+            <a href="#event">Event Delegation + Routes</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -397,7 +424,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#event">Event Binding/Routes</a>
+            <a href="#proxy">Reactive (Proxy, Observer)</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -405,39 +432,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#proxy">Data Proxy (Observe)</a>
-        </td>
-        <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            <a href="#observable">Virtual NodeList (Array)</a>
-        </td>
-        <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            Asynchronous Render
-        </td>
-        <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            <a href="#load">Transport/Load Templates</a>
-        </td>
-        <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            <a href="#export">Export/Import Views</a>
+            <a href="#async">Asynchronous Render</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -453,15 +448,7 @@ Use the modules from the "src" folder for development/debugging. When using the 
     <tr></tr>
     <tr>
         <td>
-            <a href="#conditional">Conditional Branches</a>
-        </td>
-        <td>✓</td>
-        <td>-</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>
-            <a href="#includes">Includes/Partials/Loops</a>
+            <a href="#cache">DOM Cache Helpers</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -477,17 +464,17 @@ Use the modules from the "src" folder for development/debugging. When using the 
 
 ## Benchmark Ranking (Rendering Performance)
 
-Run the benchmark (recycle):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
+Run the benchmark (non-keyed recycle):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/bench/">https://raw.githack.com/nextapps-de/mikado/bench/</a><br>
 
-Run the benchmark (keyed):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed</a><br>
+Run the benchmark (keyed recycle):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/bench/#keyed">https://raw.githack.com/nextapps-de/mikado/bench/#keyed</a><br>
 
 Run the benchmark (internal/data-driven):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#internal">https://raw.githack.com/nextapps-de/mikado/master/bench/#internal</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/bench/#internal">https://raw.githack.com/nextapps-de/mikado/bench/#internal</a><br>
 
 Sources and readme:<br>
-<a href="bench/">https://github.com/nextapps-de/mikado/tree/master/bench</a>
+<a href="bench/">https://github.com/nextapps-de/mikado/tree/bench</a>
 
 The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for file size (minified/gzip) and memory (sum of allocation during the whole test).
 
@@ -748,71 +735,59 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
 </table>
 
+<!--
 The file size and memory gets less relevance. The maximum possible **_index_** is 1000, that requires a library to be the best in each category. The **_score_** value is relational where a score of 1000 represents the statistical midfield.
+-->
 
-Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/master/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
+Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
 
 <a name="api"></a>
 
 ## API Overview
 
-Most of these methods are optional, you can just use **_.render()_** to apply all changes automatically.
+> Most of these methods are optional, you can just use **_view.render(data)_** to apply all changes automatically.
 
 Constructor:
 
-- new <a href="#Mikado.new">**Mikado**(\<root\>, template, \<options\>)</a> : view
+- new <a href="#mikado.new">**Mikado**(template, \<options\>)</a> : view
 
-Global methods:
+Static methods:
 
-- <a href="#Mikado.new">Mikado(\<root\>, template, \<options\>)</a> : view
-- <a href="#Mikado.once">Mikado.**once**(root, template, \<data\>, \<payload\>, \<callback\>)</a>
-- Mikado.**register**(template)
-- Mikado.**unregister**(template)
+- <a href="#mikado.new">Mikado(template, \<options\>)</a> : view
+- <a href="#mikado.once">Mikado.**once**(root, template, \<data\>, \<state\>, \<callback\>)</a>
+- <a href="#mikado.register">Mikado.**register**(template)</a>
+- <a href="#mikado.unregister">Mikado.**unregister**(template)</a>
 
-Global methods (not included in mikado.light.js):
+Static methods (not included in mikado.light.js):
 
-- <a href="#Mikado.compile">Mikado.**compile**(\<template | string\>)</a>
-- <a href="#Mikado.load">Mikado.**load**(url, \<callback\>)</a>
-- <a href="#Mikado.unload">Mikado.**unload**(template)</a>
-- <a href="#Mikado.route">mikado.**route**(name, handler, \<options\>)</a>
-- <a href="#Mikado.listen">mikado.**listen**(event, \<options\>)</a>
-- <a href="#Mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
-- mikado.**dispatch**(name, \<target\>, \<event\>, \<self\>)
+<!-- - <a href="#mikado.compile">Mikado.**compile**(\<template | string\>)</a> -->
+- <a href="#mikado.route">mikado.**route**(name, handler, \<options\>)</a>
+- <a href="#mikado.listen">mikado.**listen**(event, \<options\>)</a>
+- <a href="#mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
+- <a href="#mikado.dispatch">mikado.**dispatch**(name, \<target\>, \<event\>)</a>
 
 Instance methods:
 
-- <a href="#view.init">view.**init**(\<template\>, \<options\>)</a>
-- <a href="#view.mount">view.**mount**(root)</a>
-- <a href="#view.render">view.**render**(\<data\>, \<payload\>, \<callback\>)</a>
+- <a href="#view.mount">view.**mount**(root, \<hydrate\>)</a>
+- <a href="#view.render">view.**render**(\<data\>, \<state\>, \<callback\>)</a>
 - <a href="#view.reconcile">view.**reconcile**(data)</a>
-- <a href="#view.create">view.**create**(data, \<payload\>)</a>
-- <a href="#view.add">view.**add**(data, \<payload\>, <index\>)</a>
-- <a href="#view.append">view.**append**(data, \<payload\>, <index\>)</a>
-- <a href="#view.update">view.**update**(node | index, data, \<payload\>)</a>
-- <a href="#view.replace">view.**replace**(node | index, data, \<payload\>)</a>
+- <a href="#view.create">view.**create**(data, \<state\>)</a>
+- <a href="#view.add">view.**add**(data, \<state\>, <index\>)</a>
+- <a href="#view.append">view.**append**(data, \<state\>, <index\>)</a>
+- <a href="#view.update">view.**update**(node | index, data, \<state\>)</a>
+- <a href="#view.replace">view.**replace**(node | index, data, \<state\>)</a>
 - <a href="#view.remove">view.**remove**(node, <count\>)</a>
 - <a href="#view.clear">view.**clear**()</a>
-- <a href="#view.data">view.**data**(index | node)</a>
 - <a href="#view.node">view.**node**(index)</a>
 - <a href="#view.index">view.**index**(node)</a>
-- <a href="#view.destroy">view.**destroy**(\<unload?\>)</a>
-- <a href="#view.unload">view.**unload**()</a>
+- <a href="#view.destroy">view.**destroy**()</a>
 
 Instance methods (not included in mikado.light.js):
 
-- <a href="#view.refresh">view.**refresh**(\<node | index\>, \<payload\>)</a>
-- <a href="#view.sync">view.**sync**(\<uncache?\>)</a>
-- <a href="#view.purge">view.**purge**()</a>
-- <a href="#view.find">view.**find**(data)</a>
-- <a href="#view.search">view.**search**(data)</a>
-- <a href="#view.where">view.**where**(payload)</a>
-- <a href="#view.import">view.**import**()</a>
-- <a href="#view.export">view.**export**()</a>
-- <a href="#view.load">view.**load**(url, \<callback\>)</a>
 - <a href="#view.route">view.**route**(name, handler, \<options\>)</a>
 - <a href="#view.listen">view.**listen**(event, \<options\>)</a>
 - <a href="#view.unlisten">view.**unlisten**(event, \<options\>)</a>
-- <a href="#view.dispatch">view.**dispatch**(name, \<target\>, \<event\>, \<self\>)</a>
+- <a href="#view.dispatch">view.**dispatch**(name, \<target\>, \<event\>)</a>
 
 DOM manipulation helpers (optional, not included in mikado.light.js):
 
@@ -825,19 +800,15 @@ DOM manipulation helpers (optional, not included in mikado.light.js):
 - <a href="#view.before">view.**before**(node | index, node | index)</a>
 - <a href="#view.after">view.**after**(node | index, node | index)</a>
 - <a href="#view.swap">view.**swap**(node | index, node | index)</a>
-  <!-- - ~~view.__sort__(field, \<direction | handler\>)~~ -->
-  <!-- - ~~view.__shuffle__()~~ -->
 
 Instance properties:
 
-- ~~view.**dom**~~
+- <a href="#view.name">view.**name**</a>
 - <a href="#view.length">view.**length**</a>
 - <a href="#view.store">view.**store**</a>
 - <a href="#view.state">view.**state**</a>
-- ~~view.**config**~~
-- ~~view.**template**~~
 
-Global helpers (optional, not included in mikado.light.js):
+Static DOM Cache helpers (optional, not included in mikado.light.js):
 
 - <a href="#Mikado.setText">Mikado.**setText**(node, text)</a>
 - <a href="#Mikado.getText">Mikado.**getText**(node)</a>
@@ -845,20 +816,19 @@ Global helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.getHTML">Mikado.**getHTML**(node)</a>
 - <a href="#Mikado.setClass">Mikado.**setClass**(node, class)</a>
 - <a href="#Mikado.getClass">Mikado.**getClass**(node)</a>
-- Mikado.**hasClass**(node, class)
-- Mikado.**removeClass**(node, class)
-- Mikado.**toggleClass**(node, class)
-- ~~Mikado.**setStyle**(node, property, value)~~
-- ~~Mikado.**getStyle**(node, property~~
+- <a href="#Mikado.hasClass">Mikado.**hasClass**(node, class)</a>
+- <a href="#Mikado.removeClass">Mikado.**removeClass**(node, class)</a>
+- <a href="#Mikado.toggleClass">Mikado.**toggleClass**(node, class, \<state\>)</a>
+- <a href="#Mikado.setStyle">Mikado.**setStyle**(node, property, value)</a>
+- <a href="#Mikado.getStyle">Mikado.**getStyle**(node, property)</a>
 - <a href="#Mikado.setCSS">Mikado.**setCSS**(node, css)</a>
 - <a href="#Mikado.getCSS">Mikado.**getCSS**(node)</a>
 - <a href="#Mikado.setAttribute">Mikado.**setAttribute**(node, attr, value)</a>
 - <a href="#Mikado.getAttribute">Mikado.**getAttribute**(node, attr)</a>
-- Mikado.**hasAttribute**(node, attr)
-- Mikado.**removeAttribute**(node, attr)
+- <a href="#Mikado.hasAttribute">Mikado.**hasAttribute**(node, attr)</a>
+- <a href="#Mikado.removeAttribute">Mikado.**removeAttribute**(node, attr)</a>
 
 <a name="options"></a>
-
 ## Options
 
 > Each Mikado instance can have its own options.
@@ -871,7 +841,7 @@ Global helpers (optional, not included in mikado.light.js):
         <td>Default</td>
     </tr>
     <tr>
-        <td><b>root</b></td>
+        <td><b>root</b><br><b>mount</b></td>
         <td>The destination root where the template should be rendered.</td>
         <td>null</td>
     </tr>
@@ -890,26 +860,20 @@ Global helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>cache</b></td>
-        <td>Enable/disable <a href="#cache">caching</a>. Caching can greatly increase performance (up to 20x).</td>
+        <td>Enable/disable DOM state <a href="#cache">caching</a> which can greatly increase performance by a factor up to 25.</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>store</b></td>
-        <td>Passed data for rendering are also stored and synchronized along the virtual dom. You can re-render the full state at any time, without passing the data.<br><b>Notice:</b> When passing an external reference of an existing Array-like object to the field "store" the store will perform all modifications directly to this reference (<a href="#extern">read more about "External Store"</a>).</td>
-        <td>false</td>
+        <td><b>observe</b></td>
+        <td>When using <code>Mikado.Array()</code> for reactive approach you will need to pass this array instance to this property.</td>
+        <td>null</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>loose</b></td>
-        <td>When store is enabled this flag removes also data whenever a corresponding dom element was removed. <!--When set to true you cannot use paged rendering.--></td>
+        <td><b>recycle</b></td>
+        <td>When enabled all dom elements which are already rendered will be re-used (recycled) for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Whe enabled make sure to use the <a>Virtual DOM Manipulation</a> helpers.</td>
         <td>false</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><b>reuse</b></td>
-        <td>When enabled all dom elements which are already rendered will be re-used for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Whe enabled make sure to use the <a>Virtual DOM Manipulation</a> helpers.</td>
-        <td>true</td>
     </tr>
     <tr></tr>
     <tr>
@@ -920,20 +884,14 @@ Global helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>pool</b></td>
-        <td>Set it to true to use both pools: Recycle Pool + Keyed Pool (autoscale), or set it to false to fully disable pooling, or set it to either one of both: "queue" or "key" to enable just one of them respectively.</td>
-        <td>true</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><b>size</b></td>
-        <td>Sets the maximum size of the shared pool. When not set or false it uses "auto scaling".</td>
+        <td>Set it to true (unbounded) or specify the pool size. Pooling can greatly enhance both the keyed and non-keyed recycle strategy.</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>prefetch</b></td>
-        <td>Prefetch/prebuilt a template on page load. Disable to save memory a speed up page start.</td>
-        <td>true</td>
+        <td><b>hydrate</b></td>
+        <td>Progressively enables partial hydration of already existing DOM structures when mounted.</td>
+        <td>false</td>
     </tr>
 </table>
 
@@ -941,31 +899,9 @@ Global helpers (optional, not included in mikado.light.js):
 
 ## Compile Templates
 
-<!--
-<a name="xss"></a>
-
-#### XSS Security
-
-Whenever you want to load and/or compile templates during runtime on the client-side keep this rule in mind:
-
-> **Never load templates from an external resource you did not own (or trust)!**
-
-To prevent XSS there are some options:
-
-1. use templates provided by yourself (recommended)
-2. load external templates from sources you trust
-3. **_Coming Soon:_** bundle all external templates during build and pass an external sanitizer (e.g. a node module) to the compiler options
-4. **_Coming Soon:_** use the `mikado-server` as a gateway which provides a built-in sanitizer for external templates
-5. **_Coming Soon:_** use a sanitizer in the client-side and pass this along the option field `sanitize`
-
-Sanitize external resources comes with some big drawbacks accordingly to this <a href="https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.md">specification</a>:
-
-- Templates support just a small subset of tags when using `HTML` as a content type
-- Templates could **not** include any javascript expressions (just supports basic template expression accordingly to mustache or handlebars)
--->
-
 <a name="compiler"></a>
 
+<!--
 #### Compiler Methods
 
 <table>
@@ -1023,18 +959,21 @@ Sanitize external resources comes with some big drawbacks accordingly to this <a
 </table>
 
 **Note:** Choosing a specific compiler method has no impact on the render performance.
+-->
 
 <a name="mikado-compile"></a>
 
+<!--
 ### 1. Variant: Using Dedicated Compiler (Recommended)
+-->
 
-Define a HTML-like template and use double curly brackets to mark dynamic expressions which should be calculated during runtime:
+Define a HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
 
 ```html
 <table>
   <tr>
     <td>User:</td>
-    <td>{{ data.user }}</td>
+    <td>{{ data.username }}</td>
   </tr>
   <tr>
     <td>Tweets:</td>
@@ -1043,39 +982,105 @@ Define a HTML-like template and use double curly brackets to mark dynamic expres
 </table>
 ```
 
-Save this template e.g. to _user/list.html_
+Save this template e.g. to _tpl/partial/user.html_
 
-> The preserved keyword **_data_** is a reference to a passed data item. You can access the whole nested object.
+> The preserved keyword **_data_** is a reference to the passed data item. You can access the whole nested object.
 
-Mikado comes up with a template compiler ("mikado-compile") which has to be run through Node.js and provides a command-line interface (CLI) to start compilation tasks. The template compiles into a fully compatible JSON format and could also be used for server-side rendering.
-
-<!--
-Install Mikado Compiler via NPM:
-
-```npm
-npm install mikado-compile
-```
--->
+Mikado comes with a builtin template compiler "mikado-compile" which has to be run through Node.js and provides a very simple command-line interface (CLI) to start compilation tasks. The template compiles into a native javascript file which needs to be passed during creation of a Mikado instance. The same markup is also used for the server-side rendering part, so you can share the same template sources by client and server rendering.
 
 Compile the template through the command line by:
 
 ```cmd
-npx mikado-compile user/list.html
+npx mikado-compile tpl/partial/user.html
 ```
 
-> **Notation:** npx mikado-compile _{ input } { destination }_
+**Basic Notation:**
+> npx mikado-compile _source \<destination\>_
 
 <!--
 Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
 -->
 
-After compilation you will have 4 different files:
+When no destination folder was set, the compiled files will be saved to the source folder. After compilation, you will have 3 different files:
 
-1. **template.js** the template compiled in ES5 compatible Javascript
-2. **template.es6.js** the template compiled as an ES6 module
-3. **template.json** the template compiled in JSON-compatible notation (<a href="#load">to load via HTTP request</a>)
-4. **template.html** the HTML-like template (reference, do not delete it)
+1. **list.js** the template compiled as a ES6 module (which needs to be imported)
+2. **list.es5.js** the template compiled as ES5 compatible Javascript (which automatically register when loaded by script tag)
+3. **list.html** the source template you have implemented (do not delete it)
 
+**Extended Notation:**
+> npx mikado-compile --src _{ source }_ --dest _{ destination }_ --extension html --type module  --compact
+
+Compiler Flags:
+
+- `--type module`, `-t module` export as javascript modules (recommended)
+- `--type es5`, `-t es5` export as ES5-compatible package
+- `--extension html`, `--ext html`, `-e html` export as ES5-compatible package
+- `--inline`, `-i` or `--compact`, `-c` switch the build strategy to optimize either the performance or size
+- `--force`, `-f` force overwriting existing files
+- `--pretty`, `-p` do not minify the compiled result
+- `--watch`, `-w` start the watcher for automatically compile when files has changed (just for development purposes)
+
+Supported flags as attributes on the template root:
+
+```html
+<!-- switch the build strategy to prebuilt enabled cache -->
+<table cache="true"></table>
+```
+```html
+<!-- switch the build strategy to prebuilt disabled cache -->
+<table cache="false"></table>
+```
+
+Using the flag attributes are the most performant variants but also cost you some flexibility, because the cache strategy couldn't be changed in runtime, it needs to change in markup before compilation.
+
+### Auto Naming
+
+There is a new naming system which will apply by default. The name of your html files will be used as unique identifiers of your templates.
+Because several folders can include same filenames, the template name inherits from the full path you pass in as `--src`.
+
+Assuming the following file structure:
+```
+/tpl/view/start.html
+/tpl/view/user.html
+/tpl/view/cart.html
+/tpl/partial/start.html
+/tpl/partial/user.html
+/tpl/partial/cart.html
+```
+
+The command should define the path `/tpl/` as the source root because it is the most inner folder which covers all files:
+```cmd
+npx mikado-compile /tpl/
+```
+
+The template names then becomes `view/start`, `view/user`, `view/cart` and `partial/start`, `partial/user`, `partial/cart` for the partials. So when including just use this name in your expression `<table include="partial/user">`
+
+The wrong way is to compile the folder /view/ and /partial/ separately, because their template names will be same.
+```cmd
+npx mikado-compile /tpl/view/
+npx mikado-compile /tpl/partial/
+```
+This might also work, but it is better not to do.
+
+### Prebuilt Cache Strategy
+
+The option `{ cache: true/false }` when creating a Mikado instance could be better declared withing templates on their root element, let the compiler produce more optimized code for this strategy.
+
+```html
+<table cache="true">
+    <!-- ... -->
+</table>
+```
+
+Also use this approach when set `cache="false"`:
+
+```html
+<table cache="false">
+    <!-- ... -->
+</table>
+```
+
+<!--
 <a name="compiler-html5"></a>
 
 ### 2. Variant: Using HTML5 Templates
@@ -1097,13 +1102,11 @@ Define in HTML:
 </template>
 ```
 
-<a name="Mikado.compile"></a>
 Use runtime compiler:
 
 ```js
 var tpl = Mikado.compile(document.getElementById("user-list"));
 ```
-
 
 Alternatively (supports just templates/elements with IDs):
 
@@ -1147,6 +1150,7 @@ Create a mikado view:
 ```js
 var view = new Mikado(tpl);
 ```
+-->
 
 <a name="started"></a>
 
@@ -1155,48 +1159,45 @@ var view = new Mikado(tpl);
 Assume there is an array of data items to render (or just one item as an object):
 
 ```js
-var data = [
-  {
-    user: "User A",
+const data = [{
+    username: "User A",
     tweets: ["foo", "bar", "foobar"]
-  },
-  {
-    user: "User B",
+},{
+    username: "User B",
     tweets: ["foo", "bar", "foobar"]
-  },
-  {
-    user: "User C",
+},{
+    username: "User C",
     tweets: ["foo", "bar", "foobar"]
-  }
-];
+}];
 ```
 
-Load library and initialize template (ES5):
-
-```html
-<script src="mikado.min.js"></script>
-<script src="user/list.js"></script>
-<script>
-  var view = Mikado("template");
-</script>
-```
-
-> The name of a template inherits from its corresponding filename.
-
-Load library and initialize template (ES6):
+### Load library and initialize template as ES6 modules:
 
 ```html
 <script type="module">
-  import Mikado from "./mikado.js";
-  import template from "./user/list.es6.js";
-  var view = Mikado(template);
+    import Mikado from "./mikado.bundle.module.min.js";
+    import template from "./tpl/partial/user.js";
+    const view = new Mikado(template, {/* options */});
 </script>
 ```
 
-After creation you need mount to a DOM element initially as a destination root and render the template with populated data:
+
+### Load library and initialize template as legacy ES5:
+
+```html
+<script src="mikado.bundle.min.js"></script>
+<script src="tpl/partial/user.es5.js"></script>
+<script>
+    var view = new Mikado("user/list", {/* options */});
+</script>
+```
+
+> The name of a template inherits from its corresponding filename starting by the folder you passed to the `--src` flag.
+
+After creation, you need mount to a DOM element as a destination for your render tasks:
 
 ```js
-view.mount(document.body);
+view.mount(HTMLelement);
 view.render(data);
 ```
 
@@ -1210,7 +1211,9 @@ Mikado(template).mount(document.body).render(data);
 
 ## Rules and Conventions
 
-> Every template has to provide **one single root** as the outer bound. This is a convention based on the concept of Mikado.
+There is just a single convention you always need to keep in mind:
+
+> **Every template has to provide **one single root element** as the outer boundary.**
 
 Instead of doing this in a template:
 
@@ -1226,7 +1229,7 @@ Instead of doing this in a template:
 </footer>
 ```
 
-Provide one single root by doing this:
+Wrapping everything into a single outer root element by doing this:
 
 ```html
 <main>
@@ -1242,37 +1245,9 @@ Provide one single root by doing this:
 </main>
 ```
 
-You can also use a `<div>` or any other element as a template root (also custom elements).
+You can also use a `<div>` or any other element as a template root (also custom elements). The root element can also hold two special attributes `key` and `cache`. We will come later to it.
 
-Mixing text nodes and child nodes within the same root is not possible:
-
-```html
-<main>
-  {{ data.title }}
-  <section>{{ data.content }}</section>
-  {{ data.footer }}
-</main>
-```
-
-This may be provided in the future, in the meanwhile just wrap text nodes into its own child
-
-```html
-<main>
-  <title>{{ data.title }}</title>
-  <section>{{ data.content }}</section>
-  <footer>{{ data.footer }}</footer>
-</main>
-```
-
-This example does not have this issue, because text nodes and child nodes are not mixed:
-
-```html
-<main>
-  <section>{{ data.title }} foobar {{ data.footer }}</section>
-</main>
-```
-
-<a name="view"></a><a name="advanced-example"></a>
+<a name="advanced_example"></a>
 
 ## Advanced Example
 
@@ -1280,16 +1255,16 @@ A bit more complex template:
 
 ```html
 <section id="{{ data.id }}" class="{{ this.state.theme }}" data-index="{{ index }}">
-  {{@ var is_today = data.date === view.today }}
+  {{@ var is_today = data.date === state.today }}
   <div class="{{ data.class }} {{ is_today ? 'on' : 'off' }}">
     <div class="title" style="font-size: 2em">{{ data.title.toUpperCase() }}</div>
     <div class="content {{ index % 2 ? 'odd' : 'even' }}">{{# data.content }}</div>
-    <div class="footer">{{ view.parseFooter(data) }}</div>
+    <div class="footer">{{ state.parseFooter(data) }}</div>
   </div>
 </section>
 ```
 
-You can use <u>any</u> Javascript within the {{ ... }} curly bracket notation.
+You can use <u>any</u> Javascript within the {{ ... }} curly bracket notation. The scope is limited by the template, so variables from one template can't be accessed within another template (use `state` for this purpose).
 
 > To pass HTML markup as a string, the curly brackets needs to be followed by **#** e.g. `{{# ... }}`. For better performance, relevant tasks avoid passing HTML contents as a string.
 
@@ -1305,23 +1280,25 @@ Within a template you have access to the following identifiers:
     </tr>
     <tr>
         <td><b>data</b></td>
-        <td>A full reference to a passed data item.</td>
+        <td>A full reference to the passed data item. Within loops the keyword data points to each of the looped data items.</td>
     </tr>
     <tr></tr>
     <tr>
-        <td><b>view</b></td>
-        <td>An optional payload used to manually pass in non-data-item specific values or helper functions.</td>
+        <td><b>state</b></td>
+        <td>An optional payload used to manually pass in custom specific values or helper functions. The state will be delegated through all nested templates.</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>index</b></td>
-        <td>Represents the index of the currently rendered data item.</td>
+        <td>Represents the index of the currently rendered data item (starting by 0 for the first item).</td>
     </tr>
+    <!--
     <tr></tr>
     <tr>
         <td><b>self</b></td>
         <td>Points to the current rendered element itself. Using "js" node property or by using the {{@ marker grants you to have "self" available.</td>
     </tr>
+    -->
     <tr></tr>
     <tr>
         <td><b>this</b></td>
@@ -1329,31 +1306,24 @@ Within a template you have access to the following identifiers:
     </tr>
     <tr></tr>
     <tr>
+        <td><b>window</b></td>
+        <td>Gives access to the global namespace.</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td>this.<b>state</b></td>
-        <td>An object used to keep data as a state across runtime. You can share state data across all Mikado instances by passing the same external object reference during initialization.</td>
+        <td>An object used to keep data as a state across runtime. You can share state data across all Mikado instances by passing the same external object reference during initialization. When no custom payload as the state will be passed on render, the keyword `state` points to `this.state` by default.</td>
     </tr>
     <tr></tr>
     <tr>
         <td>this.<b>store</b></td>
-        <td>Gives access to the internal data store (Array).</td>
-    </tr>
-    <!--
-    <tr></tr>
-    <tr>
-        <td>this.<b>length</b></td>
-        <td>The length of all data actually rendered (to get length of stored data use <i>this.store.length</i> instead).</td>
-    </tr>
-    -->
-    <tr></tr>
-    <tr>
-        <td><b>window</b></td>
-        <td>The global namespace.</td>
+        <td>Gives access to the internal data store (only available when using `{ observe: Mikado.Array() }`).</td>
     </tr>
 </table>
 
-You cannot change the naming of those preserved keywords.
+You cannot change the naming of those preserved keywords, also make sure you didn't override them.
 
-It is recommended to pass custom functions via the _view_ object (see example above "view.parseFooter"). Alternatively you can also nest more complex computations inline as an IIFE and return the result.
+It is recommended to pass custom functions via the _state_ object (see example above `state.parseFooter = function(str){ return str; }`). Alternatively you can also nest more complex computations inline as an IIFE and return the result.
 
 ```html
 <div class="date">
@@ -1365,24 +1335,20 @@ It is recommended to pass custom functions via the _view_ object (see example ab
 </div>
 ```
 
-Alternatively of accessing _data_, _view_, _index_ and _this.state_, you can also access variables from the global namespace.
-
 To finish the example from above you need one single object or an array of **_data_** items:
 
 ```js
-var data = [
-  {
-    id: "230BA161-675A-2288-3B15-C343DB3A1DFC",
-    date: "2019-01-11",
-    class: "yellow, green",
-    title: "Sed congue, egestas lacinia.",
-    content: "<p>Vivamus non lorem <b>vitae</b> odio sagittis amet ante.</p>",
-    footer: "Pellentesque tincidunt tempus vehicula."
-  }
-];
+var data = [{
+    "id": "230BA161-675A-2288-3B15-C343DB3A1DFC",
+    "date": "2019-01-11",
+    "class": "yellow, green",
+    "title": "Sed congue, egestas lacinia.",
+    "content": "<p>Vivamus non lorem <b>vitae</b> odio sagittis amet ante.</p>",
+    "footer": "Pellentesque tincidunt tempus vehicula."
+}];
 ```
 
-Provide **_view_** payload (non-data-item specific values and helper methods used by the template):
+Provide **_state_** payload (non-data-item specific values and helper methods used by the template):
 
 ```js
 var payload = {
@@ -1400,13 +1366,13 @@ Provide **_state_** data (application-specific data and helper methods used by t
 view.state.theme = "custom";
 ```
 
-Create a new view instance or initialize a new template factory to an existing instance:
+Mount the view to a target element as a destination for all the render tasks:
 
 ```js
-view.init(template);
+view.mount(HTMLelement);
 ```
 
-Mount to a new target or just render the already mounted template:
+Render a mounted template:
 
 ```js
 view.render(data, payload);
@@ -1423,16 +1389,23 @@ view.render(data, payload, function() {
 To render asynchronously by using promises you need to create the view instance with the **_async_** option flag:
 
 ```js
-view = Mikado(template, { async: true });
+const view = new Mikado(template, { async: true });
 
+// use promise callback:
 view.render(data, payload).then(function() {
   console.log("finished.");
 });
+
+// or use promise async/await:
+await view.render(data, payload);
+console.log("finished.");
 ```
 
-<a name="event"></a><a name="view.route"></a>
+<a name="event"></a>
 
 ## Event Bindings
+
+> All the special attributes used to assign event routing within templates are inherited from the native inline listener name but without the prefix `on`, e.g. to bind routing for an "onclick" just use `click`.
 
 Let's take this example:
 
@@ -1451,17 +1424,17 @@ There are 2 click listeners. The attribute value represents the name of the rout
 Define routes:
 
 ```js
-view
-  .route("show-user", function(node, event) {
-    alert(node.textContent);
-  })
-  .route("delete-user", function(node, event, self) {
-    alert(node.dataset.id); // delegated to "root"
-    console.log("The element who fires the event: ", self);
-  });
+view.route("show-user", function(target, event) {
+    alert(target.textContent);
+});
+
+view.route("delete-user", function(target, event) {
+    // target was delegated to "root" by using the colon expression
+    alert(target.dataset.id); 
+});
 ```
 
-Routes are stored globally, so you can share routes through all Mikado instances.
+Routes are stored globally, so they share through all Mikado instances.
 
 <b>List of all supported events:</b>
 
@@ -1491,8 +1464,6 @@ Routes are stored globally, so you can share routes through all Mikado instances
     </tr>
 </table>
 
-<a name="Mikado.route"></a>
-
 #### Event Options
 
 By default, every event which is delegated to a route will be canceled (event.preventDefault) and also will stop capturing/bubbling (event.stopPropagation). To control this behavior you can configure for each route:
@@ -1509,7 +1480,7 @@ Mikado.route("handler", function(target, event){
 `cancel` prevents default behavior for this event (default: "true")<br>
 `stop` stop capturing/bubbling the event after matched (default: "true")
 
-<a name="Mikado.listen"></a><a name="Mikado.unlisten"></a><a name="view.listen"></a><a name="view.unlisten"></a>
+<a name="view.listen"></a><a name="view.unlisten"></a>
 
 #### Explicit Register/Unregister
 
@@ -1568,14 +1539,14 @@ Manually dispatch an event and pass parameters:
 view.dispatch("handler", target, event, self);
 ```
 
-<a name="modes"></a>
+<a name="keyed"></a>
 
 ## Keyed/Non-Keyed Modes
 
 > Each template instance can run in its own mode independently.
 
 Compare benchmark of all supported modes here:<br>
-https://raw.githack.com/nextapps-de/mikado/master/bench/#modes
+https://raw.githack.com/nextapps-de/mikado/bench/#modes
 
 <a name="non-keyed"></a>
 
@@ -1783,13 +1754,14 @@ view.reconcile(items);
 
 ## Create, Initialize, Destroy Views
 
-<a name="Mikado.new"></a>
+<a name="mikado.new"></a>
 Create a view from a template with options:
 
 ```js
 var view = Mikado(template, options);
 ```
 
+<a name="mikado.new"></a>
 Create view from a template with options and also mount it to a target element:
 
 ```js
@@ -2011,7 +1983,7 @@ view.purge(template);
 ```
 -->
 
-<a name="helpers"></a><a name="view.length"></a>
+<a name="helpers"></a>
 
 ### Useful Helpers
 
@@ -2252,7 +2224,7 @@ Please keep in mind that manual changes to the DOM has its limits:
 
 You can also use these helpers for all changes to any DOM node independent of it is part of the template or not. Generally, these helpers increase every DOM access.
 
-<a name="Mikado.setAttribute"></a>
+<a name="view.setAttribute"></a>
 Set attribute of a node (will not replace old attributes):
 
 ```js
@@ -2382,8 +2354,6 @@ view.sort(function(data_a, data_b){
 
 Mikado provides 4 different types of stores. It is very useful to understand how they are processed internally.
 
-<a name="store-internal"></a>
-
 #### 1. Internal Store
 
 An internal store gets updated automatically by Mikado. This comes with a small extra cost. Use this store when you need a reference to the data store as an array of items that are currently rendered.
@@ -2421,7 +2391,6 @@ Or force an update to a specific node:
 view.refresh(node);
 ```
 
-<a name="view.store"></a>
 Access to the store:
 
 ```js
@@ -2444,7 +2413,7 @@ var store = view.store;
 view.store = store = [];
 ```
 
-<a name="store-loose"></a>
+<a name="options.loose"></a>
 
 #### 2. Loose Store (Default)
 
@@ -2466,7 +2435,7 @@ var item = view.data(index);
 var item = view.data(node);
 ```
 
-<a name="store-extern"></a>
+<a name="extern"></a>
 
 #### 3. External/Custom Store
 
@@ -2496,17 +2465,15 @@ var view = new Mikado(root, template, {
 });
 ```
 
-<a name="store-reactive"></a>
-
 #### 4. Reactive Store (Observable Array)
 
 This is also an external store with all its attributes described above. Additionally, this store reacts when indices get changed (applies changes to DOM automatically). That makes reconciliation unnecessary but also has a noticeable extra cost for all other kinds of updates. The main reason why this store is slower in the benchmark by a large margin is, that this store cannot apply a bulk of updates through a loop. It reacts at the moment the data was assigned/removed from an index. Still, this store could perform faster than all other ones depending on your application / current view.
 
-The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you did not need calling any of Mikados methods again like render/reconcile/update/add/append/remove. All these methods gets redundant/obsolete because the view is completely synchronized along with the whole state of your store. This combination and how they are integrated into Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#modes">astronomical</a>.
+The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you did not need calling any of Mikados methods again like render/reconcile/update/add/append/remove. All these methods gets redundant/obsolete because the view is completely synchronized along with the whole state of your store. This combination and how they are integrated into Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/bench/#modes">astronomical</a>.
 
 Read the documentation about this kind of store <a href="#observable">here</a>.
 
-<a name="store-export"></a>
+<a name="export"></a>
 
 #### Export / Import Views
 
@@ -2532,7 +2499,7 @@ You cannot export several instances of the same template which holds different d
 
 ## State
 
-State pretty much acts like passing a <a href="#view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. The state is directly assigned to each Mikado instance and does not have to pass during rendering. This all differ from using view payloads.
+State pretty much acts like passing a <a href="#view.view">view</a> payload when rendering templates. State also holds an object but instead used to keep data across runtime. State data are also shared across all Mikado instances. The state is directly assigned to each Mikado instance and does not have to pass during rendering. This all differ from using view payloads.
 
 Define state properties:
 
@@ -2624,7 +2591,7 @@ var view = new Mikado(root, template, {
     </tr>
 </table>
 
-<a name="load"></a><a name="Mikado.load"></a>
+<a name="load"></a>
 
 ## Transport / Load Templates
 
@@ -2671,8 +2638,6 @@ var view = Mikado("template");
 view.mount(document.body).render(data);
 ```
 
-<a name="view.load"></a>
-
 **.load()** loads and initialize a new template to an existing Mikado instance:
 
 ```js
@@ -2712,7 +2677,7 @@ view
 
 When a template has no dynamic expressions (within curly brackets) which need to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. Static views could be rendered without passing data.
 
-<a name="Mikado.once"></a><a name="Mikado.unload"></a>
+<a name="mikado.once"></a>
 
 #### Once (One-time rendering)
 
@@ -2788,7 +2753,7 @@ Types:
 <table>
     <tr>
         <td><b>json</b></td>
-        <td>Assign them manually via <a href="#Mikado.register">Mikado.register</a> or just render the template <a href="#Mikado.once">once</a>.</td>
+        <td>Assign them manually via <a href="#mikado.register">Mikado.register</a> or just render the template <a href="#mikado.once">once</a>.</td>
     </tr>
     <tr></tr>
     <tr>

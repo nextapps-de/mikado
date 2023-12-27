@@ -1,3 +1,35 @@
+## 0.8.1
+
+- A whole re-build of the library
+- Support partial hydration / progressive hydration focusing on maximum performance
+- Mikado provides you server-side rendering on an extreme performance level
+- Mikado also comes with the fastest Express Middleware Render Engine of today
+- Templates are cross-compatible, uses same template markup for Server-side-rendering as for client-side-rendering
+- The server-side-implementation follows the same strategy of sharing instances and includes
+- Moves the creation of executable template functions to the compiler (CSP friendly)
+- The core has a new architecture which improves the predecessor in any aspect
+- Templates including multiple text nodes as dynamic expressions are now supported
+- The cache strategy was completely redesigned, it now shares caches across multiple template expressions
+- The "DOM Cache Helpers" are now fully integrated into the internal cache system, which transforms template caches into a more powerful strategy when used
+- The cache injects progressively when used and don't apply in preparation by default
+- The compiler provide 5 build strategies to choose from, to optimize either performance, flexibility or size
+- A special compiler flag "cache" could be placed into the template markup to prebuild the strategy by the compiler
+- The concept of shared pools was fully re-design. The goal is still the same but instead of sharing direct access on pools it shares instances of Mikado. This greatly improves integration, not only because instances can have their own configuration (options).
+- The include system was re-build from the ground up and also support real conditional template structures through the template syntax `<div if="data.length">` (they are not just "hidden" anymore)
+- It is now possible to combine all 3 kinds of include variants on a single element `<div if="data.length" foreach="data" include="tpl/partial">`
+- A new mounting system was implemented which is more robust and also support the new concept of shared Mikado instances
+- The event delegation was greatly improved, it now supports bubbling same events on parents up to the HTML root element, for this workload there is a new optimization available by `Mikado.eventCache = true`.
+- Support for SVG markup withing templates
+- A new template expression `{{? ... }}` to skip printing "nullable" values (except 0)
+- The expression `{{#= ... }}` is now supported
+- A new template expression `{{! ... }}` for escaping contents (SSR only)
+- Supports SSR-only mode where the limitation of having one outer element as the template root is unlocked, also there is an `extraction` directive to place logical placeholder elements, which will be self-extracted when rendered
+- Improved state system
+- Improved bundler and export type system
+- The registration of templates has improved, it starts instantiation right before related task and isn't cleanup automatically when calling `.destroy()` on a parent view
+- The store was removed, except when using `Mikado.Array()` you still need to pass in the store as the option `observe:`
+- The benchmark was moved to its own branch named `bench`
+
 ## 0.7.5
 `change` the option __pool__ has changed, set it to _true_ to use both pools: Recycle Pool + Keyed Pool, or set it to _false_ to fully disable pooling, or set it to either one of both: ___"queue"___ or ___"key"___ to enable just one of them respectively<br>
 `change` the option __keep__ was removed, because it was replaced by option `pool: "key"` which will switch into the "explicit keyed mode"<br>

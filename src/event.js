@@ -1,14 +1,23 @@
+// COMPILER BLOCK -->
+import { EventOptions } from "./type.js";
+import { DEBUG, MIKADO_EVENT_CACHE, SUPPORT_EVENTS } from "./config.js";
+// <-- COMPILER BLOCK
 import Mikado from "./mikado.js";
 
-if(SUPPORT_EVENTS){
+//if(SUPPORT_EVENTS){
 
+    /** @type {Object<string, boolean|number>} */
     const events = {};
-    const listener = {};
-    const options = {};
-    const body = document.documentElement || document.body.parentNode;
+    /** @type {Object<string, Function>} */
+    const routes = /** @type {Object<string, Function>} */ (SUPPORT_EVENTS && Object.create(null));
+    /** @type {Object<string, Boolean|EventOptions>} */
+    const options =  /** @type {Object<string, Boolean|EventOptions>} */ (SUPPORT_EVENTS && Object.create(null));
 
+    // The most outer element which is covered by Mikado event system is document.body
+    const doc = document.documentElement || document.body.parentNode;
     const has_touch = "ontouchstart" in window;
     const has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
+
     let tap_fallback;
 
     function handler(event, type){
@@ -16,171 +25,206 @@ if(SUPPORT_EVENTS){
         type || (type = event.type);
 
         const event_target = event.target;
-        let target = event_target;
-        let id = event_target["_event_" + type];
+        const use_event_cache = Mikado["eventCache"];
+        const use_bubble = Mikado["eventBubble"] !== false;
+        let cache;
 
-        if(!id){
+        // When "eventCache" options is enabled, all the assigned event route names and all the event targets exposed by bubbling are being cached,
+        // and therefore they can't be changed dynamically after its creation.
+        // Instead of: <div click="{{ true ? 'route-a' : 'route-b' }}"> just apply logic inside the handler.
+        // Also, this will only work when the route doesn't change for the same element: <div click="{{ data.route }}">.
+        // Alternatively a route can re-defined dynamically by register a new function to by calling Mikado.route(name, fn, options) again.
+        // Delete a route by Mikado.route(name, null, null)
 
-            while(target !== body){
+        if(use_event_cache){
+
+            cache = event_target[MIKADO_EVENT_CACHE + type];
+        }
+
+        if(typeof cache === "undefined"){
+
+            let target = event_target;
+
+            // bubble up the dom tree to find element which has assigned a handler
+
+            while(target && (target !== doc)){
+
+                let route;
 
                 if((type === "click") && tap_fallback){
 
-                    id = target.getAttribute("tap");
+                    route = target.getAttribute("tap");
                 }
 
-                if(!id){
+                if(!route){
 
-                    id = target.getAttribute(type);
+                    route = target.getAttribute(type);
                 }
 
-                if(id){
+                if(route){
 
-                    const tmp = id.indexOf(":");
+                    const delimiter = route.indexOf(":");
 
-                    if(tmp !== -1){
+                    // it has a custom target, bubbling needs to continue
 
-                        const handler = id.substring(0, tmp);
-                        const root = id.substring(tmp + 1);
+                    if(delimiter > -1){
 
-                        id = 0;
-                        target = target.parentElement;
+                        const handler = route.substring(0, delimiter);
+                        const attr = route.substring(delimiter + 1);
 
-                        while(target !== body){
+                        route = "";
 
-                            if(target.hasAttribute(root)){
+                        // continue bubble up the dom tree to find the custom defined root element
 
-                                id = handler;
+                        while((target = target.parentElement) !== doc){
+
+                            if(target.hasAttribute(attr)){
+
+                                route = handler;
                                 break;
                             }
-
-                            target = target.parentElement;
                         }
 
                         if(DEBUG){
 
-                            if(!id){
+                            if(!route){
 
-                                console.warn("Event root '" + root + "' was not found for the event: '" + handler + "'.");
+                                console.warn("Event root '" + attr + "' was not found for the event: '" + handler + "'.");
                             }
                         }
                     }
 
-                    break;
+                    if(route){
+
+                        if(!cache){
+
+                            cache = [];
+
+                            if(use_event_cache){
+
+                                event_target[MIKADO_EVENT_CACHE + type] = cache;
+                            }
+                        }
+
+                        cache.push([route, target]);
+                        const option = options[route];
+
+                        if(!use_bubble || (option && (option.stop || option.cancel))){
+
+                            // stop bubbling
+
+                            break;
+                        }
+                    }
                 }
+
+                // continue bubble up
 
                 target = target.parentElement;
             }
 
-            if(!id){
+            if(use_event_cache){
 
-                return;
+                cache || (event_target[MIKADO_EVENT_CACHE + type] = null);
             }
-
-            event_target["_event_" + type] = id;
-            event_target["_root_" + type] = target;
-        }
-        else{
-
-            target = event_target["_root_" + type];
         }
 
-        const fn = listener[id];
-        const option = options[id];
+        if(cache) for(let i = 0, tmp; i < cache.length; i++){
 
-        if(fn){
+            tmp = cache[i];
+            const route = tmp[0];
+            const fn = routes[route];
 
-            if(option["cancel"] !== false){
+            if(fn){
 
-                event.preventDefault();
+                const target = tmp[1];
+                const option = options[route];
+
+                if(option){
+
+                    option.prevent && event.preventDefault();
+                    option.stop && event.stopImmediatePropagation();
+
+                    if(option.once){
+
+                        routes[route] = null;
+
+                        if(use_event_cache){
+
+                            event_target[MIKADO_EVENT_CACHE + type] = null;
+                        }
+                    }
+                }
+
+                //fn(target, event, event_target);
+                fn(target, event);
             }
+            else if(DEBUG){
 
-            fn(target, event, event_target);
-        }
-        else if(DEBUG){
-
-            console.warn("Missing route '" + id + "' for event '" + type + "'.");
-        }
-
-        if(option["stop"] !== false){
-
-            event.stopPropagation();
+                console.warn("The route '" + route + "' is not defined for the event '" + type + "'.");
+            }
         }
     }
 
     /**
-     * @param id
-     * @param fn
-     * @param {Boolean|Object=} option
+     * @param {!string} route
+     * @param {!Function} fn
+     * @param {EventOptions=} option
      */
+    export function route(route, fn, option){
 
-    Mikado["route"] = Mikado.prototype.route = function(id, fn, option){
+        if(DEBUG){
 
-        listener[id] = fn;
-        options[id] = option || {};
-        return this;
-    };
+            if(!route){
 
-    Mikado["dispatch"] = Mikado.prototype.dispatch = function(id, target, event, event_target){
+                throw new Error("Missing route name.");
+            }
 
-        listener[id].call(this, target, event, event_target);
-        return this;
-    };
+            if(!fn){
 
-    let touch_x, touch_y;
-    let register_tap;
+                throw new Error("The route '" + route + "' has no function assigned to it.");
+            }
 
-    if(has_touch || has_pointer){
+            if(routes[route]){
 
-        function handler_down(event){
-
-            pointer(event, event["touches"]);
-        }
-
-        function handler_end(event){
-
-            let last_x = touch_x;
-            let last_y = touch_y;
-
-            pointer(event, event["changedTouches"]);
-
-            if((Math.abs(touch_x - last_x) < 50) &&
-               (Math.abs(touch_y - last_y) < 50)){
-
-                handler.call(this, event, "tap");
+                console.info("A new handler was re-assigned to the route '" + route + "'.");
             }
         }
 
-        function pointer(event, touches){
-
-            if(touches){
-
-                event = touches[0];
-            }
-
-            touch_x = event["clientX"];
-            touch_y = event["clientY"];
-        }
-
-        const opt = {
-
-            "passive": false, // Note: the default click behavior should not force passive handling
-            "capture": true
-        };
-
-        register_tap = function(add_or_remove){
-
-            register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, opt);
-            //register_event(add_or_remove, "touchmove", handler_move, false);
-            register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, opt);
-        };
+        routes[route] = fn;
+        option && (options[route] = option);
+        return this;
     }
 
     /**
-     * @param event
-     * @param {Object|boolean=} options
+     * @param {!string} route
+     * @param {!Element} target
+     * @param {Event=} event
      */
+    export function dispatch(route, target, event){
 
-    Mikado["listen"] = Mikado.prototype.listen = function(event, options){
+        if(DEBUG){
+
+            if(!route){
+
+                throw new Error("Missing route name.");
+            }
+
+            if(!routes[route]){
+
+                throw new Error("Undefined route '" + route + "'.");
+            }
+        }
+
+        routes[route].call(target || this, event || window.event);
+        return this;
+    }
+
+    /**
+     * @param {!string} event
+     * @param {EventListenerOptions|boolean=} options
+     */
+    export function listen(event, options){
 
         if(!events[event]){
 
@@ -189,15 +233,14 @@ if(SUPPORT_EVENTS){
         }
 
         return this;
-    };
+    }
 
     /**
-     * @param event
-     * @param {Object|boolean=} options
+     * @param {string} event
+     * @param {EventListenerOptions|boolean=} options
      * @returns {Mikado}
      */
-
-    Mikado["unlisten"] = Mikado.prototype.unlisten = function(event, options){
+    export function unlisten(event, options){
 
         if(events[event]){
 
@@ -206,7 +249,74 @@ if(SUPPORT_EVENTS){
         }
 
         return this;
-    };
+    }
+
+    let touch_x, touch_y, register_tap;
+
+    if(has_touch || has_pointer){
+
+        /**
+         * @param {TouchEvent|PointerEvent} event
+         */
+
+        function handler_down(event){
+
+            pointer(event, event.touches);
+        }
+
+        /**
+         * @param {TouchEvent|PointerEvent} event
+         */
+
+        function handler_end(event){
+
+            const last_x = touch_x;
+            const last_y = touch_y;
+
+            pointer(event, event.changedTouches);
+
+            if((Math.abs(touch_x - last_x) < 15) &&
+               (Math.abs(touch_y - last_y) < 15)){
+
+                handler.call(this, event, "tap");
+            }
+        }
+
+        /**
+         * @param {TouchEvent|PointerEvent|Touch} event
+         * @param {TouchList} touches
+         */
+
+        function pointer(event, touches){
+
+            if(touches){
+
+                event = touches[0];
+            }
+
+            touch_x = event.clientX;
+            touch_y = event.clientY;
+        }
+
+        /**
+         * @type {EventListenerOptions}
+         */
+
+        const opt = {
+
+            // Note: the default click behavior should not force passive handling
+            passive: false,
+            // Capturing by default, since we need the event dispatched from window
+            capture: true
+        };
+
+        register_tap = function(add_or_remove){
+
+            register_event(add_or_remove, has_pointer ? "pointerdown" : "touchstart", handler_down, opt);
+            //register_event(add_or_remove, "touchmove", handler_move, false);
+            register_event(add_or_remove, has_pointer ? "pointerup" : "touchend", handler_end, opt);
+        }
+    }
 
     /**
      * @param add_or_remove
@@ -234,7 +344,8 @@ if(SUPPORT_EVENTS){
         window[(add_or_remove ? "add": "remove") + "EventListener"](
             type,
             handler,
-            options || false
+            // Capturing by default, since we need the event dispatched from window
+            options || options === false ? options : true
         );
     }
-}
+//}

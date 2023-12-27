@@ -6,8 +6,9 @@ log/*
 tmp/
 js-framework-benchmark
 server/cache/
-#test/
-#bench/
+_old_*
+test/
+uibench/
 
 demo/todomvc/task/
 demo/todomvc/template/app/*

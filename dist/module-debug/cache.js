@@ -1,9 +1,6 @@
-// COMPILER BLOCK -->
-import { MIKADO_NODE_CACHE } from "./config.js";
-// <-- COMPILER BLOCK
+const regex_css = /[^;:]+/g,
+      regex_class = /[^ ]+/g;
 
-const regex_css = /[^;:]+/g;
-const regex_class = /[^ ]+/g;
 
 // -------------------------------------------------------------
 
@@ -12,7 +9,7 @@ const regex_class = /[^ ]+/g;
  * @param {*} text
  */
 
-export function setText(node, text){
+export function setText(node, text) {
 
     // if(node.length && !node.tagName){
     //
@@ -24,26 +21,26 @@ export function setText(node, text){
     //     return;
     // }
 
-    let cache = node[MIKADO_NODE_CACHE], child, tmp;
+    let cache = node._mkc,
+        child,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_t"];
+        tmp = cache._t;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if (tmp !== text) {
 
-    if(tmp !== text){
+        cache._t = text;
 
-        cache["_t"] = text;
+        if (3 === node.nodeType && (child = node) || (child = node.firstChild)) {
 
-        if((node.nodeType === 3 && (child = node)) || (child = node.firstChild)){
-
-            child.nodeValue = /** @type {string} */ (text);
-        }
-        else{
+            child.nodeValue = /** @type {string} */text;
+        } else {
 
             node.textContent = text;
         }
@@ -55,28 +52,28 @@ export function setText(node, text){
  * @return {string}
  */
 
-export function getText(node){
+export function getText(node) {
 
-    let cache = node[MIKADO_NODE_CACHE], child, tmp;
+    let cache = node._mkc,
+        child,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_t"];
+        tmp = cache._t;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if ("string" != typeof tmp) {
 
-    if(typeof tmp !== "string"){
+        if (3 === node.nodeType && (child = node) || (child = node.firstChild)) {
 
-        if((node.nodeType === 3 && (child = node)) || (child = node.firstChild)){
+            cache._t = tmp = child.nodeValue;
+        } else {
 
-            cache["_t"] = tmp = child.nodeValue;
-        }
-        else{
-
-            cache["_t"] = tmp = node.textContent;
+            cache._t = tmp = node.textContent;
         }
     }
 
@@ -90,7 +87,7 @@ export function getText(node){
  * @param {Object<string, string>} obj
  */
 
-export function setAttributes(node, obj){
+export function setAttributes(node, obj) {
 
     // if(node.length && !node.tagName){
     //
@@ -102,14 +99,14 @@ export function setAttributes(node, obj){
     //     return;
     // }
 
-    let cache = node[MIKADO_NODE_CACHE];
+    let cache = node._mkc;
 
-    if(!cache){
+    if (!cache) {
 
-        node[MIKADO_NODE_CACHE] = cache = {};
+        node._mkc = cache = {};
     }
 
-    for(let attr in obj){
+    for (let attr in obj) {
 
         setAttribute(node, attr, obj[attr], cache);
     }
@@ -122,26 +119,23 @@ export function setAttributes(node, obj){
  * @param {Object=} _cache
  */
 
-export function setAttribute(node, attr, value, _cache){
+export function setAttribute(node, attr, value, _cache) {
 
     let tmp;
 
-    if(_cache || (_cache = node[MIKADO_NODE_CACHE])){
+    if (_cache || (_cache = node._mkc)) {
 
         tmp = _cache["_a" + attr];
-    }
-    else{
+    } else {
 
-        node[MIKADO_NODE_CACHE] = _cache = {};
+        node._mkc = _cache = {};
     }
 
-    if(tmp !== value){
+    if (tmp !== value) {
 
         _cache["_a" + attr] = value;
 
-        value !== false
-            ? node.setAttribute(attr, value)
-            : node.removeAttribute(attr);
+        !1 !== value ? node.setAttribute(attr, value) : node.removeAttribute(attr);
     }
 }
 
@@ -150,16 +144,16 @@ export function setAttribute(node, attr, value, _cache){
  * @param {Array<string>} arr
  */
 
-export function removeAttributes(node, arr){
+export function removeAttributes(node, arr) {
 
-    let cache = node[MIKADO_NODE_CACHE];
+    let cache = node._mkc;
 
-    if(!cache){
+    if (!cache) {
 
-        node[MIKADO_NODE_CACHE] = cache = {};
+        node._mkc = cache = {};
     }
 
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
 
         removeAttribute(node, arr[i], cache);
     }
@@ -171,22 +165,21 @@ export function removeAttributes(node, arr){
  * @param {Object=} _cache
  */
 
-export function removeAttribute(node, attr, _cache){
+export function removeAttribute(node, attr, _cache) {
 
     let tmp;
 
-    if(_cache || (_cache = node[MIKADO_NODE_CACHE])){
+    if (_cache || (_cache = node._mkc)) {
 
         tmp = _cache["_a" + attr];
+    } else {
+
+        node._mkc = _cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = _cache = {};
-    }
+    if (!1 !== tmp) {
 
-    if(tmp !== false){
-
-        _cache["_a" + attr] = false;
+        _cache["_a" + attr] = !1;
         node.removeAttribute(attr);
     }
 }
@@ -197,20 +190,19 @@ export function removeAttribute(node, attr, _cache){
  * @return {string|null}
  */
 
-export function getAttribute(node, attr){
+export function getAttribute(node, attr) {
 
     let cache, tmp;
 
-    if((cache = node[MIKADO_NODE_CACHE])){
+    if (cache = node._mkc) {
 
         tmp = cache["_a" + attr];
-    }
-    else{
+    } else {
 
-        node[MIKADO_NODE_CACHE] = cache = {};
+        node._mkc = cache = {};
     }
 
-    if(typeof tmp !== "string"){
+    if ("string" != typeof tmp) {
 
         cache["_a" + attr] = tmp = node.getAttribute(attr);
     }
@@ -224,10 +216,10 @@ export function getAttribute(node, attr){
  * @return {boolean}
  */
 
-export function hasAttribute(node, attr){
+export function hasAttribute(node, attr) {
 
     const tmp = getAttribute(node, attr);
-    return !(!tmp && tmp !== "");
+    return !(!tmp && "" !== tmp);
 }
 
 // -------------------------------------------------------------
@@ -237,22 +229,22 @@ export function hasAttribute(node, attr){
  * @param {string} classname
  */
 
-export function setClass(node, classname){
+export function setClass(node, classname) {
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    let cache = node._mkc,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_c"];
+        tmp = cache._c;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if (tmp !== classname) {
 
-    if(tmp !== classname){
-
-        cache["_c"] = classname;
+        cache._c = classname;
         node.className = classname;
     }
 }
@@ -262,22 +254,22 @@ export function setClass(node, classname){
  * @return {string}
  */
 
-export function getClass(node){
+export function getClass(node) {
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    let cache = node._mkc,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_c"];
+        tmp = cache._c;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if ("string" != typeof tmp) {
 
-    if(typeof tmp !== "string"){
-
-        cache["_c"] = tmp = node.className;
+        cache._c = tmp = node.className;
     }
 
     return tmp;
@@ -288,31 +280,30 @@ export function getClass(node){
  * @return {Object}
  */
 
-function transformClassCache(node){
+function transformClassCache(node) {
+    let cache = node._mkc,
+        tmp;
 
-    let cache = node[MIKADO_NODE_CACHE];
-    let tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_c"];
-    }
-    else{
+        tmp = cache._c;
+    } else {
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
-
-    if(!tmp){
-
-        return cache["_c"] = {};
+        node._mkc = cache = {};
     }
 
-    if(typeof tmp === "string"){
+    if (!tmp) {
+
+        return cache._c = {};
+    }
+
+    if ("string" == typeof tmp) {
 
         const matches = tmp.match(regex_class);
-        cache["_c"] = tmp = {};
+        cache._c = tmp = {};
 
-        for(let i = 0; i < matches.length; i++){
+        for (let i = 0; i < matches.length; i++) {
 
             tmp[matches[i]] = 1;
         }
@@ -327,12 +318,11 @@ function transformClassCache(node){
  * @param {Object=} _cache
  */
 
-export function addClass(node, classname, _cache){
+export function addClass(node, classname, _cache) {
+    const cache = _cache || transformClassCache(node),
+          tmp = cache[classname];
 
-    const cache = _cache || transformClassCache(node);
-    const tmp = cache[classname];
-
-    if(!tmp){
+    if (!tmp) {
 
         cache[classname] = 1;
         node.classList.add(classname);
@@ -344,11 +334,11 @@ export function addClass(node, classname, _cache){
  * @param {Array<string>} arr
  */
 
-export function addClasses(node, arr){
+export function addClasses(node, arr) {
 
     const cache = transformClassCache(node);
 
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
 
         addClass(node, arr[i], cache);
     }
@@ -360,12 +350,11 @@ export function addClasses(node, arr){
  * @param {Object=} _cache
  */
 
-export function removeClass(node, classname, _cache){
+export function removeClass(node, classname, _cache) {
+    const cache = _cache || transformClassCache(node),
+          tmp = cache[classname];
 
-    const cache = _cache || transformClassCache(node);
-    const tmp = cache[classname];
-
-    if(tmp !== 0){
+    if (0 !== tmp) {
 
         cache[classname] = 0;
         node.classList.remove(classname);
@@ -377,11 +366,11 @@ export function removeClass(node, classname, _cache){
  * @param {Array<string>} arr
  */
 
-export function removeClasses(node, arr){
+export function removeClasses(node, arr) {
 
     const cache = transformClassCache(node);
 
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
 
         removeClass(node, arr[i], cache);
     }
@@ -393,12 +382,12 @@ export function removeClasses(node, arr){
  * @return {boolean}
  */
 
-export function hasClass(node, classname){
+export function hasClass(node, classname) {
 
     const cache = transformClassCache(node);
     let tmp = cache[classname];
 
-    if(typeof tmp !== "number"){
+    if ("number" != typeof tmp) {
 
         cache[classname] = tmp = node.classList.contains(classname) ? 1 : 0;
     }
@@ -413,18 +402,17 @@ export function hasClass(node, classname){
  * @param {Object=} _cache
  */
 
-export function toggleClass(node, classname, state, _cache){
+export function toggleClass(node, classname, state, _cache) {
 
     const cache = _cache || transformClassCache(node);
     let tmp = !!cache[classname];
 
-    state = typeof state === "undefined" ? !tmp : !!state;
+    state = "undefined" == typeof state ? !tmp : !!state;
 
-    if(tmp !== state){
+    if (tmp !== state) {
 
         cache[classname] = state ? 1 : 0;
-        state ? node.classList.add(classname)
-              : node.classList.remove(classname);
+        state ? node.classList.add(classname) : node.classList.remove(classname);
     }
 }
 
@@ -433,22 +421,21 @@ export function toggleClass(node, classname, state, _cache){
  * @param {Array<string>|Object<string, boolean|number>} obj
  */
 
-export function toggleClasses(node, obj){
+export function toggleClasses(node, obj) {
 
     const cache = transformClassCache(node);
 
-    if(obj.constructor === Array){
+    if (obj.constructor === Array) {
 
-        for(let i = 0; i < obj.length; i++){
+        for (let i = 0; i < obj.length; i++) {
 
-            toggleClass(node, /** @type {string} */ (obj[i]), void 0, cache);
+            toggleClass(node, /** @type {string} */obj[i], void 0, cache);
         }
-    }
-    else{
+    } else {
 
-        for(let classname in obj){
+        for (let classname in obj) {
 
-            toggleClass(node, classname, /** @type {boolean|number} */ (obj[classname]), cache);
+            toggleClass(node, classname, /** @type {boolean|number} */obj[classname], cache);
         }
     }
 }
@@ -460,22 +447,22 @@ export function toggleClasses(node, obj){
  * @param {string} css
  */
 
-export function setCss(node, css){
+export function setCss(node, css) {
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    let cache = node._mkc,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_s"];
+        tmp = cache._s;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if (tmp !== css) {
 
-    if(tmp !== css){
-
-        cache["_s"] = css;
+        cache._s = css;
         node.style.cssText = css;
 
         // const arr = css.match(regex_css);
@@ -501,31 +488,30 @@ export function setCss(node, css){
  * @return {Object}
  */
 
-function transformStyleCache(node){
+function transformStyleCache(node) {
+    let cache = node._mkc,
+        tmp;
 
-    let cache = node[MIKADO_NODE_CACHE];
-    let tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_s"];
-    }
-    else{
+        tmp = cache._s;
+    } else {
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
-
-    if(!tmp){
-
-        return cache["_s"] = {};
+        node._mkc = cache = {};
     }
 
-    if(typeof tmp === "string"){
+    if (!tmp) {
+
+        return cache._s = {};
+    }
+
+    if ("string" == typeof tmp) {
 
         const matches = tmp.match(regex_css);
-        cache["_s"] = tmp = {};
+        cache._s = tmp = {};
 
-        for(let i = 0; i < matches.length; i+=2){
+        for (let i = 0; i < matches.length; i += 2) {
 
             tmp[matches[i]] = matches[i + 1];
         }
@@ -542,14 +528,14 @@ function transformStyleCache(node){
  * @param {Object=} _cache
  */
 
-export function setStyle(node, style, value, _style, _cache){
+export function setStyle(node, style, value, _style, _cache) {
 
     const cache = _cache || transformStyleCache(node);
 
-    if(cache[style] !== value){
+    if (cache[style] !== value) {
 
         cache[style] = value;
-        (_style || node.style).setProperty(style, /** @type {string} */ (value));
+        (_style || node.style).setProperty(style, /** @type {string} */value);
     }
 }
 
@@ -558,12 +544,12 @@ export function setStyle(node, style, value, _style, _cache){
  * @param {Object<string, string|number>} styles
  */
 
-export function setStyles(node, styles){
+export function setStyles(node, styles) {
+    const cache = transformStyleCache(node),
+          prop = node.style;
 
-    const cache = transformStyleCache(node);
-    const prop = node.style;
 
-    for(let style in styles){
+    for (let style in styles) {
 
         setStyle(node, style, styles[style], prop, cache);
     }
@@ -576,24 +562,24 @@ export function setStyles(node, styles){
  * @param {string} html
  */
 
-export function setHtml(node, html){
+export function setHtml(node, html) {
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    let cache = node._mkc,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_h"];
+        tmp = cache._h;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
-
-    if(tmp !== html){
+    if (tmp !== html) {
 
         node.innerHTML = html;
-        cache["_h"] = html;
-        cache["_t"] = null;
+        cache._h = html;
+        cache._t = null;
     }
 }
 
@@ -602,22 +588,22 @@ export function setHtml(node, html){
  * @return {string}
  */
 
-export function getHtml(node){
+export function getHtml(node) {
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    let cache = node._mkc,
+        tmp;
 
-    if(cache){
+    if (cache) {
 
-        tmp = cache["_h"];
+        tmp = cache._h;
+    } else {
+
+        node._mkc = cache = {};
     }
-    else{
 
-        node[MIKADO_NODE_CACHE] = cache = {};
-    }
+    if ("string" != typeof tmp) {
 
-    if(typeof tmp !== "string"){
-
-        cache["_h"] = tmp = node.innerHTML
+        cache._h = tmp = node.innerHTML;
     }
 
     return tmp;
