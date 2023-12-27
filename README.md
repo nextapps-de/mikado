@@ -30,10 +30,10 @@ When you come from previous version: <a href="doc/migrate-0.8.md">Migration 0.8.
 - <a href="#benchmark">Stress Test Benchmark</a>
 - https://krausest.github.io/js-framework-benchmark/current.html
 
-Rendering has by far the most <ins>impact</ins> on application performance, especially <ins>on mobile devices</ins>. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you <ins>keyed</ins>, <ins>non-keyed</ins> and also <ins>reactive paradigm</ins> switchable out of the box.
-On top, it also provides a <ins>server-side-rendering</ins> approach on an extreme performance level along full support for <ins>partial hydration</ins> to inject templates progressively during the client's runtime.
-Server and client are sharing the same template definitions simply written in <ins>HTML-like markup</ins>.
-The server side approach will also come with the <ins>fastest middleware render engine for Express</ins> you can get today.
+Rendering has by far the most **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
+On top, it also provides a **server-side-rendering** approach on an extreme performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
+Server and client are sharing the same template definitions simply written in **HTML-like markup**.
+The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
 Mikado is the only library which cuts both edges, on client-side and server-side.
 
 ## Support this Project
