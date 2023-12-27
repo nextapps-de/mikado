@@ -1,8 +1,4 @@
-<h1></h1>
-<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="61.8%"><p></p></h1>
-<h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of any browser. Also provides the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
-
-### This is a preview of the upcoming release.
+## Mikado 0.8.x Migration Guide
 
 Install and Update by: `npm install nextapps-de/mikado#0.8-preview`<br>
 
@@ -13,8 +9,6 @@ These features aren't actually included:
 - Runtime Compiler
 - Benchmark Suite
 - Test Automation
-
-## Migration Guide
 
 ### Create Instances
 
