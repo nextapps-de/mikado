@@ -1,4 +1,4 @@
-export declare class Mikado {
+declare class Mikado {
     constructor(root: HTMLElement, template: Template, options?: Options);
     constructor(template: Template, options?: Options);
     add(data: Object, view?: Object, index?: number): Mikado;
@@ -46,7 +46,7 @@ export declare class Mikado {
     where(payload: Object): Array<Object>;
 }
 
-export declare namespace Mikado {
+declare namespace Mikado {
     class array {
         constructor(array?: Array<Object>);
         concat(array: Array<Object>): array;

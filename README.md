@@ -484,7 +484,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>Library</sub></td>
-        <td align=center><sub>KB</sub></td>
         <td align=center><sub>RAM</sub></td>
         <td align=center><sub>Create</sub></td>
         <td align=center><sub>Replace</sub></td>
@@ -500,7 +499,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr>
         <td><sub>mikado</sub></td>
-        <td align=right><sub>3</sub></td>
         <td align=right><sub>22</sub></td>
         <td align=right><sub>19301</sub></td>
         <td align=right><sub>8535</sub></td>
@@ -517,7 +515,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>mikado-proxy</sub></td>
-        <td align=right><sub>8.3</sub></td>
         <td align=right><sub>30</sub></td>
         <td align=right><sub>10288</sub></td>
         <td align=right><sub>5901</sub></td>
@@ -534,7 +531,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>solid</sub></td>
-        <td align=right><sub>0</sub></td>
         <td align=right><sub>339</sub></td>
         <td align=right><sub>737</sub></td>
         <td align=right><sub>665</sub></td>
@@ -551,7 +547,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>inferno</sub></td>
-        <td align=right><sub>8.4</sub></td>
         <td align=right><sub>311</sub></td>
         <td align=right><sub>754</sub></td>
         <td align=right><sub>724</sub></td>
@@ -568,7 +563,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>mithril</sub></td>
-        <td align=right><sub>9.6</sub></td>
         <td align=right><sub>263</sub></td>
         <td align=right><sub>637</sub></td>
         <td align=right><sub>612</sub></td>
@@ -585,7 +579,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
         <td align=right><sub>522</sub></td>
         <td align=right><sub>421</sub></td>
         <td align=right><sub>411</sub></td>
@@ -602,7 +595,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>domc</sub></td>
-        <td align=right><sub>4.5</sub></td>
         <td align=right><sub>393</sub></td>
         <td align=right><sub>1078</sub></td>
         <td align=right><sub>1059</sub></td>
@@ -618,7 +610,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
-        <td align=right><sub>0</sub></td>
         <td align=right><sub>494</sub></td>
         <td align=right><sub>1029</sub></td>
         <td align=right><sub>999</sub></td>
@@ -634,7 +625,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
-        <td align=right><sub>15.8</sub></td>
         <td align=right><sub>626</sub></td>
         <td align=right><sub>975</sub></td>
         <td align=right><sub>857</sub></td>
@@ -651,7 +641,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>sinuous</sub></td>
-        <td align=right><sub>7.5</sub></td>
         <td align=right><sub>650</sub></td>
         <td align=right><sub>842</sub></td>
         <td align=right><sub>809</sub></td>
@@ -668,7 +657,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>jquery</sub></td>
-        <td align=right><sub>31.3</sub></td>
         <td align=right><sub>684</sub></td>
         <td align=right><sub>809</sub></td>
         <td align=right><sub>707</sub></td>
@@ -685,7 +673,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>lit-html</sub></td>
-        <td align=right><sub>17.3</sub></td>
         <td align=right><sub>1179</sub></td>
         <td align=right><sub>441</sub></td>
         <td align=right><sub>411</sub></td>
@@ -702,7 +689,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>ractive</sub></td>
-        <td align=right><sub>68.2</sub></td>
         <td align=right><sub>4684</sub></td>
         <td align=right><sub>165</sub></td>
         <td align=right><sub>156</sub></td>
@@ -719,7 +705,6 @@ The values represent operations per second, each benchmark task has to process a
     <tr></tr>
     <tr>
         <td><sub>knockout</sub></td>
-        <td align=right><sub>24.8</sub></td>
         <td align=right><sub>2657</sub></td>
         <td align=right><sub>91</sub></td>
         <td align=right><sub>67</sub></td>
