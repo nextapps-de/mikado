@@ -2,10 +2,13 @@
 
     "use strict";
 
+    const Mikado = window.Mikado;
     const iframe = document.getElementById("iframe");
-    const options = { cache: false, store: false, pool: false };
-    const mikado = Mikado(document.getElementById("result"), "row", options);
-    const list = Mikado(document.getElementById("lib"), "lib", options);
+    const mikado_table = Mikado("row").mount(document.getElementById("result"));
+    const mikado_list = Mikado("lib").mount(document.getElementById("lib"));
+
+    Mikado.eventCache = true;
+    //Mikado.unregister("row").unregister("lib");
 
     const modes = window.location.hash.indexOf("modes") !== -1;
     let strict;
@@ -17,135 +20,130 @@
 
     let lib = shuffle(modes ? [
 
-        "mikado-cross-shared", "mikado-exclusive", "mikado-keyed",
-        "mikado-keyed-shared", "mikado-non-keyed", "mikado-proxy",
-        "mikado-observer", "mikado-observer-proxy"
+        "mode-cross-shared", "mode-exclusive", "mode-keyed-noop",
+        "mode-keyed-shared", "mode-non-keyed", "mode-proxy",
+        "mode-array", "mode-array-proxy"
     ]:[
-        "mikado", "domc", "inferno",
+        "mikado", "mikado-proxy", //"mikado-0.7.6", "mikado-proxy-0.7.6", "mikado-0.7.5", "mikado-0.7.4",
+        "stage0", "solid", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
-        "knockout", "lit-html", "ractive"
+        "knockout", "lit-html", "ractive",
+        "doohtml"
     ]);
 
     function init(hash){
 
-        strict = hash.indexOf("strict") !== -1;
-        internal = hash.indexOf("internal") !== -1;
-        keyed = hash.indexOf("keyed") !== -1;
+        strict = hash.includes("strict");
+        internal = hash.includes("internal");
+        keyed = hash.includes("keyed");
 
-        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark of Web Templating Engines (" + (keyed ? "Keyed" : strict ? "Non-Reusing" : modes ? "Modes" : internal ? "Data-Driven" : "Non-Keyed") + ")";
+        document.getElementsByTagName("h1")[0].firstChild.nodeValue = "Benchmark: Template Rendering Engines (" + (keyed ? "Keyed" : strict ? "Non-Recycle" : modes ? "Modes" : internal ? "Data-Driven" : "Recycle") + ")";
 
         if(modes){
 
             document.body.className = "modes";
         }
 
-        list.render(lib, {"mode": (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "")});
+        mikado_list.render(lib, {"mode": (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "")});
     }
 
-    init(window.location.hash);
+    init(window.location.hash || window.location.search);
 
-    document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
+    document.getElementById("mode").options[keyed ? 2 : internal ? 3 : strict ? 0 : 1].selected = true;
+    //document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
 
     if(modes){
 
         document.getElementById("mode").hidden = true;
     }
 
-    Mikado.route("start", function(target){
-
-        if(target.value === "Start"){
-
-            index = -1;
-            repeat = document.getElementById("repeat").value;
-            target.value = "Stop";
-            setTimeout(runner, 200);
-        }
-        else{
-
-            current[index][test[2]] = "";
-            target.value = "Start";
-            iframe.src = "";
-            index = lib.length;
-        }
-
-    }).route("mode", function(target){
-
-        init(window.location.hash = "#" + target.value);
-
-    }).listen("click").listen("change");
-
     const test = [
 
-        "size", "memory",
+        /*"size",*/ "memory",
         "create", "replace", "update",
         "arrange", "repaint", "append",
         "remove", "toggle", "clear"
     ];
 
-    const current = new Array(lib.length);
+    const current = [];
 
-    let size = {
+    Mikado.route("start", function(event){
 
-        "mikado": 2.8,
-        "domc": 4.46,
-        "inferno": 8.4,
-        "redom": 2.88,
-        "sinuous": 7.48,
-        "surplus": 15.79,
-        "innerHTML": 0,
-        "jquery": 31.26,
-        "mithril": 9.64,
-        "knockout": 24.8,
-        "lit-html": 17.31,
-        "ractive": 68.2,
+        if(this.value === "Start"){
 
-        "mikado-cross-shared": 2.8,
-        "mikado-exclusive": 2.8,
-        "mikado-keyed": 2.8,
-        "mikado-keyed-shared": 2.8,
-        "mikado-non-keyed": 2.8,
-        "mikado-proxy": 7.1,
-        "mikado-observer": 7.1,
-        "mikado-observer-proxy": 7.1
-    };
+            index = -1;
+            repeat = document.getElementById("repeat").value;
+            this.value = "Stop";
+            setTimeout(runner, 200);
 
-    for(let x = 0; x < lib.length; x++){
+            const reflow = document.getElementById("reflow").checked;
 
-        current[x] = {
-
-            "name": lib[x],
-            "size": size[lib[x]],
-            "memory": 0,
-            "score": "",
-            "index": ""
-        };
-
-        for(let y = 2; y < test.length + 1; y++){
-
-            current[x][test[y]] = "";
-            current[x]["color_" + test[y]] = "transparent";
+            iframe.hidden = !reflow;
+            iframe.style.position = "absolute";
+            iframe.style.display = reflow ? "": "none";
+            iframe.style.overflow = reflow ? "": "hidden";
+            iframe.style.contain = reflow ? "": "strict";
         }
+        else{
+
+            current[index][test[2]] = "";
+            this.value = "Start";
+            iframe.src = "";
+            index = lib.length;
+        }
+    })
+    .route("mode", function(event){
+
+        init(window.location.hash = "#" + this.value);
+        reset();
+    })
+    .listen("click")
+    .listen("change");
+
+    function reset(){
+
+        for(let x = 0; x < lib.length; x++){
+
+            current[x] = {
+
+                "name": lib[x],
+                //"size": size[lib[x]],
+                "memory": "",
+                "score": "",
+                "index": ""
+            };
+
+            for(let y = 1; y < test.length + 1; y++){
+
+                current[x][test[y]] = "";
+                current[x]["color_" + test[y]] = "transparent";
+            }
+        }
+
+        document.body.className = "";
+        mikado_table.render(current);
     }
 
-    mikado.render(current);
+    reset();
 
     function runner(){
 
+        const reflow = document.getElementById("reflow").checked;
         const duration = document.getElementById("duration").value;
         keep = document.getElementById("keep").checked;
 
         index++;
         const tmp = Object.assign({}, current[index]);
-        tmp[test[2]] = "run...";
-        mikado.update(mikado.node(index), tmp);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration);
+        tmp[test[1]] = "run...";
+        mikado_table.update(mikado_table.node(index), tmp);
+        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration) + (reflow ? "&hidden=false" : "");
     }
 
     function get_score(){
 
-        let max = new Array(test.length);
-        let val = new Array(test.length);
+        let max = [];
+        let val = [];
 
         for(let y = 0; y < test.length; y++){
 
@@ -161,7 +159,7 @@
                         val[y].push(current[x][test[y]]);
                     }
 
-                    if((test[y] === "size") || (test[y] === "memory")){
+                    if(/*(test[y] === "size") ||*/ (test[y] === "memory")){
 
                         if((current[x][test[y]] < max[y]) || !max[y]){
 
@@ -179,9 +177,7 @@
             }
         }
 
-        let score = new Array(lib.length);
-        let index = new Array(lib.length);
-        let length = new Array(lib.length);
+        let score = [], index = [],length = [];
         let max_score = 0, max_index = 0;
 
         for(let x = 0; x < lib.length; x++){
@@ -196,7 +192,7 @@
 
                     length[x]++;
 
-                    if((test[y] === "size") || (test[y] === "memory")){
+                    if(/*(test[y] === "size") ||*/ (test[y] === "memory")){
 
                         score[x] += Math.sqrt(median(val[y]) / current[x][test[y]]);
                         index[x] += Math.sqrt(max[y] / current[x][test[y]]);
@@ -204,8 +200,8 @@
                     }
                     else{
 
-                        score[x] += current[x][test[y]] / median(val[y]);
-                        index[x] += current[x][test[y]] / max[y];
+                        score[x] += (current[x][test[y]] / median(val[y]));
+                        index[x] += (current[x][test[y]] / max[y]);
                         current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
                     }
                 }
@@ -216,7 +212,7 @@
             }
 
             current[x]["score"] = (score[x] / length[x] * 1000 + 0.5) | 0;
-            current[x]["index"] = (index[x] / length[x] * 1000 + 0.5) | 0;
+            current[x]["index"] = (index[x] / length[x] * 100 + 0.5) | 0;
             if(max_score < current[x]["score"]) max_score = current[x]["score"];
             if(max_index < current[x]["index"]) max_index = current[x]["index"];
         }
@@ -288,7 +284,7 @@
 
                     if(index < lib.length - 1){
 
-                        mikado.update(index, current[index]);
+                        mikado_table.update(index, current[index]);
                         setTimeout(runner, 50);
                     }
                     else{
@@ -297,7 +293,7 @@
 
                         current.sort(function(a, b){
 
-                            return b["score"] - a["score"];
+                            return b["index"] - a["index"];
                         });
 
                         for(let i = 0; i < lib.length; i++){
@@ -305,7 +301,8 @@
                             lib[i] = current[i]["name"];
                         }
 
-                        mikado.render(current);
+                        mikado_table.render(current);
+                        document.body.className = "finished";
 
                         if(--repeat > 0){
 
@@ -322,7 +319,7 @@
 
                     const tmp = Object.assign({}, current[index]);
                     tmp[test[test.indexOf(parts[0]) + 1]] = "run...";
-                    mikado.update(index, tmp);
+                    mikado_table.update(index, tmp);
                 }
             }
         }

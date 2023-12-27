@@ -12,12 +12,12 @@ export function store(data){ return (data && (items = data)) || items; }
 let pos = 0;
 export const queue = [];
 const pathname = window.location.pathname;
-const keyed = pathname.indexOf("/keyed.html") !== -1;
-const strict = pathname.indexOf("/strict.html") !== -1;
-const internal = (pathname.indexOf("/internal.html") !== -1) ||
-                 (pathname.indexOf("mikado-observer") !== -1) ||
-                 (pathname.indexOf("mikado-proxy") !== -1) ||
-                 (pathname.indexOf("mikado-observer-proxy") !== -1);
+const keyed = pathname.includes("keyed.html");
+const strict = pathname.includes("strict.html");
+const internal = (pathname.includes("internal.html")) ||
+                 (pathname.includes("mode-array")) ||
+                 (pathname.includes("mode-proxy")) ||
+                 (pathname.includes("mode-array-proxy"));
 
 const params = (function(){
 
@@ -32,31 +32,15 @@ const params = (function(){
     return obj;
 }());
 
-// const rnd = (function(){
-//
+// console.log((function(){
 //     const array = new Array(DATA_SIZE_HALF);
 //     for(let i = 0; i < DATA_SIZE_HALF; i++) array[i] = i;
 //     for(let i = 0; i < 3; i++) shuffle(array);
-//
 //     return array;
-// }());
-//
-// console.log(rnd);
+// }()));
 
 const rnd = [27, 36, 31, 21, 13, 5, 11, 0, 16, 8, 9, 28, 25, 49, 6, 26, 12, 29, 38, 1, 40, 35, 20, 23, 2, 7, 18, 48, 45, 17, 22, 39, 32, 37, 24, 4, 41, 44, 14, 34, 19, 47, 46, 10, 30, 15, 33, 3, 42, 43];
-
-let runs;
-let duration;
-
-if(params["duration"] && (params["duration"].indexOf("run-") !== -1)){
-
-    duration = 86400000;
-    runs = parseInt(params["duration"].replace("run-", ""), 10);
-}
-else{
-
-    duration = parseFloat(params["duration"] || "5") * 1000;
-}
+const duration = parseFloat(params["duration"] || 5) * 1000;
 
 const hidden = params["hidden"] !== "false";
 const factory = strict ? null : [
@@ -68,22 +52,29 @@ const factory = strict ? null : [
 ];
 
 let clone;
-root.hidden = hidden;
+
+if(hidden){
+
+    root.hidden = hidden;
+    root.style.position = "absolute";
+    root.style.display = "none";
+    root.style.overflow = "hidden";
+    root.style.contain = "strict";
+}
 
 function next(){
-
-    if(strict){
-
-        return items = generate(DATA_SIZE);
-    }
 
     if(internal){
 
         copy(factory[pos], items);
     }
-    else{
+    else if(keyed){
 
         items = enforce(factory[pos]);
+    }
+    else /*if(strict || recycle)*/{
+
+        items = generate(DATA_SIZE);
     }
 
     if(++pos === factory.length){
@@ -122,20 +113,19 @@ function enforce(data){
 queue.push({
     name: "create",
     init: function(){
-        items.splice(0);
-        this.fn(items);
+        //items.splice(0);
+        //this.fn(items);
+        //items = next();
     },
     test: null,
-    start: function(){
-        shuffle_rnd();
-    },
+    start: null,
     prepare: function(){
         clone = next();
     },
     fn: null,
     end: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     },
     complete: null
 });
@@ -146,56 +136,50 @@ queue.push({
         this.fn(next());
     },
     test: null,
-    start: function(){
-        shuffle_rnd();
-    },
+    start: null,
     prepare: function(){
         clone = next();
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
 queue.push({
     name: "update",
     init: function(){
-        this.fn(next());
+        this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
-        clone = enforce(update(items, index));
+        clone = update(enforce(clone), index);
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
 queue.push({
     name: "arrange",
     init: function(){
-        this.fn(next());
+        this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
         index %= 3;
-        // a too short path comes to close to the repaint test
-        // if(index === 3){ // swap (shortest path: 2)
-        //     swap(items, 5, items.length - 6);
-        // }
         if(index === 2){ // re-order (shortest path: 10)
             const div = (DATA_SIZE / 20) | 0;
             for(let i = 0; i < div; i++){
-                items.splice(div *  4 + i, 0, items.splice(div * 16 + i, 1)[0]);
-                items.splice(div * 12 + i, 0, items.splice(div * 8  + i, 1)[0]);
+                clone.splice(div *  4 + i, 0, clone.splice(div * 16 + i, 1)[0]);
+                clone.splice(div * 12 + i, 0, clone.splice(div * 8  + i, 1)[0]);
                 // items[div * 9 + i].id = "" + (Math.random() * 999999999 | 0);
                 // items[div * 5 + i].id = "" + (Math.random() * 999999999 | 0);
             }
@@ -203,45 +187,45 @@ queue.push({
         else if(index){ // re-order (shortest path: 10)
             const div = (DATA_SIZE / 10) | 0;
             for(let i = 0; i < div; i += 2){
-                items.splice(div * 2 + i, 0, items.splice(div * 8 + i, 1)[0]);
-                items.splice(div * 6 + i, 0, items.splice(div * 4 + i, 1)[0]);
+                clone.splice(div * 2 + i, 0, clone.splice(div * 8 + i, 1)[0]);
+                clone.splice(div * 6 + i, 0, clone.splice(div * 4 + i, 1)[0]);
             }
         }
         else{ // re-order (shortest path: 10)
             const div = (DATA_SIZE / 5) | 0;
             for(let i = 0; i < div; i += 4){
-                swap(items, div * 1 + i, div * 3 + i);
+                swap(clone, div * 1 + i, div * 3 + i);
             }
         }
         // a full shuffle is theoretically a full replace, those test already exist
         // else{
         //     shuffle_rnd(items); // re-order (shortest path: 100)
         // }
-        clone = enforce(items);
+        clone = enforce(clone);
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
 queue.push({
     name: "repaint",
     init: function(){
-        this.fn(next());
+        this.fn(clone = next());
     },
     test: null,
     start: function(){
-        clone = enforce(items);
+        clone = enforce(clone);
     },
     prepare: null,
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
@@ -252,18 +236,18 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
-        tmp = next().splice(DATA_SIZE_HALF);
-        this.fn(enforce(items));
+        clone = next();
+        tmp = clone.splice(DATA_SIZE_HALF);
+        this.fn(clone);
     },
     prepare: function(){
-        clone = enforce(items.concat(tmp));
+        clone = enforce(clone.concat(tmp));
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
@@ -272,43 +256,37 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
-        this.fn(next());
+        this.fn(clone = next());
     },
     prepare: function(){
-        items.splice(DATA_SIZE_HALF);
-        clone = enforce(items);
+        clone.splice(DATA_SIZE_HALF);
+        clone = enforce(clone);
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
 queue.push({
     name: "toggle",
     init: function(){
-        shuffle_rnd();
         this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
-        if(index % 2){
-            clone = enforce(clone.concat(tmp));
-        }
-        else{
-            tmp = clone.splice(DATA_SIZE_HALF);
-            clone = enforce(clone);
-        }
+        if(index % 2) clone = clone.concat(tmp);
+        else tmp = clone.splice(DATA_SIZE_HALF);
+        clone = enforce(clone);
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
@@ -317,18 +295,16 @@ queue.push({
     init: null,
     test: null,
     start: function(){
-        shuffle_rnd();
-        this.fn(next());
+        this.fn(clone = next());
     },
     prepare: function(){
-        items.splice(0);
-        clone = items;
+        clone.splice(0);
     },
     fn: null,
     end: null,
     complete: function(){
-        items.splice(0);
-        this.fn(items);
+        clone.splice(0);
+        this.fn(clone);
     }
 });
 
@@ -416,22 +392,32 @@ function check(fn){
     fn(enforce(items));
     if(!validate(data[0])) return false;
 
-    // checks if libs updates contents on same id
+    // checks if libs updates contents on same key
 
     const tmp = enforce(items);
     tmp[0].title = "test";
     fn(tmp);
     if(!validate(tmp[0])) return false;
 
+    let target = (root.shadow || root);
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
+
     if(keyed){
 
-        const node = root.firstElementChild.firstElementChild.firstElementChild;
+        const node = target.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
         items.pop();
         items.push(data[1]);
         fn(enforce(items));
-        if(root.firstElementChild.firstElementChild.firstElementChild._test){
-            msg("lib does not run in keyed mode.");
+        if(target.firstElementChild.firstElementChild.firstElementChild._test){
+            msg("lib '" + Object.keys(suite)[0] + "' does not run in keyed mode.");
             return false;
         }
         node._test = false;
@@ -441,11 +427,11 @@ function check(fn){
         items.pop();
         items.push(data[0]);
         fn(enforce(items));
-        const node = root.firstElementChild.firstElementChild.firstElementChild;
+        const node = target.firstElementChild.firstElementChild.firstElementChild;
         node._test = true;
         fn(enforce(items));
-        if(root.firstElementChild.firstElementChild.firstElementChild._test){
-            msg("lib does not run in strict mode.");
+        if(target.firstElementChild.firstElementChild.firstElementChild._test){
+            msg("lib '" + Object.keys(suite)[0] + "' does not run in strict mode.");
             return false;
         }
         node._test = false;
@@ -453,7 +439,7 @@ function check(fn){
 
     items.pop();
     fn(items);
-    return (root.children.length === 0) || (root.firstElementChild.children.length === 0);
+    return target.children.length === 0;
 }
 
 function check_test(test){
@@ -471,12 +457,26 @@ function check_test(test){
 
     if(test.complete) test.complete();
 
-    return (root.children.length === 0) || (root.firstElementChild.children.length === 0);
+    let target = (root.shadow || root);
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
+
+    return target.children.length === 0;
 }
 
 function check_loop(name){
 
-    let target = root;
+    let target = (root.shadow || root);
+
+    if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
+        target = target.firstElementChild;
+    }
 
     if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
         target = target.firstElementChild;
@@ -497,7 +497,7 @@ function check_loop(name){
 
 function validate(item, index){
 
-    let section = root.firstElementChild;
+    let section = (root.shadow || root).firstElementChild;
     if(!section) return msg("root.firstElementChild");
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
@@ -535,8 +535,9 @@ function msg(message, a){
 // #####################################################################################
 
 let str_results = "";
-const perf = window.performance;
+const perf = window.performance || {};
       perf.memory || (perf.memory = { usedJSHeapSize: 0 });
+      perf.now || (perf.now = function(){ return Date.now() });
 
 let current = 0;
 let update_failed;
@@ -546,8 +547,8 @@ function perform(){
     const test = queue[current];
     let elapsed = 0, memory = 0;
 
-    if(current === 0 && test.test) check(test.test) || msg("Main test failed");
-    let status = check_test(test) || msg("Test failed: " + test.name);
+    if(current === 0 && test.test) check(test.test) || msg("Main test failed: " + Object.keys(suite)[0]);
+    let status = check_test(test) || msg("Test failed: " + test.name + ", " + Object.keys(suite)[0]);
 
     // Not allowed when update test fails
     if(update_failed && (test.name === "repaint")){
@@ -569,20 +570,17 @@ function perform(){
 
         const end = perf.now() + duration;
 
-        for(let start, mem_start, mem; now < end; loops++){
-
-            if(runs && (runs === loops)){
-
-                break;
-            }
+        for(let start, mem_start, mem, tmp; now < end; loops++){
 
             if(test.start) test.start(loops);
             if(!internal && test.prepare) test.prepare(loops);
+            if(!hidden) tmp = root.clientHeight;
 
             mem_start = perf.memory.usedJSHeapSize;
             start = perf.now();
             if(internal && test.prepare) test.prepare(loops);
             test.fn(clone);
+            if(!hidden) tmp = root.clientHeight;
             now = perf.now();
             mem = perf.memory.usedJSHeapSize - mem_start;
             elapsed += (now - start);
@@ -611,7 +609,11 @@ function perform(){
 
     if(current < queue.length){
 
-        setTimeout(perform, 200);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(perform, 100);
+            });
+        });
     }
     else{
 
@@ -619,17 +621,17 @@ function perform(){
     }
 }
 
-function shuffle_rnd(items){
-
-    items || (items = factory[pos]);
-
-    for(let i = 0; i < DATA_SIZE_HALF; i++) {
-
-        swap(items, i, DATA_SIZE_HALF + rnd[i]);
-    }
-
-    return items;
-}
+// function shuffle_rnd(items){
+//
+//     items || (items = factory[pos]);
+//
+//     for(let i = 0; i < DATA_SIZE_HALF; i++) {
+//
+//         swap(items, i, DATA_SIZE_HALF + rnd[i]);
+//     }
+//
+//     return items;
+// }
 
 // function shuffle(items){
 //
@@ -657,13 +659,13 @@ function update(items, index){
 
         current = i + index;
 
-       (current % 29) || swap_value(items, current, "date");
-       (current % 23) || swap_value(items, current, "classname");
-       (current % 19) || swap_value(items, current, "months");
-       (current % 17) || swap_value(items, current, "content");
-       (current % 13) || swap_value(items, current, "title");
-       (current % 11) || swap_value(items, current, "days");
-       (current % 7 ) || swap_value(items, current, "footer");
+        (current % 29) || swap_value(items, current, "date");
+        (current % 23) || swap_value(items, current, "classname");
+        (current % 19) || swap_value(items, current, "months");
+        (current % 17) || swap_value(items, current, "content");
+        (current % 13) || swap_value(items, current, "title");
+        (current % 11) || swap_value(items, current, "days");
+        (current % 7 ) || swap_value(items, current, "footer");
     }
 
     return items;

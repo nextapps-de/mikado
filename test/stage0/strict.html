@@ -1,0 +1,91 @@
+<html lang="en">
+<head>
+    <title>stage0</title>
+</head>
+<body>
+<h1>Benchmark: stage0-0.0.24 (keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<script src="dist/index.min.js"></script>
+<script src="dist/keyed.min.js"></script>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    // Notes: this implementation isn't allowed respectively to the rule to do
+    // not use dom manipulation inside test implementation, but I was interested to see the bench.
+
+    import { suite, root } from "./../../bench.js";
+
+    const itemView = stage0.h`
+        <section #section>
+            <div style="padding-right: 10px;" #wrapper>
+                <div class="title">#title</div>
+                <div class="content">#content</div>
+                <div class="footer">#footer</div>
+            </div>
+        </section>
+    `;
+
+    const mainView = stage0.h`<div #app></div>`;
+
+    function Item(item) {
+
+        const root = itemView.cloneNode(true);
+        const {section, wrapper, title, content, footer} = itemView.collect(root);
+
+        root.update = function(item) {
+
+            // this specific part breaks everything to make a LIBRARY benchmark meaningful
+            section.dataset.id = item.id;
+            section.dataset.date = item.date;
+            section.dataset.index = item.index;
+            wrapper.className = item.classname;
+            title.nodeValue = item.title;
+            content.nodeValue = item.content;
+            footer.nodeValue = item.footer;
+        };
+
+        root.update(item);
+
+        return root;
+    }
+
+    function Main() {
+
+        let root = mainView;
+        const {app} = mainView.collect(root);
+        let renderedData = [];
+
+        root.update = function(data) {
+
+            stage0.keyed(
+                "id",
+                app,
+                renderedData,
+                data,
+                function(item){
+                    return Item(item);
+                },
+                function(node, item){
+                    node.update(item);
+                }
+            );
+
+            renderedData = data.slice();
+        };
+
+        return root;
+    }
+
+    const app = Main();
+    root.appendChild(app);
+
+    suite["stage0"] = function(items){
+
+        app.update(items);
+    };
+
+</script>
+</body>
+</html>

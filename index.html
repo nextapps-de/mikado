@@ -1,15 +1,22 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Benchmark of Web Templating Engines (Non-Keyed)</title>
+    <title>Benchmark of Web Template Rendering Engines (Recycle, Keyed, Data-Driven, Strict)</title>
     <style>
         body{
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: 300;
-            line-height: 26px;
-            font-size: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, Arial, Helvetica, Roboto, OpenSans, sans-serif;
+            font-weight: 400;
+            line-height: 1.4;
+            font-size: 14px;
+            margin: 12px 20px 25px 20px;
+            max-width: 1000px;
+            background-color: rgb(22, 23, 30);
+            color: rgb(200, 200, 210);
         }
         h1{
-            padding-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
         }
         input, select{
             padding: 5px 10px;
@@ -20,70 +27,105 @@
         #benchmarks td:first-of-type{
             text-align: left;
         }
+        iframe{
+            width: 0;
+            height: 0;
+            border: 0;
+        }
         body.modes #benchmarks th:nth-last-child(1),
         body.modes #benchmarks td:nth-last-child(1),
         body.modes #benchmarks th:nth-last-child(2),
         body.modes #benchmarks td:nth-last-child(2){
             display:none;
         }
+        table{
+            font-size: 14px;
+        }
+        th{
+            font-weight: 400;
+        }
+        td:not(:first-of-type){
+            color: #fff;
+        }
+        body.finished #benchmarks td:not(:first-of-type){
+            color: #000;
+        }
+        p, li{
+            margin: 5px 0;
+        }
+        a{
+            color: #3c74ff !important;
+        }
+        body > b, th, h1{
+            color: #fff !important;
+        }
     </style>
 </head>
 <body>
-<h1>Benchmark of Web Templating Engines (Stress Test)</h1>
+<a href="https://github.com/nextapps-de/mikado/" style="text-decoration: none">Back to Mikado Github</a>
+<h1>Benchmark: Template Rendering Engines</h1>
 <table>
     <tr>
         <td>
-            <input type="button" id="start" click="start" value="Start">
+            <input type="button" id="start" click="start" value="Start" style="padding: 5px 15px">
         </td>
         <td>&emsp;</td>
         <td>
-            Mode:
-            <select id="mode" change="mode">
-                <option value>Non-keyed</option>
-                <option value="keyed">Keyed</option>
-                <option value="internal">Data-driven</option>
-            </select>
+            <label title="[Recycle]: No restrictions. Everything is allowed, e.g. the re-usage of DOM elements. [Keyed]: The re-usage of DOM elements is just allowed on data entries sharing the same key. [Data-Driven]: No restrictions. Does not apply de-referencing to the test data. [Strict]: Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.">
+                Mode:
+                <select id="mode" change="mode">
+                    <option value="strict" hidden>Strict</option>
+                    <option value="recycle" selected>Recycle</option>
+                    <option value="keyed">Keyed</option>
+                    <option value="internal">Data-driven</option>
+                </select>
+            </label>
         </td>
         <td>&emsp;</td>
         <td>
-            Duration:
-            <select id="duration">
-                <!--
-                <optgroup label="run">
-                    <option value="run-50">50 runs</option>
-                    <option value="run-100">100 runs</option>
-                    <option value="run-250">250 runs</option>
-                    <option value="run-500">500 runs</option>
-                    <option value="run-1000">1000 runs</option>
-                </optgroup>
-                <optgroup label="time">
-                -->
+            <label title="The duration of a single test.">
+                Duration:
+                <select id="duration">
                     <option value="0.1">100 ms</option>
                     <option value="0.5">500 ms</option>
                     <option value="1">1 sec</option>
+                    <option value="2">2 sec</option>
                     <option value="3">3 sec</option>
                     <option value="5" selected>5 sec</option>
                     <option value="10">10 sec</option>
                     <option value="30">30 sec</option>
-                <!--</optgroup>-->
-            </select>
+                </select>
+            </label>
         </td>
         <td>&emsp;</td>
         <td>
-            Repeat:
-            <select id="repeat">
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+            <label title="How often the whole test should repeated.">
+                Repeat:
+                <select id="repeat">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
         </td>
         <td>&emsp;</td>
         <td>
-            <input type="checkbox" id="keep" checked> keep best run
+            <label title="When 'repeat' is set to > 1 this option change calculation of results. When enabled the best run for every test is picked for the final result. When disabled every run will add up to an average final result.">
+                <input type="checkbox" id="keep" checked>
+                Keep best run
+            </label>
+        </td>
+        <td>&emsp;</td>
+        <td>
+            <label title="When enabled the benchmark will also measure the time taken by the recalculation by forcing reflow at the end of each test cycle. Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test. It is recommended to keep this option disabled.">
+                <input type="checkbox" id="reflow">
+                Include reflow
+            </label>
         </td>
     </tr>
 </table>
@@ -91,32 +133,65 @@
 <table id="benchmarks" cellpadding="5" cellspacing="5">
     <thead>
         <tr>
-            <th>Library</th>
-            <th>Size</th>
-            <th>Memory</th>
-            <th>Create</th>
-            <th>Replace</th>
-            <th>Update</th>
-            <th>Order</th>
-            <th>Repaint</th>
-            <th>Append</th>
-            <th>Remove</th>
-            <th>Toggle</th>
-            <th>Clear</th>
-            <th>Index</th>
-            <th>Score</th>
+            <th style="text-align: left">Library</th>
+            <!--<th>Size</th>-->
+            <th title="Memory consumption in bytes. Can only measured in Chrome browser. This test has far less impact on final score and is calculated internally by using the square root of the score like FINAL_SCORE += SQRT(MEMORY_SCORE).">Memory</th>
+            <th title="Render 100 data items to an empty root">Create</th>
+            <th title="Render 100 different data items over existing items">Replace</th>
+            <th title="Render 100 modified data items over existing items">Update</th>
+            <th title="Render 100 re-ordered data items over existing items">Order</th>
+            <th title="Render 100 equally data items over existing items">Repaint</th>
+            <th title="Render 100 data items to a root already containing 50 items">Append</th>
+            <th title="Render 50 data items to a root already containing 100 items">Remove</th>
+            <th title="Alternately do 'Append' and 'Remove' (Scenario: Folding/Filtering)">Toggle</th>
+            <th title="Clear a root already containing 100 items">Clear</th>
+            <th title="This score is based on median and reflects the ratio of every test result.">Score</th>
+            <th title="This score has a fixed maximum to better estimate the result. The maximum possible index is 100. An index of 100 would mean, a library has reached best benchmark in every single test.">Index</th>
         </tr>
     </thead>
     <tbody id="result"></tbody>
 </table>
-<br>
-To measure memory you have to run in Chrome browser.<br><br>
+<hr>
+Operations per second, higher values are better except the memory test.<br>
+Hover through the table header or the forms to get more information.<br>
+To measure memory you need to run in Chrome browser.<br>
+The test "innerHTML" just uses the browsers native feature <code>element.innerHTML = "..."</code> with no library.
+<br><br>
 <b>Single Tests:</b>
 <ul id="lib"></ul>
-<iframe id="iframe" hidden></iframe>
-<script src="test/mikado/dist/mikado.min.js"></script>
-<script src="tpl/row.js"></script>
-<script src="tpl/lib.js"></script>
+<br>
+<b>Test Modes:</b>
+<ul>
+    <li><u>Recycle</u>:<sup>*</sup> No restrictions. Everything is allowed, e.g. the re-usage of DOM elements.</li>
+    <li><u>Keyed</u>:<sup>*</sup> The re-usage of DOM elements is just allowed on data entries sharing the same key.</li>
+    <li><u>Data-Driven</u>:<sup> </sup> No restrictions. Does not apply de-referencing to the test data.</li>
+    <li><u>Strict</u>:<sup> </sup> Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.</li>
+</ul>
+<sup>*</sup> The test applies de-referencing to mimic real incoming data from a server. No fake allowed.
+<br><br>
+<b>Test Environment:</b>
+<p>
+Every test will run in its own isolated/dedicated browser instance (iframe) and post back results via message channel.
+The benchmark creates a sequence of fixed randomness which will apply for every test. So every test has to solve exactly the same task.
+This is a real world benchmark running in your browser, no synthetics. It applies de-referencing on "recycle" und "keyed" tests to mimic realistic data which is coming from an extern authority like a server.
+To bo honest, everything else would be a fake. The data-driven test covers the feature of internal data processing explicitly. You will find a lot of synthetic benchmarks out there which didn't cover this specific real world behavior. Keep this in mind.
+<br><br>
+The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation by forcing reflow at the end of each test cycle. Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test.
+</p><br>
+<b>Test Data:</b>
+<p>
+Before every test is running 5 slots each including 100 unique data items are created. Imagine a paginated table on which you move 5 steps forward, every page has 100 rows.
+The test data isn't infinite, because the benchmark has to cover the library optimizations capabilities. Some important capabilities are getting lost when using infinite random data. Let's take the "keyed" recycle strategy as an example. When a key will never match, the whole strategy will negate every improvement and becomes useless.
+Also, it doesn't match real world scenario when a test runs 5 seconds and is applying more than 2 million of unique data entries.
+<!--
+<br><br>
+If you like to measure through infinite random unique items instead, then switch to the "strict" test mode, which is covering this behavior but also most of the libraries performance capabilities couldn't be applied on this test mode. This mode is just for completeness but don't recommend when it comes to make solid conclusions about the library performance capabilities.
+-->
+</p>
+<iframe id="iframe"></iframe>
+<script src="test/mikado/dist/mikado.bundle.js"></script>
+<script src="tpl/row.es5.js"></script>
+<script src="tpl/lib.es5.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

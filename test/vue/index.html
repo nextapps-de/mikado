@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <title>Vue</title>
+</head>
+<body>
+<h1>Benchmark: vue-3.5.0</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root">
+    <list-item v-for="item in items" v-bind:item="item" :key="item.id"></list-item>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    Vue.component('list-item', {
+        props: ['item'],
+        template: `
+            <section :data-id=item.id :data-date=item.date :data-index=item.index>
+                <div style="padding-right: 10px;" :class=item.classname>
+                    <div class="title">{{item.title}}</div>
+                    <div class="content">{{item.content}}</div>
+                    <div class="footer">{{item.footer}}</div>
+                </div>
+            </section>
+        `
+    });
+
+    function storage(){
+
+        this.data = [];
+    }
+
+    const store = new storage();
+
+    const app = new Vue({
+        el: '#root',
+        data: () => ({
+            items: store.data
+        }),
+        methods: {
+            sync() {
+                this.items = Object.freeze(store.data);
+                this.$forceUpdate();
+            }
+        }
+    });
+
+    suite["vue"] = function(items){
+
+        store.data.splice(0);
+        store.data.push.apply(store.data, items);
+        app.sync();
+    };
+
+</script>
+</body>
+</html>

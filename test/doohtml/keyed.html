@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+    <title>doohtml</title>
+</head>
+<body>
+<h1>Benchmark: doohtml (recycle)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<template id="table">
+    <div id="root">
+        <section data-id="{{id}}" data-date="{{date}}" data-index="{{index}}" bind="rows">
+            <div class="{{classname}}" style="padding-right: 10px;">
+                <div class="title">{{title}}</div>
+                <div class="content">{{content}}</div>
+                <div class="footer">{{footer}}</div>
+            </div>
+        </section>
+    </div>
+</template>
+<doo-main id="root" bind="data" data-key="id" data-has-html="false" template="#table"></doo-main>
+<script src="./doo.html.min.js"></script>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+
+    Doo.define(
+        class Main extends Doo {
+            constructor(){
+
+                super()
+                this.defaultDataSet = "rows";
+                this.data = {
+                    [this.defaultDataSet]: []
+                };
+                suite["doohtml"] = this.render.bind(this);
+            }
+
+            render(data) {
+
+                this.shadow.firstElementChild.firstElementChild.textContent = '';
+                this.data.rows = data;
+                this.renderTable();
+            }
+        }
+    );
+
+</script>
+</body>
+</html>

@@ -28,7 +28,7 @@ There are 3 kinds of test scenarios:
     </tr>
 </table>
 
-Weather a library provides optimizations to one of these modes or not, it is fair to compare each of them in a different scenario.
+Whether a library provides optimizations to one of these modes or not, it is fair to compare each of them in a different scenario.
 
 When the option "keep best run" is enabled it will replace the better result with the old one (separately for each test). When disabled, it will summarize the results for each test.
 
@@ -45,7 +45,7 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=center><sub>Update</sub></td>
         <td align=center><sub>Order</sub></td>
         <td align=center><sub>Repaint</sub></td>
-        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Add</sub></td>
         <td align=center><sub>Remove</sub></td>
         <td align=center><sub>Toggle</sub></td>
         <td align=center><sub>Clear</sub></td>
@@ -54,19 +54,53 @@ When the option "keep best run" is enabled it will replace the better result wit
     </tr>
     <tr>
         <td><sub>mikado</sub></td>
-        <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>27</sub></td>
-        <td align=right><sub>18745</sub></td>
-        <td align=right><sub>8124</sub></td>
-        <td align=right><sub>92669</sub></td>
-        <td align=right><sub>49554</sub></td>
-        <td align=right><sub>299140</sub></td>
-        <td align=right><sub>35254</sub></td>
-        <td align=right><sub>27563</sub></td>
+        <td align=right><sub>3</sub></td>
+        <td align=right><sub>22</sub></td>
+        <td align=right><sub>19301</sub></td>
+        <td align=right><sub>8535</sub></td>
+        <td align=right><sub>206747</sub></td>
+        <td align=right><sub>51470</sub></td>
+        <td align=right><sub>220010</sub></td>
+        <td align=right><sub>35346</sub></td>
+        <td align=right><sub>27945</sub></td>
         <td align=right><sub>31265</sub></td>
-        <td align=right><sub>25276</sub></td>
-        <td align=right><b><sub>994</sub></b></td>
-        <td align=right><b><sub>60020</sub></b></td>
+        <td align=right><sub>26378</sub></td>
+        <td align=right><b><sub>996</sub></b></td>
+        <td align=right><b><sub>54089</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>mikado-proxy</sub></td>
+        <td align=right><sub>8.3</sub></td>
+        <td align=right><sub>30</sub></td>
+        <td align=right><sub>10288</sub></td>
+        <td align=right><sub>5901</sub></td>
+        <td align=right><sub>27129</sub></td>
+        <td align=right><sub>18648</sub></td>
+        <td align=right><sub>28194</sub></td>
+        <td align=right><sub>14912</sub></td>
+        <td align=right><sub>19278</sub></td>
+        <td align=right><sub>16526</sub></td>
+        <td align=right><sub>26216</sub></td>
+        <td align=right><b><sub>537</sub></b></td>
+        <td align=right><b><sub>12803</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>solid</sub></td>
+        <td align=right><sub>0</sub></td>
+        <td align=right><sub>339</sub></td>
+        <td align=right><sub>737</sub></td>
+        <td align=right><sub>665</sub></td>
+        <td align=right><sub>7291</sub></td>
+        <td align=right><sub>4029</sub></td>
+        <td align=right><sub>13279</sub></td>
+        <td align=right><sub>1391</sub></td>
+        <td align=right><sub>7487</sub></td>
+        <td align=right><sub>2470</sub></td>
+        <td align=right><sub>15227</sub></td>
+        <td align=right><b><sub>149</sub></b></td>
+        <td align=right><b><sub>3587</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -82,8 +116,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>7443</sub></td>
         <td align=right><sub>2302</sub></td>
         <td align=right><sub>15982</sub></td>
-        <td align=right><b><sub>196</sub></b></td>
-        <td align=right><b><sub>3099</sub></b></td>
+        <td align=right><b><sub>191</sub></b></td>
+        <td align=right><b><sub>2647</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -99,8 +133,25 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>6614</sub></td>
         <td align=right><sub>2004</sub></td>
         <td align=right><sub>12622</sub></td>
-        <td align=right><b><sub>175</sub></b></td>
-        <td align=right><b><sub>2639</sub></b></td>
+        <td align=right><b><sub>170</sub></b></td>
+        <td align=right><b><sub>2256</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align=right><sub>2.9</sub></td>
+        <td align=right><sub>522</sub></td>
+        <td align=right><sub>421</sub></td>
+        <td align=right><sub>411</sub></td>
+        <td align=right><sub>4146</sub></td>
+        <td align=right><sub>3719</sub></td>
+        <td align=right><sub>4215</sub></td>
+        <td align=right><sub>761</sub></td>
+        <td align=right><sub>5750</sub></td>
+        <td align=right><sub>1380</sub></td>
+        <td align=right><sub>11744</sub></td>
+        <td align=right><b><sub>190</sub></b></td>
+        <td align=right><b><sub>1954</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -116,8 +167,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>2049</sub></td>
         <td align=right><sub>1464</sub></td>
         <td align=right><sub>24931</sub></td>
-        <td align=right><b><sub>214</sub></b></td>
-        <td align=right><b><sub>1385</sub></b></td>
+        <td align=right><b><sub>211</sub></b></td>
+        <td align=right><b><sub>1250</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
@@ -132,8 +183,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1769</sub></td>
         <td align=right><sub>1186</sub></td>
         <td align=right><sub>27131</sub></td>
-        <td align=right><b><sub>157</sub></b></td>
-        <td align=right><b><sub>1232</sub></b></td>
+        <td align=right><b><sub>154</sub></b></td>
+        <td align=right><b><sub>1107</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
@@ -148,8 +199,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1560</sub></td>
         <td align=right><sub>1187</sub></td>
         <td align=right><sub>23713</sub></td>
-        <td align=right><b><sub>165</sub></b></td>
-        <td align=right><b><sub>1093</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
+        <td align=right><b><sub>987</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -165,8 +216,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1577</sub></td>
         <td align=right><sub>1096</sub></td>
         <td align=right><sub>18047</sub></td>
-        <td align=right><b><sub>161</sub></b></td>
-        <td align=right><b><sub>1043</sub></b></td>
+        <td align=right><b><sub>159</sub></b></td>
+        <td align=right><b><sub>941</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -182,25 +233,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1129</sub></td>
         <td align=right><sub>860</sub></td>
         <td align=right><sub>5520</sub></td>
-        <td align=right><b><sub>86</sub></b></td>
-        <td align=right><b><sub>784</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>1090</sub></td>
-        <td align=right><sub>449</sub></td>
-        <td align=right><sub>441</sub></td>
-        <td align=right><sub>450</sub></td>
-        <td align=right><sub>451</sub></td>
-        <td align=right><sub>452</sub></td>
-        <td align=right><sub>468</sub></td>
-        <td align=right><sub>864</sub></td>
-        <td align=right><sub>603</sub></td>
-        <td align=right><sub>11765</sub></td>
-        <td align=right><b><sub>158</sub></b></td>
-        <td align=right><b><sub>715</sub></b></td>
+        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>708</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -216,8 +250,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>761</sub></td>
         <td align=right><sub>550</sub></td>
         <td align=right><sub>4964</sub></td>
-        <td align=right><b><sub>80</sub></b></td>
-        <td align=right><b><sub>538</sub></b></td>
+        <td align=right><b><sub>79</sub></b></td>
+        <td align=right><b><sub>487</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -233,8 +267,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>298</sub></td>
         <td align=right><sub>212</sub></td>
         <td align=right><sub>1944</sub></td>
-        <td align=right><b><sub>37</sub></b></td>
-        <td align=right><b><sub>223</sub></b></td>
+        <td align=right><b><sub>36</sub></b></td>
+        <td align=right><b><sub>202</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -250,12 +284,12 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>130</sub></td>
         <td align=right><sub>103</sub></td>
         <td align=right><sub>1162</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
-        <td align=right><b><sub>175</sub></b></td>
+        <td align=right><b><sub>45</sub></b></td>
+        <td align=right><b><sub>161</sub></b></td>
     </tr>
 </table>
 
-#### Recycle (Non-Keyed)
+#### Non-Keyed (Recycle)
 
 <table>
     <tr></tr>
@@ -268,7 +302,7 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=center><sub>Update</sub></td>
         <td align=center><sub>Order</sub></td>
         <td align=center><sub>Repaint</sub></td>
-        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Add</sub></td>
         <td align=center><sub>Remove</sub></td>
         <td align=center><sub>Toggle</sub></td>
         <td align=center><sub>Clear</sub></td>
@@ -277,19 +311,36 @@ When the option "keep best run" is enabled it will replace the better result wit
     </tr>
     <tr>
         <td><sub>mikado</sub></td>
-        <td align=right><sub>2.8</sub></td>
-        <td align=right><sub>25</sub></td>
-        <td align=right><sub>18432</sub></td>
-        <td align=right><sub>7822</sub></td>
-        <td align=right><sub>90335</sub></td>
-        <td align=right><sub>48761</sub></td>
-        <td align=right><sub>284969</sub></td>
-        <td align=right><sub>34245</sub></td>
-        <td align=right><sub>27452</sub></td>
-        <td align=right><sub>30704</sub></td>
-        <td align=right><sub>25674</sub></td>
-        <td align=right><b><sub>994</sub></b></td>
-        <td align=right><b><sub>18232</sub></b></td>
+        <td align=right><sub>3</sub></td>
+        <td align=right><sub>12</sub></td>
+        <td align=right><sub>19344</sub></td>
+        <td align=right><sub>8611</sub></td>
+        <td align=right><sub>205552</sub></td>
+        <td align=right><sub>52497</sub></td>
+        <td align=right><sub>243874</sub></td>
+        <td align=right><sub>34405</sub></td>
+        <td align=right><sub>27858</sub></td>
+        <td align=right><sub>31847</sub></td>
+        <td align=right><sub>26483</sub></td>
+        <td align=right><b><sub>995</sub></b></td>
+        <td align=right><b><sub>18276</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>mikado-proxy</sub></td>
+        <td align=right><sub>8.3</sub></td>
+        <td align=right><sub>43</sub></td>
+        <td align=right><sub>10041</sub></td>
+        <td align=right><sub>5782</sub></td>
+        <td align=right><sub>24215</sub></td>
+        <td align=right><sub>18201</sub></td>
+        <td align=right><sub>24873</sub></td>
+        <td align=right><sub>14302</sub></td>
+        <td align=right><sub>19126</sub></td>
+        <td align=right><sub>16517</sub></td>
+        <td align=right><sub>25778</sub></td>
+        <td align=right><b><sub>494</sub></b></td>
+        <td align=right><b><sub>5927</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -305,8 +356,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>22497</sub></td>
         <td align=right><sub>4617</sub></td>
         <td align=right><sub>25167</sub></td>
-        <td align=right><b><sub>478</sub></b></td>
-        <td align=right><b><sub>5271</sub></b></td>
+        <td align=right><b><sub>431</sub></b></td>
+        <td align=right><b><sub>4510</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -322,8 +373,25 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>8317</sub></td>
         <td align=right><sub>1645</sub></td>
         <td align=right><sub>5021</sub></td>
-        <td align=right><b><sub>224</sub></b></td>
-        <td align=right><b><sub>2607</sub></b></td>
+        <td align=right><b><sub>197</sub></b></td>
+        <td align=right><b><sub>2220</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>solid</sub></td>
+        <td align=right><sub>0</sub></td>
+        <td align=right><sub>267</sub></td>
+        <td align=right><sub>741</sub></td>
+        <td align=right><sub>2196</sub></td>
+        <td align=right><sub>6302</sub></td>
+        <td align=right><sub>3223</sub></td>
+        <td align=right><sub>13560</sub></td>
+        <td align=right><sub>1346</sub></td>
+        <td align=right><sub>8397</sub></td>
+        <td align=right><sub>2452</sub></td>
+        <td align=right><sub>14964</sub></td>
+        <td align=right><b><sub>162</sub></b></td>
+        <td align=right><b><sub>1320</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -339,8 +407,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>7366</sub></td>
         <td align=right><sub>2345</sub></td>
         <td align=right><sub>16151</sub></td>
-        <td align=right><b><sub>198</sub></b></td>
-        <td align=right><b><sub>1272</sub></b></td>
+        <td align=right><b><sub>185</sub></b></td>
+        <td align=right><b><sub>1122</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -356,8 +424,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>7191</sub></td>
         <td align=right><sub>2011</sub></td>
         <td align=right><sub>12604</sub></td>
-        <td align=right><b><sub>193</sub></b></td>
-        <td align=right><b><sub>1200</sub></b></td>
+        <td align=right><b><sub>179</sub></b></td>
+        <td align=right><b><sub>1034</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -373,8 +441,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>6620</sub></td>
         <td align=right><sub>1530</sub></td>
         <td align=right><sub>12348</sub></td>
-        <td align=right><b><sub>226</sub></b></td>
-        <td align=right><b><sub>1167</sub></b></td>
+        <td align=right><b><sub>214</sub></b></td>
+        <td align=right><b><sub>1005</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerhtml</sub></td>
@@ -389,8 +457,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1636</sub></td>
         <td align=right><sub>1186</sub></td>
         <td align=right><sub>27371</sub></td>
-        <td align=right><b><sub>157</sub></b></td>
-        <td align=right><b><sub>791</sub></b></td>
+        <td align=right><b><sub>147</sub></b></td>
+        <td align=right><b><sub>710</sub></b></td>
     </tr>
     <tr>
         <td><sub>surplus</sub></td>
@@ -405,8 +473,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1540</sub></td>
         <td align=right><sub>1155</sub></td>
         <td align=right><sub>25324</sub></td>
-        <td align=right><b><sub>169</sub></b></td>
-        <td align=right><b><sub>740</sub></b></td>
+        <td align=right><b><sub>162</sub></b></td>
+        <td align=right><b><sub>671</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -422,8 +490,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>2970</sub></td>
         <td align=right><sub>616</sub></td>
         <td align=right><sub>1768</sub></td>
-        <td align=right><b><sub>82</sub></b></td>
-        <td align=right><b><sub>716</sub></b></td>
+        <td align=right><b><sub>73</sub></b></td>
+        <td align=right><b><sub>608</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -439,8 +507,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1609</sub></td>
         <td align=right><sub>1075</sub></td>
         <td align=right><sub>16384</sub></td>
-        <td align=right><b><sub>155</sub></b></td>
-        <td align=right><b><sub>678</sub></b></td>
+        <td align=right><b><sub>148</sub></b></td>
+        <td align=right><b><sub>614</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -456,8 +524,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1136</sub></td>
         <td align=right><sub>872</sub></td>
         <td align=right><sub>5531</sub></td>
-        <td align=right><b><sub>86</sub></b></td>
-        <td align=right><b><sub>503</sub></b></td>
+        <td align=right><b><sub>79</sub></b></td>
+        <td align=right><b><sub>454</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -473,8 +541,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>130</sub></td>
         <td align=right><sub>103</sub></td>
         <td align=right><sub>1181</sub></td>
-        <td align=right><b><sub>46</sub></b></td>
-        <td align=right><b><sub>140</sub></b></td>
+        <td align=right><b><sub>43</sub></b></td>
+        <td align=right><b><sub>130</sub></b></td>
     </tr>
 </table>
 
@@ -491,7 +559,7 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=center><sub>Update</sub></td>
         <td align=center><sub>Order</sub></td>
         <td align=center><sub>Repaint</sub></td>
-        <td align=center><sub>Append</sub></td>
+        <td align=center><sub>Add</sub></td>
         <td align=center><sub>Remove</sub></td>
         <td align=center><sub>Toggle</sub></td>
         <td align=center><sub>Clear</sub></td>
@@ -499,20 +567,54 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=center><sub>Score</sub></td>
     </tr>
     <tr>
+        <td><sub>mikado-proxy</sub></td>
+        <td align=right><sub>8.3</sub></td>
+        <td align=right><sub>18</sub></td>
+        <td align=right><sub>7350</sub></td>
+        <td align=right><sub>2600</sub></td>
+        <td align=right><sub>18467</sub></td>
+        <td align=right><sub>11819</sub></td>
+        <td align=right><sub>5601305</sub></td>
+        <td align=right><sub>10254</sub></td>
+        <td align=right><sub>23402</sub></td>
+        <td align=right><sub>14499</sub></td>
+        <td align=right><sub>18986</sub></td>
+        <td align=right><b><sub>551</sub></b></td>
+        <td align=right><b><sub>109601</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td><sub>mikado</sub></td>
-        <td align=right><sub>2.8</sub></td>
+        <td align=right><sub>3</sub></td>
         <td align=right><sub>15</sub></td>
-        <td align=right><sub>18055</sub></td>
-        <td align=right><sub>7789</sub></td>
-        <td align=right><sub>71626</sub></td>
-        <td align=right><sub>45370</sub></td>
-        <td align=right><sub>294877</sub></td>
-        <td align=right><sub>33575</sub></td>
-        <td align=right><sub>27901</sub></td>
-        <td align=right><sub>30799</sub></td>
-        <td align=right><sub>25028</sub></td>
-        <td align=right><b><sub>1000</sub></b></td>
-        <td align=right><b><sub>48211</sub></b></td>
+        <td align=right><sub>18980</sub></td>
+        <td align=right><sub>8374</sub></td>
+        <td align=right><sub>78140</sub></td>
+        <td align=right><sub>49034</sub></td>
+        <td align=right><sub>260674</sub></td>
+        <td align=right><sub>33723</sub></td>
+        <td align=right><sub>27425</sub></td>
+        <td align=right><sub>30768</sub></td>
+        <td align=right><sub>25797</sub></td>
+        <td align=right><b><sub>911</sub></b></td>
+        <td align=right><b><sub>17362</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>sinuous</sub></td>
+        <td align=right><sub>7.5</sub></td>
+        <td align=right><sub>830</sub></td>
+        <td align=right><sub>372</sub></td>
+        <td align=right><sub>377</sub></td>
+        <td align=right><sub>36533</sub></td>
+        <td align=right><sub>38554</sub></td>
+        <td align=right><sub>327320</sub></td>
+        <td align=right><sub>757</sub></td>
+        <td align=right><sub>13058</sub></td>
+        <td align=right><sub>1529</sub></td>
+        <td align=right><sub>12815</sub></td>
+        <td align=right><b><sub>289</sub></b></td>
+        <td align=right><b><sub>8431</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -528,25 +630,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>14914</sub></td>
         <td align=right><sub>3703</sub></td>
         <td align=right><sub>22609</sub></td>
-        <td align=right><b><sub>405</sub></b></td>
-        <td align=right><b><sub>13764</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>sinuous</sub></td>
-        <td align=right><sub>7.5</sub></td>
-        <td align=right><sub>247</sub></td>
-        <td align=right><sub>839</sub></td>
-        <td align=right><sub>816</sub></td>
-        <td align=right><sub>-failed-</sub></td>
-        <td align=right><sub>39032</sub></td>
-        <td align=right><sub>-failed-</sub></td>
-        <td align=right><sub>1604</sub></td>
-        <td align=right><sub>18119</sub></td>
-        <td align=right><sub>3034</sub></td>
-        <td align=right><sub>15289</sub></td>
-        <td align=right><b><sub>364</sub></b></td>
-        <td align=right><b><sub>3311</sub></b></td>
+        <td align=right><b><sub>373</sub></b></td>
+        <td align=right><b><sub>4248</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -562,8 +647,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>13561</sub></td>
         <td align=right><sub>3480</sub></td>
         <td align=right><sub>20871</sub></td>
-        <td align=right><b><sub>317</sub></b></td>
-        <td align=right><b><sub>2564</sub></b></td>
+        <td align=right><b><sub>311</sub></b></td>
+        <td align=right><b><sub>2063</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -579,8 +664,25 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>6100</sub></td>
         <td align=right><sub>2363</sub></td>
         <td align=right><sub>14419</sub></td>
-        <td align=right><b><sub>188</sub></b></td>
-        <td align=right><b><sub>2173</sub></b></td>
+        <td align=right><b><sub>184</sub></b></td>
+        <td align=right><b><sub>1200</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align=right><sub>2.9</sub></td>
+        <td align=right><sub>1126</sub></td>
+        <td align=right><sub>439</sub></td>
+        <td align=right><sub>2425</sub></td>
+        <td align=right><sub>4139</sub></td>
+        <td align=right><sub>3386</sub></td>
+        <td align=right><sub>4666</sub></td>
+        <td align=right><sub>840</sub></td>
+        <td align=right><sub>6389</sub></td>
+        <td align=right><sub>1482</sub></td>
+        <td align=right><sub>12790</sub></td>
+        <td align=right><b><sub>214</sub></b></td>
+        <td align=right><b><sub>1170</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -596,8 +698,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>6664</sub></td>
         <td align=right><sub>1964</sub></td>
         <td align=right><sub>12248</sub></td>
-        <td align=right><b><sub>171</sub></b></td>
-        <td align=right><b><sub>1870</sub></b></td>
+        <td align=right><b><sub>168</sub></b></td>
+        <td align=right><b><sub>1046</sub></b></td>
     </tr>
     <tr>
         <td><sub>innerHTML</sub></td>
@@ -612,8 +714,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1675</sub></td>
         <td align=right><sub>1167</sub></td>
         <td align=right><sub>20810</sub></td>
-        <td align=right><b><sub>135</sub></b></td>
-        <td align=right><b><sub>957</sub></b></td>
+        <td align=right><b><sub>131</sub></b></td>
+        <td align=right><b><sub>794</sub></b></td>
     </tr>
     <tr>
         <td><sub>jquery</sub></td>
@@ -628,25 +730,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>1112</sub></td>
         <td align=right><sub>856</sub></td>
         <td align=right><sub>5553</sub></td>
-        <td align=right><b><sub>85</sub></b></td>
-        <td align=right><b><sub>636</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align=right><sub>2.9</sub></td>
-        <td align=right><sub>1126</sub></td>
-        <td align=right><sub>446</sub></td>
-        <td align=right><sub>442</sub></td>
-        <td align=right><sub>443</sub></td>
-        <td align=right><sub>438</sub></td>
-        <td align=right><sub>442</sub></td>
-        <td align=right><sub>456</sub></td>
-        <td align=right><sub>865</sub></td>
-        <td align=right><sub>566</sub></td>
-        <td align=right><sub>11737</sub></td>
-        <td align=right><b><sub>158</sub></b></td>
-        <td align=right><b><sub>604</sub></b></td>
+        <td align=right><b><sub>84</sub></b></td>
+        <td align=right><b><sub>530</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -663,7 +748,7 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>554</sub></td>
         <td align=right><sub>5027</sub></td>
         <td align=right><b><sub>79</sub></b></td>
-        <td align=right><b><sub>444</sub></b></td>
+        <td align=right><b><sub>378</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -679,8 +764,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>320</sub></td>
         <td align=right><sub>191</sub></td>
         <td align=right><sub>1056</sub></td>
-        <td align=right><b><sub>56</sub></b></td>
-        <td align=right><b><sub>195</sub></b></td>
+        <td align=right><b><sub>57</sub></b></td>
+        <td align=right><b><sub>196</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -696,8 +781,8 @@ When the option "keep best run" is enabled it will replace the better result wit
         <td align=right><sub>243</sub></td>
         <td align=right><sub>187</sub></td>
         <td align=right><sub>1434</sub></td>
-        <td align=right><b><sub>34</sub></b></td>
-        <td align=right><b><sub>168</sub></b></td>
+        <td align=right><b><sub>33</sub></b></td>
+        <td align=right><b><sub>146</sub></b></td>
     </tr>	
 </table>
 
@@ -706,6 +791,10 @@ This stress test focuses a real life use case, where new data is coming from a s
 
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
 https://krausest.github.io/js-framework-benchmark/current.html
+
+#### Angular and React?
+
+There are some reasons why you did not find Angular or React on this list. Both aren't a library nor a framework, they are full integrated ecosystems which is quite unfair to compare. Also they runs completely async. If there was a way to force running them in sync I'm pretty sure, they would fill the bottom lines of this benchmark test.
 
 #### Local Installation
 

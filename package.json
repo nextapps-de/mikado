@@ -7,7 +7,7 @@
     "mikado": "^0.7.21"
   },
   "devDependencies": {
-    "mikado-compile": "^0.7.2",
+    "mikado-compile": "^0.7.44",
     "web-servo": "^0.5.1"
   }
 }

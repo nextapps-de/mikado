@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <title>lit-html</title>
+</head>
+<body>
+<h1>Benchmark: lit-html-1.1.2 (data-driven)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+    import { html, render } from 'https://unpkg.com/lit-html?module';
+
+    const template = (items) => items.map((item) => html`
+        <section data-id="${item.id}" data-date="${item.date}" data-index="${item.index}">
+            <div class="${item.classname}" style="padding-right: 10px;">
+                <div class="title">${item.title}</div>
+                <div class="content">${item.content}</div>
+                <div class="footer">${item.footer}</div>
+            </div>
+        </section>
+    `);
+
+    suite["lit-html"] = function(items){
+
+        if(items.length){
+
+            render(null, root);
+        }
+
+        render(template(items), root);
+    };
+
+</script>
+</body>
+</html>

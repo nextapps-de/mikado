@@ -3,24 +3,23 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: Mikado (Proxy)</h1><hr>
+<h1>Benchmark: mikado-proxy-0.8.117 (recycle)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
-<script src="./../mikado/dist/mikado.min.js"></script>
+<script src="./dist/mikado.bundle.js"></script>
 <script type="module">
 
     "use strict";
 
     import { suite, root, store } from "./../../bench.js";
-    import template from "./template/proxy.es6.js";
+    import template from "./template/template.js";
 
-    const mikado = new Mikado(root, template, {
-
-        "store": store(),
-        "reuse": true,
-        "pool": false,
-        "keep": true,
-        "cache": true
+    const mikado = new Mikado(template, {
+        observe: store(new Mikado.Array()),
+        mount: root,
+        recycle: true,
+        cache: true,
+        pool: true
     });
 
     suite["mikado"] = function(items){

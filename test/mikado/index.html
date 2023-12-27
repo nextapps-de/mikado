@@ -1,10 +1,9 @@
 <html lang="en">
 <head>
     <title>Mikado</title>
-    <!--<style>body{ background-color: #222; color: #bbb;}</style>-->
 </head>
 <body>
-<h1>Benchmark: mikado-0.7.0 (recycle)</h1><hr>
+<h1>Benchmark: mikado-new (recycle)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script src="./dist/mikado.light.js"></script>
@@ -20,14 +19,14 @@
     "use strict";
 
     import { suite, root } from "./../../bench.js";
-    import template from "./template/keyed.es6.js";
-    //import Mikado from "module/mikado.js";
+    import template from "./template/template.js";
+    //import Mikado from "./module/mikado.js";
 
-    const mikado = new Mikado(root, template, {
-
-        "store": false,
-        "pool": false,
-        "keep": true
+    const mikado = new Mikado(template, {
+        mount: root,
+        recycle: true,
+        cache: true,
+        pool: true
     });
 
     suite["mikado"] = function(items){

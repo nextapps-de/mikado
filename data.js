@@ -65,7 +65,7 @@ const len_continents = continents.length;
 
 export function generate(count){
 
-    const data = new Array(count);
+    const data = [];
 
     for(let i = 0; i < count; i++){
 
