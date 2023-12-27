@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.7.64",
+  "version": "0.8.133",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -23,57 +23,68 @@
   "main": "src/mikado.js",
   "module": "dist/module/mikado.js",
   "browser": "src/bundle.js",
-  "preferGlobal": false,
   "bin": {
-    "mikado": "task/cli.js"
+    "mikado-compile": "compiler/cli.js"
   },
+  "preferGlobal": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/nextapps-de/mikado.git"
   },
   "scripts": {
-    "build": "node task/build RELEASE=min USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
-    "build:light": "node task/build RELEASE=light USE_POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
-    "build:es5": "node task/build RELEASE=es5 USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
-    "build:debug": "node task/build RELEASE=debug USE_POLYFILL=true DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
-    "build:pre": "node task/build RELEASE=pre USE_POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
-    "build:module": "babel src -d dist/module && exit 0",
+    "build": "npm run build:bundle && npm run build:bundle:debug",
+    "build:bundle": "node task/build RELEASE=bundle POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:bundle:debug": "node task/build RELEASE=bundle POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:light": "node task/build RELEASE=light POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
+    "build:light:debug": "node task/build RELEASE=light POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
+    "build:es5": "node task/build RELEASE=es5 POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true LANGUAGE_OUT=ECMASCRIPT5 && exit 0",
+    "build:es5:debug": "node task/build RELEASE=es5 POLYFILL=true DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true LANGUAGE_OUT=ECMASCRIPT5 && exit 0",
+    "build:test": "node task/build RELEASE=pre POLYFILL=true DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:module": "node task/babel && exit 0",
+    "build:module:debug": "node task/babel DEBUG=true && exit 0",
+    "build:module:bundle": "node task/build RELEASE=bundle.module POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:module:bundle:debug": "node task/build RELEASE=bundle.module POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_STORAGE=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_TRANSPORT=true SUPPORT_TEMPLATE_EXTENSION=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_COMPILE=true && exit 0",
+    "build:module:light": "node task/build RELEASE=light.module POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
+    "build:module:light:debug": "node task/build RELEASE=light.module POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_STORAGE=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_TRANSPORT=false SUPPORT_TEMPLATE_EXTENSION=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
     "build:custom": "node task/build RELEASE=custom",
-    "build:all": "npm run build && npm run build:light && npm run build:es5 && npm run build:pre && npm run build:debug && npm run build:module",
+    "build:all": "npm version --no-git-tag-version patch && npm run build:bundle && npm run build:bundle:debug && npm run build:light && npm run build:light:debug && npm run build:es5 && npm run build:es5:debug && npm run build:module && npm run build:module:debug && npm run build:module:bundle && npm run build:module:bundle:debug && npm run build:module:light && npm run build:module:light:debug",
     "update": "npm install mikado-compile@latest && npm install google-closure-compiler@nightly && npm install babel-cli@latest && npm install babel-plugin-conditional-compile@latest && npm install babel-plugin-minify-constant-folding@latest && npm install babel-plugin-minify-dead-code-elimination@latest && npm install babel-plugin-minify-flip-comparisons@latest && npm install babel-plugin-minify-guarded-expressions@latest && npm install babel-plugin-minify-infinity@latest && npm install babel-plugin-minify-mangle-names@latest && npm install babel-plugin-minify-replace@latest && npm install babel-plugin-minify-simplify@latest && npm install babel-plugin-minify-type-constructors@latest && npm install babel-plugin-transform-member-expression-literals@latest && npm install babel-plugin-transform-merge-sibling-variables@latest && npm install babel-plugin-transform-minify-booleans@latest && npm install babel-plugin-transform-property-literals@latest && npm install babel-plugin-transform-simplify-comparison-operators@latest && npm install babel-plugin-transform-undefined-to-void@latest",
-    "test": "npm run build:pre && npm run build:light && cd test && npm install && npx mikado-compile template.html -f && npx mikado-compile proxy.html -f && npx mikado-compile keyed.html -f && npm run test"
+    "test": "npm run build:test && npm run build:light && npx mikado-compile test/template.html -f && npx mikado-compile test/proxy.html -f && npx mikado-compile test/keyed.html -f && npx mikado-compile test/bench/template/ -f && cd test && npm install && npm run test"
   },
   "files": [
     ".babelrc",
     "index.d.ts",
     "dist/",
     "src/",
+    "ssr/",
+    "compiler/",
+    "express/",
     "task/",
     "README.md",
     "LICENSE"
   ],
   "readme": "README.md",
   "dependencies": {
-    "mikado-compile": "^0.7.58"
+    "html2json": "^1.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-conditional-compile": "^0.0.5",
     "babel-plugin-minify-constant-folding": "^0.5.0",
-    "babel-plugin-minify-dead-code-elimination": "^0.5.1",
+    "babel-plugin-minify-dead-code-elimination": "^0.5.2",
     "babel-plugin-minify-flip-comparisons": "^0.4.3",
     "babel-plugin-minify-guarded-expressions": "^0.4.4",
     "babel-plugin-minify-infinity": "^0.4.3",
-    "babel-plugin-minify-mangle-names": "^0.5.0",
+    "babel-plugin-minify-mangle-names": "^0.5.1",
     "babel-plugin-minify-replace": "^0.5.0",
     "babel-plugin-minify-simplify": "^0.5.1",
     "babel-plugin-minify-type-constructors": "^0.4.3",
     "babel-plugin-transform-member-expression-literals": "^6.9.4",
-    "babel-plugin-transform-merge-sibling-variables": "^6.9.4",
+    "babel-plugin-transform-merge-sibling-variables": "^6.9.5",
     "babel-plugin-transform-minify-booleans": "^6.9.4",
     "babel-plugin-transform-property-literals": "^6.9.4",
     "babel-plugin-transform-simplify-comparison-operators": "^6.9.4",
     "babel-plugin-transform-undefined-to-void": "^6.9.4",
-    "google-closure-compiler": "^20201006.0.0"
+    "google-closure-compiler": "^20231005.0.0-nightly"
   }
 }

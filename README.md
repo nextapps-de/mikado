@@ -1,12 +1,6 @@
 <h1></h1>
-<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="320px"><p></p></h1>
+<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="500px"><p></p></h1>
 <h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also provides the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
-
-Rendering has by far the most <u>impact</u> on application performance, especially <u>on mobile devices</u>. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you <u>keyed</u>, <u>non-keyed</u> and also <u>reactive paradigm</u> switchable out of the box.
-On top, it also provides a <u>server-side-rendering</u> approach on an extreme performance level along full support for <u>partial hydration</u> to inject templates progressively during the client's runtime.
-Server and client are sharing the same template definitions simply written in <u>HTML-like markup</u>.
-The server side approach will also come with the <u>fastest middleware render engine for Express</u> you can get today.
-Mikado is the only library which cuts both edges, on client-side and server-side.
 
 <!--
 <a target="_blank" href="https://coveralls.io/github/nextapps-de/mikado?branch=master"><img src="https://coveralls.io/repos/github/nextapps-de/mikado/badge.svg?branch=master"></a>
@@ -35,6 +29,12 @@ When you come from previous version: <a href="doc/migrate-0.8.md">Migration 0.8.
 
 - <a href="#benchmark">Stress Test Benchmark</a>
 - https://krausest.github.io/js-framework-benchmark/current.html
+
+Rendering has by far the most <u>impact</u> on application performance, especially <u>on mobile devices</u>. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you <u>keyed</u>, <u>non-keyed</u> and also <u>reactive paradigm</u> switchable out of the box.
+On top, it also provides a <u>server-side-rendering</u> approach on an extreme performance level along full support for <u>partial hydration</u> to inject templates progressively during the client's runtime.
+Server and client are sharing the same template definitions simply written in <u>HTML-like markup</u>.
+The server side approach will also come with the <u>fastest middleware render engine for Express</u> you can get today.
+Mikado is the only library which cuts both edges, on client-side and server-side.
 
 ## Support this Project
 
