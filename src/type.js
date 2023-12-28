@@ -29,7 +29,7 @@ export let Template;
 
 /**
  * @typedef {{
- *   tag: string,
+ *   tag: (string|undefined),
  *   style: (string|undefined),
  *   class: (string|undefined),
  *   text: (string|undefined),

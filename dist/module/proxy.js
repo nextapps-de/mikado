@@ -1,1 +1,136 @@
-let ProxyHandler;const proxy=window.Proxy||function(){function a(a,b){for(const c in this.path=b.path,this.handler=b.handler,a)this.define(a,c,a[c]);return a._mkx=!0,a}return a.prototype.define=function(a,b,c){const d=this;Object.defineProperty(a,b,{get:function(){return c},set:function(a){proxy_loop.call(d,c=a,b)}})},a}();export default function proxy_create(a,b,c){return new proxy(a,{path:b,handler:c,get:proxy_get,set:proxy_set})}function proxy_get(a,b){return b==="_mkx"||a[b]}function proxy_set(a,b,c){return proxy_loop.call(this,c,b),a[b]=c,!0}function proxy_loop(a,b){const c=this.handler[b];if(c)for(let b=0;b<c.length;b++){const d=c[b],e=d[0],f=this.path[d[1]];f.c&&f.c[e+(d[2]||"")]===a||f[e](d[2]||a,a)}}
+
+
+/**
+ * @typedef {{
+ *   path: Array<Cache>,
+ *   handler: Object<string, Array<string, number>>,
+ *   get: Function,
+ *   set: Function
+ * }}
+ */
+let ProxyHandler;
+
+const proxy = window.Proxy || function () {
+
+    /**
+     * @param obj
+     * @param proxy
+     * @constructor
+     */
+
+    function Proxy(obj, proxy) {
+
+        /** @private @const {Array<Cache>} */
+        this.path = proxy.path;
+        /** @private @const {Object<string, Array<string, number>>} */
+        this.handler = proxy.handler;
+
+        for (const key in obj) {
+
+            this.define(obj, key, obj[key]);
+        }
+
+        // proxy check (visible)
+        obj._mkx = !0;
+
+        return obj;
+    }
+
+    //Proxy.prototype["_proxy"] = true;
+
+    Proxy.prototype.define = function (obj, key, val) {
+
+        const self = /** @type {!ProxyHandler} */this;
+
+        Object.defineProperty(obj, key, {
+
+            get: function () {
+
+                return val;
+            },
+            set: function (newVal) {
+
+                //if(val !== newVal){
+
+                proxy_loop.call(self, val = newVal, key);
+                //}
+            }
+        });
+    };
+
+    return Proxy;
+}();
+
+// Handler holds multiple dynamic expressions which references to the same data field
+// {"title": [["text", node, value, attr], [...]]}
+
+/**
+ * @param {Object} obj
+ * @param {Array<Cache>} path
+ * @param {Object<string, Array<string, number>>} handler
+ * @return {Proxy}
+ */
+
+export default function proxy_create(obj, path, handler) {
+
+    return new proxy(obj, {
+
+        path: path,
+        handler: handler,
+        get: proxy_get,
+        set: proxy_set
+    });
+
+    /** @type {!ProxyHandler} */
+}
+
+function proxy_get(target, prop) {
+
+    // proxy check (hidden)
+    return prop === "_mkx" || target[prop];
+}
+
+/**
+ * @param {Object} target
+ * @param {string} prop
+ * @param {*} value
+ * @this {ProxyHandler}
+ */
+
+function proxy_set(target, prop, value) {
+
+    //if(target[prop] !== value){
+
+    proxy_loop.call(this, value, prop);
+    target[prop] = value;
+    //}
+
+    // accept changes:
+    return !0;
+}
+
+/**
+ * @param {*} value
+ * @param {string} prop
+ * @this {ProxyHandler}
+ */
+
+function proxy_loop(value, prop) {
+
+    const exp = this.handler[prop];
+
+    if (exp) {
+
+        for (let i = 0; i < exp.length; i++) {
+            const tmp = exp[i],
+                  fn = tmp[0],
+                  cache = /** @type {Cache} */this.path[tmp[1]];
+
+
+            if (!cache.c || cache.c[fn + (tmp[2] || "")] !== value) {
+
+                cache[fn](tmp[2] || value, value);
+            }
+        }
+    }
+}

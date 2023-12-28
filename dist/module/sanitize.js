@@ -1,1 +1,39 @@
-const escape_div=document.createElement("div"),escape_text=document.createTextNode(""),sanitizer_div=document.createElement("div");escape_div.appendChild(escape_text);export function escape(a){return escape_div._text!==a&&(escape_text.nodeValue=a,escape_div._html=escape_div.innerHTML,escape_div._text=a),escape_div._html}export function sanitize(a){return sanitizer_div._html!==a&&(sanitizer_div.innerHTML=a,sanitizer_div._html=a,sanitizer_div._text=sanitizer_div.textContent),sanitizer_div._text}
+const escape_div = document.createElement("div"),
+      escape_text = document.createTextNode(""),
+      sanitizer_div = document.createElement("div");
+
+escape_div.appendChild(escape_text);
+
+/**
+ * @param {*} str
+ * @return {string}
+ */
+
+export function escape(str) {
+
+    if (escape_div._text !== str) {
+
+        escape_text.nodeValue = /** @type {string} */str;
+        escape_div._html = escape_div.innerHTML;
+        escape_div._text = str;
+    }
+
+    return escape_div._html;
+}
+
+/**
+ * @param {*} str
+ * @return {string}
+ */
+
+export function sanitize(str) {
+
+    if (sanitizer_div._html !== str) {
+
+        sanitizer_div.innerHTML = str;
+        sanitizer_div._html = str;
+        sanitizer_div._text = sanitizer_div.textContent;
+    }
+
+    return sanitizer_div._text;
+}

@@ -48,11 +48,19 @@ import {
     addClasses,
     setClass,
 
+    getCss,
     setCss,
+    getStyle,
     setStyle,
     setStyles
 } from "./cache.js";
-import { dispatch, listen, route, unlisten } from "./event.js";
+
+import {
+    dispatch,
+    listen,
+    route,
+    unlisten
+} from "./event.js";
 
 /*
 if(SUPPORT_COMPILE){
@@ -96,11 +104,11 @@ Mikado.prototype.render;
 /** @export */
 Mikado.prototype.reconcile;
 /** @export */
-Mikado.prototype.refresh;
-/** @export */
 Mikado.prototype.remove;
 /** @export */
 Mikado.prototype.node;
+/** @export */
+Mikado.prototype.index;
 /** @export */
 Mikado.prototype.mount;
 /** @export */
@@ -144,6 +152,8 @@ if(SUPPORT_CACHE_HELPERS){
     Mikado["removeAttributes"] = removeAttributes;
 
     Mikado["setCss"] = setCss;
+    Mikado["getCss"] = getCss;
+    Mikado["getStyle"] = getStyle;
     Mikado["setStyle"] = setStyle;
     Mikado["setStyles"] = setStyles;
 }
@@ -198,6 +208,8 @@ if(SUPPORT_DOM_HELPERS){
     Mikado.prototype.after;
     /** @export */
     Mikado.prototype.swap;
+    /** @export */
+    Mikado.prototype.shift;
 }
 
 // Cache private instance properties
@@ -340,6 +352,10 @@ MikadoOptions.hydrate;
 EventOptions.prevent;
 /** @export */
 EventOptions.stop;
+/** @export */
+EventOptions.cancel;
+/** @export */
+EventOptions.once;
 
 // Export as library (Bundle)
 // --------------------------------

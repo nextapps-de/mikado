@@ -1,9 +1,10 @@
 const child_process = require('child_process');
 const fs = require('fs');
 const debug = process.argv[2] && process.argv[2].toLowerCase().includes("debug=true");
+const minify = process.argv[2] && process.argv[2].toLowerCase().includes("release=min");
 
 console.log("Start build .....");
-console.log('Bundle: ' + ('module' /* 'custom' */) + (debug ?  ":debug" : ""));
+console.log('Bundle: ' + ('module' /* 'custom' */) + (debug ?  ":debug" : (minify ?  ":min" : "")));
 
 fs.existsSync("log") || fs.mkdirSync("log");
 fs.existsSync("tmp") || fs.mkdirSync("tmp");
@@ -49,9 +50,9 @@ files.forEach(function(file){
     fs.writeFileSync("tmp/" + file, src);
 });
 
-fs.copyFileSync("task/babel." + (debug ? "debug": "bundle") + ".json", "tmp/.babelrc");
+fs.copyFileSync("task/babel." + (debug ? "debug": (minify ? "min" : "bundle")) + ".json", "tmp/.babelrc");
 
-exec("npx babel tmp -d dist/module" + (debug ? "-debug" : " --minified --compact true") + " --config-file tmp/.babelrc && exit 0", function(){
+exec("npx babel tmp -d dist/module" + (debug ? "-debug" : (minify ? "-min --minified --compact true" : "")) + " --config-file tmp/.babelrc && exit 0", function(){
 
     // let build = fs.readFileSync(filename);
     // let preserve = fs.readFileSync("src/mikado.js", "utf8");

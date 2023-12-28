@@ -87,12 +87,11 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 
 ## Table of contents
 
-Rendering has by far the most **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
+Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
 On top, it also provides a **server-side-rendering** approach on an extreme performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Mikado is the only library which cuts both edges, on client-side and server-side.
-
+Packed with a smart routing concept of event delegation, Mikado gives you everything you will need to build cutting edge applications.
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
@@ -156,30 +155,8 @@ Mikado is the only library which cuts both edges, on client-side and server-side
 
 ## Get Latest
 
-### Bundles
-
-The bundles export all features to the public class identifier e.g. `Mikado.register()`.
-
-The abbreviations used at the end of the filenames indicates:
-
-- `bundle` All features included, Mikado is available on `window.Mikado`
-- `light` Only basic features are included, Mikado is available on `window.Mikado`
-- `es5` bundle has support for EcmaScript5, Mikado is available on `window.Mikado`
-- `module` bundle is a Javascript module, Mikado is available by `import Mikado from "./mikado.bundle.module.min.js"`
-- `min` bundle is minified
-- `debug` bundle has enabled debug mode (only for development purposes, do not use for production)
-
 > Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including modules).
 
-> When using modules you can choose between 2 variants, `mikado.xxx.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported explicitly by `import { register } from "./dist/module/mikado.js"`.
-
-<!--
-If you are interested how to use the "src" folder then check this repo, it uses 3 different compilation techniques which all resolves the compiler flags:
-
-1. Closure Compiler Simple
-2. Closure Compiler Advanced
-3. Babel + Compiler-Plugin
--->
 
 <table>
     <tr></tr>
@@ -268,6 +245,33 @@ If you are interested how to use the "src" folder then check this repo, it uses 
 
 > All debug versions are providing debug information through the console and gives you helpful advices on certain situations.
 
+### Bundles
+
+> The bundles export all features to the public class identifier e.g. `Mikado.register()`.
+
+The abbreviations used at the end of the filenames indicates:
+
+- `bundle` All features included, Mikado is available on `window.Mikado`
+- `light` Only basic features are included, Mikado is available on `window.Mikado`
+- `es5` bundle has support for EcmaScript5, Mikado is available on `window.Mikado`
+- `module` bundle is a Javascript module, Mikado is available by `import Mikado from "./mikado.bundle.module.min.js"`
+- `min` bundle is minified
+- `debug` bundle has enabled debug mode (only for development purposes, do not use for production)
+
+### Module
+
+When using modules you can choose between 2 variants, `mikado.xxx.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported explicitly by `import { register } from "./dist/module/mikado.js"`.
+
+Also, there exist a debug version for the development and pre-compiled minified version for production builds.
+
+<!--
+If you are interested how to use the "src" folder then check this repo, it uses 3 different compilation techniques which all resolves the compiler flags:
+
+1. Closure Compiler Simple
+2. Closure Compiler Advanced
+3. Babel + Compiler-Plugin
+-->
+
 ### Browser
 
 Load the bundle by a script tag:
@@ -300,11 +304,11 @@ Use the bundled version exported as a module:
 </script>
 ```
 
-Also, pre-compiled non-bundled production-ready modules are located in `dist/module/`.
+Also, pre-compiled non-bundled production-ready modules are located in `dist/module-min/`.
 
 ```html
 <script>
-    import Mikado, { register } from "./dist/module/mikado.js";
+    import Mikado, { register } from "./dist/module-min/mikado.js";
     // bundled access by Mikado.register isn't available
     // requires direct access by e.g. register()
 </script>
@@ -318,7 +322,7 @@ You can also load modules via CDN:
 </script>
 ```
 
-> Loading modules via CDN isn't recommended at all, using modules in Javascript commonly expects to build/bundle your app properly.
+> Loading modules via CDN commonly expects to build/bundle your app properly before distribution. Do not load them via CDN in production.
 
 <a name="feature-comparison"></a>
 
@@ -445,7 +449,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#manipulate">DOM Manipulation Helpers</a>
+            <a href="#manipulate">View Manipulation Helpers</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -460,8 +464,8 @@ You can also load modules via CDN:
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>8.3 kb</td>
-        <td>3.0 kb</td>
+        <td>6.5 kb</td>
+        <td>3.4 kb</td>
     </tr>
 </table>
 
@@ -725,9 +729,11 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
 </table>
 
-The maximum possible **_index_** is 100, that requires a library to be the best in each category. The **_score_** value isn't normalized like the index, where a score of 100 represents the statistical midfield.
+The **_index_** is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
 
+<!--
 Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
+-->
 
 <a name="api"></a>
 
@@ -817,7 +823,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 - <a href="#Mikado.removeAttribute">Mikado.**removeAttribute**(node, attr)</a>
 
 <a name="options"></a>
-## Options
+## Mikado Options
 
 > Each Mikado instance, also named includes/partials can have their own options. Except inline partials always inherits the same options from its parent. For this reason you should prefer named includes over inlining in certain situations.
 
@@ -866,7 +872,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>state</b></td>
-        <td>Pass an extern object which should be referenced as the state used within template expressions.</td>
+        <td>Pass an extern object which should be referenced as the <code>state</code> used within template expressions.</td>
         <td>{ }</td>
     </tr>
     <tr></tr>
@@ -1008,8 +1014,8 @@ Compiler Flags:
 
 - `--type module`, `-t module` export as javascript modules (recommended)
 - `--type es5`, `-t es5` export as ES5-compatible package
-- `--extension html`, `--ext html`, `-e html` export as ES5-compatible package
-- `--inline`, `-i` or `--compact`, `-c` switch the build strategy to optimize either the performance or size
+- `--extension html`, `--ext html`, `-e html` the file extension which should be compiled
+- `--inline`, `-i` or `--compact`, `-c` switch the build strategy to optimize either the performance (inline) or size (compact)
 - `--force`, `-f` force overwriting existing files
 - `--pretty`, `-p` do not minify the compiled result
 - `--watch`, `-w` start the watcher for automatically compile when files has changed (just for development purposes)
@@ -1186,9 +1192,9 @@ const data = [{
 </script>
 ```
 
-> The name of a template inherits from its corresponding filename starting by the folder you passed to the `--src` flag.
+> The name of a template inherits from its corresponding filename starting by the folder you've passed through the `--src` flag when calling the compiler.
 
-After creation, you need mount to a DOM element as a destination for your render tasks:
+After creation, you need mount the Mikado view instance to an HTML element as a destination for your render tasks:
 
 ```js
 view.mount(HTMLelement);
@@ -1207,7 +1213,7 @@ Mikado(template).mount(document.body).render(data);
 
 There is just a single convention you always need to keep in mind:
 
-> **Every template has to provide **one single root element** as the outer boundary.**
+> **Every template has to provide one single root element as the outer boundary.**
 
 Instead of doing this in a template:
 
@@ -1342,22 +1348,16 @@ var data = [{
 }];
 ```
 
-Provide **_state_** payload (non-data-item specific values and helper methods used by the template):
+Provide **_state_** payload (includes specific values and helper methods used within template expressions):
 
 ```js
 var payload = {
-  page: 1,
   today: "2019-01-11",
+  theme: "custom",
   parseFooter: function(data) {
     return data.footer;
   }
 };
-```
-
-Provide **_state_** data (application-specific data and helper methods used by the template):
-
-```js
-view.state.theme = "custom";
 ```
 
 Mount the view to a target element as a destination for all the render tasks:
