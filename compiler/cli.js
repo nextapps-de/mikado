@@ -17,8 +17,10 @@ const parameter = parse_argv(process.argv, {
     pretty: 1, p: 1,
     watch: 1, w: 1,
     compact: 1, c: 1,
-    inline: 1, i: 1
+    inline: 1, i: 1,
+    help: 1, h: 1, info: 1
 });
+
 const extension = (parameter.extension || parameter.ext || parameter.e || parameter[2] || "html").replace(/^\./, "");
 const src = (parameter.source || parameter.src || parameter.s || parameter[0] || "").replace(/^\.[/\\]/, "");
 const dest = (parameter.destination || parameter.dest || parameter.d || parameter[1] || "").replace(/^\.[/\\]/, "");
@@ -29,7 +31,45 @@ let mode = parameter.mode || parameter.m || "default";
 const compact = mode === "compact" || parameter.compact || parameter.c || false;
 const inline = !compact && (mode === "inline" || parameter.inline || parameter.i || false);
 const watch = parameter.watch || parameter.w || false;
+const help = parameter.help || parameter.info || parameter.h || false;
 const extension_regex = new RegExp("\." + extension + "$");
+
+if(help){
+
+    console.log("");
+    console.log("Mikado Compiler CLI (Help)");
+    console.log("------------------------------------------");
+    console.log("--src {filepath}\tThe source file or folder. It should be the most inner folder which is covering every template. This also influences the template auto naming.");
+    console.log("-s {filepath}");
+    console.log("");
+    console.log("--dest {filepath}\tThe destination file or folder. When not set the destination files will be saved into the source folders.");
+    console.log("-d {filepath}");
+    console.log("");
+    console.log("--force\t\t\tSilently replace existing destination files.");
+    console.log("-f");
+    console.log("");
+    console.log("--pretty\t\tDoes not minify the output.");
+    console.log("-p");
+    console.log("");
+    console.log("--extension html\tSpecify the extension of files which should be compiled.");
+    console.log("--ext .html");
+    console.log("-e html");
+    console.log("");
+    console.log("--type module|es5\tSpecify if the template should be exported as ES6 module or as a legacy ES5 script.");
+    console.log("-t module|es5")
+    console.log("");
+    console.log("--mode compact|inline\tSwitch the build strategy to optimize either the performance or size.");
+    console.log("-m compact|inline");
+    console.log("--compact");
+    console.log("-c");
+    console.log("--inline");
+    console.log("-i");
+    console.log("");
+    console.log("--watch\t\t\tStart a watcher to automatically compile given sources when files has changed (for development purposes only).");
+    console.log("-w")
+
+    return;
+}
 
 if(!src){
 

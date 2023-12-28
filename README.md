@@ -1,6 +1,6 @@
 <h1></h1>
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="500px"><p></p></h1>
-<h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also provides the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
+<h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also providing the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <!--
 <a target="_blank" href="https://coveralls.io/github/nextapps-de/mikado?branch=master"><img src="https://coveralls.io/repos/github/nextapps-de/mikado/badge.svg?branch=master"></a>
@@ -23,18 +23,12 @@
 <a href="#express">Express Render Engine</a> &ensp;&bull;&ensp;
 <a href="CHANGELOG.md">Changelog</a>
 
-When you come from previous version: <a href="doc/migrate-0.8.md">Migration 0.8.x</a>
+When you come from any previous version: <a href="doc/migrate-0.8.md">Migration Guide 0.8.x</a>
 
 **Benchmark:**
 
 - <a href="#benchmark">Stress Test Benchmark</a>
 - https://krausest.github.io/js-framework-benchmark/current.html
-
-Rendering has by far the most **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
-On top, it also provides a **server-side-rendering** approach on an extreme performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
-Server and client are sharing the same template definitions simply written in **HTML-like markup**.
-The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Mikado is the only library which cuts both edges, on client-side and server-side.
 
 ## Support this Project
 
@@ -92,6 +86,13 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 -->
 
 ## Table of contents
+
+Rendering has by far the most **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
+On top, it also provides a **server-side-rendering** approach on an extreme performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
+Server and client are sharing the same template definitions simply written in **HTML-like markup**.
+The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
+Mikado is the only library which cuts both edges, on client-side and server-side.
+
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
@@ -157,7 +158,9 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 
 ### Bundles
 
-The abbreviations used at the end of the filenames:
+The bundles export all features to the public class identifier e.g. `Mikado.register()`.
+
+The abbreviations used at the end of the filenames indicates:
 
 - `bundle` All features included, Mikado is available on `window.Mikado`
 - `light` Only basic features are included, Mikado is available on `window.Mikado`
@@ -168,7 +171,7 @@ The abbreviations used at the end of the filenames:
 
 > Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including modules).
 
-> When using modules you can choose between 2 versions, `mikado.light.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported `import { register } from "./dist/module/mikado.js"`.
+> When using modules you can choose between 2 variants, `mikado.xxx.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported explicitly by `import { register } from "./dist/module/mikado.js"`.
 
 <!--
 If you are interested how to use the "src" folder then check this repo, it uses 3 different compilation techniques which all resolves the compiler flags:
@@ -265,7 +268,9 @@ If you are interested how to use the "src" folder then check this repo, it uses 
 
 > All debug versions are providing debug information through the console and gives you helpful advices on certain situations.
 
-Example:
+### Browser
+
+Load the bundle by a script tag:
 
 ```html
 <script src="dist/mikado.bundle.min.js"></script>
@@ -274,7 +279,7 @@ Example:
 </script>
 ```
 
-### Node.js
+### NPM
 
 Install Mikado via NPM:
 
@@ -286,12 +291,12 @@ The **_dist_** folder are located in `node_modules/mikado/dist/`.
 
 ### Javascript Modules
  
-A bundled version exported as a module:
+Use the bundled version exported as a module:
 
 ```html
 <script>
-  import Mikado from "./dist/mikado.bundle.module.min.js";
-  // bundled access through e.g. Mikado.register()
+    import Mikado from "./dist/mikado.bundle.module.min.js";
+    // bundled access by e.g. Mikado.register()
 </script>
 ```
 
@@ -299,17 +304,17 @@ Also, pre-compiled non-bundled production-ready modules are located in `dist/mod
 
 ```html
 <script>
-  import Mikado, { register } from "./dist/module/mikado.js";
-  // bundled access through Mikado.register does not exist
-  // requires direct access through e.g. register()
+    import Mikado, { register } from "./dist/module/mikado.js";
+    // bundled access by Mikado.register isn't available
+    // requires direct access by e.g. register()
 </script>
 ```
 
-You can also load modules via CDN, e.g.:
+You can also load modules via CDN:
 
 ```html
 <script>
-  import Mikado from "https://unpkg.com/mikado@0.8.1/dist/module/mikado.js";
+    import Mikado from "https://unpkg.com/mikado@0.8.1/dist/module/mikado.js";
 </script>
 ```
 
@@ -476,7 +481,7 @@ Run the benchmark (internal/data-driven):<br>
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/bench</a>
 
-The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for file size (minified/gzip) and memory (sum of allocation during the whole test).
+The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for memory (sum of allocated memory during the whole test).
 
 #### Keyed
 
@@ -720,9 +725,7 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
 </table>
 
-<!--
-The file size and memory gets less relevance. The maximum possible **_index_** is 1000, that requires a library to be the best in each category. The **_score_** value is relational where a score of 1000 represents the statistical midfield.
--->
+The maximum possible **_index_** is 100, that requires a library to be the best in each category. The **_score_** value isn't normalized like the index, where a score of 100 represents the statistical midfield.
 
 Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
 
@@ -736,27 +739,34 @@ Constructor:
 
 - new <a href="#mikado.new">**Mikado**(template, \<options\>)</a> : view
 
+Instance properties:
+
+- <a href="#view.name">view.**name**</a>
+- <a href="#view.root">view.**root**</a>
+- <a href="#view.length">view.**length**</a>
+- <a href="#view.state">view.**state**</a>
+- <a href="#view.store">view.**store**</a>
+
 Static methods:
 
-- <a href="#mikado.new">Mikado(template, \<options\>)</a> : view
 - <a href="#mikado.once">Mikado.**once**(root, template, \<data\>, \<state\>, \<callback\>)</a>
-- <a href="#mikado.register">Mikado.**register**(template)</a>
+- <a href="#mikado.register">Mikado.**register**(template, \<options\>)</a>
 - <a href="#mikado.unregister">Mikado.**unregister**(template)</a>
 
-Static methods (not included in mikado.light.js):
+Instance methods (not included in mikado.light.js):
 
 <!-- - <a href="#mikado.compile">Mikado.**compile**(\<template | string\>)</a> -->
 - <a href="#mikado.route">mikado.**route**(name, handler, \<options\>)</a>
 - <a href="#mikado.listen">mikado.**listen**(event, \<options\>)</a>
 - <a href="#mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
-- <a href="#mikado.dispatch">mikado.**dispatch**(name, \<target\>, \<event\>)</a>
+- <a href="#mikado.dispatch">mikado.**dispatch**(route, \<target\>, \<event\>)</a>
 
 Instance methods:
 
 - <a href="#view.mount">view.**mount**(root, \<hydrate\>)</a>
 - <a href="#view.render">view.**render**(\<data\>, \<state\>, \<callback\>)</a>
-- <a href="#view.reconcile">view.**reconcile**(data)</a>
-- <a href="#view.create">view.**create**(data, \<state\>)</a>
+- <a href="#view.reconcile">view.**reconcile**(data, \<state\>)</a>
+- <a href="#view.create">view.**create**(data, \<state\>, \<index\>)</a>
 - <a href="#view.add">view.**add**(data, \<state\>, <index\>)</a>
 - <a href="#view.append">view.**append**(data, \<state\>, <index\>)</a>
 - <a href="#view.update">view.**update**(node | index, data, \<state\>)</a>
@@ -774,7 +784,7 @@ Instance methods (not included in mikado.light.js):
 - <a href="#view.unlisten">view.**unlisten**(event, \<options\>)</a>
 - <a href="#view.dispatch">view.**dispatch**(name, \<target\>, \<event\>)</a>
 
-DOM manipulation helpers (optional, not included in mikado.light.js):
+View manipulation helpers (optional, not included in mikado.light.js):
 
 - <a href="#view.move">view.**move**(node | index, index)</a>
 - <a href="#view.shift">view.**shift**(node | index, index)</a>
@@ -785,13 +795,6 @@ DOM manipulation helpers (optional, not included in mikado.light.js):
 - <a href="#view.before">view.**before**(node | index, node | index)</a>
 - <a href="#view.after">view.**after**(node | index, node | index)</a>
 - <a href="#view.swap">view.**swap**(node | index, node | index)</a>
-
-Instance properties:
-
-- <a href="#view.name">view.**name**</a>
-- <a href="#view.length">view.**length**</a>
-- <a href="#view.store">view.**store**</a>
-- <a href="#view.state">view.**state**</a>
 
 Static DOM Cache helpers (optional, not included in mikado.light.js):
 
@@ -816,7 +819,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 <a name="options"></a>
 ## Options
 
-> Each Mikado instance can have its own options.
+> Each Mikado instance, also named includes/partials can have their own options. Except inline partials always inherits the same options from its parent. For this reason you should prefer named includes over inlining in certain situations.
 
 <table>
     <tr></tr>
@@ -827,25 +830,25 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
     </tr>
     <tr>
         <td><b>root</b><br><b>mount</b></td>
-        <td>The destination root where the template should be rendered.</td>
+        <td>The destination root element on where the template should be rendered.</td>
         <td>null</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>template</b></td>
-        <td>The template which should be assigned to the Mikado instance (JSON or the name of the template when registered/loaded externally).</td>
+        <td>You will need to assign a template to the Mikado instance (or the name of the template when already registered/loaded).</td>
         <td></td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>async</b></td>
-        <td>Perform render tasks asynchronously and return a Promise.</td>
+        <td>Perform the <code>.render(data)</code> task asynchronously and return a Promise.</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>cache</b></td>
-        <td>Enable/disable DOM state <a href="#cache">caching</a> which can greatly increase performance by a factor up to 25.</td>
+        <td>Enable/disable <a href="#cache">DOM state caching</a> which can greatly increase performance by a factor up to 25. When enabled make sure to use the <a href="#cache">DOM Cache Helpers</a> when manipulating the DOM directly on properties which are also covered by template expressions.</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -857,7 +860,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>recycle</b></td>
-        <td>When enabled all dom elements which are already rendered will be re-used (recycled) for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Whe enabled make sure to use the <a>Virtual DOM Manipulation</a> helpers.</td>
+        <td>When enabled all dom elements which are already rendered will be re-used (recycled) for the next render task. This performs better, but it may produce issues when manual dom manipulations was made which are not fully covered by the template. Alternatively use the <code>keyed</code> strategy, which limits recycling of components by matching the same data key (e.g. ID).</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -869,13 +872,13 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>pool</b></td>
-        <td>Set it to true (unbounded) or specify the pool size. Pooling can greatly enhance both the keyed and non-keyed recycle strategy.</td>
+        <td>Set it to true (unbounded) or specify the pool size by a numeric value (the latter is recommended when using pools). Pooling can greatly enhance both the keyed and non-keyed recycle strategy.</td>
         <td>false</td>
     </tr>
     <tr></tr>
     <tr>
         <td><b>hydrate</b></td>
-        <td>Progressively enables partial hydration of already existing DOM structures when mounted.</td>
+        <td>Progressively enables partial hydration of already existing DOM structures when mounted. Make sure the existing DOM structure is based on the same template. When something differs from the given template schema, the hydration will stop and silently falls back into the default build strategy.</td>
         <td>false</td>
     </tr>
 </table>
@@ -952,7 +955,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 ### 1. Variant: Using Dedicated Compiler (Recommended)
 -->
 
-Define a HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
+Define an HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
 
 ```html
 <table>
@@ -971,7 +974,13 @@ Save this template e.g. to _tpl/partial/user.html_
 
 > The preserved keyword **_data_** is a reference to the passed data item. You can access the whole nested object.
 
-Mikado comes with a builtin template compiler "mikado-compile" which has to be run through Node.js and provides a very simple command-line interface (CLI) to start compilation tasks. The template compiles into a native javascript file which needs to be passed during creation of a Mikado instance. The same markup is also used for the server-side rendering part, so you can share the same template sources by client and server rendering.
+Mikado comes with a builtin template compiler you can simply access by typing `npx mikado-compile` into your console. The compiler uses a very simple command-line interface (CLI) running on Node.js to perform compilation tasks. The template compiles into a native javascript file which needs to be passed during creation of a Mikado instance. The same markup is also used for the server-side rendering part, so you can share the same template sources for client and server rendering.
+
+Show help to list all available commands:
+
+```cmd
+npx mikado-compile --help
+```
 
 Compile the template through the command line by:
 
