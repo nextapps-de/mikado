@@ -38,7 +38,7 @@ import {
     setAttribute,
     setAttributes,
 
-    getClass,
+    getClasses,
     hasClass,
     toggleClass,
     toggleClasses,
@@ -102,8 +102,6 @@ Mikado.prototype.replace;
 /** @export */
 Mikado.prototype.render;
 /** @export */
-Mikado.prototype.reconcile;
-/** @export */
 Mikado.prototype.remove;
 /** @export */
 Mikado.prototype.node;
@@ -135,7 +133,7 @@ if(SUPPORT_CACHE_HELPERS){
     Mikado["getHtml"] = getHtml;
 
     Mikado["setClass"] = setClass;
-    Mikado["getClass"] = getClass;
+    Mikado["getClasses"] = getClasses;
     Mikado["hasClass"] = hasClass;
     Mikado["toggleClass"] = toggleClass;
     Mikado["toggleClasses"] = toggleClasses;

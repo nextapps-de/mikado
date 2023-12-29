@@ -14,8 +14,6 @@ import {
     SUPPORT_CACHE,
     SUPPORT_KEYED,
     SUPPORT_POOLS,
-    SUPPORT_STORAGE,
-    SUPPORT_TEMPLATE_EXTENSION,
     SUPPORT_CALLBACKS,
     SUPPORT_ASYNC,
     SUPPORT_REACTIVE,
@@ -991,9 +989,9 @@ Mikado.prototype.add = function(data, state, index){
 
     const node = this.create(data, state, index, 1);
 
-    if(SUPPORT_STORAGE) {
+    //if(SUPPORT_STORAGE) {
 
-        let stealth_mode;
+        //let stealth_mode;
 
         // if(SUPPORT_REACTIVE && this.proxy){
         //
@@ -1028,7 +1026,7 @@ Mikado.prototype.add = function(data, state, index){
         //         node["_data"] = data;
         //     }
         // }
-    }
+    //}
 
     if(has_index){
 

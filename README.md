@@ -12,18 +12,17 @@
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
-<a href="#started">Getting Started</a> &ensp;&bull;&ensp;
+<a href="#get-started">Getting Started</a> &ensp;&bull;&ensp;
 <a href="#options">Options</a> &ensp;&bull;&ensp;
 <a href="#api">API</a> &ensp;&bull;&ensp;
 <a href="#concept">Concept</a> &ensp;&bull;&ensp;
 <a href="#benchmark">Benchmark</a> &ensp;&bull;&ensp;
-<a href="#builds">Custom Builds</a> &ensp;&bull;&ensp;
 <a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
 <a href="#ssr">Server-Side-Rendering</a> &ensp;&bull;&ensp;
 <a href="#express">Express Render Engine</a> &ensp;&bull;&ensp;
 <a href="CHANGELOG.md">Changelog</a>
 
-When you come from any previous version: <a href="doc/migrate-0.8.md">Migration Guide 0.8.x</a>
+When you are coming from any previous version: <a href="doc/migrate-0.8.md">Migration Guide 0.8.x</a>
 
 **Benchmark:**
 
@@ -103,7 +102,7 @@ Packed with a smart routing concept of event delegation, Mikado gives you everyt
    - <a href="#compiler-html5">Using HTML5 Templates</a>
    - <a href="#compiler-string">Using Template String</a>
 7. <a href="#conventions">Rules and Conventions</a>
-8. <a href="#started">Basic Example</a>
+8. <a href="#get-started">Basic Example</a>
 9. <a href="#advanced_example">Advanced Example</a>
 10. <a href="#event">Event Bindings</a>
     - <a href="#view.listen">Explicit Register/Unregister</a>
@@ -152,11 +151,9 @@ Packed with a smart routing concept of event delegation, Mikado gives you everyt
 27. <a href="#builds">Custom Builds</a>
 
 <a name="get-latest"></a>
-
 ## Get Latest
 
 > Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including modules).
-
 
 <table>
     <tr></tr>
@@ -253,7 +250,7 @@ Packed with a smart routing concept of event delegation, Mikado gives you everyt
 
 ### Bundles
 
-> The bundles export all features to the public class identifier e.g. `Mikado.register()`.
+> Bundles export all their features as static functions to the public class namespace e.g. `Mikado.register()`.
 
 The abbreviations used at the end of the filenames indicates:
 
@@ -266,17 +263,11 @@ The abbreviations used at the end of the filenames indicates:
 
 ### Module
 
-When using modules you can choose between 2 variants, `mikado.xxx.module.min.js` has all features bundled on the public class identifier e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported explicitly by `import { register } from "./dist/module/mikado.js"`.
+When using modules you can choose from 2 variants: `mikado.xxx.module.min.js` has all features bundled on the public class namespace e.g. `Mikado.register()`, whereas the folder `/dist/module/` export most of the features as functions which needs to be imported explicitly by `import { register } from "./dist/module/mikado.js"`.
 
-Also, there exist a debug version for the development and pre-compiled minified version for production builds.
-
-<!--
-If you are interested how to use the "src" folder then check this repo, it uses 3 different compilation techniques which all resolves the compiler flags:
-
-1. Closure Compiler Simple
-2. Closure Compiler Advanced
-3. Babel + Compiler-Plugin
--->
+Also, for each variant there exist:
+1. A debug version for the development
+2. A pre-compiled minified version for production
 
 ### Browser
 
@@ -331,7 +322,6 @@ You can also load modules via CDN:
 > Loading modules via CDN commonly expects to build/bundle your app properly before distribution. Do not load them via CDN in production.
 
 <a name="feature-comparison"></a>
-
 ### Feature Comparison "Bundle vs. Light"
 
 <table>
@@ -359,7 +349,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#concept">Shared Pools / Live Pools</a>
+            <a href="#pool">Shared Pools / Live Pools</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -399,7 +389,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#">Extended Template Expressions</a>
+            <a href="#expression">Extended Template Expressions</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -415,7 +405,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#includes">Includes/Partials/Loops</a>
+            <a href="#include">Includes/Partials/Loops</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -463,7 +453,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#cache">DOM Cache Helpers</a>
+            <a href="#helper">DOM Cache Helpers</a>
         </td>
         <td>✓</td>
         <td>-</td>
@@ -476,7 +466,6 @@ You can also load modules via CDN:
 </table>
 
 <a name="benchmark"></a>
-
 ## Benchmark Ranking (Rendering Performance)
 
 Run the benchmark (non-keyed recycle):<br>
@@ -488,10 +477,12 @@ Run the benchmark (keyed recycle):<br>
 Run the benchmark (internal/data-driven):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/bench/#internal">https://raw.githack.com/nextapps-de/mikado/bench/#internal</a><br>
 
+<!--
 Sources and readme:<br>
 <a href="bench/">https://github.com/nextapps-de/mikado/tree/bench</a>
+-->
 
-The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for memory (sum of allocated memory during the whole test).
+The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for memory (the sum of allocated memory during the whole test).
 
 #### Keyed
 
@@ -737,12 +728,7 @@ The values represent operations per second, each benchmark task has to process a
 
 The **_index_** is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
 
-<!--
-Read more about this test and also show ranking table for "non-keyed" and "data-driven" <a href="https://github.com/nextapps-de/mikado/blob/bench/README.md"><u>here</u></a>. <!-- or take a look on <a href="https://github.com/nextapps-de/mikado/issues/7">Mobile Benchmark Results</a>.-->
--->
-
 <a name="api"></a>
-
 ## API Overview
 
 > Most of these methods are optional, you can just use **_view.render(data)_** to apply all changes automatically.
@@ -753,80 +739,87 @@ Constructor:
 
 Instance properties:
 
-- <a href="#view.name">view.**name**</a>
-- <a href="#view.root">view.**root**</a>
-- <a href="#view.length">view.**length**</a>
-- <a href="#view.state">view.**state**</a>
-- <a href="#view.store">view.**store**</a>
+- view.<a href="#view.name">**name**</a>
+- view.<a href="#view.root">**root**</a>
+- view.<a href="#view.length">**length**</a>
+- view.<a href="#view.state">**state**</a>
+- view.<a href="#view.store">**store**</a>
 
 Static methods:
 
-- <a href="#mikado.once">Mikado.**once**(root, template, \<data\>, \<state\>, \<callback\>)</a>
-- <a href="#mikado.register">Mikado.**register**(template, \<options\>)</a>
-- <a href="#mikado.unregister">Mikado.**unregister**(template)</a>
+- Mikado.<a href="#mikado.once">**once**(root, template, \<data\>, \<state\>, \<callback\>)</a>
+- Mikado.<a href="#mikado.register">**register**(template, \<options\>)</a>
+- Mikado.<a href="#mikado.unregister">**unregister**(template)</a>
 
-Instance methods (not included in mikado.light.js):
+Static methods (not included in mikado.light.js):
 
-<!-- - <a href="#mikado.compile">Mikado.**compile**(\<template | string\>)</a> -->
-- <a href="#mikado.route">mikado.**route**(name, handler, \<options\>)</a>
-- <a href="#mikado.listen">mikado.**listen**(event, \<options\>)</a>
-- <a href="#mikado.unlisten">mikado.**unlisten**(event, \<options\>)</a>
-- <a href="#mikado.dispatch">mikado.**dispatch**(route, \<target\>, \<event\>)</a>
+<!-- - <a href="#mikado.compile">**compile**(\<template | string\>)</a> -->
+- Mikado.<a href="#mikado.route">**route**(name, function, \<options\>)</a>
+- Mikado.<a href="#mikado.listen">**listen**(event, \<options\>)</a>
+- Mikado.<a href="#mikado.unlisten">**unlisten**(event, \<options\>)</a>
+- Mikado.<a href="#mikado.dispatch">**dispatch**(route, \<target\>, \<event\>)</a>
 
 Instance methods:
 
-- <a href="#view.mount">view.**mount**(root, \<hydrate\>)</a>
-- <a href="#view.render">view.**render**(\<data\>, \<state\>, \<callback\>)</a>
-- <a href="#view.reconcile">view.**reconcile**(data, \<state\>)</a>
-- <a href="#view.create">view.**create**(data, \<state\>, \<index\>)</a>
-- <a href="#view.add">view.**add**(data, \<state\>, <index\>)</a>
-- <a href="#view.append">view.**append**(data, \<state\>, <index\>)</a>
-- <a href="#view.update">view.**update**(node | index, data, \<state\>)</a>
-- <a href="#view.replace">view.**replace**(node | index, data, \<state\>)</a>
-- <a href="#view.remove">view.**remove**(node, <count\>)</a>
-- <a href="#view.clear">view.**clear**()</a>
-- <a href="#view.node">view.**node**(index)</a>
-- <a href="#view.index">view.**index**(node)</a>
-- <a href="#view.destroy">view.**destroy**()</a>
+- view.<a href="#view.mount">**mount**(root, \<hydrate\>)</a>
+- view.<a href="#view.render">**render**(\<data\>, \<state\>, \<callback\>)</a>
+- view.<a href="#view.create">**create**(data, \<state\>, \<index\>)</a>&thinsp;:&thinsp;node
+- view.<a href="#view.add">**add**(data, \<state\>, <index\>)</a>
+- view.<a href="#view.append">**append**(data, \<state\>, <index\>)</a>
+- view.<a href="#view.update">**update**(node | index, data, \<state\>, <index\>)</a>
+- view.<a href="#view.replace">**replace**(node | index, data, \<state\>, <index\>)</a>
+- view.<a href="#view.remove">**remove**(node, <count\>)</a>
+- view.<a href="#view.clear">**clear**()</a>
+- view.<a href="#view.node">**node**(index)</a>&thinsp;:&thinsp;node
+- view.<a href="#view.index">**index**(node)</a>&thinsp;:&thinsp;number
+- view.<a href="#view.destroy">**destroy**()</a>
 
 Instance methods (not included in mikado.light.js):
 
-- <a href="#view.route">view.**route**(name, handler, \<options\>)</a>
-- <a href="#view.listen">view.**listen**(event, \<options\>)</a>
-- <a href="#view.unlisten">view.**unlisten**(event, \<options\>)</a>
-- <a href="#view.dispatch">view.**dispatch**(name, \<target\>, \<event\>)</a>
+- view.<a href="#view.route">**route**(name, function, \<options\>)</a>
+- view.<a href="#view.listen">**listen**(event, \<options\>)</a>
+- view.<a href="#view.unlisten">**unlisten**(event, \<options\>)</a>
+- view.<a href="#view.dispatch">**dispatch**(name, \<target\>, \<event\>)</a>
 
 View manipulation helpers (optional, not included in mikado.light.js):
 
-- <a href="#view.move">view.**move**(node | index, index)</a>
-- <a href="#view.shift">view.**shift**(node | index, index)</a>
-- <a href="#view.up">view.**up**(node | index)</a>
-- <a href="#view.down">view.**down**(node | index)</a>
-- <a href="#view.first">view.**first**(node | index)</a>
-- <a href="#view.last">view.**last**(node | index)</a>
-- <a href="#view.before">view.**before**(node | index, node | index)</a>
-- <a href="#view.after">view.**after**(node | index, node | index)</a>
-- <a href="#view.swap">view.**swap**(node | index, node | index)</a>
+- view.<a href="#view.move">**move**(node | index, position)</a>
+- view.<a href="#view.shift">**shift**(node | index, offset)</a>
+- view.<a href="#view.up">**up**(node | index)</a>
+- view.<a href="#view.down">**down**(node | index)</a>
+- view.<a href="#view.first">**first**(node | index)</a>
+- view.<a href="#view.last">**last**(node | index)</a>
+- view.<a href="#view.before">**before**(node | index, node | index)</a>
+- view.<a href="#view.after">**after**(node | index, node | index)</a>
+- view.<a href="#view.swap">**swap**(node | index, node | index)</a>
 
 Static DOM Cache helpers (optional, not included in mikado.light.js):
 
-- <a href="#Mikado.setText">Mikado.**setText**(node, text)</a>
-- <a href="#Mikado.getText">Mikado.**getText**(node)</a>
-- <a href="#Mikado.setHTML">Mikado.**setHTML**(node, html)</a>
-- <a href="#Mikado.getHTML">Mikado.**getHTML**(node)</a>
-- <a href="#Mikado.setClass">Mikado.**setClass**(node, class)</a>
-- <a href="#Mikado.getClass">Mikado.**getClass**(node)</a>
-- <a href="#Mikado.hasClass">Mikado.**hasClass**(node, class)</a>
-- <a href="#Mikado.removeClass">Mikado.**removeClass**(node, class)</a>
-- <a href="#Mikado.toggleClass">Mikado.**toggleClass**(node, class, \<state\>)</a>
-- <a href="#Mikado.setStyle">Mikado.**setStyle**(node, property, value)</a>
-- <a href="#Mikado.getStyle">Mikado.**getStyle**(node, property)</a>
-- <a href="#Mikado.setCSS">Mikado.**setCSS**(node, css)</a>
-- <a href="#Mikado.getCSS">Mikado.**getCSS**(node)</a>
-- <a href="#Mikado.setAttribute">Mikado.**setAttribute**(node, attr, value)</a>
-- <a href="#Mikado.getAttribute">Mikado.**getAttribute**(node, attr)</a>
-- <a href="#Mikado.hasAttribute">Mikado.**hasAttribute**(node, attr)</a>
-- <a href="#Mikado.removeAttribute">Mikado.**removeAttribute**(node, attr)</a>
+- Mikado.<a href="#Mikado.setText">**setText**(node, text)</a>
+- Mikado.<a href="#Mikado.getText">**getText**(node)</a>&thinsp;:&thinsp;string
+- Mikado.<a href="#Mikado.setHtml">**setHtml**(node, html)</a>
+- Mikado.<a href="#Mikado.getHtml">**getHtml**(node)</a>&thinsp;:&thinsp;string
+- Mikado.<a href="#Mikado.setClass">**setClass**(node, classname)</a>
+- Mikado.<a href="#Mikado.setClasses">**setClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.addClass">**addClass**(node, classname)</a>
+- Mikado.<a href="#Mikado.addClasses">**addClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.getClasses">**getClasses**(node)</a>&thinsp;:&thinsp;[string]
+- Mikado.<a href="#Mikado.hasClass">**hasClass**(node, classname)</a>&thinsp;:&thinsp;boolean
+- Mikado.<a href="#Mikado.removeClass">**removeClass**(node, classname)</a>
+- Mikado.<a href="#Mikado.removeClasses">**removeClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.toggleClass">**toggleClass**(node, classname, \<state\>)</a>
+- Mikado.<a href="#Mikado.toggleClasses">**toggleClasses**(node, [classnames], \<state\>)</a>
+- Mikado.<a href="#Mikado.setStyle">**setStyle**(node, property, value)</a>
+- Mikado.<a href="#Mikado.setStyles">**setStyles**(node, {property: value})</a>
+- Mikado.<a href="#Mikado.getStyle">**getStyle**(node, property)</a>&thinsp;:&thinsp;string
+- Mikado.<a href="#Mikado.setCss">**setCss**(node, css)</a>
+- Mikado.<a href="#Mikado.getCss">**getCss**(node)</a>&thinsp;:&thinsp;string
+- Mikado.<a href="#Mikado.setAttribute">**setAttribute**(node, attribute, value)</a>
+- Mikado.<a href="#Mikado.setAttributes">**setAttributes**(node, {attribute: value})</a>
+- Mikado.<a href="#Mikado.getAttribute">**getAttribute**(node, attribute)</a>&thinsp;:&thinsp;string | null
+- Mikado.<a href="#Mikado.hasAttribute">**hasAttribute**(node, attribute)</a>&thinsp;:&thinsp;boolean
+- Mikado.<a href="#Mikado.removeAttribute">**removeAttribute**(node, attribute)</a>
+- Mikado.<a href="#Mikado.removeAttributes">**removeAttributes**(node, [attributes])</a>
 
 <a name="options"></a>
 ## Mikado Options
@@ -894,197 +887,6 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
         <td>false</td>
     </tr>
 </table>
-
-<a name="compiler"></a>
-
-## Compile Templates
-
-<a name="compiler"></a>
-
-<!--
-#### Compiler Methods
-
-<table>
-    <tr></tr>
-    <tr>
-        <td>Method</td>
-        <td>Notes</td>
-    </tr>
-    <tr>
-        <td><a href="#mikado-compile">Mikado Compiler (CLI)</a></td>
-        <td>
-            <ul>
-                <li>instant performance</li>
-                <li>recommended for production</li>
-                <li>bundle templates easily out of the box</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-service">Compiler Service (Server)</a></td>
-        <td>
-            <ul>
-                <li>server-side</li>
-                <li>good for production</li>
-                <li>bundle not required</li>
-                <li>best caching/re-using capabilities</li>
-                <li>enable live updates</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-html5">HTML5 Templates (Runtime)</a></td>
-        <td>
-            <ul>
-                <li>requires compiling during runtime</li>
-                <li>good for development</li>
-                <li>bundle templates requires additional tooling (like webpack)</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-string">Template String (Runtime)</a></td>
-        <td>
-            <ul>
-                <li>requires compiling during runtime</li>
-                <li>compiling strings comes with an extra cost</li>
-                <li>good for development</li>
-                <li>bundle templates easily out of the box</li>
-            </ul>
-        </td>
-    </tr>
-</table>
-
-**Note:** Choosing a specific compiler method has no impact on the render performance.
--->
-
-<a name="mikado-compile"></a>
-
-<!--
-### 1. Variant: Using Dedicated Compiler (Recommended)
--->
-
-Define an HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
-
-```html
-<table>
-  <tr>
-    <td>User:</td>
-    <td>{{ data.username }}</td>
-  </tr>
-  <tr>
-    <td>Tweets:</td>
-    <td>{{ data.tweets.length }}</td>
-  </tr>
-</table>
-```
-
-Save this template e.g. to _tpl/partial/user.html_
-
-> The preserved keyword **_data_** is a reference to the passed data item. You can access the whole nested object.
-
-Mikado comes with a builtin template compiler you can simply access by typing `npx mikado-compile` into your console. The compiler uses a very simple command-line interface (CLI) running on Node.js to perform compilation tasks. The template compiles into a native javascript file which needs to be passed during creation of a Mikado instance. The same markup is also used for the server-side rendering part, so you can share the same template sources for client and server rendering.
-
-Show help to list all available commands:
-
-```cmd
-npx mikado-compile --help
-```
-
-Compile the template through the command line by:
-
-```cmd
-npx mikado-compile tpl/partial/user.html
-```
-
-**Basic Notation:**
-> npx mikado-compile _source \<destination\>_
-
-<!--
-Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
--->
-
-When no destination folder was set, the compiled files will be saved to the source folder. After compilation, you will have 3 different files:
-
-1. **list.js** the template compiled as a ES6 module (which needs to be imported)
-2. **list.es5.js** the template compiled as ES5 compatible Javascript (which automatically register when loaded by script tag)
-3. **list.html** the source template you have implemented (do not delete it)
-
-**Extended Notation:**
-> npx mikado-compile --src _{ source }_ --dest _{ destination }_ --extension html --type module  --compact
-
-Compiler Flags:
-
-- `--type module`, `-t module` export as javascript modules (recommended)
-- `--type es5`, `-t es5` export as ES5-compatible package
-- `--extension html`, `--ext html`, `-e html` the file extension which should be compiled
-- `--inline`, `-i` or `--compact`, `-c` switch the build strategy to optimize either the performance (inline) or size (compact)
-- `--force`, `-f` force overwriting existing files
-- `--pretty`, `-p` do not minify the compiled result
-- `--watch`, `-w` start the watcher for automatically compile when files has changed (just for development purposes)
-
-Supported flags as attributes on the template root:
-
-```html
-<!-- switch the build strategy to prebuilt enabled cache -->
-<table cache="true"></table>
-```
-```html
-<!-- switch the build strategy to prebuilt disabled cache -->
-<table cache="false"></table>
-```
-
-Using the flag attributes are the most performant variants but also cost you some flexibility, because the cache strategy couldn't be changed in runtime, it needs to change in markup before compilation.
-
-### Auto Naming
-
-There is a new naming system which will apply by default. The name of your html files will be used as unique identifiers of your templates.
-Because several folders can include same filenames, the template name inherits from the full path you pass in as `--src`.
-
-Assuming the following file structure:
-```
-tpl/view/start.html
-tpl/view/user.html
-tpl/view/cart.html
-tpl/partial/start.html
-tpl/partial/user.html
-tpl/partial/cart.html
-```
-
-The command should define the path `/tpl/` as the source root because it is the most inner folder which covers all files:
-```cmd
-npx mikado-compile ./tpl/
-```
-
-The template names then becomes `view/start`, `view/user`, `view/cart` and `partial/start`, `partial/user`, `partial/cart` for the partials. So when including just use this name in your expression `<table include="partial/user">`
-
-The wrong way is to compile the folder /view/ and /partial/ separately, because their template names will be same.
-```cmd
-npx mikado-compile ./tpl/view/
-npx mikado-compile ./tpl/partial/
-```
-This might also work, but it is better not to do.
-
-### Prebuilt Cache Strategy
-
-The option `{ cache: true/false }` when creating a Mikado instance could be better declared withing templates on their root element, let the compiler produce more optimized code for this strategy.
-
-```html
-<table cache="true">
-    <!-- ... -->
-</table>
-```
-
-Also use this approach when set `cache="false"`:
-
-```html
-<table cache="false">
-    <!-- ... -->
-</table>
-```
 
 <!--
 <a name="compiler-html5"></a>
@@ -1158,8 +960,7 @@ var view = new Mikado(tpl);
 ```
 -->
 
-<a name="started"></a>
-
+<a name="get-started"></a>
 ## Basic Example
 
 Assume there is an array of data items to render (or just one item as an object):
@@ -1425,6 +1226,196 @@ view.render(data, payload).then(function() {
 // or use async/await:
 await view.render(data, payload);
 console.log("finished.");
+```
+
+<a name="compiler"></a>
+## Compile Templates
+
+<a name="compiler"></a>
+
+<!--
+#### Compiler Methods
+
+<table>
+    <tr></tr>
+    <tr>
+        <td>Method</td>
+        <td>Notes</td>
+    </tr>
+    <tr>
+        <td><a href="#mikado-compile">Mikado Compiler (CLI)</a></td>
+        <td>
+            <ul>
+                <li>instant performance</li>
+                <li>recommended for production</li>
+                <li>bundle templates easily out of the box</li>
+            </ul>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-service">Compiler Service (Server)</a></td>
+        <td>
+            <ul>
+                <li>server-side</li>
+                <li>good for production</li>
+                <li>bundle not required</li>
+                <li>best caching/re-using capabilities</li>
+                <li>enable live updates</li>
+            </ul>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-html5">HTML5 Templates (Runtime)</a></td>
+        <td>
+            <ul>
+                <li>requires compiling during runtime</li>
+                <li>good for development</li>
+                <li>bundle templates requires additional tooling (like webpack)</li>
+            </ul>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><a href="#compiler-string">Template String (Runtime)</a></td>
+        <td>
+            <ul>
+                <li>requires compiling during runtime</li>
+                <li>compiling strings comes with an extra cost</li>
+                <li>good for development</li>
+                <li>bundle templates easily out of the box</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+**Note:** Choosing a specific compiler method has no impact on the render performance.
+-->
+
+<a name="mikado-compile"></a>
+
+<!--
+### 1. Variant: Using Dedicated Compiler (Recommended)
+-->
+
+Define an HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
+
+```html
+<table>
+  <tr>
+    <td>User:</td>
+    <td>{{ data.username }}</td>
+  </tr>
+  <tr>
+    <td>Tweets:</td>
+    <td>{{ data.tweets.length }}</td>
+  </tr>
+</table>
+```
+
+Save this template e.g. to _tpl/partial/user.html_
+
+> The preserved keyword **_data_** is a reference to the passed data item. You can access the whole nested object.
+
+Mikado comes with a builtin template compiler you can simply access by typing `npx mikado-compile` into your console. The compiler uses a very simple command-line interface (CLI) running on Node.js to perform compilation tasks. The template compiles into a native javascript file which needs to be passed during creation of a Mikado instance. The same markup is also used for the server-side rendering part, so you can share the same template sources for client and server rendering.
+
+Show help to list all available commands:
+
+```cmd
+npx mikado-compile --help
+```
+
+Compile the template through the command line by:
+
+```cmd
+npx mikado-compile tpl/partial/user.html
+```
+
+**Basic Notation:**
+> npx mikado-compile _source \<destination\>_
+
+<!--
+Instead of `npx mikado compile` you can also use `npx mikado-compile` alternatively. When a destination was not set, the input folder will be used instead.
+-->
+
+When no destination folder was set, the compiled files will be saved to the source folder. After compilation, you will have 3 different files:
+
+1. **list.js** the template compiled as a ES6 module (which needs to be imported)
+2. **list.es5.js** the template compiled as ES5 compatible Javascript (which automatically register when loaded by script tag)
+3. **list.html** the source template you have implemented (do not delete it)
+
+**Extended Notation:**
+> npx mikado-compile --src _{ source }_ --dest _{ destination }_ --extension html --type module  --compact
+
+Compiler Flags:
+
+- `--type module`, `-t module` export as javascript modules (recommended)
+- `--type es5`, `-t es5` export as ES5-compatible package
+- `--extension html`, `--ext html`, `-e html` the file extension which should be compiled
+- `--inline`, `-i` or `--compact`, `-c` switch the build strategy to optimize either the performance (inline) or size (compact)
+- `--force`, `-f` force overwriting existing files
+- `--pretty`, `-p` do not minify the compiled result
+- `--watch`, `-w` start the watcher for automatically compile when files has changed (just for development purposes)
+
+Supported flags as attributes on the template root:
+
+```html
+<!-- switch the build strategy to prebuilt enabled cache -->
+<table cache="true"></table>
+```
+```html
+<!-- switch the build strategy to prebuilt disabled cache -->
+<table cache="false"></table>
+```
+
+Using the flag attributes are the most performant variants but also cost you some flexibility, because the cache strategy couldn't be changed in runtime, it needs to change in markup before compilation.
+
+### Auto Naming
+
+There is a new naming system which will apply by default. The name of your html files will be used as unique identifiers of your templates.
+Because several folders can include same filenames, the template name inherits from the full path you pass in as `--src`.
+
+Assuming the following file structure:
+```
+tpl/view/start.html
+tpl/view/user.html
+tpl/view/cart.html
+tpl/partial/start.html
+tpl/partial/user.html
+tpl/partial/cart.html
+```
+
+The command should define the path `/tpl/` as the source root because it is the most inner folder which covers all files:
+```cmd
+npx mikado-compile ./tpl/
+```
+
+The template names then becomes `view/start`, `view/user`, `view/cart` and `partial/start`, `partial/user`, `partial/cart` for the partials. So when including just use this name in your expression `<table include="partial/user">`
+
+The wrong way is to compile the folder /view/ and /partial/ separately, because their template names will be same.
+```cmd
+npx mikado-compile ./tpl/view/
+npx mikado-compile ./tpl/partial/
+```
+This might also work, but it is better not to do.
+
+### Prebuilt Cache Strategy
+
+The option `{ cache: true/false }` when creating a Mikado instance could be better declared withing templates on their root element, let the compiler produce more optimized code for this strategy.
+
+```html
+<table cache="true">
+    <!-- ... -->
+</table>
+```
+
+Also use this approach when set `cache="false"`:
+
+```html
+<table cache="false">
+    <!-- ... -->
+</table>
 ```
 
 <a name="event"></a>
@@ -1790,7 +1781,7 @@ view.render();
 
 <a name="view.create"></a>
 
-### Create Components
+#### Create Components
 
 Just create a component from a template without adding/assigning/rendering them to the root ("orphan"):
 
@@ -1894,7 +1885,7 @@ view.update(index, data);
 ```
 
 <a name="helpers"></a>
-### Common View Helpers
+#### Common View Helpers
 
 <a name="view.node"></a>
 Get a components root element by a specific index:
@@ -2236,155 +2227,6 @@ Get inner HTML of an element:
 ```js
 var html = Mikado.getHTML(node);
 ```
-
-<!--
-<a name="store"></a>
-
-## Stores
-
-Mikado provides 4 different types of stores. It is very useful to understand how they are processed internally.
-
-#### 1. Internal Store
-
-An internal store gets updated automatically by Mikado. This comes with a small extra cost. Use this store when you need a reference to the data store as an array of items that are currently rendered.
-
-> When the internal store is used, this store gets automatically updated by any of Mikados methods e.g. render/update/add/append/remove.
-
-Enable internal store bypassing the options during initialization:
-
-```js
-var view = new Mikado(template, { store: true });
-```
-
-Whenever you call the **_.render()_** function along with passed data, this data will be updated (add/remove/change) to the internal store.
-
-```js
-view.render(data);
-```
-
-<a name="view.refresh"></a>
-You can re-render/refresh the last/current state at any time without passing data again:
-
-```js
-view.refresh();
-```
-
-Or force an update to a specific index:
-
-```js
-view.refresh(index);
-```
-
-Or force an update to a specific node:
-
-```js
-view.refresh(node);
-```
-
-Access to the store:
-
-```js
-var store = view.store;
-```
-
-Do not de-reference the store, e.g.:
-
-```js
-var store = view.store;
-// ...
-store = [];
-```
-
-Instead, do this:
-
-```js
-var store = view.store;
-// ...
-view.store = store = [];
-```
-
-<a name="options.loose"></a>
-
-#### 2. Loose Store (Default)
-
-When **_loose_** is enabled Mikado will use a data-to-dom binding strategy rather than keeping data separated from rendered elements/templates. This performs slightly faster and has a lower memory footprint but you will also lose any data at the moment when the corresponding dom element was also removed from the screen/dom (render stack). Often, this is the expected behavior, but it depends on your application.
-
-Initialize a loose store:
-
-```js
-var view = new Mikado(template, { store: true, loose: true });
-```
-
-To get a data item back from a node you cannot access `view.store[]` when the **_loose_** option is enabled. You have to get the item from a node or by index:
-
-```js
-var item = view.data(index);
-```
-
-```js
-var item = view.data(node);
-```
-
-<a name="extern"></a>
-
-#### 3. External/Custom Store
-
-External stores differ from the other stores. An external store assumes to get updated from the outside and will not be changed by Mikado. That means that you have to apply all changes to the external store before rendering. Use this store when:
-
-- you like to use data-driven style
-- you need sharing the data store to your application functions or libs
-- you like to make the data store immutable for Mikado
-
-> When an external store is used, this store gets **not** updated by any of Mikados methods e.g. render/update/add/append/remove.
-
-There is one exception: when you use a <a href="#proxy">proxy</a> (observable attributes), the external store will be replaced by the proxied reference once (otherwise the proxy feature becomes useless).
-
-You can also pass a reference to an external store. This store must be an Array-like type.
-
-```js
-var MyStore = [
-  /* Item Data */
-];
-```
-
-Pass in the external store when initializing:
-
-```js
-var view = new Mikado(root, template, {
-  store: MyStore
-});
-```
-
-## Reactive Rendering (Observable Array)
-
-This is also an external store with all its attributes described above. Additionally, this store reacts when indices get changed (applies changes to DOM automatically). That makes reconciliation unnecessary but also has a noticeable extra cost for all other kinds of updates. The main reason why this store is slower in the benchmark by a large margin is, that this store cannot apply a bulk of updates through a loop. It reacts at the moment the data was assigned/removed from an index. Still, this store could perform faster than all other ones depending on your application / current view.
-
-The reactive store could also be used in a combination with the <a href="#proxy">proxy</a> feature. Using both provides you a complete reactive store where you did not need calling any of Mikados methods again like render/reconcile/update/add/append/remove. All these methods gets redundant/obsolete because the view is completely synchronized along with the whole state of your store. This combination and how they are integrated into Mikado are unique. The "repaint" test from the benchmark ist just an empty function call and performs <a href="https://raw.githack.com/nextapps-de/mikado/bench/#modes">astronomical</a>.
-
-Read the documentation about this kind of store <a href="#observable">here</a>.
-
-<a name="export"></a>
-
-#### Export / Import Views
-
-<a name="view.export"></a>
-You can export the data of a view to the local store.
-
-```js
-view.export();
-```
-
-<a name="view.import"></a>
-You can import and render the stored data by:
-
-```js
-view.import().render();
-```
-
-> When exporting/importing templates, the ID is used as a key. The template ID corresponds to its filename.
-
-You cannot export several instances of the same template which holds different data. Also, the **_state_** is not included in the export.
--->
 
 <a name="view.state"></a>
 
@@ -3448,11 +3290,11 @@ Mikados reconcile provides you the most effective diffing today (you can take th
 
 <a name="concept"></a>
 
-## Concept of Shared Pools
+## Concept of Shared Components
 
 There are four kinds of synchronized pools under the hood. Three of them are shared across all template instances to make them re-usable. They also save memory and skip redundant re-calculations.
 
-<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg" alt="Mikado Shared Pool (Concept)"><br><br>
+<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg?v=1" alt="Mikado Shared Components (Concept)"><br><br>
 
 #### Factory Pool
 
@@ -3522,7 +3364,7 @@ There are some features in the draft and it points out that those features requi
 
 <a name="builds" id="builds"></a>
 
-## Custom Builds
+## Builds
 
 Perform a full build:
 
@@ -3536,17 +3378,15 @@ Perform a light build:
 npm run build:light
 ```
 
-Perform a custom Build:
+Perform a custom build by passing build flags:
 
 ```bash
-npm run build:custom ENABLE_CACHE=false LANGUAGE_OUT=ECMASCRIPT5 USE_POLYFILL=true
+npm run build:custom ENABLE_CACHE=true SUPPORT_POOLS=true LANGUAGE_OUT=ECMASCRIPT5 USE_POLYFILL=true
 ```
 
-> On custom builds each build flag will be set to _false_ by default.
+> On custom builds each build flag will be set to _**false**_ by default.
 
 The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a hash based on the used build flags).
-
-The destination folder of the build is: _/dist/_
 
 ##### Supported Build Flags
 
@@ -3560,55 +3400,49 @@ The destination folder of the build is: _/dist/_
     <tr>
         <td>DEBUG</td>
         <td>true, false</td>
-        <td>Log debugging infos</td>
+        <td>Output debug information to the console (do not enable for production)</td>
     </tr>
     <tr></tr>
     <tr>
         <td>SUPPORT_CACHE</td>
         <td>true, false</td>
-        <td>DOM Cache</td>
+        <td>DOM State Cache</td>
     </tr>
     <tr></tr>
     <tr>
         <td>SUPPORT_EVENTS</td>
         <td>true, false</td>
-        <td>Template event bindings</td>
+        <td>Routing & Event Delegation (template event bindings)</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>SUPPORT_STORAGE</td>
+        <td>SUPPORT_KEYED</td>
         <td>true, false</td>
-        <td>Template data binding</td>
+        <td>Support for keyed recycling (reconciliation)</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>SUPPORT_HELPERS</td>
-        <td>true, false, string</td>
-        <td>DOM Manipulation helpers (supports comma separated string)</td>
+        <td>SUPPORT_DOM_HELPERS</td>
+        <td>true, false</td>
+        <td>DOM Manipulation Helpers</td>
     </tr>
     <tr></tr>
     <tr>
         <td>SUPPORT_CACHE_HELPERS</td>
         <td>true, false</td>
-        <td>DOM Cache helpers</td>
+        <td>DOM Cache Helpers</td>
     </tr>
     <tr></tr>
     <tr>
         <td>SUPPORT_ASYNC</td>
         <td>true, false</td>
-        <td>Asynchronous rendering (Promise Support)</td>
+        <td>Asynchronous Rendering (support Promises)</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>SUPPORT_TRANSPORT</td>
+        <td>SUPPORT_POOLS</td>
         <td>true, false</td>
-        <td>Load templates through the network</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>SUPPORT_TEMPLATE_EXTENSION</td>
-        <td>true, false</td>
-        <td>Use loops, includes and conditionals within templates</td>
+        <td>Support component pools for keyed and non-keyed recycle strategies</td>
     </tr>
     <tr></tr>
     <tr>
@@ -3618,29 +3452,33 @@ The destination folder of the build is: _/dist/_
     </tr>
     <tr></tr>
     <tr>
+        <td>SUPPORT_CALLBACKS</td>
+        <td>true, false</td>
+        <td>Use callbacks for specific render tasks</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td>SUPPORT_COMPILE</td>
         <td>true, false</td>
-        <td>Use runtime template compiler</td>
+        <td>Use the runtime compiler</td>
     </tr>
     <tr>
-        <td><br><b>Compiler Flags</b></td>
-        <td></td>
-        <td></td>
+        <td colspan="3"><br><b>Compiler Flags</b></td>
     </tr>
     <tr>
-        <td>USE_POLYFILL</td>
+        <td>POLYFILL</td>
         <td>true, false</td>
-        <td>Include Polyfills (based on Ecmascript 5)</td>
+        <td>Include Polyfills (based on LANGUAGE_OUT)</td>
     </tr>
     <tr></tr>
     <tr>
         <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br></td>
-        <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT5_STRICT<br>ECMASCRIPT6<br>ECMASCRIPT6_STRICT<br>ECMASCRIPT_2015<br>ECMASCRIPT_2017<br>STABLE</td>
+        <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT_2015<br>ECMASCRIPT_2016<br>ECMASCRIPT_2017<br>ECMASCRIPT_2018<br>ECMASCRIPT_2019<br>ECMASCRIPT_2020<br>ECMASCRIPT_2021<br>ECMASCRIPT_NEXT<br>STABLE</td>
         <td>Target language</td>
     </tr>
 </table>
 
 ---
 
-Copyright 2019 Nextapps GmbH<br>
+Copyright 2019-2023 Nextapps GmbH<br>
 Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache 2.0 License</a><br>

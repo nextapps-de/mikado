@@ -13,10 +13,6 @@ export const SUPPORT_KEYED = true;
 /** @define {boolean} */
 export const SUPPORT_POOLS = true;
 /** @define {boolean} */
-export const SUPPORT_STORAGE = true;
-/** @define {boolean} */
-export const SUPPORT_TEMPLATE_EXTENSION = true;
-/** @define {boolean} */
 export const SUPPORT_CALLBACKS = true;
 /** @define {boolean} */
 export const SUPPORT_ASYNC = true;
@@ -28,8 +24,6 @@ export const SUPPORT_REACTIVE = REACTIVE_ONLY || true;
 export const SUPPORT_COMPILE = false;
 /** @define {boolean} */
 export const SUPPORT_EVENTS = true;
-/** @define {boolean} */
-export const SUPPORT_TRANSPORT = true;
 
 /** @define {string} */
 export const MIKADO_NODE_CACHE = "_mkc";

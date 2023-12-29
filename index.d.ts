@@ -8,7 +8,6 @@ declare class Mikado {
 
     mount(target: HTMLElement, hydrate?: boolean): Mikado;
     render(data?: Object|Array<Object>, state?: Object, callback?: Function): Promise<void>|Mikado;
-    reconcile(data: Array<Object>, state?: Object): Mikado;
 
     add(data: Object, state?: Object, index?: number): Mikado;
     add(data: Object, index?: number): Mikado;
@@ -82,7 +81,7 @@ declare namespace Mikado {
         unshift(data: Object): void;
     }
 
-    function getClass(target: HTMLElement): string;
+    function getClasses(target: HTMLElement): Array<string>;
     function hasClass(target: HTMLElement, classname: string): boolean;
     function toggleClass(target: HTMLElement, classname: string, state?: boolean): Mikado;
     function toggleClasses(target: HTMLElement, classnames: Array<string>, state?: boolean): Mikado;

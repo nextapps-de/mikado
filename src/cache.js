@@ -259,10 +259,10 @@ export function setClass(node, classname){
 
 /**
  * @param {Element} node
- * @return {string}
+ * @return {Array<string>}
  */
 
-export function getClass(node){
+export function getClasses(node){
 
     let cache = node[MIKADO_NODE_CACHE], tmp;
 
@@ -280,7 +280,7 @@ export function getClass(node){
         cache["_c"] = tmp = node.className;
     }
 
-    return tmp;
+    return tmp.split(regex_class);
 }
 
 /**
