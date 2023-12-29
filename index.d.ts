@@ -125,13 +125,13 @@ type TemplateDOM = {
     class?: string|[string];
     text?: string|[string];
     html?: string|[string];
-    attr?: Record<string, string|[string]>;
-    event?: Record<string, string|[string]>;
+    attr?: {[attribute: string]: string|[string]};
+    event?: {[event: string]: string|[string]};
     child?: TemplateDOM|Array<TemplateDOM>;
     inc?: string;
     key?: string;
     cache?: boolean;
-    svg?: string;
+    svg?: 1;
 }
 
 type MikadoOptions = {
@@ -144,7 +144,7 @@ type MikadoOptions = {
     pool?: boolean|number;
     state?: Object;
     observe?: Mikado.array;
-    on?: Record<string, Function>;
+    on?: {[event: string]: Function};
 }
 
 type RouteOptions = {
@@ -153,3 +153,5 @@ type RouteOptions = {
     cancel?: boolean;
     once?: boolean;
 }
+
+export = Mikado;
