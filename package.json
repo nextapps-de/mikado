@@ -23,6 +23,7 @@
   "main": "src/mikado.js",
   "module": "dist/module/mikado.js",
   "browser": "src/bundle.js",
+  "types": "./index.d.ts",
   "bin": {
     "mikado-compile": "compiler/cli.js"
   },
