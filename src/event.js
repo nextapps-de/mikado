@@ -25,8 +25,11 @@ import Mikado from "./mikado.js";
         type || (type = event.type);
 
         const event_target = event.target;
+        // disabled by default:
         const use_event_cache = Mikado["eventCache"];
-        const use_bubble = Mikado["eventBubble"] !== false;
+        // disabled by default:
+        const use_bubble = Mikado["eventBubble"];
+
         let cache;
 
         // When "eventCache" options is enabled, all the assigned event route names and all the event targets exposed by bubbling are being cached,

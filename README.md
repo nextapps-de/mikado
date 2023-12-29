@@ -1492,10 +1492,10 @@ Routes are stored globally, so they share through all Mikado instances.
 
 ### Event Bubbling
 
-When multiple listeners of the same type are nested, the event will bubble up to the HTML root element.
+When multiple listeners of the same type are nested, the event will bubble up to the HTML root element when enabling the global flag `Mikado.eventBubble = true`, otherwise bubbling will stop on the most inner definition which gets matched.
 
 ```html
-<table cache="true">
+<table>
     <tr click="route-tr">
         <td click="route-td"></td>
         <td></td>
@@ -1514,7 +1514,9 @@ Mikado.route("route-tr", function(target, event){
 });
 ```
 
-Both listeners will execute when clicking on "td". To control this behavior pass in options as the 3rd parameter when defining routes.
+By default, the above example will just execute the route named "route-td" when clicked on the TD element. When `Mikado.eventBubble = true` was enabled the bubble continues after calling the most inner matched handler and both routes will be executed when clicking on TD element.
+
+To control Mikados internal event bubbling mechanism you can pass in options as the 3rd parameter when defining routes:
 
 ```js
 Mikado.route("route-td", function(){ /*...*/ }, { stop: true });
@@ -1522,34 +1524,56 @@ Mikado.route("route-td", function(){ /*...*/ }, { stop: true });
 
 Supported Options (mixable):
 
-- `stop: boolean` stop capturing/bubbling the event up to the root element
-- `prevent: boolean` prevents the default behavior for this event
+- `stop: boolean` stop capturing/bubbling the event up to the root element (stops Mikado event + native event)
+- `prevent: boolean` prevents the default behavior for this native event
 - `cancel: boolean` just stop bubbling the Mikado event, but the native event bubbling will still continue
 - `once: boolean` just catch the event once and remove the route then
 
-<!--
-#### Event Options
+#### Event Cache
 
-By default, every event which is delegated to a route will be canceled (event.preventDefault) and also will stop capturing/bubbling (event.stopPropagation). To control this behavior you can configure for each route:
+You can cache more complex event delegations by setting the global flag `Mikado.eventCache = true`.
+A candidate for a complex delegation is forwarding a different target to the handler by using the ":" colon notation or when using `Mikado.eventBubble = true`.
 
-```js
-Mikado.route("handler", function(target, event){
-  console.log("Clicked");
-},{
-  cancel: false,
-  stop: false 
-});
+> When using Event Cache the scope of forwarding custom target elements to the handler and also nested routes of the same event type should be defined in the same template scope. Thinks may break when components are shared through multiple instances.
+
+This is okay, because all partials are inline:
+
+```html
+<table foreach="data.result" root>
+    <!-- a new template scope -->
+    <tr foreach="data.user" click="route-tr:root">
+        <!-- a new template scope -->
+        <td click="route-td:root">{{ data.username }}</td>
+    </tr>
+</table>
 ```
 
-`cancel` prevents default behavior for this event (default: "true")<br>
-`stop` stop capturing/bubbling the event after matched (default: "true")
--->
+When using extern includes it might produce unexpected behavior:
+
+tpl.html:
+```html
+<table foreach="data.result" root>
+    <!-- a new template scope -->
+    <tr foreach="data.user" include="tpl-td">
+        <!-- a new template scope -->
+    </tr>
+</table>
+```
+
+tpl-td.html:
+```html
+<td click="route-td:root">{{ data.username }}</td>
+```
+
+This will have no side effects when the partial "tpl-td.html" is just use for the template "tpl.html".
+But imagine you have another template which includes "tpl-td.html" and **also** one of the recycle strategies (keyed, non-keyed) was enabled on both.
+In this specific situation the cache might point to a false element `<table root>` used to forward to the handler.
+Then you need to choose between: 1. limiting the scope of used event notation to the template scope, 2. do not enable `Mikado.eventCache = true`. 
 
 <a name="view.listen"></a><a name="view.unlisten"></a>
+#### Explicit Register/Unregister Event Delegation
 
-#### Explicit Register/Unregister
-
-You can also use Mikado routing and event delegation feature outside a template. Just apply the event attribute as you would do in a template.
+You can use Mikado routing and event delegation feature everywhere, also outside a template. Just apply the event attribute as you would do in a template.
 
 ```html
 <body>
@@ -1569,7 +1593,7 @@ Then you have to explicit register the global "click" listener once:
 Mikado.listen("click");
 ```
 
-Because events register when creating the template factory under the hood. When no template was created which includes the same type of event, a global listener does not exist. For that reason, you have to explicitly register the listener once.
+Because events automatically register when creating the template factory under the hood. When no template was created which includes the same type of event, a global listener does not exist. For that reason, you have to explicitly register the listener once.
 
 #### Control Native Events
 
@@ -2932,9 +2956,12 @@ Also, try to assign computations outside a loop by using the state to delegate v
 
 <a name="proxy" id="proxy"></a>
 
-## Reactive Proxy (Observer)
+## Reactive Properties (Proxy)
 
-Mikado provides you a reactive way to listen and apply changes of data to the DOM. It is based on the new ES6 proxy feature which gives great performance and fully falls back to a classical observer when the proxy is not available. Using a reactive strategy can additionally boost performance beyond a factor of 100 when updating data. It depends on your application / current view: this feature has an advantage when updating data has to process more often than creating new.
+Mikado provides you a reactive approach to listen for changes to the data and apply them accordingly to the DOM.
+It is based on native Proxy feature which has great performance, a small memory footprint and fully falls back to a legacy observer when Proxy is not available.
+Using a reactive strategy can additionally boost performance beyond a factor of 100 when updating specific data instead of leverage a full render task.
+It depends on your application or current view, this feature has an advantage when updating data **partially** has to process more often than full data updates.
 
 **Template markup**:
 
@@ -2951,59 +2978,34 @@ Mikado provides you a reactive way to listen and apply changes of data to the DO
 </table>
 ```
 
-> The expression for an observable property has to start with: `{{=`
+> The expression for an observable property uses this syntax: `{{=`. You can combine with other expressions, but should be defined at least, e.g. `{{#=` or `{{!=` or `{{?=`.
 
-Using proxy requires using one of the 3 store strategies.
+> You can't use any Javascript code inside reactive expressions, just the full data scope of the value is allowed to specify within those expressions.
 
-**1. Use with internal store:**
-
-```js
-var view = new Mikado(template, { store: true });
-view.render([...]);
-```
-
-When data changes, the corresponding dom element will automatically change:
+When using reactive properties you'll need to manage a store (could be a simple Array) which gets proxified under the hood.
 
 ```js
-view.store[0].name = "New Name";
-```
+// define a store
+const store = [/* Array of objects */];
 
-**2. Use with external store:**
+// create, mount and initial render the store by using
+// a template which has reactive properties included
+Mikado(template).mount(root).render(store);
 
-```js
-var data = [...];
-var view = new Mikado(template, { store: data });
-view.render(data);
-```
+// the store now has proxified item properties!
+// do not throw it away, instead apply updates on it
+store[0].name = "John Doe";
+store[0].email = "john@doe.com";
 
-When data changes, the corresponding dom element will automatically change:
-
-```js
-data[0].name = "New Name";
-```
-
-```js
-view.store[0].name = "New Name";
-```
-
-**3. Use with loose store:**
-
-```js
-var view = new Mikado(template, { store: true, loose: true });
-view.render([...]);
-```
-
-When data changes, the corresponding dom element will automatically change:
-
-```js
-view.data(0).name = "New Name";
+// when data changes, the corresponding DOM elements
+// will automatically change also
 ```
 
 <a name="limitations"></a>
 
 ### Limitations
 
-Proxy comes with some limitations on template expressions. Removing these restrictions is already work in progress and will release soon.
+Actually there are some limitations on template expressions.
 
 1.&nbsp;Fields from deeply nested data objects are not reactive:
 
@@ -3018,7 +3020,7 @@ var data = {
 };
 ```
 
-2.&nbsp;Conditional or advanced template expressions are not supported:
+2.&nbsp;Template expressions including any kind of Javascript syntax are not supported:
 
 ```html
 <table>
@@ -3035,15 +3037,15 @@ var data = {
 </table>
 ```
 
-Just use plain property notation within curly brackets.
+Just use plain property notation within the curly brackets.
 
-<a name="stealth"></a>
+<a name="strictproxy"></a>
 
-### Stealth Mode
+### Strict-Proxy Mode
 
-Whenever **all** your template expressions are just using proxy notation it enables the "stealth" mode, which boosts performance from every update process to the absolute maximum. This mode has no advantage when every render loop has to apply new items.
+Whenever **all** your template expressions are just using proxy notation it enables a special "strict-proxy" mode under the hood, which further boosts performance from every update to a maximum. This mode has no advantage when every render loop has to apply almost new items.
 
-This enables stealth mode:
+This enables "strict-proxy" mode:
 
 ```html
 <item>
@@ -3058,7 +3060,7 @@ This enables stealth mode:
 </item>
 ```
 
-This not:
+This won't enable it:
 
 ```html
 <item>
@@ -3073,33 +3075,35 @@ This not:
 </item>
 ```
 
-Also using conditionals, loops and inline javascript will prevent switching to the stealth mode. Just includes (without loop) could be used additionally to the proxy notation, but it requires all fields also observed by the partial which is included.
+Also using conditionals, includes, loops and inline Javascript will prevent switching to the "strict-proxy" mode. You can't switch this mode by yourself. It just activates when conditions are met.
 
 <a name="observable"></a>
 
 ### Observable Array (Virtual NodeList)
 
-Additionally to react on changes of properties you can create an observable Array that acts like a synchronized NodeList. It uses ES6 Proxy under the hood which fully falls back to the classical observer, when not available.
+In addition to react on changes of property values you can additionally also listen to changes made to the Array index of the store.
+Mikado provides you an observable Array that acts like a native Array and apply all changes to a synchronized NodeList under the hood.
+It also uses native Proxy which fully falls back to a legacy observer, when not available.
 
-> Semantically the observable Array is equal to an array-like Javascript array.
+> Semantically the observable array you will get from `Mikado.Array()` is equal to an array-like Javascript Array.
 
 Create an observable array:
 
 ```js
-var array = Mikado.array();
+var store = new Mikado.Array();
 ```
 
 Create an observable array with initial data:
 
 ```js
 var items = [ ... ];
-var array = Mikado.array(items);
+var store = new Mikado.Array(items);
 ```
 
-Bind this store to a Mikado instance:
+Every observable array needs to bind to a mounted Mikado instance, because it needs to apply render tasks somewhere:
 
 ```js
-var view = Mikado(target, template, { store: array });
+var view = Mikado(template, { observe: store, mount: root });
 ```
 
 Now the observable array is linked with your instance. Whenever you change the array all changes apply automatically to the corresponding template.
@@ -3107,33 +3111,41 @@ Now the observable array is linked with your instance. Whenever you change the a
 You can use all common array built-ins, e.g.:
 
 ```js
-array.push({ ... });
+store.push({ ... });
 ```
 
 ```js
-var last = array.pop();
+var last = store.pop();
 ```
 
 ```js
-array.unshift({ ... });
+store.unshift({ ... });
 ```
 
 ```js
-array.splice(0, 1, { ... });
-```
-
-The best option is to **get and set via array index access** which is a rarely available feature (including non-proxy fallback):
-
-```js
-array[0] = { ... };
+var first = store.shift();
 ```
 
 ```js
-array[array.length] = { ... };
+store.slice(3, 1);
 ```
 
 ```js
-var first = array[0];
+store.splice(0, 1, { ... });
+```
+
+You can **get and set via array index access**. This feature also has a non-proxy fallback included.
+
+```js
+store[0] = { ... };
+```
+
+```js
+store[store.length] = { ... };
+```
+
+```js
+var first = store[0];
 ```
 
 A list of all supported array prototypes:
@@ -3154,11 +3166,9 @@ A list of all supported array prototypes:
 - sort
 - swap
 
-These methods are implemented, without some extensions like parameter chaining. They may come in a future update .e.g `array.push(a, b, c)` is not available, instead, you have to call push for each item on by one.
+These methods are implemented, without some extensions like parameter chaining, e.g. `array.push(a, b, c)` is not available, instead, you have to call push for each item one by one.
 
-The method `array.swap(a, b)` is an optional performance shortcut.
-
-There are some methods which differ slightly from the original implementation. These methods will apply changes **_in place_** and returning the original reference instead of applying on a copy:
+There are some methods which slightly differs from the original implementation of native Arrays. These methods will apply changes **_in place_** and returning the original reference instead of applying on a copy:
 
 - concat
 - filter
@@ -3168,25 +3178,31 @@ When you need the original behavior you can simply do that by:
 
 ```js
 var new_array = [ ... ];
-var copy = Array.prototype.concat.call(array, new_array);
+var copy = Array.prototype.concat.call(store, new_array);
 ```
 
 ```js
-var copy = Array.prototype.filter.call(array, function(){ ... });
+var copy = Array.prototype.filter.call(store, function(){ ... });
 ```
 
-There is a limitation when falling back to the non-proxy polyfill. You cannot fill sparse arrays or access indexes which are greater than the current `array.length`. There is just one undefined index that could always accessed (by read/write) that is the last "undefined" index on an array when you call `array[array.length]`. This index is a special marker that increases the "virtual" array size. Whenever you assign a value to this special index the size of the observable index growth automatically and the next "undefined" index in the queue becomes this marker. This limitation is not existing when the ES6 proxy is available.
+In a situation when falling back to the non-proxy polyfill because of missing support for native Proxy, there is a limitation.
+You cannot fill sparse arrays or access indexes which are greater than the current `array.length`.
+There is just one undefined index that could always access (by read/write) that is the last "undefined" index on an array when you call `array[array.length]`.
+This index is a special marker that increases the "virtual" array size.
+Whenever you assign a value to this special index the size of the observable index growth automatically and the next "undefined" index in the queue becomes this marker.
+This limitation is not existing when the ES6 proxy is available.
 
 Also, there are some drawbacks when reflection is used:
 
 ```js
-var array = Mikado.array();
-console.log(array.constructor === Array); // -> false
-console.log(array.prototype === Array.prototype); // -> false
-console.log(array instanceof Array); // -> false
+var store = Mikado.Array();
+console.log(store.constructor === Array); // -> false
+console.log(store.prototype === Array.prototype); // -> false
+console.log(store instanceof Array); // -> false
+console.log(Array.isArray(store)); // -> true
 ```
 
-The proxy feature theoretically allows those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase.
+The proxy feature theoretically allows all those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Use can still use `Array.isArray()` to identify array-like objects.
 
 <!--
 <a name="bind" id="bind"></a>

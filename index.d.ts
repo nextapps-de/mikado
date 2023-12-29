@@ -46,6 +46,9 @@ declare class Mikado {
 
 declare namespace Mikado {
 
+    const eventCache: boolean;
+    const eventBubble: boolean;
+
     function once(root: HTMLElement, template: Template|string, data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
     //function compile(node: HTMLTemplateElement|string): Mikado;
 
