@@ -33,24 +33,12 @@ When you are coming from any previous version: <a href="doc/migrate-0.8.md">Migr
 
 Mikado was getting so much positive feedback and also feature requests. Help keeping Mikado active by a personal donation.
 
-<a href="https://opencollective.com/mikado/donate" target="_blank" style="margin-right: 10px">
-    <img src="https://opencollective.com/webpack/donate/button@2x.png?color=blue" height="32" alt="Donate using Open Collective">
-</a>
-<a href="https://github.com/sponsors/ts-thomas/" target="_blank" style="margin-right: 10px">
-    <img src="https://camo.githubusercontent.com/b932f45963b659dfeb86b77ff29a9eaebe25a734d63a17a176aa82bf34845cf2/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f6c6162656c3d53706f6e736f72266d6573736167653d254532253944254134266c6f676f3d47697448756226636f6c6f723d253233666538653836" height="32" alt="Donate using Github Sponsors">
-</a>
-<a href="https://liberapay.com/ts-thomas/donate" target="_blank" style="margin-right: 10px">
-    <img src="https://liberapay.com/assets/widgets/donate.svg" height="32" alt="Donate using Liberapay">
-</a>
-<a href="https://www.patreon.com/user?u=96245532" target="_blank" style="margin-right: 10px">
-    <img src="https://s3-us-west-1.amazonaws.com/widget-images/become-patron-widget-medium%402x.png" height="32" alt="Donate using Patreon">
-</a>
-<a href="https://salt.bountysource.com/teams/ts-thomas" target="_blank" style="margin-right: 10px">
-    <img src="https://cdn.worldvectorlogo.com/logos/bountysource.svg" height="32" alt="Donate using Bountysource">
-</a>
-<a href="https://www.paypal.com/donate/?hosted_button_id=GEVR88FC9BWRW" target="_blank">
-    <img src="https://www.paypalobjects.com/webstatic/de_DE/i/de-pp-logo-200px.png" height="32" alt="Donate using PayPal">
-</a>
+<a href="https://opencollective.com/mikado/donate" target="_blank" style="margin-right: 10px"><img src="doc/opencollective.png" height="32" alt="Donate using Open Collective"></a>
+<a href="https://github.com/sponsors/ts-thomas/" target="_blank" style="margin-right: 10px"><img src="doc/github-sponsors.png" height="32" alt="Donate using Github Sponsors"></a>
+<a href="https://liberapay.com/ts-thomas/donate" target="_blank" style="margin-right: 10px"><img src="doc/liberapay.svg" height="32" alt="Donate using Liberapay"></a>
+<a href="https://www.patreon.com/user?u=96245532" target="_blank" style="margin-right: 10px"><img src="doc/patron.png" height="32" alt="Donate using Patreon"></a>
+<a href="https://salt.bountysource.com/teams/ts-thomas" target="_blank" style="margin-right: 10px"><img src="doc/bountysource.svg" height="32" alt="Donate using Bountysource"></a>
+<a href="https://www.paypal.com/donate/?hosted_button_id=GEVR88FC9BWRW" target="_blank"><img src="doc/paypal.png" height="32" alt="Donate using PayPal"></a>
 
 <!--
 **Demo:**
@@ -67,7 +55,10 @@ Mikado was getting so much positive feedback and also feature requests. Help kee
 <!--
 #### First Steps
 
-Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars". You do not have to learn a new language, you just need some basic skills you probably already have. **It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details. You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
+Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars".
+You do not have to learn a new language, you just need some basic skills you probably already have.
+**It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details.
+You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
 
 Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required.
 
@@ -86,11 +77,11 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 
 ## Table of contents
 
-Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes templating performance to a <a href="#benchmark">whole new level</a> and provides you **keyed**, **non-keyed** and also **reactive paradigm** switchable out of the box.
-On top, it also provides a **server-side-rendering** approach on an extreme performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
+Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes <a href="#benchmark">templating performance</a> to a new level and provides you **keyed**, **non-keyed** recycling and also **reactive paradigm** switchable out of the box.
+On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Packed with a smart routing concept of event delegation, Mikado gives you everything you will need to build cutting edge applications.
+Packed with a smart routing feature for event delegation, Mikado gives you everything you'll need to build realtime applications on a cutting edge performance level.
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
@@ -123,18 +114,11 @@ Packed with a smart routing concept of event delegation, Mikado gives you everyt
     - <a href="#cache-helpers">Caching Helpers</a>
 14. <a href="#cache">DOM State Caching</a>
 15. Stores:
-    - <a href="#store">Internal Store</a>
-    - <a href="#options.loose">Loose Store</a>
-    - <a href="#extern">Extern/Custom Store</a>
     - <a href="#extern">Reactive Store</a>
-    - <a href="#export">Export / Import Stores</a>
 16. <a href="#view.state">State</a>
 17. <a href="#callbacks">Callbacks</a>
-18. <a href="#load">Transport / Load Templates</a>
 19. <a href="#static">Static Templates</a>
     - <a href="#mikado.once">Once (One-time rendering)</a>
-20. <a href="#compiler-service">Compiler Service / Live Templates</a>
-    - <a href="#localdev">Local Development</a>
 21. Template Features:
     - <a href="#includes">Includes</a>
     - <a href="#loop-partials">Loop Partials</a>
@@ -142,11 +126,9 @@ Packed with a smart routing concept of event delegation, Mikado gives you everyt
     - <a href="#conditional">Conditional Branches</a>
 22. <a href="#proxy">Reactive Proxy (Observer)</a>
     - <a href="#limitations">Limitations</a>
-    - <a href="#stealth">Stealth Mode</a>
+    - <a href="#strict-proxy">Strict-Proxy Mode</a>
     - <a href="#observable">Observable Array (Virtual NodeList)</a>
 23. <a href="#best-practices">Best Practices</a>
-24. <a href="#memory">Memory Optimizations</a>
-25. <a href="#reconcile">About Reconcile (Diffing)</a>
 26. <a href="#concept">Concept of Shared Pools</a>
 27. <a href="#builds">Custom Builds</a>
 
@@ -3046,28 +3028,7 @@ console.log(Array.isArray(store)); // -> true
 
 The proxy feature theoretically allows all those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Use can still use `Array.isArray()` to identify array-like objects.
 
-<!--
-<a name="bind" id="bind"></a>
-## Bind Input Elements
-
-_WIP (release when reaching 2500 Github stars)_
-
-The attribute **_bind_** provides you a 2-way-binding of input elements with your data store.
-
-```html
-<main>
-  <input type="text" bind="{{ data.name }}" />
-  <input type="checkbox" bind="{{ data.status }}" />
-  <input type="radio" value="female" bind="{{ data.gender }}" />
-  <input type="radio" value="male" bind="{{ data.gender }}" />
-</main>
-```
-
-When data is changed, the input elements will automatically update, as well as other turn around, when the input elements get new data the store will automatically update.
--->
-
 <a name="full-template"></a>
-
 ## Full Template Example
 
 Use this almost complete template example to check if you know everything about the template mechanism:
@@ -3210,157 +3171,12 @@ view_c.mount(root_a).render(data);
 
 Ideally, every template should be initialized by one Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast, but re-assigning templates is not as fast.
 
-<a name="memory"></a>
-
-#### Memory Optimizations
-
-<!--
-IT might be useful to understand the memory allocation of several settings.
-
-The absolute lowest memory footprint (when idle):
-```js
-var view = new Mikado(template, {
-    store: false,
-    cache: false,
-    pool: false,
-    prefetch: false
-});
-```
-
-The most memory efficient memory allocation (during runtime):
-```js
-var view = new Mikado(template, {
-    cache: true,
-    pool: true
-});
-```
-
-Mikado provides you some helpers to apply manually to get the most out of both. Stick with the second example above (enable ___cache___ and ___pool___).
--->
-
-Clear shared pools of the current template:
-
-```js
-view.purge();
-```
-
-<!--
-Clear shared pools of all templates:
-```js
-Mikado.purge();
-```
-
-Clear shared pools of a specific template:
-```js
-Mikado.purge(template);
-```
--->
-
-Clear cache:
-
-```js
-view.sync(/* uncache? */ true);
-```
-
-Destroy a view:
-
-```js
-view.destroy();
-```
-
-Unload/unregister a template definition:
-
-```js
-view.unload();
-```
-
-Destroy a view + unload:
-
-```js
-view.destroy(/* unload? */ true);
-```
-
-<a name="reconcile"></a>
-
-## Reconcile (Diffing)
-
-Mikado comes with its own new diffing algorithm which gains performance of reconciling/re-arrangement. The algorithm is based on the <a href="https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#2-longest-distance">"Longest Distance"</a> concept which was invented by me, the author of this library. I also discovered two other concepts from scratch from where I have also implemented the <a href="https://github.com/nextapps-de/mikado/blob/master/doc/reconcile.md#3-3-way-splice">"3-Way-Splice"</a>, but the longest distance has slightly better overall performance. Although by a very small margin. Theoretically, the splice concept has some advantages but it isn't that easy to make them capable.
-
-Mikados reconcile provides you the most effective diffing today (you can take the row "order" from the <a href="#benchmark">benchmark</a> as a reference).
-
 <a name="concept"></a>
-
 ## Concept of Shared Components
 
 There are four kinds of synchronized pools under the hood. Three of them are shared across all template instances to make them re-usable. They also save memory and skip redundant re-calculations.
 
 <br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
-
-#### Factory Pool
-
-The factory pool shares partials or the same template definitions. When partials or templates are used more than once they will point to the same instance. That will save memory, skip redundant re-calculations and also improve runtime execution because different jobs can now run through the same process (less reference spread).
-
-#### Template Pool
-
-The template pool is a feature accordingly to the option <a href="#reuse">reuse</a> and extends the strategy of re-using. Templates have to be created by the factory just <u>once</u> and stay available for reuse along the whole runtime.
-
-#### Keyed Pool
-
-The keyed pool is basically the same concept as the template pool, but it has keyed access and works differently than the template pool (which is queued and has indexed access). The keyed pool and the template pool are synchronized. It depends on the options which were set.
-
-#### Live Pool
-
-The live pool contains all elements which are rendered on-screen (in use). That will keep track of not sharing elements that are already in use by another view. When elements were removed, they will move from the live pool to the shared pools. When the option **_reuse_** was set to false, the live pool will also share its elements to the next render loop of the same view.
-
-#### Some notes about pools
-
-Pooling just extends concepts which already exist/used:
-
-1. The queued pool extends the feature of "recycling" (reusing) nodes
-2. The keyed pool extends the feature of keeping components which are referential keyed
-
-<!--
-_"Does pooling have any advantages?"_ Yes, Otherwise recycling or keyed wouldn't have any advantage at all. So semantically there is nothing changed when using pools.
-
-_"How does pooling improve performance?"_ the benchmark suite from here gets a benefit in 4 from 11 test cases by using pools (create, replace, append, toggle). In all other tests, pooling has no effect, except it has an extra cost because of applying pool transitions. But that isn't the main essence behind pools. Everyone who is thinking pooling exist to just boost this benchmark did not understand this <a href="#concept">concept</a>. The most important capability of Mikados pools isn't covered by any of these tests yet. Because the true advantage comes in when using partials, includes, and partial loops. But those aren't strictly compared anywhere. If there was a benchmark that measures the performance of partial loops and **mixin them in different contexts** (by example) I'm pretty sure, that Mikado gains an astronomical performance factor over all others. Sadly I haven't the time to provide such a comparison. In the future someone might be releasing a benchmark that covers this case, I would go in immediately.
--->
-
-## Motivation
-
-This library was built by reversed engineering with these primary goals as its base:
-
-1. providing a clean, simple and non-cryptic tool for developers who focus on living standards and common styles
-2. designer-readable templates based on pure HTML (most famous and compatible markup in the web)
-3. providing the best overall performance
-4. can be flexibly integrated into every stack
-
-<!--
-## Milestones
-
-There are some features in the draft and it points out that those features requires more effort to implement. I need some motivation, so I will wait for this library gets more popular.
-
-<table>
-    <tr>
-        <td>1000&nbsp;Github&nbsp;Stars</td>
-        <td>Providing pseudo attributes <b>else</b> and <b>elseif</b> within templates to chain conditionals.</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>2500&nbsp;Github&nbsp;Stars</td>
-        <td>New attribute <a href="#bind">bind</a> for input elements (reactive 2-way binding of input elements).</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>5000&nbsp;Github&nbsp;Stars</td>
-        <td>Express middleware / standalone webserver for high performance bi-directional server-side rendering (SSR).</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>10k&nbsp;Github&nbsp;Stars</td>
-        <td>A reboot of <a href="https://github.com/nextapps-de/xone">Xone</a> on top of Mikado. Xone is a full-stack mobile application SDK which seamlessly runs in browser and also supports Cordova and NativeScript from the same codebase.</td>
-    </tr>
-</table>
--->
 
 <a name="builds" id="builds"></a>
 

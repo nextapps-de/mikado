@@ -50,11 +50,9 @@
     "build:module:light:debug": "node task/build RELEASE=light.module POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_COMPILE=false && exit 0",
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm version --no-git-tag-version patch && npm run build:bundle && npm run build:bundle:debug && npm run build:light && npm run build:light:debug && npm run build:es5 && npm run build:es5:debug && npm run build:module && npm run build:module:debug && npm run build:module:bundle && npm run build:module:bundle:debug && npm run build:module:light && npm run build:module:light:debug",
-    "update": "npm install mikado-compile@latest && npm install google-closure-compiler@nightly && npm install babel-cli@latest && npm install babel-plugin-conditional-compile@latest && npm install babel-plugin-minify-constant-folding@latest && npm install babel-plugin-minify-dead-code-elimination@latest && npm install babel-plugin-minify-flip-comparisons@latest && npm install babel-plugin-minify-guarded-expressions@latest && npm install babel-plugin-minify-infinity@latest && npm install babel-plugin-minify-mangle-names@latest && npm install babel-plugin-minify-replace@latest && npm install babel-plugin-minify-simplify@latest && npm install babel-plugin-minify-type-constructors@latest && npm install babel-plugin-transform-member-expression-literals@latest && npm install babel-plugin-transform-merge-sibling-variables@latest && npm install babel-plugin-transform-minify-booleans@latest && npm install babel-plugin-transform-property-literals@latest && npm install babel-plugin-transform-simplify-comparison-operators@latest && npm install babel-plugin-transform-undefined-to-void@latest",
     "test": "npm run build:test && npm run build:light && npx mikado-compile test/template.html -f && npx mikado-compile test/proxy.html -f && npx mikado-compile test/keyed.html -f && npx mikado-compile test/bench/template/ -f && cd test && npm install && npm run test"
   },
   "files": [
-    ".babelrc",
     "index.d.ts",
     "dist/",
     "src/",
