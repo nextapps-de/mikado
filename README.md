@@ -3294,7 +3294,7 @@ Mikados reconcile provides you the most effective diffing today (you can take th
 
 There are four kinds of synchronized pools under the hood. Three of them are shared across all template instances to make them re-usable. They also save memory and skip redundant re-calculations.
 
-<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@3fb04d360aa4c7280cd8e7dd4f401a462132780f/doc/concept.svg?v=1" alt="Mikado Shared Components (Concept)"><br><br>
+<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
 
 #### Factory Pool
 
