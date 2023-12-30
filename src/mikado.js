@@ -500,7 +500,9 @@ if(!REACTIVE_ONLY){
 
         if(SUPPORT_ASYNC && !_skip_async){
 
-            if(typeof state === "function"){
+            let has_fn;
+
+            if(state && (has_fn = typeof state === "function") || state === true){
 
                 callback = /** @type {Function|boolean} */ (state);
                 state = null;
@@ -514,29 +516,19 @@ if(!REACTIVE_ONLY){
             if(this.async || callback){
 
                 const self = this;
+                has_fn || (has_fn = typeof callback === "function");
 
                 self.timer = requestAnimationFrame(function(){
 
                     self.timer = 0;
                     self.render(data, state, null, 1);
-
-                    if(typeof callback === "function"){
-
-                        callback();
-                    }
+                    has_fn && callback();
                 });
 
-                if(callback){
+                return has_fn ? this : new Promise(function(resolve){
 
-                    return this;
-                }
-                else{
-
-                    return new Promise(function(resolve){
-
-                        callback = resolve;
-                    });
-                }
+                    callback = resolve;
+                });
             }
         }
 

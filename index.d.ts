@@ -7,16 +7,15 @@ declare class Mikado {
     length: number;
 
     mount(target: HTMLElement, hydrate?: boolean): Mikado;
-    render(data?: Object|Array<Object>, state?: Object, callback?: Function): Promise<void>|Mikado;
+    render(data?: Object|Array<Object>, state?: Object, callback?: Function|boolean): Mikado|Promise<void>;
+    render(data?: Object|Array<Object>, callback?: Function|boolean): Mikado|Promise<void>;
 
-    add(data: Object, state?: Object, index?: number): Mikado;
-    add(data: Object, index?: number): Mikado;
-    append(data: Object|Array<Object>, state?: Object, index?: number): Mikado;
-    append(data: Object|Array<Object>, index?: number): Mikado;
-    update(node: HTMLElement|number, data?: Object, state?: Object, index?: number): Mikado;
-    update(node: HTMLElement|number, data?: Object, index?: number): Mikado;
-    replace(node: HTMLElement|number, data: Object, state?: Object, index?: number): Mikado;
-    replace(node: HTMLElement|number, data: Object, index?: number): Mikado;
+    add(data: Object, state?: Object, position?: number): Mikado;
+    add(data: Object, position?: number): Mikado;
+    append(data: Array<Object>, state?: Object, position?: number): Mikado;
+    append(data: Array<Object>, position?: number): Mikado;
+    update(node: HTMLElement|number, data?: Object, state?: Object): Mikado;
+    replace(node: HTMLElement|number, data: Object, state?: Object): Mikado;
     remove(index?: HTMLElement|number, count?: number): Mikado;
     create(data: Object, state?: Object, index?: number): HTMLElement;
 
