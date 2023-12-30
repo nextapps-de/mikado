@@ -748,6 +748,8 @@ Static methods (not included in mikado.light.js):
 - Mikado.<a href="#mikado.listen">**listen**(event, \<options\>)</a>
 - Mikado.<a href="#mikado.unlisten">**unlisten**(event, \<options\>)</a>
 - Mikado.<a href="#mikado.dispatch">**dispatch**(route, \<target\>, \<event\>)</a>
+- Mikado.<a href="#mikado.escape">**escape**(text)</a>&thinsp;:&thinsp;string
+- Mikado.<a href="#mikado.sanitize">**sanitize**(text)</a>&thinsp;:&thinsp;string
 
 Instance methods:
 
@@ -1419,8 +1421,189 @@ Also use this approach when set `cache="false"`:
 </table>
 ```
 
-<a name="event"></a>
+## Template Expressions
 
+> The template notation expects double curly brackets `{{ ... }}` for any kind of dynamic expressions.
+
+> Except when using {{@ ... }} for inline code notation, the returned value of every dynamic expression will be replaced to its position.
+
+### Default Value Insertion `{{ ... }}`
+
+```html
+<div>{{ data.value }}</div>
+```
+
+```js
+view.render({ value: "test" });
+```
+
+You can also combine multiple expressions with non-expression contents:
+
+```html
+<div>The title "{{ data.title }}" has the value: {{ data.value }}</div>
+```
+
+```js
+view.render({ title: "title", value: "test" });
+```
+
+You can also mix text nodes with elements on the same root element:
+
+```html
+<div>Title: <b>{{ data.title }}</b><br>Value: {{ data.value }}</div>
+```
+
+```js
+view.render({ title: "title", value: "test" });
+```
+
+Also, you can use expressions within every attribute:
+
+```html
+<div data-id="{{ data.title }}" class="{{ data.class }}">{{ data.value }}</div>
+```
+```js
+view.render({ id: 1, value: "test", class: "test" });
+```
+
+Every Javascript syntax is allowed withing expression:
+
+```html
+<div style="color: {{ data.active ? 'green' : 'black' }}; {{ data.value ? '' : 'display: none;' }}"></div>
+```
+```js
+view.render({ active: true, value: "not empty" });
+```
+
+Since expressions just need to return a value you can also use IIFE:
+
+```html
+<div>{{ 
+    (function(){ 
+        var date = new Date();
+        // perform some code ...
+        return date.toLocaleString();
+    }())
+}}</div>
+```
+```js
+view.render();
+```
+
+### JS Inline Code `{{@ ... }}`
+
+The inline code expression is the only one which doesn't return a value to be rendered in place, it just executes.
+
+```html
+<div>
+    {{@ const value = data.title.toUpperCase(); }}
+    <h1>{{ value }}</h1>
+</div>
+```
+```js
+view.render({ title: "title" });
+```
+
+The scope is limited to the template scope, but you can assign to `state` alternatively to share values across nested instances:
+
+```html
+<div>
+    {{@ state.value = data.title.toUpperCase(); }}
+    <div include="header">
+        <!-- contents of header.html:
+        <h1>{{ state.value }}</h1>
+        -->
+    </div>
+</div>
+```
+```js
+view.render({ title: "title" });
+```
+
+### Truthy Values `{{? ... }}`
+
+This will just output the result when it is not `null`, `undefined`, `NaN` or `false`.
+
+```html
+<div>{{? data.value }}</div>
+```
+```js
+view.render([{
+    value: null
+},{
+    value: NaN
+},{
+    value: undefined
+},{
+    value: false
+}]);
+```
+
+### Escape Values `{{! ... }}` (SSR only)
+
+This will escape the value before return. This is just important for the server-side-rendering part, the client automatically escape contents by default (except when using the HTML-expression).
+
+```html
+<div>{{! data.value }}</div>
+```
+```js
+view.render({ value: "<b>html is not allowed</b>" });
+```
+
+### HTML Contents `{{# ... }}`
+
+This will allow for inserting HTML returned string.
+
+> Be aware of this can potentially lead into security issues like XSS. Use carefully!
+
+```html
+<div>{{# data.value }}</div>
+```
+```js
+view.render({ value: "<b>html is allowed</b>" });
+```
+
+<a name="mikado.escape"></a><a name="mikado.sanitize"></a>
+#### Sanitizer
+
+Mikado provides you high performant helper function you can use in this context to escape contents or to sanitize.
+
+```js
+view.render({ 
+    value: "<b>html allowed</b><br>" + Mikado.escape("<b>not allowed</b>")
+});
+```
+
+```js
+view.render({ 
+    value: "<b>html allowed</b><br>" + Mikado.sanitize("<b>not allowed</b>")
+});
+```
+
+Using the sanitizer will remove the tags completely, whereas when escaping the content aren't removed but just escaped.
+
+### Reactive Bindings `{{= ... }}`
+
+Define properties by using pure data object notation without any javascript inside:
+
+```html
+<div class="{{= data.class }}">{{= data.value }}</div>
+```
+```js
+const data = { class: "active", value: "foo" };
+view.render(data);
+```
+
+Now you can change the properties of `data` and the corresponding DOM elements will change automatically:
+
+```js
+data.class = "inactive";
+data.value = "bar";
+```
+
+Read more about reactive paradigm <a href="#proxy">here</a>.
+
+<a name="event"></a>
 ## Routing & Event Delegation
 
 > All the special attributes used to assign event routing within templates are inherited from the native inline listener name but without the prefix `on`, e.g. to bind routing for an "onclick" just use `click`.
@@ -2535,7 +2718,7 @@ const view = await mikado.compile("view/start.html", {
 </div>
 ```
 
-> Those templates aren't supported by the client render engine.
+> Those templates aren't supported by the client render engine, also you can't hydrate them.
 
 ## Express Render Engine
 
@@ -2582,14 +2765,25 @@ app.get("/", function(req, res){
 ```
 
 <a name="includes"></a>
-
 ## Includes
 
 Partials gets its own instance under the hood. This performance gain also makes template factories re-usable when the same partials are shared across different views.
 
 > Be aware of circular includes. A partial cannot include itself (or later in its own chain). Especially when your include-chain growths remember this rule.
 
-Assume you've created a partial template. Make sure the template is providing one single root as the outer bound.
+Assume you've created one or more partial templates. Make sure each of the partial templates is providing one single root as the outer bound.
+
+The file structure might look like:
+
+- _tpl/header.html_
+- _tpl/article.html_
+- _tpl/footer.html_
+
+You will need to compile the templates:
+
+```bash
+npx mikado-compile ./tpl/
+```
 
 You have to register all partial templates once **before** you initialize the templates which will including them:
 
@@ -2603,35 +2797,10 @@ Mikado.register(tpl_article);
 Mikado.register(tpl_footer);
 ```
 
-When using templates in ES5 compatible format, they are automatically registered by default. You can also use the runtime compiler and pass the returned template to the register method.
+When using templates in ES5 compatible format, they are automatically registered by default when loaded.
+<!--You can also use the runtime compiler and pass the returned template to the register method.-->
 
-Now you can include partials with a pseudo-element:
-
-```html
-<section>
-  <include>{{ header }}</include>
-  <include>{{ article }}</include>
-  <include>{{ footer }}</include>
-</section>
-```
-
-Use the template name (filename) for includes.
-
-> The pseudo-element **_\<include\>_** will extract into place and is not a part of the component. You cannot use dynamic expressions within curly brackets, just provide the name of the template.
-
-Equal to:
-
-```html
-<section>
-  <include from="header"></include>
-  <include from="article"></include>
-  <include from="footer"></include>
-</section>
-```
-
-> You **can't** use self-closing custom elements accordingly to the HTML5 specs e.g. `<include from="title"/>`.
-
-You can also include a root node which is part of the component by an attribute:
+Include partial templates in another template __tpl/section.html__:
 
 ```html
 <section>
@@ -2641,9 +2810,18 @@ You can also include a root node which is part of the component by an attribute:
 </section>
 ```
 
-<a name="loop-partials"></a>
+The "section" from above could be also included by another one (and so on):
 
-### Loop Partials
+```html
+<html>
+<body>
+    <main foreach="data.sections" include="section"></main>
+</body>
+</html>
+```
+
+<a name="loop-partials"></a>
+## Loop Partials
 
 Assume the template example from above is a tweet (title, article, footer).
 
@@ -2673,7 +2851,6 @@ The **_offset_** attribute could also be negative to reverse the boundary direct
 ```
 
 <a name="inline-loops"></a>
-
 ### Inline Loops
 
 You can also loop through an inline partial. Mikado will extract and referencing this partial to its own instance under the hood.
@@ -2737,7 +2914,6 @@ In this example every foreach-expression is wrong (you will find the right examp
 ```
 
 <a name="conditional" id="conditional"></a>
-
 ## Conditional Template Structures
 
 ```html
@@ -2798,7 +2974,6 @@ Also, try to assign computations outside a loop by using the state to delegate v
 ```
 
 <a name="proxy" id="proxy"></a>
-
 ## Reactive Properties (Proxy)
 
 Mikado provides you a reactive approach to listen for changes to the data and apply them accordingly to the DOM.
@@ -3017,7 +3192,7 @@ There are some methods which slightly differs from the original implementation o
 - filter
 - map
 
-When you need the original behavior you can simply do that by:
+When you need the original native behavior you can simply do that by:
 
 ```js
 var new_array = [ ... ];
@@ -3035,17 +3210,18 @@ This index is a special marker that increases the "virtual" array size.
 Whenever you assign a value to this special index the size of the observable index growth automatically and the next "undefined" index in the queue becomes this marker.
 This limitation is not existing when the ES6 proxy is available.
 
-Also, there are some drawbacks when reflection is used:
+Also, there are some divergent characteristics when using reflection:
 
 ```js
 var store = Mikado.Array();
 console.log(store.constructor === Array); // -> false
 console.log(store.prototype === Array.prototype); // -> false
 console.log(store instanceof Array); // -> false
-console.log(Array.isArray(store)); // -> true
+console.log(Array.isArray(store)); // -> false
+console.log(store instanceof Mikado.Array); // -> true
 ```
 
-The proxy feature theoretically allows all those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Use can still use `Array.isArray()` to identify array-like objects.
+The proxy feature theoretically allows all those checks but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Alternatively you can use an `instanceof` check for identification.
 
 <a name="pools"></a>
 ## Template Pools
