@@ -2212,7 +2212,7 @@ var html = Mikado.getHTML(node);
 
 <a name="view.state"></a>
 
-## State
+## View State
 
 Every Mikado instance has by default a state object you can access by `view.state`.
 
@@ -3136,40 +3136,16 @@ Each template part explained:
 
 ## Best Practices
 
-A Mikado instance has a stronger relation to the template as to the root element. Please keep this example in mind:
+When you are focus on performance you should take those settings as a goal:
 
-This is good:
+1. For keyed recycling use: `{ pool: 200 }` by adding `cache="true"` on the template root element in addition to `key="data.id"`
+2. For non-keyed recycling use: `{ recycle: true, pool: true }` by adding `cache="true"` on the template root element
+3. Also enable `Mikado.eventCache = true`.
 
-```js
-var view = new Mikado(template);
+> Please don't just use them blindly, you will need to understand at least a minimum about what those options are doing. Also, in certain situations they might not the best pick. You will also get a great performance when not using this options.
 
-view.mount(root_a).render(data);
-view.mount(root_b).render(data);
-view.mount(root_c).render(data);
-```
-
-This is okay, but instead of this:
-
-```js
-view.mount(root);
-view.init(tpl_a).render(data);
-view.init(tpl_b).render(data);
-view.init(tpl_c).render(data);
-```
-
-Doing this:
-
-```js
-var view_a = new Mikado(tpl_a);
-var view_b = new Mikado(tpl_b);
-var view_c = new Mikado(tpl_c);
-
-view_a.mount(root_c).render(data);
-view_b.mount(root_b).render(data);
-view_c.mount(root_a).render(data);
-```
-
-Ideally, every template should be initialized by one Mikado instance and should be re-mounted when using in another context. Re-mounting is very fast, but re-assigning templates is not as fast.
+- Remember, inline includes (foreach, if, include) can also have a key property on their inline root element.
+- Prefer named includes when structures will be reused by multiple views, also when assigning custom options gives you any advantage.
 
 <a name="concept"></a>
 ## Concept of Shared Components

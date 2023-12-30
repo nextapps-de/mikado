@@ -25,7 +25,10 @@ function handler(event, type) {
 
     const event_target = event.target,
           use_event_cache = Mikado.eventCache,
-          use_bubble = !1 !== Mikado.eventBubble;
+          use_bubble = Mikado.eventBubble;
+    // disabled by default:
+
+    // disabled by default:
 
     let cache;
 

@@ -816,7 +816,44 @@ Mikado.prototype.add = function (data, state, index) {
 
     const node = this.create(data, state, index, 1);
 
-    {}
+    //if(SUPPORT_STORAGE) {
+
+    //let stealth_mode;
+
+    // if(SUPPORT_REACTIVE && this.proxy){
+    //
+    //     if(this.stealth && this.loose && (node["_data"] === data)){
+    //
+    //         stealth_mode = 1;
+    //     }
+    //     else{
+    //
+    //         data["_proxy"] || (data = proxy_create(data, node["_path"] || this.create_path(node), this.proxy));
+    //     }
+    // }
+
+    // if(!stealth_mode){
+    //
+    //     if(this.store){
+    //
+    //         if(has_index && !this.extern){
+    //
+    //             splice(this.store, this.length - 1, length, data);
+    //             //this.store.splice(length, 0, data);
+    //         }
+    //         else{
+    //
+    //             if(SUPPORT_REACTIVE) this.skip = 1;
+    //             this.store[length] = data;
+    //             if(SUPPORT_REACTIVE) this.skip = 0;
+    //         }
+    //     }
+    //     else if(this.loose){
+    //
+    //         node["_data"] = data;
+    //     }
+    // }
+    //}
 
     if (has_index) {
 
@@ -1272,6 +1309,14 @@ Mikado.prototype.checkout = function (node) {
             }
         }
     }
+};
+
+
+Mikado.prototype.flush = function () {
+
+    this.pool_shared = [];
+
+    this.pool_keyed = {};
 };
 
 /**

@@ -26,9 +26,9 @@ import Mikado from "./mikado.js";
 
         const event_target = event.target;
         // disabled by default:
-        const use_event_cache = Mikado["eventCache"];
+        const use_event_cache = Mikado.eventCache;
         // disabled by default:
-        const use_bubble = Mikado["eventBubble"];
+        const use_bubble = Mikado.eventBubble;
 
         let cache;
 

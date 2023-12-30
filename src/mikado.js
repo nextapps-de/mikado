@@ -1514,6 +1514,19 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
     };
 }
 
+if(SUPPORT_POOLS){
+
+    Mikado.prototype.flush = function(){
+
+        this.pool_shared = [];
+
+        if(SUPPORT_KEYED){
+
+            this.pool_keyed = {};
+        }
+    }
+}
+
 /**
  * @const
  */

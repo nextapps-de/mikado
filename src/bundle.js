@@ -81,6 +81,13 @@ Mikado["unregister"] = unregister;
 // Mikado global properties
 // --------------------------------
 
+if(SUPPORT_EVENTS){
+
+    /** @export */
+    Mikado.eventCache;
+    /** @export */
+    Mikado.eventBubble;
+}
 
 // Mikado public instance properties
 // --------------------------------
@@ -111,6 +118,8 @@ Mikado.prototype.index;
 Mikado.prototype.mount;
 /** @export */
 Mikado.prototype.destroy;
+/** @export */
+Mikado.prototype.flush;
 /** @export */
 Mikado.prototype.create;
 /** @export */

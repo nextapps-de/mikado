@@ -23,6 +23,7 @@ declare class Mikado {
     cancel(): Mikado;
     clear(): Mikado;
     destroy(): void;
+    flush(): void;
 
     index(node: HTMLElement): number;
     node(index: number): HTMLElement;

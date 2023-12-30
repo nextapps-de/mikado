@@ -251,10 +251,10 @@ export function setClass(node, classname) {
 
 /**
  * @param {Element} node
- * @return {string}
+ * @return {Array<string>}
  */
 
-export function getClass(node) {
+export function getClasses(node) {
 
     let cache = node._mkc,
         tmp;
@@ -272,7 +272,7 @@ export function getClass(node) {
         cache._c = tmp = node.className;
     }
 
-    return tmp;
+    return tmp.split(regex_class);
 }
 
 /**
@@ -484,6 +484,32 @@ export function setCss(node, css) {
 }
 
 /**
+ * @param {HTMLElement} node
+ * @return {string}
+ */
+
+export function getCss(node) {
+
+    let cache = node._mkc,
+        tmp;
+
+    if (cache) {
+
+        tmp = cache._s;
+    } else {
+
+        node._mkc = cache = {};
+    }
+
+    if ("string" != typeof tmp) {
+
+        cache._s = tmp = node.style.cssText;
+    }
+
+    return tmp;
+}
+
+/**
  * @param {Element} node
  * @return {Object}
  */
@@ -521,38 +547,57 @@ function transformStyleCache(node) {
 }
 
 /**
- * @param {Element} node
- * @param {string} style
+ * @param {HTMLElement} node
+ * @param {string} property
  * @param {string|number} value
  * @param {CSSStyleDeclaration} _style
  * @param {Object=} _cache
  */
 
-export function setStyle(node, style, value, _style, _cache) {
+export function setStyle(node, property, value, _style, _cache) {
 
     const cache = _cache || transformStyleCache(node);
 
-    if (cache[style] !== value) {
+    if (cache[property] !== value) {
 
-        cache[style] = value;
-        (_style || node.style).setProperty(style, /** @type {string} */value);
+        cache[property] = value;
+        (_style || node.style).setProperty(property, /** @type {string} */value);
     }
 }
 
 /**
  * @param {HTMLElement} node
- * @param {Object<string, string|number>} styles
+ * @param {Object<string, string|number>} properties
  */
 
-export function setStyles(node, styles) {
+export function setStyles(node, properties) {
     const cache = transformStyleCache(node),
           prop = node.style;
 
 
-    for (let style in styles) {
+    for (const style in properties) {
 
-        setStyle(node, style, styles[style], prop, cache);
+        setStyle(node, style, properties[style], prop, cache);
     }
+}
+
+/**
+ * @param {HTMLElement} node
+ * @param {string} property
+ * @return {string}
+ */
+
+export function getStyle(node, property) {
+
+    const cache = transformStyleCache(node);
+    let tmp = cache[property];
+
+    if ("string" != typeof tmp) {
+
+        cache[property] = tmp = node.style.getPropertyValue(property);
+    }
+
+    return tmp;
 }
 
 // -------------------------------------------------------------
