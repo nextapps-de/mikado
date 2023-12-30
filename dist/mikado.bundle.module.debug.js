@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.134 (Bundle/Module/Debug)
+ * Mikado.js v0.8.135 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -117,7 +117,7 @@ function F(a, b, c, d) {
   return a._mkp = e;
 }
 function K(a, b, c, d, e, k) {
-  const f = d || (a.tag ? a.D ? document.createElementNS("http://www.w3.org/2000/svg", a.tag) : document.createElement(a.tag) : document.createTextNode(a.text));
+  const f = d || (a.tag ? a.C ? document.createElementNS("http://www.w3.org/2000/svg", a.tag) : document.createElement(a.tag) : document.createTextNode(a.text));
   let h, g;
   if (g = a.class) {
     "object" === typeof g ? (b.push(new J(h = {_c:""}, f, c)), (g = g[0]) && L.call(e, g, ["_c", b.length - 1])) : d || (f.className = g);
@@ -162,10 +162,10 @@ function K(a, b, c, d, e, k) {
       }
     } else {
       c = e.inc.length;
-      if (!e.tpl.C.length) {
+      if (!e.tpl.B.length) {
         throw Error("The template '" + e.name + "|" + c + "' has conflicts. It should provide a handler entry, but wasn't found.");
       }
-      a = new E({name:e.name + "|" + c, tpl:g, key:g.key, cache:g.cache, fn:e.tpl.C}, {recycle:e.recycle, cache:e.cache, pool:e.pool, state:e.state, mount:f, hydrate:!!d});
+      a = new E({name:e.name + "|" + c, tpl:g, key:g.key, cache:g.cache, fn:e.tpl.B}, {recycle:e.recycle, cache:e.cache, pool:e.pool, state:e.state, mount:f, hydrate:!!d});
     }
     e.inc.push(a);
   }
@@ -232,7 +232,7 @@ l._h = function(a) {
 const fa = window.Proxy || function() {
   function a(b, c) {
     this.path = c.path;
-    this.B = c.B;
+    this.A = c.A;
     for (const d in b) {
       this.define(b, d, b[d]);
     }
@@ -258,7 +258,7 @@ function ia(a, b, c) {
   return !0;
 }
 function ea(a, b) {
-  if (b = this.B[b]) {
+  if (b = this.A[b]) {
     for (let c = 0; c < b.length; c++) {
       const d = b[c], e = d[0], k = this.path[d[1]];
       if (!k.c || k.c[e + (d[2] || "")] !== a) {
@@ -295,16 +295,15 @@ function E(a, b = {}) {
   this.recycle = !!b.recycle;
   this.state = b.state || {};
   this.key = a.key || "";
-  this.l = {};
+  this.m = {};
   this.apply = (c = a.fn) && c.pop();
   this.tpl = a.tpl;
   this.name = a.name;
   this.inc = [];
-  a.tpl.C = c;
+  a.tpl.B = c;
   this.pool = (this.key || this.recycle) && b.pool || 0;
   this.u = [];
-  this.m = {};
-  this.A = 0;
+  this.l = new Map();
   this.cache = a.cache || !!b.cache;
   this.async = !!b.async;
   this.o = 0;
@@ -342,8 +341,8 @@ l.mount = function(a, b) {
     a._mkd = this.g;
   }
   if (this.key) {
-    if (d && this.root && (this.root._mkl = this.l), c === this) {
-      this.l = a._mkl;
+    if (d && this.root && (this.root._mkl = this.m), c === this) {
+      this.m = a._mkl;
     } else {
       d = {};
       if (!c && b && this.length) {
@@ -351,7 +350,7 @@ l.mount = function(a, b) {
           f = this.g[k], h = f.getAttribute("key"), f._mkk = h, d[h] = f;
         }
       }
-      a._mkl = this.l = d;
+      a._mkl = this.m = d;
     }
   }
   a._mki = this;
@@ -420,7 +419,7 @@ l.replace = function(a, b, c, d) {
   var e;
   if (this.key) {
     var k = b[this.key];
-    if (e = this.l[k]) {
+    if (e = this.m[k]) {
       if (e !== a) {
         var f = this.index(e);
         this.g[d] = e;
@@ -432,7 +431,7 @@ l.replace = function(a, b, c, d) {
         h !== f && this.root.insertBefore(f, h);
       }
     } else {
-      this.pool && (e = this.m[k]) && (this.m[k] = null, this.A--, P(this, a), this.g[d] = e, a.replaceWith(e));
+      this.pool && (e = this.l.get(k)) && (this.l.delete(k), P(this, a), this.g[d] = e, a.replaceWith(e));
     }
   } else {
     this.recycle && (e = a);
@@ -462,10 +461,10 @@ l.create = function(a, b, c, d) {
   let e = this.key;
   const k = e && a[e];
   let f, h, g, m;
-  e && this.pool && (h = this.m) && (f = h[k]) ? (m = 1, h[k] = null, this.A--) : (!e || this.recycle) && this.pool && (h = this.u) && h.length ? f = h.pop() : (f = g = this.j, g || (this.j = f = g = K(this.tpl, [], "", null, this), this.tpl = null));
+  e && this.pool && (h = this.l) && (f = h.get(k)) ? (m = 1, h.delete(k)) : (!e || this.recycle) && this.pool && (h = this.u) && h.length ? f = h.pop() : (f = g = this.j, g || (this.j = f = g = K(this.tpl, [], "", null, this), this.tpl = null));
   this.apply && this.apply(a, b || this.state, c, f._mkp || I(f, this.j._mkp, !!g || this.cache));
   g && (f = f.cloneNode(!0));
-  e && (m || (f._mkk = k), d && (this.l[k] = f));
+  e && (m || (f._mkk = k), d && (this.m[k] = f));
   (a = this.on[g ? "create" : "recycle"]) && a(f);
   return f;
 };
@@ -479,10 +478,10 @@ l.add = function(a, b, c) {
 };
 function O(a, b) {
   a = a._mkp || I(a, this.j._mkp, this.cache);
-  return new fa(b, {path:a, B:this.proxy, get:ha, set:ia});
+  return new fa(b, {path:a, A:this.proxy, get:ha, set:ia});
 }
 function ja(a, b, c, d) {
-  const e = a.g, k = a.l, f = a.key;
+  const e = a.g, k = a.m, f = a.key;
   let h = b.length, g = e.length, m = g > h ? g : h, p = 0;
   for (d || (d = 0); d < m; d++) {
     var r = void 0;
@@ -566,13 +565,11 @@ l.node = function(a) {
 function P(a, b) {
   if (a.key) {
     var c = b._mkk;
-    a.l[c] = null;
+    a.m[c] = null;
   }
   if (a.pool) {
-    if (a.key) {
-      if (!0 === a.pool || a.A < a.pool) {
-        a.m[c] = b, a.A++;
-      }
+    if (c) {
+      a.l.set(c, b), !0 !== a.pool && a.l.size > a.pool && a.l.delete(a.l.keys().next().value);
     } else {
       if (c = a.u.length, !0 === a.pool || c < a.pool) {
         a.u[c] = b;
@@ -582,15 +579,16 @@ function P(a, b) {
 }
 l.flush = function() {
   this.u = [];
-  this.m = {};
+  this.l = new Map();
+  return this;
 };
 l.destroy = function() {
   for (let a = 0, b; a < this.inc.length; a++) {
     b = this.inc[a], M[b.name] || b.destroy();
   }
-  this.key && (this.root && (this.root._mkl = null), this.l = null);
+  this.key && (this.root && (this.root._mkl = null), this.m = null);
   this.root && (this.root._mkd = this.root._mki = null);
-  this.proxy = this.on = this.m = this.u = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.j = null;
+  this.proxy = this.on = this.l = this.u = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.j = null;
 };
 const S = Array.prototype, T = window.Proxy;
 let U = !1;

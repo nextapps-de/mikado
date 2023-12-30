@@ -725,7 +725,15 @@ Instance properties:
 - view.<a href="#view.root">**root**</a>
 - view.<a href="#view.length">**length**</a>
 - view.<a href="#view.state">**state**</a>
+
+Instance properties (not included in mikado.light.js):
+
 - view.<a href="#view.store">**store**</a>
+
+Static properties (not included in mikado.light.js):
+
+- Mikado.<a href="#mikado.eventCache">**eventCache**</a>
+- Mikado.<a href="#mikado.eventBubble">**eventBubble**</a>
 
 Static methods:
 
@@ -754,6 +762,7 @@ Instance methods:
 - view.<a href="#view.clear">**clear**()</a>
 - view.<a href="#view.node">**node**(index)</a>&thinsp;:&thinsp;node
 - view.<a href="#view.index">**index**(node)</a>&thinsp;:&thinsp;number
+- view.<a href="#view.flush">**flush**()</a>
 - view.<a href="#view.destroy">**destroy**()</a>
 
 Instance methods (not included in mikado.light.js):
@@ -945,6 +954,14 @@ var view = new Mikado(tpl);
 <a name="get-started"></a>
 ## Basic Example
 
+The Mikado Compiler requires Node.js to be installed. This is probably the simplest step in this guide.
+
+Install Mikado from NPM (also installs the compiler):
+
+```npm
+npm install mikado
+```
+
 Assume there is an array of data items to render (or just one item as an object):
 
 ```js
@@ -960,7 +977,7 @@ const data = [{
 }];
 ```
 
-Accordingly, a template "tpl/partial/user.html" might look like:
+Accordingly, a template **_tpl/partial/user.html_** might look like:
 
 ```html
 <table>
@@ -976,6 +993,8 @@ Accordingly, a template "tpl/partial/user.html" might look like:
 ```
 
 ### Compile the template:
+
+In your console type this command line:
 
 ```cmd
 npx mikado-compile ./tpl/
@@ -3027,6 +3046,38 @@ console.log(Array.isArray(store)); // -> true
 ```
 
 The proxy feature theoretically allows all those reflections but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Use can still use `Array.isArray()` to identify array-like objects.
+
+<a name="pools"></a>
+## Template Pools
+
+Using pools greatly enhance the strategy of keyed and non-keyed recycling. Mikado detects automatically if it needs to use keyed or non-keyed pooling and will apply different strategies optimized for each of them.
+
+> Pools just enables (regardless of the passed options) when one of the recycle strategy was used: keyed or non-keyed.
+
+Enable pool and limit pool size (keyed and non-keyed:
+
+```js
+const view = new Mikado(tpl, { pool: 200, recycle: true });
+```
+
+> A proper value of pool size should be set at least to the max amount of items which is rendered in one loop (e.g. a page of 30 items). Using twice of this length is recommended, when your components aren't oversized or when page has less than 100 items to render.
+
+Enable pool with unbounded pool size (non-keyed only):
+
+```js
+const view = new Mikado(tpl, { pool: true, recycle: true });
+```
+
+> In keyed mode you should only use an unbounded pool size, when the total amount of data is very limited (e.g. less than 300 items). To be safe you should always limit the pool when using keyed recycling.
+
+<a name="mikado.flush"></a>
+#### Flush Pools
+
+You can delete pool contents at any time:
+
+```js
+view.flush();
+```
 
 <a name="full-template"></a>
 ## Full Template Example

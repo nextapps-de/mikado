@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.134 (Light/Debug)
+ * Mikado.js v0.8.135 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -33,7 +33,7 @@ function p(a, c, b) {
   return a._mkp = g;
 }
 function z(a, c, b, e, g, k) {
-  const d = e || (a.tag ? a.s ? document.createElementNS("http://www.w3.org/2000/svg", a.tag) : document.createElement(a.tag) : document.createTextNode(a.text));
+  const d = e || (a.tag ? a.o ? document.createElementNS("http://www.w3.org/2000/svg", a.tag) : document.createElement(a.tag) : document.createTextNode(a.text));
   let h, f;
   if (f = a.class) {
     "object" === typeof f ? c.push(new w(h = {_c:""}, d, b)) : e || (d.className = f);
@@ -78,10 +78,10 @@ function z(a, c, b, e, g, k) {
       }
     } else {
       b = g.inc.length;
-      if (!g.tpl.o.length) {
+      if (!g.tpl.m.length) {
         throw Error("The template '" + g.name + "|" + b + "' has conflicts. It should provide a handler entry, but wasn't found.");
       }
-      a = new D({name:g.name + "|" + b, tpl:f, key:f.key, cache:f.cache, fn:g.tpl.o}, {recycle:g.recycle, cache:g.cache, pool:g.pool, state:g.state, mount:d, hydrate:!!e});
+      a = new D({name:g.name + "|" + b, tpl:f, key:f.key, cache:f.cache, fn:g.tpl.m}, {recycle:g.recycle, cache:g.cache, pool:g.pool, state:g.state, mount:d, hydrate:!!e});
     }
     g.inc.push(a);
   }
@@ -168,16 +168,15 @@ function D(a, c = {}) {
   this.recycle = !!c.recycle;
   this.state = c.state || {};
   this.key = a.key || "";
-  this.i = {};
+  this.j = {};
   this.apply = (b = a.fn) && b.pop();
   this.tpl = a.tpl;
   this.name = a.name;
   this.inc = [];
-  a.tpl.o = b;
+  a.tpl.m = b;
   this.pool = (this.key || this.recycle) && c.pool || 0;
   this.l = [];
-  this.j = {};
-  this.m = 0;
+  this.i = new Map();
   this.cache = a.cache || !!c.cache;
   this.root ? this.mount(this.root, c.hydrate) : this.h = null;
 }
@@ -208,8 +207,8 @@ n.mount = function(a, c) {
     a._mkd = this.g;
   }
   if (this.key) {
-    if (e && this.root && (this.root._mkl = this.i), b === this) {
-      this.i = a._mkl;
+    if (e && this.root && (this.root._mkl = this.j), b === this) {
+      this.j = a._mkl;
     } else {
       e = {};
       if (!b && c && this.length) {
@@ -217,7 +216,7 @@ n.mount = function(a, c) {
           d = this.g[k], h = d.getAttribute("key"), d._mkk = h, e[h] = d;
         }
       }
-      a._mkl = this.i = e;
+      a._mkl = this.j = e;
     }
   }
   a._mki = this;
@@ -253,7 +252,7 @@ n.render = function(a, c) {
       q = a[d];
       if (g && m._mkk !== q[g]) {
         b = this.g;
-        e = this.i;
+        e = this.j;
         g = this.key;
         k = a.length;
         let l = b.length, u = l > k ? l : k, A = 0;
@@ -301,7 +300,7 @@ n.replace = function(a, c, b, e) {
   var g;
   if (this.key) {
     var k = c[this.key];
-    if (g = this.i[k]) {
+    if (g = this.j[k]) {
       if (g !== a) {
         var d = this.index(g);
         this.g[e] = g;
@@ -313,7 +312,7 @@ n.replace = function(a, c, b, e) {
         h !== d && this.root.insertBefore(d, h);
       }
     } else {
-      this.pool && (g = this.j[k]) && (this.j[k] = null, this.m--, F(this, a), this.g[e] = g, a.replaceWith(g));
+      this.pool && (g = this.i.get(k)) && (this.i.delete(k), F(this, a), this.g[e] = g, a.replaceWith(g));
     }
   } else {
     this.recycle && (g = a);
@@ -333,10 +332,10 @@ n.create = function(a, c, b, e) {
   let g = this.key;
   const k = g && a[g];
   let d, h, f, m;
-  g && this.pool && (h = this.j) && (d = h[k]) ? (m = 1, h[k] = null, this.m--) : (!g || this.recycle) && this.pool && (h = this.l) && h.length ? d = h.pop() : (d = f = this.h, f || (this.h = d = f = z(this.tpl, [], "", null, this), this.tpl = null));
+  g && this.pool && (h = this.i) && (d = h.get(k)) ? (m = 1, h.delete(k)) : (!g || this.recycle) && this.pool && (h = this.l) && h.length ? d = h.pop() : (d = f = this.h, f || (this.h = d = f = z(this.tpl, [], "", null, this), this.tpl = null));
   this.apply && this.apply(a, c || this.state, b, d._mkp || p(d, this.h._mkp, !!f || this.cache));
   f && (d = d.cloneNode(!0));
-  g && (m || (d._mkk = k), e && (this.i[k] = d));
+  g && (m || (d._mkk = k), e && (this.j[k] = d));
   return d;
 };
 n.add = function(a, c, b) {
@@ -401,13 +400,11 @@ n.node = function(a) {
 function F(a, c) {
   if (a.key) {
     var b = c._mkk;
-    a.i[b] = null;
+    a.j[b] = null;
   }
   if (a.pool) {
-    if (a.key) {
-      if (!0 === a.pool || a.m < a.pool) {
-        a.j[b] = c, a.m++;
-      }
+    if (b) {
+      a.i.set(b, c), !0 !== a.pool && a.i.size > a.pool && a.i.delete(a.i.keys().next().value);
     } else {
       if (b = a.l.length, !0 === a.pool || b < a.pool) {
         a.l[b] = c;
@@ -417,15 +414,16 @@ function F(a, c) {
 }
 n.flush = function() {
   this.l = [];
-  this.j = {};
+  this.i = new Map();
+  return this;
 };
 n.destroy = function() {
   for (let a = 0, c; a < this.inc.length; a++) {
     c = this.inc[a], C[c.name] || c.destroy();
   }
-  this.key && (this.root && (this.root._mkl = null), this.i = null);
+  this.key && (this.root && (this.root._mkl = null), this.j = null);
   this.root && (this.root._mkd = this.root._mki = null);
-  this.j = this.l = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.h = null;
+  this.i = this.l = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.h = null;
 };
 D.register = function(a, c) {
   let b, e;

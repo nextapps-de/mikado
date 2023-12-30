@@ -147,13 +147,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
         if(SUPPORT_KEYED){
 
-            /**
-             * @dict {Object<string, Element>}
-             * @private
-             */
-            this.pool_keyed = {};
-            /** @private {number} */
-            this.pool_keyed_length = 0;
+            /** @private */
+            this.pool_keyed = new Map();
         }
     }
 
@@ -707,10 +702,9 @@ Mikado.prototype.replace = function(node, data, state, index){
                 }
             }
         }
-        else if(SUPPORT_POOLS && this.pool && (tmp = this.pool_keyed[key])){
+        else if(SUPPORT_POOLS && this.pool && (tmp = this.pool_keyed.get(key))){
 
-            this.pool_keyed[key] = null;
-            this.pool_keyed_length--;
+            this.pool_keyed.delete(key);
             this.checkout(node);
             this.dom[index] = tmp;
             node.replaceWith(tmp);
@@ -905,12 +899,10 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
     let node, pool, factory, found;
 
     // 1. keyed pool (shared)
-    if(SUPPORT_POOLS && keyed && this.pool && (pool = this.pool_keyed) && (node = pool[key])){
+    if(SUPPORT_POOLS && keyed && this.pool && (pool = this.pool_keyed) && (node = pool.get(key))){
 
         found = 1;
-
-        pool[key] = null;
-        this.pool_keyed_length--;
+        pool.delete(key);
     }
     // 2. non-keyed pool (shared)
     else if(SUPPORT_POOLS && (!keyed || this.recycle) && this.pool && (pool = this.pool_shared) && pool.length){
@@ -1426,6 +1418,25 @@ Mikado.prototype.remove = function(index, count){
     const checkout = (SUPPORT_KEYED || SUPPORT_POOLS) && (this.key || this.pool);
     const callback = SUPPORT_CALLBACKS && this.on["remove"];
 
+    // TODO
+    // 1. checkout multiple keyed nodes
+    // 2. when count > this.pool it should assign new Map() instead
+    // 3. handle oversize checkouts (count > this.pool) to add items later
+
+    // const resize = SUPPORT_KEYED && SUPPORT_POOLS && count > 1 && this.key && this.pool && this.pool !== true && ((this.pool_keyed.size + count) - this.pool);
+    //
+    // if(resize){
+    //
+    //     if(count >= this.pool){
+    //
+    //         this.pool_keyed = new Map();
+    //     }
+    //     else{
+    //
+    //         this.pool_keyed._keys = this.pool_keyed.keys();
+    //     }
+    // }
+
     for(let x = 0, node; x < count; x++){
 
         node = nodes[reverse ? count - x - 1 : x];
@@ -1433,6 +1444,11 @@ Mikado.prototype.remove = function(index, count){
         checkout && this.checkout(node);
         callback && callback(node);
     }
+
+    // if(resize){
+    //
+    //     this.pool_keyed._keys = null;
+    // }
 
     this.length = length;
 
@@ -1488,16 +1504,17 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
 
         if(SUPPORT_POOLS && this.pool){
 
-            if(SUPPORT_KEYED && this.key){
+            if(key){
 
-                if(this.pool === true || (this.pool_keyed_length < this.pool)){
+                // always adding to keyed shared-pool increases the probability of matching keys
+                // but requires resizing of limited pools
+                this.pool_keyed.set(key, node);
 
-                    // update reference to queued shared-pool
-                    //node[MIKADO_TPL_INDEX] = length;
+                if(this.pool !== true && (this.pool_keyed.size > this.pool)){
 
-                    // add to keyed shared-pool
-                    this.pool_keyed[key] = node;
-                    this.pool_keyed_length++;
+                    this.pool_keyed.delete(
+                        (/*this.pool_keyed._keys ||*/ this.pool_keyed.keys()).next().value
+                    );
                 }
             }
             else{
@@ -1522,8 +1539,10 @@ if(SUPPORT_POOLS){
 
         if(SUPPORT_KEYED){
 
-            this.pool_keyed = {};
+            this.pool_keyed = new Map();
         }
+
+        return this;
     }
 }
 
