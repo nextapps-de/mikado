@@ -146,10 +146,11 @@ Packed with a smart routing feature for event delegation, Mikado gives you every
     - <a href="#limitations">Limitations</a>
     - <a href="#strict-proxy">Strict-Proxy Mode</a>
 22. <a href="#pools">Template Pools</a>
-23. <a href="#full-template">Full Template Example</a>
-24. <a href="#best-practices">Best Practices</a>
-25. <a href="#concept">Concept of Shared Components</a>
-26. <a href="#builds">Custom Builds</a>
+23. <a href="#hydration">Hydration</a>
+24. <a href="#full-template">Full Template Example</a>
+25. <a href="#best-practices">Best Practices</a>
+26. <a href="#concept">Concept of Shared Components</a>
+27. <a href="#builds">Custom Builds</a>
     - <a href="#build-flags">Supported Build Flags</a>
 
 <a name="get-latest"></a>
@@ -3278,6 +3279,64 @@ You can delete pool contents at any time:
 ```js
 view.flush();
 ```
+
+<a name="hydration"></a>
+## Hydration
+
+Hydration is a concept on where the server is sending some basic HTML structure (or the whole App/Page) and the client consumes those contents into its own rendering system. This will improve several performance aspects of page loading (e.g. the Lighthouse test) but also it enables you to have server-side-rendered content by also providing a full PWA (aka "Single-Page-Application") experience at the same time.
+
+Mikado uses partial hydration strategy, where components are hydrated progressively right before a render task will be performed.
+
+Assume the server was sending this HTML structure as initial:
+
+```html
+<html>
+<body>
+    <main>
+        <section>
+            <title>Title</title>
+            <tweets>
+                <tweet><!-- ... --></tweet>
+                <tweet><!-- ... --></tweet>
+                <tweet><!-- ... --></tweet>
+            </tweets>
+        </section>
+    </main>
+</body>
+</html>
+```
+
+Your template looks like:
+
+```html
+<section>
+  <title>{{ data.title }}</title>
+  <tweets foreach="data.tweets">
+      <h1>{{ data.title }}</h1>
+      <title>Comments:</title>
+      <div foreach="data.comments">
+          <comment><!-- ... --></comment>
+      </div>
+  </tweets>
+</section>
+```
+
+You can hydrate the existing structure when creating instance:
+
+```js
+const root = document.querySelector("main");
+const view = new Mikado(tpl, { mount: root, hydrate: true });
+```
+
+You can also do this just right before mounting by passing the 2nd parameter:
+
+```js
+const view = new Mikado(tpl);
+// ... somewhat later in the runtime
+view.mount(document.querySelector("main"), /* hydrate? */ true);
+```
+
+> When a hydration breaks because it isn't compatible for some reason, it fully skips this process silently (logs a message when DEBUG was enabled) and falls back to a construction of a factory instead.
 
 <a name="full-template"></a>
 ## Full Template Example
