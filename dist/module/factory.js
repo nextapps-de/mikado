@@ -239,6 +239,11 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             //vnode = vnode.firstElementChild;
             vnode = vnode.firstChild;
+
+            if (!vnode) {
+
+                return;
+            }
         }
 
         if (val.constructor !== Array) {

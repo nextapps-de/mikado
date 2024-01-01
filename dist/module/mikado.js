@@ -299,9 +299,12 @@ Mikado.prototype.mount = function (target, hydrate) {
 
             /** @private */
             this.factory = this.dom[0].cloneNode();
-            construct( /** @type {TemplateDOM} */this.tpl, [], "", this.factory, this);
-            this.tpl = null;
-        } else {
+            construct( /** @type {TemplateDOM} */this.tpl, [], "", this.factory, this) && (this.tpl = null);
+        }
+
+        // also when falls back on hydration if structure was incompatible
+
+        if (this.tpl) {
 
             /** @private */
             this.factory = construct( /** @type {TemplateDOM} */this.tpl, [], "", null, this);
@@ -383,7 +386,9 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
 
     if (!_skip_async) {
 
-        if ("function" == typeof state) {
+        let has_fn;
+
+        if (state && (has_fn = "function" == typeof state) || !0 === state) {
 
             callback = /** @type {Function|boolean} */state;
             state = null;
@@ -397,28 +402,19 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
         if (this.async || callback) {
 
             const self = this;
+            has_fn || (has_fn = "function" == typeof callback);
 
             self.timer = requestAnimationFrame(function () {
 
                 self.timer = 0;
                 self.render(data, state, null, 1);
-
-                if ("function" == typeof callback) {
-
-                    callback();
-                }
+                has_fn && callback();
             });
 
-            if (callback) {
+            return has_fn ? this : new Promise(function (resolve) {
 
-                return this;
-            } else {
-
-                return new Promise(function (resolve) {
-
-                    callback = resolve;
-                });
-            }
+                callback = resolve;
+            });
         }
     }
 

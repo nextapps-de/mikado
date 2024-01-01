@@ -77,7 +77,7 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 ## Table of contents
 
 Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes <a href="#benchmark">templating performance</a> to a new level and provides you **keyed**, **non-keyed** recycling and also **reactive paradigm** switchable out of the box.
-On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **partial hydration** to inject templates progressively during the client's runtime.
+On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively during the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
 Packed with a smart routing feature for event delegation, Mikado gives you everything you'll need to build realtime applications on a cutting edge performance level.
@@ -904,7 +904,7 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>hydrate</b></td>
-        <td>Progressively enables partial hydration of already existing DOM structures when mounted. Make sure the existing DOM structure is based on the same template. When something differs from the given template schema, the hydration will stop and silently falls back into the default build strategy.</td>
+        <td>Progressively enables hydration of already existing DOM structures when mounted. Make sure the existing DOM structure is based on the same template. When something differs from the given template schema, the hydration will stop and silently falls back into the default build strategy.</td>
         <td>false</td>
     </tr>
 </table>
@@ -1953,8 +1953,6 @@ view.destroy();
 <a name="view.render"></a>
 ## Render Templates
 
-> When using an internal store (not external), every render task also updates the stored data.
-
 Render just a single data object:
 
 ```js
@@ -2861,7 +2859,7 @@ You can also loop through an inline partial. Mikado will extract and referencing
 ```html
 <main>
   <title>{{ data.title }}</title>
-  <tweets for="data.tweets">
+  <tweets foreach="data.tweets">
     <section>
       <header include="header"></header>
       <article include="article"></article>
@@ -3283,25 +3281,25 @@ view.flush();
 <a name="hydration"></a>
 ## Hydration
 
-Hydration is a concept on where the server is sending some basic HTML structure (or the whole App/Page) and the client consumes those contents into its own rendering system. This will improve several performance aspects of page loading (e.g. the Lighthouse test) but also it enables you to have server-side-rendered content by also providing a full PWA (aka "Single-Page-Application") experience at the same time.
+Hydration is a concept where the server is sending some basic HTML structure (or the whole App/Page) and the client consumes those contents into its own rendering system. This will improve several performance aspects of page loading (e.g. the Lighthouse test) but also it enables you to have server-side-rendered content by also providing a full PWA (aka "Single-Page-Application") experience at the same time.
 
-Mikado uses partial hydration strategy, where components are hydrated progressively right before a render task will be performed.
+Mikado uses hydration strategy, where components are hydrated progressively right before a render task will be performed.
 
 Assume the server was sending this HTML structure as initial:
 
 ```html
 <html>
 <body>
-    <main>
-        <section>
-            <title>Title</title>
-            <tweets>
-                <tweet><!-- ... --></tweet>
-                <tweet><!-- ... --></tweet>
-                <tweet><!-- ... --></tweet>
-            </tweets>
-        </section>
-    </main>
+  <main>
+    <section>
+      <title>Title</title>
+      <tweets>
+        <tweet><!-- ... --></tweet>
+        <tweet><!-- ... --></tweet>
+        <tweet><!-- ... --></tweet>
+      </tweets>
+    </section>
+  </main>
 </body>
 </html>
 ```
@@ -3312,16 +3310,22 @@ Your template looks like:
 <section>
   <title>{{ data.title }}</title>
   <tweets foreach="data.tweets">
+    <tweet>
       <h1>{{ data.title }}</h1>
       <title>Comments:</title>
       <div foreach="data.comments">
-          <comment><!-- ... --></comment>
+        <comment><!-- ... --></comment>
       </div>
+   </tweet>
   </tweets>
 </section>
 ```
 
-You can hydrate the existing structure when creating instance:
+> When a mounted template matches the same DOM structure like the component which should be hydrated, the initialization of the template will boot up faster because the factory is derived instead of created. You can use Mikados SSR feature to provide client-compatible structures on the server-side.
+
+> When `DEBUG` is enabled (or by using one of the debug builds) you'll get a message in the console when hydration falls back into factory construction because of an incompatible DOM structure.
+
+You can hydrate the existing structure when creating instance (prefetch):
 
 ```js
 const root = document.querySelector("main");
@@ -3345,41 +3349,41 @@ Use this almost complete template example to check if you know everything about 
 
 ```html
 <main cache="true" id="{{ data.view }}">
-    <table>
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>Title</th>
-                <th>Media</th>
-                <th>Category</th>
-                <th>Comment</th>
-                <th>Date</th>
-                <th include="pager"></th>
-            </tr>
-        </thead>
-        <tbody foreach="data.entries">
-            {{@ const datestr = data.date && new Date(data.date).toISOString(); }}
-            <tr key="data.id" data-id="{{ data.id }}" root>
-                <td>{{ index + 1 }}</td>
-                <td>{{= data.title }}</td>
-                <td>{{# data.media }}</td>
-                <td>{{? data.category }}</td>
-                <td>{{! data.comment }}</td>
-                <td>{{ datestr }}</td>
-                <td style="opacity: {{ state.selected === data.id '1' ? '0.5' }}">
-                    <select change="select-active:root">
-                        <option value="on" selected="data.mode === 'on'">Enabled</option>
-                        <option value="off" selected="data.mode === 'off'">Disabled</option>
-                    </select>
-                </td>
-            </tr>
-        </tbody>
-        <tfoot if="!data.entries.length">
-            <tr>
-                <td colspan="7">No entries found.</td>
-            </tr>
-        </tfoot>
-    </table>
+  <table>
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Title</th>
+          <th>Media</th>
+          <th>Category</th>
+          <th>Comment</th>
+          <th>Date</th>
+          <th include="pager"></th>
+        </tr>
+      </thead>
+      <tbody foreach="data.entries">
+        {{@ const datestr = data.date && new Date(data.date).toISOString(); }}
+        <tr key="data.id" data-id="{{ data.id }}" root>
+          <td>{{ index + 1 }}</td>
+          <td>{{= data.title }}</td>
+          <td>{{# data.media }}</td>
+          <td>{{? data.category }}</td>
+          <td>{{! data.comment }}</td>
+          <td>{{ datestr }}</td>
+          <td style="opacity: {{ state.selected === data.id '1' ? '0.5' }}">
+              <select change="select-active:root">
+                <option value="on" selected="data.mode === 'on'">Enabled</option>
+                <option value="off" selected="data.mode === 'off'">Disabled</option>
+              </select>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot if="!data.entries.length">
+        <tr>
+          <td colspan="7">No entries found.</td>
+        </tr>
+      </tfoot>
+  </table>
 </main>
 ```
 

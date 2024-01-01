@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.135 (Light/Debug)
+ * Mikado.js v0.8.137 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -55,7 +55,10 @@ function z(a, c, b, e, g, k) {
   if (f = a.text) {
     "object" === typeof f ? (g = d, f = f[0], a.tag ? (b += "|", g = !e && d.firstChild, g || (g = document.createTextNode(f), d.appendChild(g))) : h = {}, (h || (h = {}))._t = f, c.push(new w(h, g, b))) : e || (a.tag ? d.textContent = f : d.nodeValue = f);
   } else if (f = a.child) {
-    e && (e = e.firstChild);
+    if (e && (e = e.firstChild, !e)) {
+      console.warn("Hydration failed of template '" + g.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
+      return;
+    }
     f.constructor !== Array && (f = [f]);
     for (let m = 0, q, l = f.length; m < l; m++) {
       q = f[m], b = m ? b + "+" : b + ">", a = z(q, c, b, e, g, 1), e ? m < l - 1 && (e = e.nextSibling) : d.appendChild(a);
@@ -221,7 +224,7 @@ n.mount = function(a, c) {
   }
   a._mki = this;
   this.root = a;
-  this.h || (c && this.length ? (this.h = this.g[0].cloneNode(), z(this.tpl, [], "", this.h, this)) : this.h = z(this.tpl, [], "", null, this), this.tpl = null);
+  this.h || (c && this.length && (this.h = this.g[0].cloneNode(), z(this.tpl, [], "", this.h, this) && (this.tpl = null)), this.tpl && (this.h = z(this.tpl, [], "", null, this), this.tpl = null));
   return this;
 };
 n.render = function(a, c) {

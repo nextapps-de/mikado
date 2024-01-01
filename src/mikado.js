@@ -393,10 +393,12 @@ Mikado.prototype.mount = function(target, hydrate){
 
             /** @private */
             this.factory = this.dom[0].cloneNode();
-            construct(/** @type {TemplateDOM} */ (this.tpl), [], "", this.factory, this);
-            this.tpl = null;
+            construct(/** @type {TemplateDOM} */ (this.tpl), [], "", this.factory, this) && (this.tpl = null);
         }
-        else{
+
+        // also when falls back on hydration if structure was incompatible
+
+        if(this.tpl){
 
             /** @private */
             this.factory = construct(/** @type {TemplateDOM} */ (this.tpl), [], "", null, this);

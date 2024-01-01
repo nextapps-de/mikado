@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.135 (Bundle/Module/Debug)
+ * Mikado.js v0.8.137 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -139,7 +139,10 @@ function K(a, b, c, d, e, k) {
   if (g = a.text) {
     "object" === typeof g ? (m = f, g = g[0], a.tag ? (c += "|", m = !d && f.firstChild, m || (m = document.createTextNode(g), f.appendChild(m))) : h = {}, (h || (h = {}))._t = g, b.push(new J(h, m, c)), g && L.call(e, g, ["_t", b.length - 1])) : d || (a.tag ? f.textContent = g : f.nodeValue = g);
   } else if (g = a.child) {
-    d && (d = d.firstChild);
+    if (d && (d = d.firstChild, !d)) {
+      console.warn("Hydration failed of template '" + e.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
+      return;
+    }
     g.constructor !== Array && (g = [g]);
     for (let p = 0, r, q = g.length; p < q; p++) {
       r = g[p], c = p ? c + "+" : c + ">", a = K(r, b, c, d, e, 1), d ? p < q - 1 && (d = d.nextSibling) : f.appendChild(a);
@@ -355,7 +358,7 @@ l.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.j || (b && this.length ? (this.j = this.g[0].cloneNode(), K(this.tpl, [], "", this.j, this)) : this.j = K(this.tpl, [], "", null, this), this.tpl = null);
+  this.j || (b && this.length && (this.j = this.g[0].cloneNode(), K(this.tpl, [], "", this.j, this) && (this.tpl = null)), this.tpl && (this.j = K(this.tpl, [], "", null, this), this.tpl = null));
   return this;
 };
 l.render = function(a, b, c, d) {
@@ -365,16 +368,24 @@ l.render = function(a, b, c, d) {
   if (this.root._mki !== this) {
     throw Error("Another template is already assigned to this root. Please use '.mount(root_element)' before calling '.render()' to switch the context of a template.");
   }
-  if (!d && ("function" === typeof b && (c = b, b = null), this.o && this.cancel(), this.async || c)) {
-    const g = this;
-    g.o = requestAnimationFrame(function() {
-      g.o = 0;
-      g.render(a, b, null, 1);
-      "function" === typeof c && c();
-    });
-    return c ? this : new Promise(function(m) {
-      c = m;
-    });
+  if (!d) {
+    let g;
+    if (b && (g = "function" === typeof b) || !0 === b) {
+      c = b, b = null;
+    }
+    this.o && this.cancel();
+    if (this.async || c) {
+      const m = this;
+      g || (g = "function" === typeof c);
+      m.o = requestAnimationFrame(function() {
+        m.o = 0;
+        m.render(a, b, null, 1);
+        g && c();
+      });
+      return g ? this : new Promise(function(p) {
+        c = p;
+      });
+    }
   }
   var e = this.length;
   if (!a) {

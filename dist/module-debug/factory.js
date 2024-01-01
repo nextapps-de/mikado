@@ -239,6 +239,14 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             //vnode = vnode.firstElementChild;
             vnode = vnode.firstChild;
+
+            if (!vnode) {
+
+                console.warn("Hydration failed of template '" + self.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
+
+
+                return;
+            }
         }
 
         if (val.constructor !== Array) {
