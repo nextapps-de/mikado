@@ -1,13 +1,13 @@
 <h1>Benchmark of Template Rendering</h1>
 
-Run the benchmark (recycle):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/master/bench/</a><br>
+Run the benchmark (non-keyed recycle):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/">https://raw.githack.com/nextapps-de/mikado/bench/</a><br>
 
-Run the benchmark (keyed):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed">https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed</a><br>
+Run the benchmark (keyed recycle):<br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#keyed">https://raw.githack.com/nextapps-de/mikado/bench/#keyed</a><br>
 
 Run the benchmark (internal/data-driven):<br>
-<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#internal">https://raw.githack.com/nextapps-de/mikado/master/bench/#internal</a><br>
+<a href="https://raw.githack.com/nextapps-de/mikado/master/bench/#internal">https://raw.githack.com/nextapps-de/mikado/bench/#internal</a><br>
 
 There are 3 kinds of test scenarios:
 
@@ -32,7 +32,7 @@ Whether a library provides optimizations to one of these modes or not, it is fai
 
 When the option "keep best run" is enabled it will replace the better result with the old one (separately for each test). When disabled, it will summarize the results for each test.
 
-#### Keyed
+#### Keyed Recycle
 
 <table>
     <tr></tr>
@@ -289,7 +289,7 @@ When the option "keep best run" is enabled it will replace the better result wit
     </tr>
 </table>
 
-#### Non-Keyed (Recycle)
+#### Non-Keyed Recycle
 
 <table>
     <tr></tr>
@@ -546,7 +546,7 @@ When the option "keep best run" is enabled it will replace the better result wit
     </tr>
 </table>
 
-#### Data-Driven (Internal)
+#### Internal (Data-Driven)
 
 <table>
     <tr></tr>
