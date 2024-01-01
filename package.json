@@ -4,10 +4,10 @@
     "server": "node task/server.js"
   },
   "dependencies": {
-    "mikado": "^0.7.21"
+    "mikado": "^0.8.134"
+
   },
   "devDependencies": {
-    "mikado-compile": "^0.7.44",
     "web-servo": "^0.5.1"
   }
 }

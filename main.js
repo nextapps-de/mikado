@@ -68,13 +68,13 @@
 
     const current = [];
 
-    Mikado.route("start", function(event){
+    Mikado.route("start", function(target, event){
 
-        if(this.value === "Start"){
+        if(target.value === "Start"){
 
             index = -1;
             repeat = document.getElementById("repeat").value;
-            this.value = "Stop";
+            target.value = "Stop";
             setTimeout(runner, 200);
 
             const reflow = document.getElementById("reflow").checked;
@@ -88,14 +88,14 @@
         else{
 
             current[index][test[2]] = "";
-            this.value = "Start";
+            target.value = "Start";
             iframe.src = "";
             index = lib.length;
         }
     })
-    .route("mode", function(event){
+    .route("mode", function(target, event){
 
-        init(window.location.hash = "#" + this.value);
+        init(window.location.hash = "#" + target.value);
         reset();
     })
     .listen("click")

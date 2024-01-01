@@ -13,12 +13,12 @@ There are 3 kinds of test scenarios:
 
 <table>
     <tr>
-        <td>1.&nbsp;recycle</td>
+        <td>1.&nbsp;non-keyed recycle</td>
         <td>In this mode all existing nodes could be reused (recycling nodes). This mode has no restrictions.</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>2.&nbsp;keyed</td>
+        <td>2.&nbsp;keyed recycle</td>
         <td>In this mode just existing nodes with the same key (ID) are allowed to be reused. Re-arrangement / reconcile is a rare implemented but also strong feature which is explicitly covered by the test "order".</td>
     </tr>
     <tr></tr>
@@ -792,10 +792,6 @@ This stress test focuses a real life use case, where new data is coming from a s
 This test measures the raw rendering performance. If you look for a benchmark which covers more aspects goto here:<br>
 https://krausest.github.io/js-framework-benchmark/current.html
 
-#### Angular and React?
-
-There are some reasons why you did not find Angular or React on this list. Both aren't a library nor a framework, they are full integrated ecosystems which is quite unfair to compare. Also they runs completely async. If there was a way to force running them in sync I'm pretty sure, they would fill the bottom lines of this benchmark test.
-
 #### Local Installation
 
 Go to the folder _bench/_ and install dependencies:
@@ -815,14 +811,14 @@ The score is calculated in relation to the median value of each test. That will 
 
 <code>Score = Sum<sub>test</sub>(lib_ops / median_ops) / test_count * 1000</code>
 
-The file size and memory gets less relevance by applying the square root of these values.
+The memory gets less relevance by applying just the square root of these values to the total score.
 
 #### Index
-The score index is a very stable representation where each score points to a specific place in a ranking table. The maximum possible score and also the best place is 1000, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
+The score index is a very stable representation where each score points to a specific place in a ranking table (from 0 worst to 100 best). The maximum possible score and also the best place is 100, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
 
 <code>Index = Sum<sub>test</sub>(lib_ops / max_ops) / test_count * 1000</code>
 
-The file size and memory gets less relevance by applying the square root of these values.
+The memory gets less relevance by applying just the square root of these values to the index.
 
 ## Tests
 <table>
@@ -913,9 +909,9 @@ Regardless the function is doing, every test has to run through the same logic.
 
 #### Random item factory
 
-The items were created by a random factory. The items comes from a pre-filled pool (5 slots a 100 items), so that keyed libraries get a chance to match same IDs.
+The items were created by a random factory. The items come from a pre-filled pool (5 slots each including 100 items), so that keyed libraries get a chance to match same IDs.
 
-Also the items has some fields, which aren't included by the template. That is also important, because in this situation is the most common. Most other benchmarks just provide data which is consumed by the template.
+Also the items has some fields, which aren't included by the template. That is also important, because in this situation is the most common.
 
 #### Mimic data from a server or created during runtime
 
@@ -935,11 +931,9 @@ You may see benchmarks which draws the rendering visible to the users screen. It
 
 #### About requirements for tested libraries
 1. Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand.
-The goal is to benchmark library performance and not the performance made by an implementation of a developer. That is probably the biggest different to other benchmark tests.
-
-2. Also asynchronous/scheduled rendering is not allowed.
-
-3. The keyed test requires a largely non-reusing paradigm. When a new item comes from the outside, the library does not reusing nodes (on different keys/IDs).
+The goal is to benchmark library performance and not the performance made by an implementation of a developer.
+2. Also, asynchronous/scheduled rendering is actually not allowed.
+3. The keyed test requires a specific paradigm. When a new item comes from the outside, the library just can recycle nodes when data key was matched.
 
 #### About the test environment
 
@@ -948,7 +942,4 @@ This test also covers runtime optimizations of each library which is very import
 #### About median values
 Using the median value is very common to normalize the spread in results in a statistically manner. But using the median as benchmark samples, especially when code runs through a VM, the risk is high that the median value is getting back a false result. One thing that is often overseen is the run of the garbage collector, which has a significantly cost and runs randomly. A benchmark which is based on median results will effectively cut out the garbage collector and may produce wrong results. A benchmark based on a best run will absolutely cut off the garbage collector.
 
-This test implementation just using a median to map the results into a normalized scoring index. The results are based on the full computation time including the full run of the garbage collector. That also comes closest to a real environment.
-
-#### About benchmark precision
-It is not possible to provide absolute stable browser measuring. There are so many factors which has an impact of benchmarking that it makes no sense in trying to make "synthetic" fixes on things they cannot been fixed. Also every synthetic change may lead into wrong results and false interpreting. For my personal view the best benchmark just uses the browser without any cosmetics. That comes closest to the environment of an user who is using an application.
+This test implementation is using median factorization for the field "index" to map the results into a normalized scoring rank (0 worst to 100 best). The results are based on the full computation time including the full run of the garbage collector. That also comes closest to a real environment.
