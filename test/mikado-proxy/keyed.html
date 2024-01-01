@@ -6,20 +6,25 @@
 <h1>Benchmark: mikado-proxy-0.8.117 (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
-<script src="./dist/mikado.bundle.js"></script>
 <script type="module">
 
     "use strict";
 
     import { suite, root, store } from "./../../bench.js";
     import template from "./template/keyed.js";
+    import Mikado from "./dist/mikado.bundle.module.min.js";
+
+    // the pool is limited to 100, that is the amount
+    // of items to be rendered in a single test.
+    // it is not allowed to transfer a pool to the
+    // next round!
 
     const mikado = new Mikado(template, {
         observe: store(new Mikado.Array()),
         mount: root,
         recycle: true,
         cache: true,
-        pool: true
+        pool: 100
     });
 
     suite["mikado"] = function(items){

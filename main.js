@@ -211,7 +211,7 @@
                 }
             }
 
-            current[x]["score"] = (score[x] / length[x] * 1000 + 0.5) | 0;
+            current[x]["score"] = (score[x] / length[x] * 100 + 0.5) | 0;
             current[x]["index"] = (index[x] / length[x] * 100 + 0.5) | 0;
             if(max_score < current[x]["score"]) max_score = current[x]["score"];
             if(max_index < current[x]["index"]) max_index = current[x]["index"];

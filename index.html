@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Benchmark of Web Template Rendering Engines (Recycle, Keyed, Data-Driven, Strict)</title>
+    <title>Benchmark of Web Template Rendering Engines (Keyed/Non-Keyed Recycle, Data-Driven)</title>
     <style>
         body{
             font-family: -apple-system, BlinkMacSystemFont, Arial, Helvetica, Roboto, OpenSans, sans-serif;
@@ -71,11 +71,11 @@
         </td>
         <td>&emsp;</td>
         <td>
-            <label title="[Recycle]: No restrictions. Everything is allowed, e.g. the re-usage of DOM elements. [Keyed]: The re-usage of DOM elements is just allowed on data entries sharing the same key. [Data-Driven]: No restrictions. Does not apply de-referencing to the test data. [Strict]: Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.">
+            <label title="[Recycle]: No restrictions. Everything is allowed, e.g. the re-usage of DOM elements. [Keyed]: The re-usage of DOM elements is just allowed on data entries sharing the same key. [Data-Driven]: No restrictions. Does not apply de-referencing to the test data">
                 Mode:
                 <select id="mode" change="mode">
-                    <option value="strict" hidden>Strict</option>
-                    <option value="recycle" selected>Recycle</option>
+                    <!--<option value="strict" hidden>Strict</option>-->
+                    <option value="recycle" selected>Non-Keyed</option>
                     <option value="keyed">Keyed</option>
                     <option value="internal">Data-driven</option>
                 </select>
@@ -165,7 +165,7 @@ The test "innerHTML" just uses the browsers native feature <code>element.innerHT
     <li><u>Recycle</u>:<sup>*</sup> No restrictions. Everything is allowed, e.g. the re-usage of DOM elements.</li>
     <li><u>Keyed</u>:<sup>*</sup> The re-usage of DOM elements is just allowed on data entries sharing the same key.</li>
     <li><u>Data-Driven</u>:<sup> </sup> No restrictions. Does not apply de-referencing to the test data.</li>
-    <li><u>Strict</u>:<sup> </sup> Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.</li>
+    <!--<li><u>Strict</u>:<sup> </sup> Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.</li>-->
 </ul>
 <sup>*</sup> The test applies de-referencing to mimic real incoming data from a server. No fake allowed.
 <br><br>
@@ -173,10 +173,10 @@ The test "innerHTML" just uses the browsers native feature <code>element.innerHT
 <p>
 Every test will run in its own isolated/dedicated browser instance (iframe) and post back results via message channel.
 The benchmark creates a sequence of fixed randomness which will apply for every test. So every test has to solve exactly the same task.
-This is a real world benchmark running in your browser, no synthetics. It applies de-referencing on "recycle" und "keyed" tests to mimic realistic data which is coming from an extern authority like a server.
+This is a real world benchmark running in your browser, no synthetics. It applies de-referencing on "recycle" und "keyed" tests to mimic realistic data coming from an extern authority like a server.
 To bo honest, everything else would be a fake. The data-driven test covers the feature of internal data processing explicitly. You will find a lot of synthetic benchmarks out there which didn't cover this specific real world behavior. Keep this in mind.
 <br><br>
-The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation by forcing reflow at the end of each test cycle. Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test.
+The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation (by forcing reflow at the end of each test cycle). Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test and will drastically reduce the potential of getting meaningful results.
 </p><br>
 <b>Test Data:</b>
 <p>
@@ -187,6 +187,10 @@ Also, it doesn't match real world scenario when a test runs 5 seconds and is app
 <br><br>
 If you like to measure through infinite random unique items instead, then switch to the "strict" test mode, which is covering this behavior but also most of the libraries performance capabilities couldn't be applied on this test mode. This mode is just for completeness but don't recommend when it comes to make solid conclusions about the library performance capabilities.
 -->
+</p><br>
+<b>Results:</b>
+<p>
+The <b>index</b> is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The <b>score</b> value is based on median factorization, here a score of 100 represents the statistical midfield.
 </p>
 <iframe id="iframe"></iframe>
 <script src="test/mikado/dist/mikado.bundle.js"></script>
