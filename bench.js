@@ -113,17 +113,17 @@ function enforce(data){
 queue.push({
     name: "create",
     init: function(){
-        //items.splice(0);
-        //this.fn(items);
-        //items = next();
+        //start empty
     },
     test: null,
     start: null,
     prepare: function(){
+        // prepare data to render
         clone = next();
     },
     fn: null,
     end: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     },
@@ -133,16 +133,19 @@ queue.push({
 queue.push({
     name: "replace",
     init: function(){
+        //start pre-filled
         this.fn(next());
     },
     test: null,
     start: null,
     prepare: function(){
+        // prepare data to render
         clone = next();
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -151,16 +154,19 @@ queue.push({
 queue.push({
     name: "update",
     init: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
+        // prepare updated data to render
         clone = update(enforce(clone), index);
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -169,19 +175,19 @@ queue.push({
 queue.push({
     name: "arrange",
     init: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
+        // prepare re-arranged data array to render
         index %= 3;
         if(index === 2){ // re-order (shortest path: 10)
             const div = (DATA_SIZE / 20) | 0;
             for(let i = 0; i < div; i++){
                 clone.splice(div *  4 + i, 0, clone.splice(div * 16 + i, 1)[0]);
                 clone.splice(div * 12 + i, 0, clone.splice(div * 8  + i, 1)[0]);
-                // items[div * 9 + i].id = "" + (Math.random() * 999999999 | 0);
-                // items[div * 5 + i].id = "" + (Math.random() * 999999999 | 0);
             }
         }
         else if(index){ // re-order (shortest path: 10)
@@ -197,15 +203,12 @@ queue.push({
                 swap(clone, div * 1 + i, div * 3 + i);
             }
         }
-        // a full shuffle is theoretically a full replace, those test already exist
-        // else{
-        //     shuffle_rnd(items); // re-order (shortest path: 100)
-        // }
         clone = enforce(clone);
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -214,16 +217,19 @@ queue.push({
 queue.push({
     name: "repaint",
     init: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     test: null,
     start: function(){
+        // prepare unchanged data to render
         clone = enforce(clone);
     },
     prepare: null,
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -236,16 +242,21 @@ queue.push({
     init: null,
     test: null,
     start: function(){
+        //create full data
         clone = next();
+        //divide data into 2 parts
         tmp = clone.splice(DATA_SIZE_HALF);
+        //start pre-filled of first half data
         this.fn(clone);
     },
     prepare: function(){
+        // prepare data to render by append the 2nd half
         clone = enforce(clone.concat(tmp));
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -256,15 +267,18 @@ queue.push({
     init: null,
     test: null,
     start: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     prepare: function(){
+        // prepare data to render by remove the 2nd half
         clone.splice(DATA_SIZE_HALF);
         clone = enforce(clone);
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -273,11 +287,13 @@ queue.push({
 queue.push({
     name: "toggle",
     init: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     test: null,
     start: null,
     prepare: function(index){
+        // prepare data to render by either add or remove the 2nd half
         if(index % 2) clone = clone.concat(tmp);
         else tmp = clone.splice(DATA_SIZE_HALF);
         clone = enforce(clone);
@@ -285,6 +301,7 @@ queue.push({
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }
@@ -295,14 +312,17 @@ queue.push({
     init: null,
     test: null,
     start: function(){
+        //start pre-filled, cache data
         this.fn(clone = next());
     },
     prepare: function(){
+        // prepare empty data to render
         clone.splice(0);
     },
     fn: null,
     end: null,
     complete: function(){
+        // removes everything (teardown)
         clone.splice(0);
         this.fn(clone);
     }

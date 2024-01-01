@@ -809,14 +809,14 @@ Go to the URL which displays in the console, e.g. _http://localhost_. The tests 
 #### Score
 The score is calculated in relation to the median value of each test. That will keeping the benchmark factor between each library effectively but also vary relationally when new libraries were added.
 
-<code>Score = Sum<sub>test</sub>(lib_ops / median_ops) / test_count * 1000</code>
+<code>Score = Sum<sub>test</sub>(lib_ops / median_ops) / test_count * 100</code>
 
 The memory gets less relevance by applying just the square root of these values to the total score.
 
 #### Index
 The score index is a very stable representation where each score points to a specific place in a ranking table (from 0 worst to 100 best). The maximum possible score and also the best place is 100, that requires a library to be best in each category (regardless of how much better the factor is, that's the difference to the score value).
 
-<code>Index = Sum<sub>test</sub>(lib_ops / max_ops) / test_count * 1000</code>
+<code>Index = Sum<sub>test</sub>(lib_ops / max_ops) / test_count * 100</code>
 
 The memory gets less relevance by applying just the square root of these values to the index.
 
@@ -905,7 +905,7 @@ suite["sinuous"] = function(items){
 
 The data is unknown, the library does not know if data was added, removed, updated or stay unchanged before it gets the data. That's the main different to other benchmark implementations, where a programmer can iteratively solve a problem to a known task.
 
-Regardless the function is doing, every test has to run through the same logic.
+But we won't measure the developer skills, we want to measure pure library performance. Regardless of a specific test case, every test has to run through the same logic.
 
 #### Random item factory
 
