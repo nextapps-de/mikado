@@ -744,7 +744,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 }
                                 else if(attr){
 
-                                    index.ssr += "'+((_val=" + escape_single_quotes(tmp) + ')===false?\'\':\' ' + key + '="\'+_val+\'"\')+\'';
+                                    index.ssr += "'+((_val=" + /*escape_single_quotes*/(tmp) + ')===false?\'\':\' ' + key + '="\'+_val+\'"\')+\'';
                                 }
                                 // else{
                                 //
