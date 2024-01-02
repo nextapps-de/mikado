@@ -342,7 +342,7 @@ function collection_to_array(collection) {
  * @const
  */
 
-Mikado.once = function (root, template, data, state, callback) {
+export function once(root, template, data, state, callback) {
 
     const mikado = new Mikado(template);
 
@@ -371,7 +371,7 @@ Mikado.once = function (root, template, data, state, callback) {
     }
 
     return Mikado;
-};
+}
 
 /**
  * @param {!*} data
@@ -408,7 +408,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
 
                 self.timer = 0;
                 self.render(data, state, null, 1);
-                has_fn && callback();
+                has_fn && /** @type {Function} */callback();
             });
 
             return has_fn ? this : new Promise(function (resolve) {

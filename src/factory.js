@@ -287,7 +287,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive){
                     console.warn("Hydration failed of template '" + self.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
                 }
 
-                return;
+                return null;
             }
         }
 
@@ -317,6 +317,16 @@ export function construct(tpl, path, vpath, vnode, self, _recursive){
 
                     //vnode = vnode.nextElementSibling;
                     vnode = vnode.nextSibling;
+
+                    if(!vnode){
+
+                        if(DEBUG){
+
+                            console.warn("Hydration failed of template '" + self.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
+                        }
+
+                        return null;
+                    }
                 }
             }
             else{

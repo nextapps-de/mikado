@@ -242,7 +242,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             if (!vnode) {
 
-                return;
+                return null;
             }
         }
 
@@ -271,6 +271,11 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
                     //vnode = vnode.nextElementSibling;
                     vnode = vnode.nextSibling;
+
+                    if (!vnode) {
+
+                        return null;
+                    }
                 }
             } else {
 

@@ -82,6 +82,7 @@ declare namespace Mikado {
     }
 
     function getClasses(target: HTMLElement): Array<string>;
+    function setClasses(target: HTMLElement, classname: string|Array<string>): Mikado;
     function hasClass(target: HTMLElement, classname: string): boolean;
     function toggleClass(target: HTMLElement, classname: string, state?: boolean): Mikado;
     function toggleClasses(target: HTMLElement, classnames: Array<string>, state?: boolean): Mikado;
@@ -89,7 +90,6 @@ declare namespace Mikado {
     function removeClasses(target: HTMLElement, classnames: Array<string>): Mikado;
     function addClass(target: HTMLElement, classname: string): Mikado;
     function addClasses(target: HTMLElement, classnames: Array<string>): Mikado;
-    function setClass(target: HTMLElement, classname: string): Mikado;
 
     function getAttribute(target: HTMLElement, attribute: string): string;
     function hasAttribute(target: HTMLElement, attribute: string): boolean;

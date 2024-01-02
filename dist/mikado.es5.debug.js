@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.137 (ES5/Debug)
+ * Mikado.js v0.8.139 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -668,13 +668,18 @@ function O(a, b, c, d, h, l) {
     "object" === typeof f ? (k = g, f = f[0], a.tag ? (c += "|", k = !d && g.firstChild, k || (k = document.createTextNode(f), g.appendChild(k))) : e = {}, (e || (e = {}))._t = f, b.push(new N(e, k, c)), f && P.call(h, f, ["_t", b.length - 1])) : d || (a.tag ? g.textContent = f : g.nodeValue = f);
   } else if (f = a.child) {
     if (d && (d = d.firstChild, !d)) {
-      console.warn("Hydration failed of template '" + h.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
-      return;
+      return console.warn("Hydration failed of template '" + h.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
     }
     f.constructor !== Array && (f = [f]);
     a = 0;
     for (k = f.length; a < k; a++) {
-      m = f[a], c = a ? c + "+" : c + ">", m = O(m, b, c, d, h, 1), d ? a < k - 1 && (d = d.nextSibling) : g.appendChild(m);
+      if (m = f[a], c = a ? c + "+" : c + ">", m = O(m, b, c, d, h, 1), d) {
+        if (a < k - 1 && (d = d.nextSibling, !d)) {
+          return console.warn("Hydration failed of template '" + h.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
+        }
+      } else {
+        g.appendChild(m);
+      }
     }
   } else if (f = a.html) {
     "object" === typeof f ? (e || b.push(new N(e = {}, g, c)), e._h = "", (f = f[0]) && P.call(h, f, ["_h", b.length - 1])) : d || (g.innerHTML = f);
@@ -1368,7 +1373,24 @@ function Ga(a, b, c, d, h) {
   h = h || Fa(a);
   h[b] !== c && (h[b] = c, (d || a.style).setProperty(b, c));
 }
-;I.register = function(a, b) {
+;I.once = function(a, b, c, d, h) {
+  var l = new I(b);
+  "function" === typeof d && (h = d, d = null);
+  if (h) {
+    var g = h;
+    h = function() {
+      l.destroy();
+      g();
+    };
+  }
+  if (!a) {
+    throw Error("Root element is not defined.");
+  }
+  a.append(l.create(c, d));
+  h || l.destroy();
+  return I;
+};
+I.register = function(a, b) {
   var c;
   if ("string" === typeof a) {
     var d = c = a;
@@ -1412,7 +1434,7 @@ I.getHtml = function(a) {
   "string" !== typeof c && (b._h = c = a.innerHTML);
   return c;
 };
-I.setClass = function(a, b) {
+I.setClasses = function(a, b) {
   var c = a._mkc, d;
   c ? d = c._c : a._mkc = c = {};
   d !== b && (c._c = b, a.className = b);

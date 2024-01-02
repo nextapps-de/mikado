@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.137 (Bundle/Module/Debug)
+ * Mikado.js v0.8.139 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -140,12 +140,17 @@ function K(a, b, c, d, e, k) {
     "object" === typeof g ? (m = f, g = g[0], a.tag ? (c += "|", m = !d && f.firstChild, m || (m = document.createTextNode(g), f.appendChild(m))) : h = {}, (h || (h = {}))._t = g, b.push(new J(h, m, c)), g && L.call(e, g, ["_t", b.length - 1])) : d || (a.tag ? f.textContent = g : f.nodeValue = g);
   } else if (g = a.child) {
     if (d && (d = d.firstChild, !d)) {
-      console.warn("Hydration failed of template '" + e.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead.");
-      return;
+      return console.warn("Hydration failed of template '" + e.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
     }
     g.constructor !== Array && (g = [g]);
     for (let p = 0, r, q = g.length; p < q; p++) {
-      r = g[p], c = p ? c + "+" : c + ">", a = K(r, b, c, d, e, 1), d ? p < q - 1 && (d = d.nextSibling) : f.appendChild(a);
+      if (r = g[p], c = p ? c + "+" : c + ">", a = K(r, b, c, d, e, 1), d) {
+        if (p < q - 1 && (d = d.nextSibling, !d)) {
+          return console.warn("Hydration failed of template '" + e.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
+        }
+      } else {
+        f.appendChild(a);
+      }
     }
   } else if (g = a.html) {
     "object" === typeof g ? (h || b.push(new J(h = {}, f, c)), h._h = "", (g = g[0]) && L.call(e, g, ["_h", b.length - 1])) : d || (f.innerHTML = g);
@@ -832,7 +837,24 @@ function ua(a, b, c, d, e) {
   e = e || ta(a);
   e[b] !== c && (e[b] = c, (d || a.style).setProperty(b, c));
 }
-;E.register = function(a, b) {
+;E.once = function(a, b, c, d, e) {
+  const k = new E(b);
+  "function" === typeof d && (e = d, d = null);
+  if (e) {
+    const f = e;
+    e = function() {
+      k.destroy();
+      f();
+    };
+  }
+  if (!a) {
+    throw Error("Root element is not defined.");
+  }
+  a.append(k.create(c, d));
+  e || k.destroy();
+  return E;
+};
+E.register = function(a, b) {
   let c, d;
   if ("string" === typeof a) {
     if (c = d = a, a = M[c], a instanceof E || (a = a[0]), !a) {
@@ -873,7 +895,7 @@ E.getHtml = function(a) {
   "string" !== typeof c && (b._h = c = a.innerHTML);
   return c;
 };
-E.setClass = function(a, b) {
+E.setClasses = function(a, b) {
   let c = a._mkc, d;
   c ? d = c._c : a._mkc = c = {};
   d !== b && (c._c = b, a.className = b);

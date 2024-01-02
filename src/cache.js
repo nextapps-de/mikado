@@ -237,7 +237,7 @@ export function hasAttribute(node, attr){
  * @param {string} classname
  */
 
-export function setClass(node, classname){
+export function setClasses(node, classname){
 
     let cache = node[MIKADO_NODE_CACHE], tmp;
 

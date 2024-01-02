@@ -19,7 +19,7 @@ import {
     MIKADO_NODE_CACHE
 } from "./config.js";
 import { Template, TemplateDOM, MikadoOptions, EventOptions } from "./type.js";
-import Mikado, { register, unregister } from "./mikado.js";
+import Mikado, { once, register, unregister } from "./mikado.js";
 import Observer from "./array.js";
 import { Cache } from "./factory.js";
 import { escape, sanitize } from "./sanitize.js";
@@ -39,6 +39,7 @@ import {
     setAttributes,
 
     getClasses,
+    setClasses,
     hasClass,
     toggleClass,
     toggleClasses,
@@ -46,7 +47,6 @@ import {
     removeClasses,
     addClass,
     addClasses,
-    setClass,
 
     getCss,
     setCss,
@@ -75,6 +75,7 @@ if(SUPPORT_COMPILE){
 // Mikado global methods
 // --------------------------------
 
+Mikado["once"] = once;
 Mikado["register"] = register;
 Mikado["unregister"] = unregister;
 
@@ -141,7 +142,7 @@ if(SUPPORT_CACHE_HELPERS){
     Mikado["setHtml"] = setHtml;
     Mikado["getHtml"] = getHtml;
 
-    Mikado["setClass"] = setClass;
+    Mikado["setClasses"] = setClasses;
     Mikado["getClasses"] = getClasses;
     Mikado["hasClass"] = hasClass;
     Mikado["toggleClass"] = toggleClass;

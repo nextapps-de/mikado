@@ -816,11 +816,10 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 - Mikado.<a href="#Mikado.getHtml">**getHtml**(node)</a> : <small>_string_</small>
 
 
-- Mikado.<a href="#Mikado.setClass">**setClass**(node, classname)</a>
 - Mikado.<a href="#Mikado.setClasses">**setClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.getClasses">**getClasses**(node)</a> : <small>_[string]_</small>
 - Mikado.<a href="#Mikado.addClass">**addClass**(node, classname)</a>
 - Mikado.<a href="#Mikado.addClasses">**addClasses**(node, [classnames])</a>
-- Mikado.<a href="#Mikado.getClasses">**getClasses**(node)</a> : <small>_[string]_</small>
 - Mikado.<a href="#Mikado.hasClass">**hasClass**(node, classname)</a> : <small>_boolean_</small>
 - Mikado.<a href="#Mikado.removeClass">**removeClass**(node, classname)</a>
 - Mikado.<a href="#Mikado.removeClasses">**removeClasses**(node, [classnames])</a>
@@ -2331,15 +2330,15 @@ Check existence of a nodes attribute:
 var href = Mikado.hasAttribute(node, "href");
 ```
 
-<a name="Mikado.setClass"></a>
+<a name="Mikado.setClasses"></a>
 Set class name of a node (fully replaces old classes):
 
 ```js
-Mikado.setClass(node, "class_a class_b");
+Mikado.setClasses(node, "class_a class_b");
 ```
 
 ```js
-Mikado.setClass(node, ["class_a", "class_b"]);
+Mikado.setClasses(node, ["class_a", "class_b"]);
 ```
 
 <a name="Mikado.addClass"></a>
@@ -2356,11 +2355,11 @@ Add multiple classnames to a node:
 Mikado.addClasses(node, ["class_a", "class_b"]);
 ```
 
-<a name="Mikado.getClass"></a>
-Get classnames of a node (returns an array):
+<a name="Mikado.getClasses"></a>
+Get all classnames of a node (returns an array):
 
 ```js
-var classList = Mikado.getClass(node);
+var classList = Mikado.getClasses(node);
 ```
 
 <a name="Mikado.toggleClass"></a>
