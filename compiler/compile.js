@@ -615,7 +615,7 @@ function escape_single_quotes_expression(str){
 
     //console.log(str.replace(/{{(.*)?(\\)?([\s\S])|(')([^}]+)?/ig, "{{$1$2$3$4$5"))
 
-    return str.replace(/{{(.*)?(\\)?([\s\S])|(')([^}]+)?/ig, "{{$1$2$3$4$5");
+    return str.replace(/{{(.*)?(\\)?([\s\S])|(')(.*)?(}})/ig, "{{$1$2$3$4$5$6");
 }
 
 function newLine(length){
@@ -705,6 +705,8 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     .replace(/(\s+)?}}(\s+)?"/g, ")")
                                     .replace(/{{(\s+)?/g, "'+(")
                                     .replace(/(\s+)?}}/g, ")+'");
+                                    //.replace(/^'\+\(/, "")
+                                    //.replace(/\)\+'$/, "");
 
                             //console.log(("'" + tmp + "'"))
 
