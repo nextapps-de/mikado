@@ -110,6 +110,12 @@ module.exports = function(src, dest, options, _recall){
     }
 
     let json = prepare_template(html2json(template), src, csr);
+
+    if(!json || !json.child) {
+
+        return;
+    }
+
     let template_name = dest.replace(/\\/g, "/");
 
     if(root){
@@ -710,7 +716,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                                     //.replace(/\)$/g, '')
                                                    .replace(/['"]\)\+''\+\(['"]/g, "") // ")+''+("
                                                    .replace(/['"](\s+)?\+(\s+)?['"]/g, "") // ' + '
-                                                   .replace(/\(([^ ]+)\)/g, "$1")
+                                                   .replace(/^\(([^ ]+)\)$/g, "$1") // ( value )
                                                    .trim();
 
                             if((tmp.startsWith("'") && tmp.endsWith("'") && !tmp.includes("'+") && !tmp.includes("+'")) ||
@@ -719,7 +725,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 // detect static string expression, so we can resolve this expression in place
 
                                 root[key] = tmp.replace(/^['"]/, "").replace(/['"]$/, "");
-                                index.ssr += root[key] ? ' ' + key + '="' + escape_single_quotes(root[key]) + '"' : "";
+                                index.ssr += attr ? ' ' + key + '="' + escape_single_quotes(root[key]) + '"' : (root.extract ? "" : ">") + root[key];
                                 continue;
                             }
                             else{
@@ -955,7 +961,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                             }
                             else if(key === "text"){
 
-                                index.ssr += (root.tag ? ">" : "") + escape_single_quotes(value);
+                                index.ssr += (root.tag ? ">" : "") + escape_single_quotes(value.replace(/\\n/g, " "));
                             }
                             else if(key !== "tag" && key !== "root" && key !== "for" && key !== "if" && key !== "inc"){
 

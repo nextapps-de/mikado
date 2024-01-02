@@ -26,10 +26,8 @@ const src = (parameter.source || parameter.src || parameter.s || parameter[0] ||
 const dest = (parameter.destination || parameter.dest || parameter.d || parameter[1] || "").replace(/^\.[/\\]/, "");
 const force = parameter.force || parameter.f || false;
 const pretty = parameter.pretty || parameter.p || false;
-const type = parameter.type || parameter.t || false;
-let mode = parameter.mode || parameter.m || "default";
-const compact = mode === "compact" || parameter.compact || parameter.c || false;
-const inline = !compact && (mode === "inline" || parameter.inline || parameter.i || false);
+const type = parameter.type || parameter.t || (parameter.es5 ? "es5" : false) || (parameter.module ? "module" : false) || false;
+const mode = parameter.mode || parameter.m || (parameter.compact || parameter.c ? "compact": "") || (parameter.inline || parameter.i ? "inline": "") || "default";
 const watch = parameter.watch || parameter.w || false;
 const help = parameter.help || parameter.info || parameter.h || false;
 const extension_regex = new RegExp("\." + extension + "$");
@@ -55,8 +53,13 @@ if(help){
     console.log("--ext .html");
     console.log("-e html");
     console.log("");
-    console.log("--type module|es5\tSpecify if the template should be exported as ES6 module or as a legacy ES5 script.");
-    console.log("-t module|es5")
+    console.log("--type module\tSpecify if the template should be exported as a ES6 module.");
+    console.log("-t module");
+    console.log("-module");
+    console.log("");
+    console.log("--type es5\tSpecify if the template should be exported as a legacy ES5 script.");
+    console.log("-t es5");
+    console.log("-es5");
     console.log("");
     console.log("--mode compact|inline\tSwitch the build strategy to optimize either the performance or size.");
     console.log("-m compact|inline");
@@ -85,9 +88,6 @@ if(mode && mode !== "compact" && mode !== "inline" && mode !== "default"){
 
     throw new CommandError("Unknown mode '" + mode + "' was passed by the flag --mode");
 }
-
-if(compact) mode = "compact";
-else if(inline) mode = "inline";
 
 function parse_argv(argv, flags){
 
@@ -143,8 +143,8 @@ function compiler(name, _force){
     });
 }
 
-const skip = {};
-const repeat = {};
+const skip = Object.create(null);
+const repeat = Object.create(null);
 
 function watcher(src) {
 
@@ -160,7 +160,7 @@ function watcher(src) {
 
                 if(extension_regex.test(name)){
 
-                    await compiler(name, true);
+                    compiler(name, true);
                     repeat[name] = false;
 
                     setTimeout(function(){
@@ -182,12 +182,12 @@ function watcher(src) {
 
 async function loopFiles(file, callback) {
 
-    const dir = await fs.promises.opendir(file, { recursive: true });
+    const dir = await fs.promises.opendir(file);
 
     for await(const dirent of dir) {
 
         const name = path.join(file, dirent.name).replace(/\\/g, "/");
-        dirent.isDirectory() ? await loopFiles(name, callback) : callback(name.replace(src, ""));
+        dirent.isDirectory() ? await loopFiles(name, callback) : await callback(name.replace(src, ""));
     }
 }
 
@@ -281,11 +281,11 @@ async function check(name, type){
 
         if(is_dir){
 
-            await loopFiles(src, async function(name){
+            await loopFiles(src, function(name){
 
                 if(extension_regex.test(name)){
 
-                    await compiler(name);
+                    compiler(name);
                 }
             });
         }
@@ -293,7 +293,7 @@ async function check(name, type){
 
             if(extension_regex.test(src)){
 
-                await compiler("");
+                compiler("");
             }
         }
 
