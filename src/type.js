@@ -22,7 +22,8 @@ export let MikadoOptions;
  *   key: (string|undefined),
  *   cache: (boolean|undefined),
  *   tpl: TemplateDOM,
- *   fn: (Array<Function>|null)
+ *   fn: (Array<Function>|null),
+ *   fc: (Array<Function>|undefined)
  * }}
  */
 export let Template;
@@ -30,17 +31,17 @@ export let Template;
 /**
  * @typedef {{
  *   tag: (string|undefined),
- *   style: (string|undefined),
- *   class: (string|undefined),
- *   text: (string|undefined),
- *   html: (string|undefined),
- *   attr: (Object<string, string>|undefined),
- *   event: (Object<string, string>|undefined),
+ *   style: (string|Array<string>|undefined),
+ *   class: (string|Array<string>|undefined),
+ *   text: (string|Array<string>|undefined),
+ *   html: (string|Array<string>|undefined),
+ *   attr: (Object<string, string|Array<string>>|undefined),
+ *   event: (Object<string, string|Array<string>>|undefined),
  *   child: (TemplateDOM|Array<TemplateDOM>|undefined),
  *   inc: (string|undefined),
  *   key: (string|undefined),
- *   svg: (number|undefined),
- *   _fn: (Array<Function>|null)
+ *   cache: (boolean|undefined),
+ *   svg: (number|undefined)
  * }}
  */
 export let TemplateDOM;

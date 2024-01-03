@@ -107,16 +107,16 @@ function resolve(root, path, cache) {
 }
 
 /**
+ * @param {!Mikado} self
  * @param {TemplateDOM} tpl
  * @param {Array<Cache>} path
  * @param {string} vpath
  * @param {Element|Node=} vnode Exists on hydration
- * @param {Mikado=} self
  * @param {boolean|number=} _recursive
  * @returns {Element|Node}
  */
 
-export function construct(tpl, path, vpath, vnode, self, _recursive) {
+export function construct(self, tpl, path, vpath, vnode, _recursive) {
 
     const node = vnode || (tpl.tag ? tpl.svg ? document.createElementNS("http://www.w3.org/2000/svg", tpl.tag) : document.createElement(tpl.tag) : document.createTextNode( /** @type {string} */tpl.text));
 
@@ -130,7 +130,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             if (val = val[0]) {
 
-                init_proxy.call(self, val, ["_c", path.length - 1]);
+                init_proxy(self, val, ["_c", path.length - 1]);
             }
         } else if (!vnode) {
 
@@ -151,7 +151,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
                 if (item = item[0]) {
 
-                    init_proxy.call(self, item, ["_a", path.length - 1, key]);
+                    init_proxy(self, item, ["_a", path.length - 1, key]);
                 }
             } else if (!vnode) {
 
@@ -182,7 +182,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             if (val = val[0]) {
 
-                init_proxy.call(self, val, ["_s", path.length - 1]);
+                init_proxy(self, val, ["_s", path.length - 1]);
             }
         } else if (!vnode) {
 
@@ -221,7 +221,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             if (val) {
 
-                init_proxy.call(self, val, ["_t", path.length - 1]);
+                init_proxy(self, val, ["_t", path.length - 1]);
             }
         } else if (!vnode) {
 
@@ -266,7 +266,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
                 vpath += ">";
             }
 
-            const tmp = construct(child, path, vpath, vnode, self, 1);
+            const tmp = construct(self, child, path, vpath, vnode, 1);
 
             if (vnode) {
 
@@ -297,7 +297,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
             if (val = val[0]) {
 
-                init_proxy.call(self, val, ["_h", path.length - 1]);
+                init_proxy(self, val, ["_h", path.length - 1]);
             }
         } else if (!vnode) {
 
@@ -346,7 +346,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 
                 const index = self.inc.length;
 
-                if (!self.tpl._fn.length) {
+                if (!self.tpl.fn.length) {
 
                     throw new Error("The template '" + self.name + "|" + index + "' has conflicts. It should provide a handler entry, but wasn't found.");
                 }
@@ -363,7 +363,7 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
                     tpl: val,
                     key: val.key,
                     cache: val.cache,
-                    fn: self.tpl._fn
+                    fn: self.tpl.fn
                 },
                       options = {
                     recycle: self.recycle,
@@ -403,16 +403,16 @@ export function construct(tpl, path, vpath, vnode, self, _recursive) {
 }
 
 /**
+ * @param {!Mikado} self
  * @param {string} key
- * @param {Array<string, Cache>} payload
- * @this Mikado
+ * @param {Array<string|number>} payload
  */
 
-function init_proxy(key, payload) {
+function init_proxy(self, key, payload) {
 
-    this.fullproxy++;
-    this.proxy || (this.proxy = {});
-    (this.proxy[key] || (this.proxy[key] = [])).push(payload);
+    self.fullproxy++;
+    self.proxy || (self.proxy = {});
+    (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }
 
 /**

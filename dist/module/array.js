@@ -233,7 +233,7 @@ const handler = {
 
         if (index_by_number && mikado.proxy && !value._mkx) {
 
-            value = apply_proxy.call(mikado, mikado.dom[prop], value);
+            value = apply_proxy(mikado, mikado.dom[prop], value);
         }
 
         (proxy ? target : target.proto)[prop] = value;
@@ -243,20 +243,16 @@ const handler = {
     }
 };
 
-// if((SUPPORT_HELPERS === true) || (SUPPORT_HELPERS && SUPPORT_HELPERS.indexOf("swap") !== -1)){
-//
-//     Observer.prototype.swap = function(a, b){
-//
-//         skip = true;
-//         this.mikado.swap(a, b, this.view);
-//         //const self = proxy ? this : this.proto;
-//         // const tmp = self[b];
-//         // self[b] = self[a];
-//         // self[a] = tmp;
-//         skip = false;
-//         return this;
-//     };
-// }
+Observer.prototype.swap = function (a, b) {
+
+    skip = !0;
+    //const self = proxy ? this : this.proto;
+    const tmp = this[b];
+    this[b] = this[a];
+    this[a] = tmp;
+    skip = !1;
+    return this;
+};
 
 Observer.prototype.set = function (array) {
 

@@ -177,7 +177,7 @@ export function route(route, fn, option) {
  */
 export function dispatch(route, target, event) {
 
-    routes[route].call(target || this, event || window.event);
+    routes[route](target || this, event || window.event);
     return this;
 }
 
@@ -238,7 +238,7 @@ if (has_touch || has_pointer) {
 
         if (15 > Math.abs(touch_x - last_x) && 15 > Math.abs(touch_y - last_y)) {
 
-            handler.call(this, event, "tap");
+            handler(event, "tap");
         }
     }
 

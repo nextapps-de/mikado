@@ -3,7 +3,7 @@
 /**
  * @typedef {{
  *   path: Array<Cache>,
- *   handler: Object<string, Array<string, number>>,
+ *   fn: Object<string, Array<string, number>>,
  *   get: Function,
  *   set: Function
  * }}
@@ -23,7 +23,7 @@ const proxy = window.Proxy || function () {
         /** @private @const {Array<Cache>} */
         this.path = proxy.path;
         /** @private @const {Object<string, Array<string, number>>} */
-        this.handler = proxy.handler;
+        this.fn = proxy.fn;
 
         for (const key in obj) {
 
@@ -52,7 +52,7 @@ const proxy = window.Proxy || function () {
 
                 //if(val !== newVal){
 
-                proxy_loop.call(self, val = newVal, key);
+                proxy_loop(self, val = newVal, key);
                 //}
             }
         });
@@ -67,24 +67,17 @@ const proxy = window.Proxy || function () {
 /**
  * @param {Object} obj
  * @param {Array<Cache>} path
- * @param {Object<string, Array<string, number>>} handler
+ * @param {Object<string, Array<string, number>>} fn
  * @return {Proxy}
  */
 
-export default function proxy_create(obj, path, handler) {
-
-    return new proxy(obj, {
-
-        path: path,
-        handler: handler,
-        get: proxy_get,
-        set: proxy_set
-    });
+export default function proxy_create(obj, path, fn) {
+    return new proxy(obj, { path, fn, get, set });
 
     /** @type {!ProxyHandler} */
 }
 
-function proxy_get(target, prop) {
+function get(target, prop) {
 
     // proxy check (hidden)
     return prop === "_mkx" || target[prop];
@@ -97,11 +90,11 @@ function proxy_get(target, prop) {
  * @this {ProxyHandler}
  */
 
-function proxy_set(target, prop, value) {
+function set(target, prop, value) {
 
     //if(target[prop] !== value){
 
-    proxy_loop.call(this, value, prop);
+    proxy_loop(this, value, prop);
     target[prop] = value;
     //}
 
@@ -110,21 +103,21 @@ function proxy_set(target, prop, value) {
 }
 
 /**
+ * @param {ProxyHandler} handler
  * @param {*} value
  * @param {string} prop
- * @this {ProxyHandler}
  */
 
-function proxy_loop(value, prop) {
+function proxy_loop(handler, value, prop) {
 
-    const exp = this.handler[prop];
+    const exp = handler.fn[prop];
 
     if (exp) {
 
         for (let i = 0; i < exp.length; i++) {
             const tmp = exp[i],
                   fn = tmp[0],
-                  cache = /** @type {Cache} */this.path[tmp[1]];
+                  cache = /** @type {Cache} */handler.path[tmp[1]];
 
 
             if (!cache.c || cache.c[fn + (tmp[2] || "")] !== value) {

@@ -118,25 +118,25 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
     /** @type {Array<Function>} */
     const fn = template.fn;
+    // make a copy to make this template re-usable when consumed
+    // this should just have been copied when it is a root template!
+    template.fc || (fn && (template.fc = fn.slice()));
     /**
-     * The compiler unshift includes, so we can use faster arr.pop() here, because it needs reverse direction
+     * The compiler unshift includes, so we can use faster arr.pop() here, because it needs reverse direction.
+     * Let consume the nested template functions by using .pop() is pretty much simpler than using an index.
      * @private {Function}
      */
     this.apply = fn && fn.pop();
-    /** @type {TemplateDOM|null} */
-    this.tpl = template.tpl;
+    /** @type {Template|null} */
+    this.tpl = template;
     /** @const {string} */
     this.name = template.name;
-    /* @const {Array<Mikado>} */
-    this.inc = [];
 
-    /**
-     * Temporary assign includes to template definition,
-     * because this.inc = [] is filled with Mikado instances when factory is constructed,
-     * and it needs something which holds those definitions
-     * @const {Array<Function>}
+    /*
+     * Includes are filled with Mikado instances when factory is constructed
+     * @const {Array<Mikado>}
      */
-    template.tpl._fn = fn;
+    this.inc = [];
 
     if(SUPPORT_POOLS){
 
@@ -393,21 +393,45 @@ Mikado.prototype.mount = function(target, hydrate){
 
             /** @private */
             this.factory = this.dom[0].cloneNode();
-            construct(/** @type {TemplateDOM} */ (this.tpl), [], "", this.factory, this) && (this.tpl = null);
+            construct(this, /** @type {TemplateDOM} */ (this.tpl.tpl), [], "", this.factory)
+            && finishFactory(this);
         }
 
-        // also when falls back on hydration if structure was incompatible
+        // also when falls back on hydration if structure was incompatible:
 
         if(this.tpl){
 
             /** @private */
-            this.factory = construct(/** @type {TemplateDOM} */ (this.tpl), [], "", null, this);
-            this.tpl = null;
+            this.factory = construct(this, /** @type {TemplateDOM} */ (this.tpl.tpl), [], "");
+            finishFactory(this);
         }
     }
 
     return this;
 };
+
+/**
+ * @param {Mikado} self
+ */
+
+function finishFactory(self){
+
+    if(self.tpl.fc){
+
+        if(DEBUG){
+
+            if(self.tpl.fn.length){
+
+                console.error("The template '" + self.name + "' might not have been initialized properly. There are " + self.tpl.fn.length + " template functions left which wasn't assigned. Please post an example to Mikado Github issues.");
+            }
+        }
+
+        self.tpl.fn = self.tpl.fc;
+        self.tpl.fc = null;
+    }
+
+    self.tpl = null;
+}
 
 /**
  * @param {NodeList} collection
@@ -608,7 +632,7 @@ if(!REACTIVE_ONLY){
 
                 if(SUPPORT_REACTIVE && this.proxy && !item[MIKADO_PROXY]){
 
-                    data[x] = apply_proxy.call(this, node, item);
+                    data[x] = apply_proxy(this, node, item);
                 }
             }
         }
@@ -623,7 +647,7 @@ if(!REACTIVE_ONLY){
 
                 if(SUPPORT_REACTIVE && this.proxy && !item[MIKADO_PROXY]){
 
-                    data[x] = apply_proxy.call(this, this.dom[x], item);
+                    data[x] = apply_proxy(this, this.dom[x], item);
                 }
             }
         }
@@ -910,8 +934,8 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
         if(!factory){
 
             /** @private */
-            this.factory = node = factory = construct(/** @type {TemplateDOM} */ (this.tpl), [], "", null, this);
-            this.tpl = null;
+            this.factory = node = factory = construct(this, /** @type {TemplateDOM} */ (this.tpl.tpl), [], "");
+            finishFactory(this);
         }
     }
 
@@ -1036,18 +1060,18 @@ Mikado.prototype.add = function(data, state, index){
 };
 
 /**
+ * @param {Mikado} self
  * @param {Element} node
  * @param {Object} data
- * @this Mikado
  * @return {Proxy}
  */
 
-export function apply_proxy(node, data){
+export function apply_proxy(self, node, data){
 
     return proxy_create(
         data,
-        node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], SUPPORT_CACHE && this.cache),
-        this.proxy
+        node[MIKADO_TPL_PATH] || create_path(node, self.factory[MIKADO_TPL_PATH], SUPPORT_CACHE && self.cache),
+        self.proxy
     );
 }
 
@@ -1105,7 +1129,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
 
-                        b[x] = apply_proxy.call(this, a_x, b_x);
+                        b[x] = apply_proxy(this, a_x, b_x);
                     }
 
                     if(a_x_key === b_x_key){
@@ -1139,7 +1163,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
 
-                        b[x] = apply_proxy.call(this, a[x], b_x);
+                        b[x] = apply_proxy(this, a[x], b_x);
                     }
 
                     continue;

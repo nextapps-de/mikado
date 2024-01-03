@@ -219,7 +219,7 @@ import Mikado from "./mikado.js";
             }
         }
 
-        routes[route].call(target || this, event || window.event);
+        routes[route](target || this, event || window.event);
         return this;
     }
 
@@ -281,7 +281,7 @@ import Mikado from "./mikado.js";
             if((Math.abs(touch_x - last_x) < 15) &&
                (Math.abs(touch_y - last_y) < 15)){
 
-                handler.call(this, event, "tap");
+                handler(event, "tap");
             }
         }
 

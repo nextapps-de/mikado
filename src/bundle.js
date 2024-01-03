@@ -23,6 +23,7 @@ import Mikado, { once, register, unregister } from "./mikado.js";
 import Observer from "./array.js";
 import { Cache } from "./factory.js";
 import { escape, sanitize } from "./sanitize.js";
+import "./helper.js";
 //import compile from "./compile.js";
 
 import {
@@ -293,7 +294,7 @@ if(SUPPORT_REACTIVE){
     /** @export */
     Observer.prototype.forEach;
     /** @export */
-    //Observer.prototype.swap;
+    Observer.prototype.swap;
 }
 
 // Structural type definitions

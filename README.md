@@ -463,7 +463,7 @@ You can also load modules via CDN:
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>6.5 kb</td>
+        <td>7.1 kb</td>
         <td>3.4 kb</td>
     </tr>
 </table>
@@ -840,6 +840,31 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 - Mikado.<a href="#Mikado.hasAttribute">**hasAttribute**(node, attribute)</a> : <small>_boolean_</small>
 - Mikado.<a href="#Mikado.removeAttribute">**removeAttribute**(node, attribute)</a>
 - Mikado.<a href="#Mikado.removeAttributes">**removeAttributes**(node, [attributes])</a>
+
+Observable constructor (optional, not included in mikado.light.js):
+
+- new <a href="#mikado.array">**Mikado.Array**(\<array\>)</a> : <small>_observable_</small>
+
+Observable array-like methods (optional, not included in mikado.light.js):
+
+- observable.<a href="#array.length">**length**</a> : <small>_number_</small>
+- observable.<a href="#array.mount">**mount**(view)</a>
+- observable.<a href="#array.concat">**concat**([object])</a>
+- observable.<a href="#array.push">**push**(object)</a>
+- observable.<a href="#array.splice">**splice**</a> : <small>_[Object]_</small>
+- observable.<a href="#array.pop">**pop**</a> : <small>_Object_</small>
+- observable.<a href="#array.shift">**shift**</a> : <small>_Object_</small>
+- observable.<a href="#array.unshift">**unshift**(object)</a>
+- observable.<a href="#array.slice">**slice**(\<index\>, \<count\>)</a>
+- observable.<a href="#array.set">**set**([object])</a>
+- observable.<a href="#array.sort">**sort**(fn)</a>
+- observable.<a href="#array.reverse">**reverse**()</a>
+- observable.<a href="#array.swap">**swap**(idx_a, idx_b)</a>
+- observable.<a href="#array.map">**map**(fn)</a>
+- observable.<a href="#array.filter">**filter**(fn)</a>
+- observable.<a href="#array.indexOf">**indexOf**(object)</a> : <small>_number_</small>
+- observable.<a href="#array.lastIndexOf">**lastIndexOf**(object)</a> : <small>_number_</small>
+- observable.<a href="#array.forEach">**forEach**(fn)</a>
 
 <a name="options"></a>
 ## Mikado Options

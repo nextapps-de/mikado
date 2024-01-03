@@ -1,23 +1,7 @@
 // COMPILER BLOCK -->
-import { Cache, NodeCache } from "./factory.js";
+import { Cache } from "./factory.js";
 import {
-    SUPPORT_DOM_HELPERS,
-    DEBUG,
-    SUPPORT_CACHE,
-    SUPPORT_KEYED,
-    SUPPORT_POOLS,
-    SUPPORT_CALLBACKS,
-    SUPPORT_ASYNC,
     SUPPORT_REACTIVE,
-    SUPPORT_EVENTS,
-
-    MIKADO_DOM,
-    MIKADO_LIVE_POOL,
-    MIKADO_CLASS,
-    MIKADO_TPL_KEY,
-    //MIKADO_TPL_INDEX,
-    MIKADO_TPL_PATH,
-    MIKADO_NODE_CACHE,
     MIKADO_PROXY
 } from "./config.js";
 // <-- COMPILER BLOCK
@@ -25,7 +9,7 @@ import {
 /**
  * @typedef {{
  *   path: Array<Cache>,
- *   handler: Object<string, Array<string, number>>,
+ *   fn: Object<string, Array<string, number>>,
  *   get: Function,
  *   set: Function
  * }}
@@ -45,7 +29,7 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
         /** @private @const {Array<Cache>} */
         this.path = proxy.path;
         /** @private @const {Object<string, Array<string, number>>} */
-        this.handler = proxy.handler;
+        this.fn = proxy.fn;
 
         for(const key in obj){
 
@@ -74,7 +58,7 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
                 //if(val !== newVal){
 
-                    proxy_loop.call(self, val = newVal, key);
+                    proxy_loop(self, val = newVal, key);
                 //}
             }
         });
@@ -89,25 +73,18 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 /**
  * @param {Object} obj
  * @param {Array<Cache>} path
- * @param {Object<string, Array<string, number>>} handler
+ * @param {Object<string, Array<string, number>>} fn
  * @return {Proxy}
  */
 
-export default function proxy_create(obj, path, handler){
+export default function proxy_create(obj, path, fn){
 
     /** @type {!ProxyHandler} */
-    const proxy_handler = {
-
-        path: path,
-        handler: handler,
-        get: proxy_get,
-        set: proxy_set
-    };
-
+    const proxy_handler = { path, fn, get, set };
     return new proxy(obj, proxy_handler);
 }
 
-function proxy_get(target, prop){
+function get(target, prop){
 
     // proxy check (hidden)
     return (prop === MIKADO_PROXY) || target[prop];
@@ -120,11 +97,11 @@ function proxy_get(target, prop){
  * @this {ProxyHandler}
  */
 
-function proxy_set(target, prop, value){
+function set(target, prop, value){
 
     //if(target[prop] !== value){
 
-        proxy_loop.call(this, value, prop);
+        proxy_loop(this, value, prop);
         target[prop] = value;
     //}
 
@@ -133,14 +110,14 @@ function proxy_set(target, prop, value){
 }
 
 /**
+ * @param {ProxyHandler} handler
  * @param {*} value
  * @param {string} prop
- * @this {ProxyHandler}
  */
 
-function proxy_loop(value, prop){
+function proxy_loop(handler, value, prop){
 
-    const exp = this.handler[prop];
+    const exp = handler.fn[prop];
 
     if(exp){
 
@@ -148,7 +125,7 @@ function proxy_loop(value, prop){
 
             const tmp = exp[i];
             const fn = tmp[0];
-            const cache = /** @type {Cache} */ (this.path[tmp[1]]);
+            const cache = /** @type {Cache} */ (handler.path[tmp[1]]);
 
             if(!cache.c || cache.c[fn + (tmp[2] || "")] !== value){
 
