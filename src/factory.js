@@ -142,6 +142,14 @@ function resolve(root, path, cache){
 
 export function construct(self, tpl, path, vpath, vnode, _recursive){
 
+    if(SUPPORT_REACTIVE){
+
+        if(!_recursive){
+
+            self.fullproxy = 1;
+        }
+    }
+
     const node = vnode || (
         tpl.tag
             ? (tpl.svg
@@ -158,9 +166,16 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
             /*cache ||*/ path.push(new Cache(cache = {"_c": ""}, node, vpath));
 
-            if(SUPPORT_REACTIVE && (val = val[0])){
+            if(SUPPORT_REACTIVE){
 
-                init_proxy(self, val, ["_c", path.length - 1]);
+                if((val = val[0])){
+
+                    init_proxy(self, val, ["_c", path.length - 1]);
+                }
+                else{
+
+                    self.fullproxy = 0;
+                }
             }
         }
         else if(!vnode){
@@ -180,9 +195,16 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
                 cache || path.push(new Cache(cache = {}, node, vpath));
                 cache["_a" + key] = false;
 
-                if(SUPPORT_REACTIVE && (item = item[0])){
+                if(SUPPORT_REACTIVE){
 
-                    init_proxy(self, item, ["_a", path.length - 1, key]);
+                    if((item = item[0])){
+
+                        init_proxy(self, item, ["_a", path.length - 1, key]);
+                    }
+                    else{
+
+                        self.fullproxy = 0;
+                    }
                 }
             }
             else if(!vnode){
@@ -215,9 +237,16 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
             path.push(new Cache(cache || (cache = {}), node.style, vpath + "@"));
             cache["_s"] = "";
 
-            if(SUPPORT_REACTIVE && (val = val[0])){
+            if(SUPPORT_REACTIVE){
 
-                init_proxy(self, val, ["_s", path.length - 1]);
+                if((val = val[0])){
+
+                    init_proxy(self, val, ["_s", path.length - 1]);
+                }
+                else{
+
+                    self.fullproxy = 0;
+                }
             }
         }
         else if(!vnode){
@@ -256,9 +285,16 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
             path.push(new Cache(cache, /** @type {Element|Node} */ (child), vpath));
 
-            if(SUPPORT_REACTIVE && val){
+            if(SUPPORT_REACTIVE){
 
-                init_proxy(self, val, ["_t", path.length - 1]);
+                if(val){
+
+                    init_proxy(self, val, ["_t", path.length - 1]);
+                }
+                else{
+
+                    self.fullproxy = 0;
+                }
             }
         }
         else if(!vnode){
@@ -342,9 +378,16 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
             cache || path.push(new Cache(cache = {}, node, vpath));
             cache["_h"] = "";
 
-            if(SUPPORT_REACTIVE && (val = val[0])){
+            if(SUPPORT_REACTIVE){
 
-                init_proxy(self, val, ["_h", path.length - 1]);
+                if((val = val[0])){
+
+                    init_proxy(self, val, ["_h", path.length - 1]);
+                }
+                else{
+
+                    self.fullproxy = 0;
+                }
             }
         }
         else if(!vnode){
@@ -451,11 +494,6 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
     if(!_recursive){
 
         node[MIKADO_TPL_PATH] = path;
-
-        if(SUPPORT_REACTIVE){
-
-            self.fullproxy = self.fullproxy === path.length ? 1 : 0;
-        }
     }
 
     return node;
@@ -469,7 +507,6 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
 function init_proxy(self, key, payload){
 
-    self.fullproxy++;
     self.proxy || (self.proxy = {});
     (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }

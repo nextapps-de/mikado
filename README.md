@@ -748,10 +748,6 @@ Instance properties:
 - view.<a href="#view.length">**length**</a> <small>_readonly_</small>
 - view.<a href="#view.state">**state**</a> <small>_readonly_</small>
 
-Instance properties (not included in mikado.light.js):
-
-- view.<a href="#view.store">**store**</a> : <small>_observable_</small>
-
 Static properties (not included in mikado.light.js):
 
 - Mikado.<a href="#mikado.eventCache">**eventCache**</a> : <small>_boolean_</small>
@@ -816,30 +812,31 @@ Static DOM Cache helpers (optional, not included in mikado.light.js):
 - Mikado.<a href="#Mikado.getHtml">**getHtml**(node)</a> : <small>_string_</small>
 
 
-- Mikado.<a href="#Mikado.setClasses">**setClasses**(node, [classnames])</a>
-- Mikado.<a href="#Mikado.getClasses">**getClasses**(node)</a> : <small>_[string]_</small>
+- Mikado.<a href="#Mikado.setClass">**setClass**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.getClass">**getClass**(node)</a> : <small>_[string]_</small>
 - Mikado.<a href="#Mikado.addClass">**addClass**(node, classname)</a>
-- Mikado.<a href="#Mikado.addClasses">**addClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.addClass">**addClass**(node, [classnames])</a>
 - Mikado.<a href="#Mikado.hasClass">**hasClass**(node, classname)</a> : <small>_boolean_</small>
 - Mikado.<a href="#Mikado.removeClass">**removeClass**(node, classname)</a>
-- Mikado.<a href="#Mikado.removeClasses">**removeClasses**(node, [classnames])</a>
+- Mikado.<a href="#Mikado.removeClass">**removeClasses**(node, [classnames])</a>
 - Mikado.<a href="#Mikado.toggleClass">**toggleClass**(node, classname, \<state\>)</a>
-- Mikado.<a href="#Mikado.toggleClasses">**toggleClasses**(node, [classnames], \<state\>)</a>
+- Mikado.<a href="#Mikado.toggleClass">**toggleClasses**(node, [classnames], \<state\>)</a>
+- Mikado.<a href="#Mikado.toggleClass">**toggleClasses**(node, {classname: state})</a>
 
 
 - Mikado.<a href="#Mikado.setStyle">**setStyle**(node, property, value)</a>
-- Mikado.<a href="#Mikado.setStyles">**setStyles**(node, {property: value})</a>
+- Mikado.<a href="#Mikado.setStyle">**setStyles**(node, {property: value})</a>
 - Mikado.<a href="#Mikado.getStyle">**getStyle**(node, property)</a> : <small>_string_</small>
 - Mikado.<a href="#Mikado.setCss">**setCss**(node, css)</a>
 - Mikado.<a href="#Mikado.getCss">**getCss**(node)</a> : <small>_string_</small>
 
 
 - Mikado.<a href="#Mikado.setAttribute">**setAttribute**(node, attribute, value)</a>
-- Mikado.<a href="#Mikado.setAttributes">**setAttributes**(node, {attribute: value})</a>
+- Mikado.<a href="#Mikado.setAttribute">**setAttribute**(node, {attribute: value})</a>
 - Mikado.<a href="#Mikado.getAttribute">**getAttribute**(node, attribute)</a> : <small>_string | null_</small>
 - Mikado.<a href="#Mikado.hasAttribute">**hasAttribute**(node, attribute)</a> : <small>_boolean_</small>
 - Mikado.<a href="#Mikado.removeAttribute">**removeAttribute**(node, attribute)</a>
-- Mikado.<a href="#Mikado.removeAttributes">**removeAttributes**(node, [attributes])</a>
+- Mikado.<a href="#Mikado.removeAttribute">**removeAttribute**(node, [attributes])</a>
 
 Observable constructor (optional, not included in mikado.light.js):
 
@@ -1190,18 +1187,6 @@ Within a template there are several **reserved keywords** you can use as an iden
         <td><b>window</b></td>
         <td>Gives access to the global namespace.</td>
     </tr>
-    <!--
-    <tr></tr>
-    <tr>
-        <td>this.<b>state</b></td>
-        <td>An object used to keep data as a state across runtime. You can share state data across all Mikado instances by passing the same external object reference during initialization. When no custom payload as the state will be passed on render, the keyword `state` points to `this.state` by default.</td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td>this.<b>store</b></td>
-        <td>Gives access to the internal data store (only available when using `{ observe: Mikado.Array() }`).</td>
-    </tr>
-    -->
     <tr>
         <td>_p<br>_v<br>_o<br>_inc</td>
         <td>private identifiers, used by internal processing</td>
@@ -2058,7 +2043,15 @@ view.add(data);
 Add one data item to a specific index position (did not replace):
 
 ```js
-view.add(data, 0); // add to beginning
+// add to beginning:
+view.add(data, 0);
+```
+
+Add one data item to a reversed index position (did not replace):
+
+```js
+// add before the last element:
+view.add(data, -1);
 ```
 
 <a name="view.append"></a>
@@ -2071,20 +2064,37 @@ view.append(data);
 Append multiple data before an index:
 
 ```js
-view.append(data, 0); // append to beginning
+// append to beginning
+view.append(data, 0);
+```
+
+Append multiple data before a reversed index position:
+
+```js
+// append before the last element:
+view.append(data, -1);
 ```
 
 <a name="view.remove"></a>
 Remove a specific template node:
 
+> Parameter: `remove(position, <count>)`
+
 ```js
 view.remove(node);
 ```
 
-Or remove a specific template node by its index:
+Remove a specific template node by its index:
 
 ```js
 view.remove(20);
+```
+
+Remove a specific template node by its reversed index:
+
+```js
+// remove the last:
+view.remove(-1);
 ```
 
 Remove a range of nodes starting from a specific node or index (included in removal):
@@ -2317,11 +2327,10 @@ Set an attribute of a node (will not replace old attributes):
 Mikado.setAttribute(node, "href", "/foo");
 ```
 
-<a name="view.setAttributes"></a>
 Set multiple attributes of a node (will not replace old attributes):
 
 ```js
-Mikado.setAttributes(node, {
+Mikado.setAttribute(node, {
   id: "foo",
   href: "/foo"
 });
@@ -2341,7 +2350,6 @@ Remove an attribute of a node:
 var attr = Mikado.removeAttribute(node, "href");
 ```
 
-<a name="Mikado.removeAttributes"></a>
 Remove multiple attributes of a node:
 
 ```js
@@ -2355,15 +2363,15 @@ Check existence of a nodes attribute:
 var href = Mikado.hasAttribute(node, "href");
 ```
 
-<a name="Mikado.setClasses"></a>
+<a name="Mikado.setClass"></a>
 Set class name of a node (fully replaces old classes):
 
 ```js
-Mikado.setClasses(node, "class_a class_b");
-```
-
+Mikado.setClass(node, "class_a class_b");
+```~~
+~~
 ```js
-Mikado.setClasses(node, ["class_a", "class_b"]);
+Mikado.setClass(node, ["class_a", "class_b"]);
 ```
 
 <a name="Mikado.addClass"></a>
@@ -2373,18 +2381,17 @@ Add a classname to a node:
 Mikado.addClass(node, "class_a");
 ```
 
-<a name="Mikado.addClasses"></a>
 Add multiple classnames to a node:
 
 ```js
-Mikado.addClasses(node, ["class_a", "class_b"]);
+Mikado.addClass(node, ["class_a", "class_b"]);
 ```
 
-<a name="Mikado.getClasses"></a>
+<a name="Mikado.getClass"></a>
 Get all classnames of a node (returns an array):
 
 ```js
-var classList = Mikado.getClasses(node);
+var classList = Mikado.getClass(node);
 ```
 
 <a name="Mikado.toggleClass"></a>
@@ -2400,11 +2407,19 @@ Toggle classnames of a node to a specific state (a short variant of conditional 
 var classList = Mikado.toggleClass(node, "class_a", true);
 ```
 
-<a name="Mikado.toggleClasses"></a>
 Toggle multiple classnames of a node:
 
 ```js
-var classList = Mikado.toggleClasses(node, ["class_a", "class_b"]);
+var classList = Mikado.toggleClass(node, ["class_a", "class_b"]);
+```
+
+Toggle multiple classnames of a node each of them to a specific state:
+
+```js
+var classList = Mikado.toggleClass(node, {
+    "class_a": true,
+    "class_b": false
+});
 ```
 
 <a name="Mikado.hasClass"></a>
@@ -2421,11 +2436,10 @@ Removes a classnames of a node:
 Mikado.removeClass(node, "class_a");
 ```
 
-<a name="Mikado.removeClasses"></a>
 Removes multiple classnames of a node:
 
 ```js
-Mikado.removeClasses(node, ["class_a", "class_b"]);
+Mikado.removeClass(node, ["class_a", "class_b"]);
 ```
 
 <a name="Mikado.setCSS"></a>
@@ -2453,11 +2467,10 @@ Set a specific inline style of a node (will not replace old styles):
 Mikado.setStyle(node, "padding-right", "10px");
 ```
 
-<a name="Mikado.setStyles"></a>
 Set multiple specific inline styles of a node (will not replace old styles):
 
 ```js
-Mikado.setStyles(node, { "top": 0, "padding-right": "10px" });
+Mikado.setStyle(node, { "top": 0, "padding-right": "10px" });
 ```
 
 <a name="Mikado.getStyle"></a>

@@ -476,7 +476,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
 
                 self.timer = 0;
                 self.render(data, state, null, 1);
-                has_fn && /** @type {Function} */callback();
+                /*has_fn &&*/ /** @type {Function} */callback();
             });
 
             return has_fn ? this : new Promise(function (resolve) {
@@ -495,10 +495,10 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
         if (!this.apply) {
 
             this.dom[0] || this.add();
+        } else {
+
+            console.warn("When calling .render() by passing no data nothing will happen!");
         }
-
-        console.warn("When calling .render() by passing no data nothing will happen!");
-
 
         return this;
     }
@@ -552,7 +552,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
                 this.update(node, item, state, x, 1);
             }
 
-            if (this.proxy && !item._mkx) {
+            if (this.proxy && /*!this.recycle ||*/!item._mkx) {
 
                 data[x] = apply_proxy(this, node, item);
             }
@@ -565,9 +565,9 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
         for (; x < count; x++) {
 
             const item = data[x];
-            this.add(item, state, x);
+            this.add(item, state /*, x*/);
 
-            if (this.proxy && !item._mkx) {
+            if (this.proxy && (!this.recycle || !item._mkx)) {
 
                 data[x] = apply_proxy(this, this.dom[x], item);
             }
@@ -602,7 +602,7 @@ Mikado.prototype.replace = function (node, data, state, index) {
 
         if ("number" == typeof node) {
 
-            index = node;
+            index = 0 > node ? this.length + node : node;
             node = this.dom[index];
         } else {
 
@@ -708,8 +708,8 @@ Mikado.prototype.update = function (node, data, state, index) {
 
         if ("number" == typeof node) {
 
-            index = node;
-            node = this.dom[node];
+            index = 0 > node ? this.length + node - 1 : node;
+            node = this.dom[index];
         } else {
 
             index = this.index(node);
@@ -856,7 +856,7 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
 
 /**
  * @param {*=} data
- * @param {*=} state
+ * @param {*|number=} state
  * @param {number|null=} index
  * @returns {Mikado}
  * @const
@@ -870,11 +870,12 @@ Mikado.prototype.add = function (data, state, index) {
 
     if ("number" == typeof state) {
 
-        index = state;
+        index = 0 > state ? this.length + state : state;
         state = null;
         has_index = index < this.length;
-    } else if (index || 0 === index) {
+    } else if ("number" == typeof index) {
 
+        if (0 > index) index += this.length;
         has_index = index < this.length;
     } else {
 
@@ -965,17 +966,6 @@ export function apply_proxy(self, node, data) {
  */
 
 Mikado.prototype.reconcile = function (b, state, x, render) {
-
-    // const store = SUPPORT_STORAGE && !this.extern && this.store;
-    //
-    // if(store){
-    //
-    //     b || (b = store);
-    //
-    //     // skips updating internal store
-    //     this.store = 0;
-    // }
-
     const a = this.dom,
           live = this.live,
           key = this.key;
@@ -996,16 +986,16 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
             let a_x, b_x_key, a_x_key;
 
 
+            if (this.proxy && !b_x._mkx) {
+
+                b[x] = apply_proxy(this, a[x], b_x);
+            }
+
             if (!ended) {
 
                 a_x = a[x];
                 b_x_key = b_x[key];
                 a_x_key = a_x._mkk;
-
-                if (this.proxy && !b_x._mkx) {
-
-                    b[x] = apply_proxy(this, a_x, b_x);
-                }
 
                 if (a_x_key === b_x_key) {
 
@@ -1022,7 +1012,7 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
 
                 if (render) {
 
-                    // TODO check: !this.pool
+                    // TODO make better decision weather to insert before or replace
                     if (ended || !this.pool) {
 
                         end_a++;
@@ -1033,11 +1023,6 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
 
                         this.replace(a_x, b_x, state, x);
                     }
-                }
-
-                if (this.proxy && !b_x._mkx) {
-
-                    b[x] = apply_proxy(this, a[x], b_x);
                 }
 
                 continue;
@@ -1082,11 +1067,6 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
                                 console.error("Error");
                             }
 
-                            // if(render){
-                            //
-                            //     this.update(a_x, b[y], state, y);
-                            // }
-
                             //steps++;
                         } else {
 
@@ -1128,11 +1108,6 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
             x--;
         }
     }
-
-    // if(store){
-    //
-    //     this.store = b;
-    // }
 
     //if(steps) console.log(steps);
 
@@ -1188,11 +1163,12 @@ Mikado.prototype.append = function (data, state, index) {
 
     if ("number" == typeof state) {
 
-        index = state;
+        index = 0 > state ? this.length + state : state;
         state = null;
         has_index = 1;
-    } else if (index || 0 === index) {
+    } else if ("number" == typeof index) {
 
+        if (0 > index) index += this.length;
         has_index = 1;
     }
 
@@ -1243,7 +1219,7 @@ Mikado.prototype.remove = function (index, count) {
             index = this.index(index);
         } else if (0 > index) {
 
-            index = length + index - 1;
+            index = length + index;
         }
     }
 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="node_modules/intern/browser/intern.js"></script>
+    <script src="../dist/mikado.bundle.debug.js"></script>
+    <script>
+        intern.configure({
+            reporters: "html",
+            loader: "esm",
+            suites: [
+                "/mikado/test/browser/bundle.js",
+                "/mikado/test/browser/mount.js",
+                "/mikado/test/browser/render.js",
+                "/mikado/test/browser/recycle.js",
+                "/mikado/test/browser/modify.js",
+                "/mikado/test/browser/event.js",
+                "/mikado/test/browser/cache.js",
+                "/mikado/test/browser/manipulate.js",
+                "/mikado/test/browser/proxy.js",
+                "/mikado/test/browser/callbacks.js"
+            ],
+            coverage: [
+                "/mikado/test/browser/bundle.js",
+                "/mikado/test/browser/mount.js",
+                "/mikado/test/browser/render.js",
+                "/mikado/test/browser/recycle.js"
+            ],
+        });
+        intern.run();
+    </script>
+</head>
+<body>
+<div id="root-1" hidden></div>
+<div id="root-2" hidden></div>
+<div id="root-3" hidden></div>
+</body>
+</html>

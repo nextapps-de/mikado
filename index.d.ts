@@ -3,12 +3,13 @@ declare class Mikado {
     name: string;
     root: HTMLElement|null;
     state: Object;
-    store: Mikado.array|null;
     length: number;
 
     mount(target: HTMLElement, hydrate?: boolean): Mikado;
-    render(data?: Object|Array<Object>, state?: Object, callback?: Function|boolean): Mikado|Promise<void>;
-    render(data?: Object|Array<Object>, callback?: Function|boolean): Mikado|Promise<void>;
+    render(data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
+    render(data?: Object|Array<Object>, state?: Object, callback?: boolean): Promise<void>;
+    render(data?: Object|Array<Object>, callback?: Function): Mikado;
+    render(data?: Object|Array<Object>, callback?: boolean): Promise<void>;
 
     add(data: Object, state?: Object, position?: number): Mikado;
     add(data: Object, position?: number): Mikado;
@@ -16,7 +17,7 @@ declare class Mikado {
     append(data: Array<Object>, position?: number): Mikado;
     update(node: HTMLElement|number, data?: Object, state?: Object): Mikado;
     replace(node: HTMLElement|number, data: Object, state?: Object): Mikado;
-    remove(index?: HTMLElement|number, count?: number): Mikado;
+    remove(index: HTMLElement|number, count?: number): Mikado;
     create(data: Object, state?: Object, index?: number): HTMLElement;
 
     cancel(): Mikado;
@@ -81,22 +82,19 @@ declare namespace Mikado {
         unshift(data: Object): void;
     }
 
-    function getClasses(target: HTMLElement): Array<string>;
-    function setClasses(target: HTMLElement, classname: string|Array<string>): Mikado;
+    function getClass(target: HTMLElement): Array<string>;
+    function setClass(target: HTMLElement, classname: string|Array<string>): Mikado;
     function hasClass(target: HTMLElement, classname: string): boolean;
-    function toggleClass(target: HTMLElement, classname: string, state?: boolean): Mikado;
-    function toggleClasses(target: HTMLElement, classnames: Array<string>, state?: boolean): Mikado;
-    function removeClass(target: HTMLElement, classname: string): Mikado;
-    function removeClasses(target: HTMLElement, classnames: Array<string>): Mikado;
-    function addClass(target: HTMLElement, classname: string): Mikado;
-    function addClasses(target: HTMLElement, classnames: Array<string>): Mikado;
+    function toggleClass(target: HTMLElement, classname: string|Array<string>, state?: boolean): Mikado;
+    function toggleClass(target: HTMLElement, classnames: {[classname: string]: boolean}): Mikado;
+    function removeClass(target: HTMLElement, classname: string|Array<string>): Mikado;
+    function addClass(target: HTMLElement, classname: string|Array<string>): Mikado;
 
     function getAttribute(target: HTMLElement, attribute: string): string;
     function hasAttribute(target: HTMLElement, attribute: string): boolean;
-    function removeAttribute(target: HTMLElement, attribute: string): Mikado;
-    function removeAttributes(target: HTMLElement, attributes: Array<string>): Mikado;
+    function removeAttribute(target: HTMLElement, attribute: string|Array<string>): Mikado;
     function setAttribute(target: HTMLElement, attribute: string, value: string): Mikado;
-    function setAttributes(target: HTMLElement, attributes: {[attribute: string]: string}): Mikado;
+    function setAttribute(target: HTMLElement, attributes: {[attribute: string]: string}): Mikado;
 
     function setHtml(target: HTMLElement, html: string): Mikado;
     function getHtml(target: HTMLElement): string;
@@ -106,7 +104,7 @@ declare namespace Mikado {
     function setCss(target: HTMLElement, style: string): Mikado;
     function getCss(target: HTMLElement): string;
     function setStyle(target: HTMLElement, property: string, value: string): Mikado;
-    function setStyles(target: HTMLElement, styles: {[property: string]: string}): Mikado;
+    function setStyle(target: HTMLElement, styles: {[property: string]: string}): Mikado;
     function getStyle(target: HTMLElement, property: string): string;
 
     function escape(text: string): string;

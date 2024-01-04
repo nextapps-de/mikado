@@ -67,6 +67,8 @@ function handler(event, type) {
             if (route) {
 
                 const delimiter = route.indexOf(":");
+                // when continue bubble it needs the original target
+                let root = target;
 
                 // it has a custom target, bubbling needs to continue
 
@@ -79,9 +81,9 @@ function handler(event, type) {
 
                     // continue bubble up the dom tree to find the custom defined root element
 
-                    while ((target = target.parentElement) !== doc) {
+                    while ((root = root.parentElement) !== doc) {
 
-                        if (target.hasAttribute(attr)) {
+                        if (root.hasAttribute(attr)) {
 
                             route = handler;
                             break;
@@ -101,7 +103,7 @@ function handler(event, type) {
                         }
                     }
 
-                    cache.push([route, target]);
+                    cache.push([route, root]);
                     const option = options[route];
 
                     if (!use_bubble || option && (option.stop || option.cancel)) {

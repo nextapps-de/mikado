@@ -31,7 +31,7 @@ const proxy = window.Proxy || function () {
         }
 
         // proxy check (visible)
-        obj._mkx = !0;
+        obj._mkx = this;
 
         return obj;
     }
@@ -72,15 +72,25 @@ const proxy = window.Proxy || function () {
  */
 
 export default function proxy_create(obj, path, fn) {
-    return new proxy(obj, { path, fn, get, set });
+
+    const self = obj._mkx;
+
+    if (self) {
+
+        self.path = path;
+        return (/** @type {Proxy} */obj
+        );
+    }
 
     /** @type {!ProxyHandler} */
+
+    return new proxy(obj, { path, fn, get, set });
 }
 
 function get(target, prop) {
 
     // proxy check (hidden)
-    return prop === "_mkx" || target[prop];
+    return prop === "_mkx" ? this : target[prop];
 }
 
 /**

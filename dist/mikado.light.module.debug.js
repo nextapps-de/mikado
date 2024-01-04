@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.140 (Bundle/Debug)
+ * Mikado.js v0.8.141 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -147,6 +147,8 @@ n._h = function(a) {
   }
   this.n.innerHTML = a;
 };
+/*
+ this.recycle ||*/
 const C = Object.create(null);
 function D(a, b = {}) {
   if (!(this instanceof D)) {
@@ -245,7 +247,7 @@ n.render = function(a, b) {
   }
   var c = this.length;
   if (!a) {
-    return this.apply || this.g[0] || this.add(), console.warn("When calling .render() by passing no data nothing will happen!"), this;
+    return this.apply ? console.warn("When calling .render() by passing no data nothing will happen!") : this.g[0] || this.add(), this;
   }
   if (Array.isArray(a)) {
     var e = a.length;
@@ -300,7 +302,7 @@ n.render = function(a, b) {
   }
   if (d < e) {
     for (; d < e; d++) {
-      this.add(a[d], b, d);
+      this.add(a[d], b);
     }
   } else {
     e < c && this.remove(e, c - e);
@@ -308,7 +310,7 @@ n.render = function(a, b) {
   return this;
 };
 n.replace = function(a, b, c, e) {
-  "undefined" === typeof e && ("number" === typeof a ? (e = a, a = this.g[e]) : e = this.index(a));
+  "undefined" === typeof e && ("number" === typeof a ? (e = 0 > a ? this.length + a : a, a = this.g[e]) : e = this.index(a));
   var f;
   if (this.key) {
     var h = b[this.key];
@@ -336,7 +338,7 @@ n.update = function(a, b, c, e) {
   if (!this.apply) {
     return console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
   }
-  "undefined" === typeof e && ("number" === typeof a ? (e = a, a = this.g[a]) : e = this.index(a));
+  "undefined" === typeof e && ("number" === typeof a ? (e = 0 > a ? this.length + a - 1 : a, a = this.g[e]) : e = this.index(a));
   this.apply(b, c || this.state, e, a._mkp || p(a, this.h._mkp, this.cache));
   return this;
 };
@@ -352,7 +354,7 @@ n.create = function(a, b, c, e) {
 };
 n.add = function(a, b, c) {
   let e;
-  "number" === typeof b ? (c = b, b = null, e = c < this.length) : c || 0 === c ? e = c < this.length : c = this.length;
+  "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, e = c < this.length) : "number" === typeof c ? (0 > c && (c += this.length), e = c < this.length) : c = this.length;
   a = this.create(a, b, c, 1);
   e ? (this.root.insertBefore(a, this.g[c]), F(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
   return this;
@@ -373,11 +375,7 @@ function F(a, b, c, e) {
 }
 n.append = function(a, b, c) {
   let e;
-  if ("number" === typeof b) {
-    c = b, b = null, e = 1;
-  } else if (c || 0 === c) {
-    e = 1;
-  }
+  "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, e = 1) : "number" === typeof c && (0 > c && (c += this.length), e = 1);
   const f = a.length;
   for (let h = 0; h < f; h++) {
     this.add(a[h], b, e ? c++ : null);
@@ -390,7 +388,7 @@ n.clear = function() {
 };
 n.remove = function(a, b) {
   let c = this.length;
-  c && a && ("number" !== typeof a ? a = this.index(a) : 0 > a && (a = c + a - 1));
+  c && a && ("number" !== typeof a ? a = this.index(a) : 0 > a && (a = c + a));
   if (!c || a >= c) {
     return this;
   }

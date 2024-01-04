@@ -37,7 +37,7 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
         }
 
         // proxy check (visible)
-        obj[MIKADO_PROXY] = true;
+        obj[MIKADO_PROXY] = this;
 
         return obj;
     }
@@ -79,6 +79,14 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
 export default function proxy_create(obj, path, fn){
 
+    const self = obj[MIKADO_PROXY];
+
+    if(self){
+
+        self.path = path;
+        return /** @type {Proxy} */ (obj);
+    }
+
     /** @type {!ProxyHandler} */
     const proxy_handler = { path, fn, get, set };
     return new proxy(obj, proxy_handler);
@@ -87,7 +95,7 @@ export default function proxy_create(obj, path, fn){
 function get(target, prop){
 
     // proxy check (hidden)
-    return (prop === MIKADO_PROXY) || target[prop];
+    return prop === MIKADO_PROXY ? this : target[prop];
 }
 
 /**

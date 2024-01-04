@@ -258,7 +258,7 @@ const handler = {
             skip = false;
         }
 
-        if(index_by_number && mikado.proxy && !value[MIKADO_PROXY]){
+        if(index_by_number && mikado.proxy && (!mikado.recycle || !value[MIKADO_PROXY])){
 
             value = apply_proxy(mikado, mikado.dom[prop], value);
         }
@@ -272,12 +272,12 @@ const handler = {
 
 Observer.prototype.swap = function(a, b){
 
-    skip = true;
+    //skip = true;
     //const self = proxy ? this : this.proto;
     const tmp = this[b];
     this[b] = this[a];
     this[a] = tmp;
-    skip = false;
+    //skip = false;
     return this;
 };
 

@@ -548,7 +548,7 @@ if(!REACTIVE_ONLY){
 
                     self.timer = 0;
                     self.render(data, state, null, 1);
-                    has_fn && /** @type {Function} */ (callback)();
+                    /*has_fn &&*/ /** @type {Function} */ (callback)();
                 });
 
                 return has_fn ? this : new Promise(function(resolve){
@@ -568,8 +568,7 @@ if(!REACTIVE_ONLY){
 
                 this.dom[0] || this.add();
             }
-
-            if(DEBUG){
+            else if(DEBUG){
 
                 console.warn("When calling .render() by passing no data nothing will happen!");
             }
@@ -630,7 +629,7 @@ if(!REACTIVE_ONLY){
                     this.update(node, item, state, x, 1);
                 }
 
-                if(SUPPORT_REACTIVE && this.proxy && !item[MIKADO_PROXY]){
+                if(SUPPORT_REACTIVE && this.proxy && (/*!this.recycle ||*/ !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, node, item);
                 }
@@ -643,9 +642,9 @@ if(!REACTIVE_ONLY){
             for(; x < count; x++){
 
                 const item = data[x];
-                this.add(item, state, x);
+                this.add(item, state/*, x*/);
 
-                if(SUPPORT_REACTIVE && this.proxy && !item[MIKADO_PROXY]){
+                if(SUPPORT_REACTIVE && this.proxy && (!this.recycle || !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, this.dom[x], item);
                 }
@@ -681,7 +680,7 @@ Mikado.prototype.replace = function(node, data, state, index){
 
         if(typeof node === "number"){
 
-            index = node;
+            index = node < 0 ? this.length + node : node;
             node = this.dom[index];
         }
         else{
@@ -797,8 +796,8 @@ Mikado.prototype.update = function(node, data, state, index, _skip_check){
 
         if(typeof node === "number"){
 
-            index = node;
-            node = this.dom[node];
+            index = node < 0 ? this.length + node - 1 : node;
+            node = this.dom[index];
         }
         else{
 
@@ -970,7 +969,7 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
 
 /**
  * @param {*=} data
- * @param {*=} state
+ * @param {*|number=} state
  * @param {number|null=} index
  * @returns {Mikado}
  * @const
@@ -984,12 +983,13 @@ Mikado.prototype.add = function(data, state, index){
 
     if(typeof state === "number"){
 
-        index = state;
+        index = state < 0 ? this.length + state : state;
         state = null;
         has_index = index < this.length;
     }
-    else if(index || (index === 0)){
+    else if(typeof index === "number"){
 
+        if(index < 0) index += this.length;
         has_index = index < this.length;
     }
     else{
@@ -1089,16 +1089,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
     Mikado.prototype.reconcile = function(b, state, x, render){
 
-        // const store = SUPPORT_STORAGE && !this.extern && this.store;
-        //
-        // if(store){
-        //
-        //     b || (b = store);
-        //
-        //     // skips updating internal store
-        //     this.store = 0;
-        // }
-
         const a = this.dom;
         const live = this.live;
         const key = this.key;
@@ -1121,16 +1111,16 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                 let b_x_key;
                 let a_x_key;
 
+                if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
+
+                    b[x] = apply_proxy(this, a[x], b_x);
+                }
+
                 if(!ended){
 
                     a_x = a[x];
                     b_x_key = b_x[key];
                     a_x_key = a_x[MIKADO_TPL_KEY];
-
-                    if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
-
-                        b[x] = apply_proxy(this, a_x, b_x);
-                    }
 
                     if(a_x_key === b_x_key){
 
@@ -1147,7 +1137,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(render){
 
-                        // TODO check: !this.pool
+                        // TODO make better decision weather to insert before or replace
                         if(ended || !this.pool){
 
                             end_a++;
@@ -1159,11 +1149,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                             this.replace(a_x, b_x, state, x);
                         }
-                    }
-
-                    if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
-
-                        b[x] = apply_proxy(this, a[x], b_x);
                     }
 
                     continue;
@@ -1211,11 +1196,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                                     }
                                 }
 
-                                // if(render){
-                                //
-                                //     this.update(a_x, b[y], state, y);
-                                // }
-
                                 //steps++;
                             }
                             else{
@@ -1258,11 +1238,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                 x--;
             }
         }
-
-        // if(store){
-        //
-        //     this.store = b;
-        // }
 
         //if(steps) console.log(steps);
 
@@ -1322,12 +1297,13 @@ if(!REACTIVE_ONLY){
 
         if(typeof state === "number"){
 
-            index = state;
+            index = state < 0 ? this.length + state : state;
             state = null;
             has_index = 1;
         }
-        else if(index || index === 0){
+        else if(typeof index === "number"){
 
+            if(index < 0) index += this.length;
             has_index = 1;
         }
 
@@ -1380,7 +1356,7 @@ Mikado.prototype.remove = function(index, count){
         }
         else if(index < 0){
 
-            index = length + index - 1;
+            index = length + index;
         }
     }
 

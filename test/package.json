@@ -1,0 +1,12 @@
+{
+  "public": false,
+  "preferGlobal": false,
+  "scripts": {
+    "test": "npx intern",
+    "test:serve": "npx intern serveOnly"
+  },
+  "readme": "README.md",
+  "dependencies": {
+    "intern": "^4.10.1"
+  }
+}

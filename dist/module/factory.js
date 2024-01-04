@@ -118,6 +118,12 @@ function resolve(root, path, cache) {
 
 export function construct(self, tpl, path, vpath, vnode, _recursive) {
 
+    if (!_recursive) {
+
+        self.fullproxy = 1;
+    }
+
+
     const node = vnode || (tpl.tag ? tpl.svg ? document.createElementNS("http://www.w3.org/2000/svg", tpl.tag) : document.createElement(tpl.tag) : document.createTextNode( /** @type {string} */tpl.text));
 
     let cache, val;
@@ -131,6 +137,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
             if (val = val[0]) {
 
                 init_proxy(self, val, ["_c", path.length - 1]);
+            } else {
+
+                self.fullproxy = 0;
             }
         } else if (!vnode) {
 
@@ -152,6 +161,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
                 if (item = item[0]) {
 
                     init_proxy(self, item, ["_a", path.length - 1, key]);
+                } else {
+
+                    self.fullproxy = 0;
                 }
             } else if (!vnode) {
 
@@ -183,6 +195,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
             if (val = val[0]) {
 
                 init_proxy(self, val, ["_s", path.length - 1]);
+            } else {
+
+                self.fullproxy = 0;
             }
         } else if (!vnode) {
 
@@ -222,6 +237,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
             if (val) {
 
                 init_proxy(self, val, ["_t", path.length - 1]);
+            } else {
+
+                self.fullproxy = 0;
             }
         } else if (!vnode) {
 
@@ -292,6 +310,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
             if (val = val[0]) {
 
                 init_proxy(self, val, ["_h", path.length - 1]);
+            } else {
+
+                self.fullproxy = 0;
             }
         } else if (!vnode) {
 
@@ -381,8 +402,6 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
     if (!_recursive) {
 
         node._mkp = path;
-
-        self.fullproxy = self.fullproxy === path.length ? 1 : 0;
     }
 
     return node;
@@ -396,7 +415,6 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
 
 function init_proxy(self, key, payload) {
 
-    self.fullproxy++;
     self.proxy || (self.proxy = {});
     (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }

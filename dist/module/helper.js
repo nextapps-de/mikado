@@ -257,8 +257,8 @@ Mikado.prototype.swap = function (a, b) {
 
         if ("number" == typeof a) {
 
-            tmp_a = a;
-            a = this.dom[a];
+            tmp_a = 0 > a ? this.length + a : a;
+            a = this.dom[tmp_a];
         } else {
 
             tmp_a = this.index(a);
@@ -266,8 +266,8 @@ Mikado.prototype.swap = function (a, b) {
 
         if ("number" == typeof b) {
 
-            tmp_b = b;
-            b = this.dom[b];
+            tmp_b = 0 > b ? this.length + b : b;
+            b = this.dom[tmp_b];
         } else {
 
             tmp_b = this.index(b);

@@ -35,25 +35,19 @@ import {
     getAttribute,
     hasAttribute,
     removeAttribute,
-    removeAttributes,
     setAttribute,
-    setAttributes,
 
-    getClasses,
-    setClasses,
+    getClass,
+    setClass,
     hasClass,
     toggleClass,
-    toggleClasses,
     removeClass,
-    removeClasses,
     addClass,
-    addClasses,
 
     getCss,
     setCss,
     getStyle,
-    setStyle,
-    setStyles
+    setStyle
 } from "./cache.js";
 
 import {
@@ -143,28 +137,22 @@ if(SUPPORT_CACHE_HELPERS){
     Mikado["setHtml"] = setHtml;
     Mikado["getHtml"] = getHtml;
 
-    Mikado["setClasses"] = setClasses;
-    Mikado["getClasses"] = getClasses;
+    Mikado["setClass"] = setClass;
+    Mikado["getClass"] = getClass;
     Mikado["hasClass"] = hasClass;
     Mikado["toggleClass"] = toggleClass;
-    Mikado["toggleClasses"] = toggleClasses;
     Mikado["removeClass"] = removeClass;
-    Mikado["removeClasses"] = removeClasses;
     Mikado["addClass"] = addClass;
-    Mikado["addClasses"] = addClasses;
 
     Mikado["setAttribute"] = setAttribute;
-    Mikado["setAttributes"] = setAttributes;
     Mikado["getAttribute"] = getAttribute;
     Mikado["hasAttribute"] = hasAttribute;
     Mikado["removeAttribute"] = removeAttribute;
-    Mikado["removeAttributes"] = removeAttributes;
 
     Mikado["setCss"] = setCss;
     Mikado["getCss"] = getCss;
     Mikado["getStyle"] = getStyle;
     Mikado["setStyle"] = setStyle;
-    Mikado["setStyles"] = setStyles;
 }
 
 if(RELEASE !== "light" && RELEASE !== "light.module"){

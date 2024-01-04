@@ -271,8 +271,8 @@ if(SUPPORT_DOM_HELPERS){
 
             if(typeof a === "number"){
 
-                tmp_a = a;
-                a = this.dom[a];
+                tmp_a = a < 0 ? this.length + a : a;
+                a = this.dom[tmp_a];
             }
             else{
 
@@ -281,8 +281,8 @@ if(SUPPORT_DOM_HELPERS){
 
             if(typeof b === "number"){
 
-                tmp_b = b;
-                b = this.dom[b];
+                tmp_b = b < 0 ? this.length + b : b;
+                b = this.dom[tmp_b];
             }
             else{
 

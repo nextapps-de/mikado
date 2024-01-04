@@ -1,5 +1,5 @@
 const regex_css = /[^;:]+/g,
-      regex_class = /[^ ]+/g;
+      regex_class = /[ ]+/g;
 
 
 // -------------------------------------------------------------
@@ -87,17 +87,13 @@ export function getText(node) {
  * @param {Object<string, string>} obj
  */
 
-export function setAttributes(node, obj) {
+/**
+ * @param {Element} node
+ * @param {string|Object<string, string>} attr
+ * @param {string|number|boolean=} value
+ */
 
-    // if(node.length && !node.tagName){
-    //
-    //     for(let i = 0; i < node.length; i++){
-    //
-    //         setAttributes(node[i], obj);
-    //     }
-    //
-    //     return;
-    // }
+export function setAttribute(node, attr, value) {
 
     let cache = node._mkc;
 
@@ -106,9 +102,15 @@ export function setAttributes(node, obj) {
         node._mkc = cache = {};
     }
 
-    for (let attr in obj) {
+    if ("object" == typeof attr) {
 
-        setAttribute(node, attr, obj[attr], cache);
+        for (let key in attr) {
+
+            _setAttribute(node, key, attr[key], cache);
+        }
+    } else {
+
+        _setAttribute(node, attr, /** @type {string} */value, cache);
     }
 }
 
@@ -116,24 +118,14 @@ export function setAttributes(node, obj) {
  * @param {Element} node
  * @param {string} attr
  * @param {string|number|boolean} value
- * @param {Object=} _cache
+ * @param {Object=} cache
  */
 
-export function setAttribute(node, attr, value, _cache) {
+function _setAttribute(node, attr, value, cache) {
 
-    let tmp;
+    if (cache["_a" + attr] !== value) {
 
-    if (_cache || (_cache = node._mkc)) {
-
-        tmp = _cache["_a" + attr];
-    } else {
-
-        node._mkc = _cache = {};
-    }
-
-    if (tmp !== value) {
-
-        _cache["_a" + attr] = value;
+        cache["_a" + attr] = value;
 
         !1 !== value ? node.setAttribute(attr, value) : node.removeAttribute(attr);
     }
@@ -141,10 +133,10 @@ export function setAttribute(node, attr, value, _cache) {
 
 /**
  * @param {Element} node
- * @param {Array<string>} arr
+ * @param {string|Array<string>} arr
  */
 
-export function removeAttributes(node, arr) {
+export function removeAttribute(node, arr) {
 
     let cache = node._mkc;
 
@@ -153,33 +145,29 @@ export function removeAttributes(node, arr) {
         node._mkc = cache = {};
     }
 
-    for (let i = 0; i < arr.length; i++) {
+    if ("object" == typeof arr) {
 
-        removeAttribute(node, arr[i], cache);
+        for (let i = 0; i < arr.length; i++) {
+
+            _removeAttribute(node, arr[i], cache);
+        }
+    } else {
+
+        _removeAttribute(node, /** @type {string} */arr, cache);
     }
 }
 
 /**
  * @param {Element} node
  * @param {string} attr
- * @param {Object=} _cache
+ * @param {Object=} cache
  */
 
-export function removeAttribute(node, attr, _cache) {
+function _removeAttribute(node, attr, cache) {
 
-    let tmp;
+    if (!1 !== cache["_a" + attr]) {
 
-    if (_cache || (_cache = node._mkc)) {
-
-        tmp = _cache["_a" + attr];
-    } else {
-
-        node._mkc = _cache = {};
-    }
-
-    if (!1 !== tmp) {
-
-        _cache["_a" + attr] = !1;
+        cache["_a" + attr] = !1;
         node.removeAttribute(attr);
     }
 }
@@ -226,10 +214,10 @@ export function hasAttribute(node, attr) {
 
 /**
  * @param {Element} node
- * @param {string} classname
+ * @param {string|Array<string>} classname
  */
 
-export function setClasses(node, classname) {
+export function setClass(node, classname) {
 
     let cache = node._mkc,
         tmp;
@@ -240,6 +228,11 @@ export function setClasses(node, classname) {
     } else {
 
         node._mkc = cache = {};
+    }
+
+    if ("object" == typeof classname) {
+
+        classname = classname.join(" ");
     }
 
     if (tmp !== classname) {
@@ -254,7 +247,7 @@ export function setClasses(node, classname) {
  * @return {Array<string>}
  */
 
-export function getClasses(node) {
+export function getClass(node) {
 
     let cache = node._mkc,
         tmp;
@@ -300,7 +293,7 @@ function transformClassCache(node) {
 
     if ("string" == typeof tmp) {
 
-        const matches = tmp.match(regex_class);
+        const matches = tmp.split(regex_class);
         cache._c = tmp = {};
 
         for (let i = 0; i < matches.length; i++) {
@@ -314,13 +307,34 @@ function transformClassCache(node) {
 
 /**
  * @param {Element} node
- * @param {string} classname
- * @param {Object=} _cache
+ * @param {string|Array<string>} classname
  */
 
-export function addClass(node, classname, _cache) {
-    const cache = _cache || transformClassCache(node),
-          tmp = cache[classname];
+export function addClass(node, classname) {
+
+    const cache = transformClassCache(node);
+
+    if ("object" == typeof classname) {
+
+        for (let i = 0; i < classname.length; i++) {
+
+            _addClass(node, classname[i], cache);
+        }
+    } else {
+
+        _addClass(node, classname, cache);
+    }
+}
+
+/**
+ * @param {Element} node
+ * @param {string} classname
+ * @param {Object=} cache
+ */
+
+function _addClass(node, classname, cache) {
+
+    const tmp = cache[classname];
 
     if (!tmp) {
 
@@ -331,48 +345,39 @@ export function addClass(node, classname, _cache) {
 
 /**
  * @param {Element} node
- * @param {Array<string>} arr
+ * @param {string|Array<string>} classname
  */
 
-export function addClasses(node, arr) {
+export function removeClass(node, classname) {
 
     const cache = transformClassCache(node);
 
-    for (let i = 0; i < arr.length; i++) {
+    if ("object" == typeof classname) {
 
-        addClass(node, arr[i], cache);
+        for (let i = 0; i < classname.length; i++) {
+
+            _removeClass(node, classname[i], cache);
+        }
+    } else {
+
+        _removeClass(node, classname, cache);
     }
 }
 
 /**
  * @param {Element} node
  * @param {string} classname
- * @param {Object=} _cache
+ * @param {Object=} cache
  */
 
-export function removeClass(node, classname, _cache) {
-    const cache = _cache || transformClassCache(node),
-          tmp = cache[classname];
+function _removeClass(node, classname, cache) {
+
+    const tmp = cache[classname];
 
     if (0 !== tmp) {
 
         cache[classname] = 0;
         node.classList.remove(classname);
-    }
-}
-
-/**
- * @param {Element} node
- * @param {Array<string>} arr
- */
-
-export function removeClasses(node, arr) {
-
-    const cache = transformClassCache(node);
-
-    for (let i = 0; i < arr.length; i++) {
-
-        removeClass(node, arr[i], cache);
     }
 }
 
@@ -397,14 +402,44 @@ export function hasClass(node, classname) {
 
 /**
  * @param {Element} node
- * @param {string} classname
+ * @param {string|Array<string>|Object<string, boolean|number>} classname
  * @param {boolean|number|undefined=} state
- * @param {Object=} _cache
  */
 
-export function toggleClass(node, classname, state, _cache) {
+export function toggleClass(node, classname, state) {
 
-    const cache = _cache || transformClassCache(node);
+    const cache = transformClassCache(node);
+
+    if ("object" == typeof classname) {
+
+        if (classname.constructor === Array) {
+
+            for (let i = 0; i < classname.length; i++) {
+
+                _toggleClass(node, /** @type {string} */classname[i], state, cache);
+            }
+        } else {
+
+            for (let key in classname) {
+
+                _toggleClass(node, key, /** @type {boolean|number} */classname[key], cache);
+            }
+        }
+    } else {
+
+        _toggleClass(node, /** @type {string} */classname, state, cache);
+    }
+}
+
+/**
+ * @param {Element} node
+ * @param {string} classname
+ * @param {boolean|number|undefined=} state
+ * @param {Object=} cache
+ */
+
+function _toggleClass(node, classname, state, cache) {
+
     let tmp = !!cache[classname];
 
     state = "undefined" == typeof state ? !tmp : !!state;
@@ -413,30 +448,6 @@ export function toggleClass(node, classname, state, _cache) {
 
         cache[classname] = state ? 1 : 0;
         state ? node.classList.add(classname) : node.classList.remove(classname);
-    }
-}
-
-/**
- * @param {Element} node
- * @param {Array<string>|Object<string, boolean|number>} obj
- */
-
-export function toggleClasses(node, obj) {
-
-    const cache = transformClassCache(node);
-
-    if (obj.constructor === Array) {
-
-        for (let i = 0; i < obj.length; i++) {
-
-            toggleClass(node, /** @type {string} */obj[i], void 0, cache);
-        }
-    } else {
-
-        for (let classname in obj) {
-
-            toggleClass(node, classname, /** @type {boolean|number} */obj[classname], cache);
-        }
     }
 }
 
@@ -548,36 +559,41 @@ function transformStyleCache(node) {
 
 /**
  * @param {HTMLElement} node
- * @param {string} property
- * @param {string|number} value
- * @param {CSSStyleDeclaration} _style
- * @param {Object=} _cache
+ * @param {string|Object<string, string|number>} property
+ * @param {string|number=} value
  */
 
-export function setStyle(node, property, value, _style, _cache) {
+export function setStyle(node, property, value) {
+    const cache = transformStyleCache(node),
+          prop = node.style;
 
-    const cache = _cache || transformStyleCache(node);
 
-    if (cache[property] !== value) {
+    if ("object" == typeof property) {
 
-        cache[property] = value;
-        (_style || node.style).setProperty(property, /** @type {string} */value);
+        for (const style in property) {
+
+            _setStyle(node, style, property[style], prop, cache);
+        }
+    } else {
+
+        _setStyle(node, property, /** @type {string} */value, prop, cache);
     }
 }
 
 /**
  * @param {HTMLElement} node
- * @param {Object<string, string|number>} properties
+ * @param {string} property
+ * @param {string|number} value
+ * @param {CSSStyleDeclaration} _style
+ * @param {Object=} cache
  */
 
-export function setStyles(node, properties) {
-    const cache = transformStyleCache(node),
-          prop = node.style;
+function _setStyle(node, property, value, _style, cache) {
 
+    if (cache[property] !== value) {
 
-    for (const style in properties) {
-
-        setStyle(node, style, properties[style], prop, cache);
+        cache[property] = value;
+        (_style || node.style).setProperty(property, /** @type {string} */value);
     }
 }
 
