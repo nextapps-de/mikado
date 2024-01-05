@@ -419,7 +419,7 @@ function check(fn){
     fn(tmp);
     if(!validate(tmp[0])) return false;
 
-    let target = (root.shadow || root);
+    let target = (root.shadow || root.shadowRoot || root);
 
     if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
         target = target.firstElementChild;
@@ -477,7 +477,7 @@ function check_test(test){
 
     if(test.complete) test.complete();
 
-    let target = (root.shadow || root);
+    let target = (root.shadow || root.shadowRoot || root);
 
     if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
         target = target.firstElementChild;
@@ -492,7 +492,7 @@ function check_test(test){
 
 function check_loop(name){
 
-    let target = (root.shadow || root);
+    let target = (root.shadow || root.shadowRoot || root);
 
     if(target.firstElementChild && target.firstElementChild.tagName.toLowerCase() !== "section"){
         target = target.firstElementChild;
@@ -517,12 +517,13 @@ function check_loop(name){
 
 function validate(item, index){
 
-    let section = (root.shadow || root).firstElementChild;
+    let _root = root.shadow || root.shadowRoot || root;
+    let section = _root.firstElementChild;
     if(!section) return msg("root.firstElementChild");
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
 
-    index && (section = section.parentElement.children[index]);
+    index && (section = _root.children[index]);
 
     const dataset = section.dataset;
     if(dataset.id !== item.id) return msg("dataset.id", dataset.id + " should be " + item.id);

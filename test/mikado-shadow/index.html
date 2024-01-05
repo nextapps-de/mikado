@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+    <title>Mikado</title>
+</head>
+<body>
+<h1>Benchmark: mikado-shadow-0.8.x (non-keyed)</h1><hr>
+<div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
+<div id="root"></div>
+<script type="module">
+
+    "use strict";
+
+    import { suite, root } from "./../../bench.js";
+    import template from "./template/template.js";
+    import Mikado from "./dist/mikado.light.module.min.js";
+
+    // the pool is limited to 100, that is the amount
+    // of items to be rendered in a single test.
+    // it is not allowed to transfer a pool to the
+    // next round!
+
+    const mikado = new Mikado(template, {
+        mount: root,
+        recycle: true,
+        cache: true,
+        pool: 100,
+        shadow:true
+    });
+
+    suite["mikado"] = function(items){
+
+        mikado.render(items);
+    };
+
+</script>
+</body>
+</html>
