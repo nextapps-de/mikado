@@ -2262,7 +2262,10 @@ Caching of DOM properties can greatly increase performance (up to 20x). There ar
 Caching is disabled by default, you will need to explicitly set this flag when initializing:
 
 ```js
-var view = new Mikado(template, { cache: true });
+const view = new Mikado(template, { 
+    recycle:true,
+    cache: true 
+});
 ```
 
 It is very recommended reading the next section to understand how caching is working.

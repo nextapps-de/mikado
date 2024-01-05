@@ -167,7 +167,10 @@ module.exports = function(src, dest, options, _recall){
             compression: compression,
 
             // a state to identify if inline js code was used in template
-            inline_code: false
+            inline_code: false,
+
+            // a state to identify if one of the 3 include types was applied
+            included: false
         };
 
         fn.index = index;
@@ -974,7 +977,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                         // handle includes
                         // special attributes are not a part of element attributes
 
-                        if((key === "for" || key === "if" || key === "inc") && !attr){
+                        if((key === "for" || key === "if" || key === "inc") && !attr && !index.included){
 
                             if(index.count !== index.last){
 
@@ -995,16 +998,19 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ')[' + root.if.trim() + '?"render":"clear"](' + data_str + ',state)');
                                 index.ssr += (root.extract ? "" : ">") + "'+(" + escape_single_quotes(root.if.trim()) + "?this.fn[" + index.inc + "]." + (root.for ? "render" : "apply") + "(" + escape_single_quotes(data_str) + ",state" + (root.for ? "" : ",index") + "):\"\")+'";
+                                index.included = true;
                             }
                             else if(root.for){
 
                                 fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(' + data_str + ',state)');
                                 index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + index.inc + "].render(" + escape_single_quotes(data_str) + ",state)+'";
+                                index.included = true;
                             }
                             else{
 
                                 fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(data,state)');
                                 index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + index.inc + "].apply(data,state,index)+'";
+                                index.included = true;
                             }
 
                             // for, range and if are fully contained inside render function
@@ -1036,6 +1042,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     indent: index.indent,
                                     ssr: "",
                                     inline_code: false,
+                                    included: false,
                                     compression: index.compression,
                                     csr: index.csr
                                 };
@@ -1079,6 +1086,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                 for(let i = 0; i < child.length; i++){
 
                     index.count++;
+                    index.included = false;
 
                     create_schema(child[i], inc, fn, index, false, mode);
                 }
