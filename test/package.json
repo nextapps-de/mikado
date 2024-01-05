@@ -3,10 +3,13 @@
   "preferGlobal": false,
   "scripts": {
     "test": "npx intern",
-    "test:serve": "npx intern serveOnly"
+    "test:serve": "npx intern serveOnly",
+    "coverage": "echo http://localhost:8080/jscoverage.html?test/index.html && java -jar JSCover-all.jar -ws --document-root=../ --report-dir=report --only-instrument-reg=\"/dist/.*\"",
+    "server": "node server.js"
   },
   "readme": "README.md",
   "dependencies": {
-    "intern": "^4.10.1"
+    "intern": "^4.10.1",
+    "web-servo": "^0.5.1"
   }
 }
