@@ -50,8 +50,8 @@
 
     init(window.location.hash || window.location.search);
 
-    document.getElementById("mode").options[keyed ? 2 : internal ? 3 : strict ? 0 : 1].selected = true;
-    //document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
+    //document.getElementById("mode").options[keyed ? 2 : internal ? 3 : strict ? 0 : 1].selected = true;
+    document.getElementById("mode").options[keyed ? 1 : internal ? 2 : 0].selected = true;
 
     if(modes){
 

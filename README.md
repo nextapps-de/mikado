@@ -19,7 +19,7 @@ There are 3 kinds of test scenarios:
     <tr></tr>
     <tr>
         <td>2.&nbsp;keyed recycle</td>
-        <td>In this mode just existing nodes with the same key (ID) are allowed to be reused. Re-arrangement / reconcile is a rare implemented but also strong feature which is explicitly covered by the test "order".</td>
+        <td>In this mode just existing nodes sharing the same key (ID) are allowed to be reused. Re-arrangement / reconcile is a feature which is explicitly covered by the test "order".</td>
     </tr>
     <tr></tr>
     <tr>
@@ -854,12 +854,12 @@ The memory gets less relevance by applying just the square root of these values 
     <tr></tr>
     <tr>
         <td>Arrange</td>
-        <td>Test re-arrangement, all contents stay unchanged. Toggles between:<br>1. swap second and fore-last item<br>2. re-arrange (4 shifted groups)<br>3. shuffle (on every 5th loop)</td>
+        <td>Test re-arrangement, all contents stay unchanged. The test toggles between 3 different scenarios of shifted elements.</td>
     </tr>
     <tr></tr>
     <tr>
         <td>Repaint</td>
-        <td>Render same items in the same order.</td>
+        <td>Render same data in the same order.</td>
     </tr>
     <tr></tr>
     <tr>
@@ -874,7 +874,7 @@ The memory gets less relevance by applying just the square root of these values 
     <tr></tr>
     <tr>
         <td>Toggle</td>
-        <td>Toggles between "Remove" and "Append" (test for optimizations like: pagination, content folding, list resizing).</td>
+        <td>Toggles between "Remove" 50 items and "Append" same 50 items (test for optimizations like: pagination, content folding, list resizing).</td>
     </tr>  
     <tr></tr>
     <tr>
@@ -907,11 +907,9 @@ The data is unknown, the library does not know if data was added, removed, updat
 
 But we won't measure the developer skills, we want to measure pure library performance. Regardless of a specific test case, every test has to run through the same logic.
 
-#### Random item factory
+#### Fixed randomness for the data factory
 
-The items were created by a random factory. The items come from a pre-filled pool (5 slots each including 100 items), so that keyed libraries get a chance to match same IDs.
-
-Also the items has some fields, which aren't included by the template. That is also important, because in this situation is the most common.
+The data has a fixed randomness (srand), so every library has to solve exactly the same task.
 
 #### Mimic data from a server or created during runtime
 
@@ -921,19 +919,15 @@ The items will be cloned before every test to mimic a fresh fetch from the serve
 
 Each test suite runs in its own dedicated sandbox through an iframe. This is reducing noise from externals to a minimum.
 
-#### Hidden render target
+#### Measure reflow cycle
 
-You may see benchmarks which draws the rendering visible to the users screen. It depends on what is the desired part to benchmark. This benchmark will just cover the raw time of applied re-calculations (creation/updating/removing of elements), the time the browser takes to make them visible is:
-
-1. no part of this test
-2. not relevant, because this time is almost not influenced by the library
-3. introduce unnecessary distortion to the test
+The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation (by forcing reflow at the end of each test cycle). Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test and will drastically reduce the potential of getting meaningful results.
 
 #### About requirements for tested libraries
 1. Each library should provide at least its own features to change DOM. A test implementation should not force to implement something like `node.nodeValue = "..."` or `node.className = "..."` by hand.
 The goal is to benchmark library performance and not the performance made by an implementation of a developer.
-2. Also, asynchronous/scheduled rendering is actually not allowed.
-3. The keyed test requires a specific paradigm. When a new item comes from the outside, the library just can recycle nodes when data key was matched.
+2. Also, asynchronous/scheduled rendering is actually not supported (but I can make a support when needed).
+3. The keyed test requires a specific paradigm. A component just getting recycled, when a given data key was matched.
 
 #### About the test environment
 

@@ -62,6 +62,7 @@ const len_months = months.length;
 const len_days = days.length;
 const len_planets = planets.length;
 const len_continents = continents.length;
+const srand = mulberry32(2398547);
 
 export function generate(count){
 
@@ -72,7 +73,7 @@ export function generate(count){
         data[i] = {
 
             "id": (random_string(4) + "-" + random_string(8) + "-" + random_string(4)).toUpperCase(),
-            "date": new Date(Math.random() * 999999999999).toISOString(),
+            "date": new Date(srand() * 999999999999).toISOString(),
             "index": i,
             "classname": colors[random(len_colors)],
             "title": titles[random(len_titles)],
@@ -83,7 +84,7 @@ export function generate(count){
             "days": days[random(len_days)],
             "planets": planets[random(len_planets)],
             "continents": continents[random(len_continents)],
-            "flag": Math.random() > 0.5
+            "flag": srand() > 0.5
         };
     }
 
@@ -106,5 +107,15 @@ function random_string(length, charset) {
 
 function random(max){
 
-    return (Math.random() * max) | 0;
+    return (srand() * max) | 0;
+}
+
+function mulberry32(a) {
+
+    return function() {
+        a = a + 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
 }

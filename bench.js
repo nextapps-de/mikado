@@ -43,13 +43,13 @@ const rnd = [27, 36, 31, 21, 13, 5, 11, 0, 16, 8, 9, 28, 25, 49, 6, 26, 12, 29, 
 const duration = parseFloat(params["duration"] || 5) * 1000;
 
 const hidden = params["hidden"] !== "false";
-const factory = strict ? null : [
-    generate(DATA_SIZE),
-    generate(DATA_SIZE),
-    generate(DATA_SIZE),
-    generate(DATA_SIZE),
-    generate(DATA_SIZE)
-];
+// const factory = strict ? null : [
+//     generate(DATA_SIZE),
+//     generate(DATA_SIZE),
+//     generate(DATA_SIZE),
+//     generate(DATA_SIZE),
+//     generate(DATA_SIZE)
+// ];
 
 let clone;
 
@@ -66,21 +66,21 @@ function next(){
 
     if(internal){
 
-        copy(factory[pos], items);
+        copy(generate(DATA_SIZE), items);
     }
-    else if(keyed){
-
-        items = enforce(factory[pos]);
-    }
+    // else if(keyed){
+    //
+    //     items = enforce(factory[pos]);
+    // }
     else /*if(strict || recycle)*/{
 
         items = generate(DATA_SIZE);
     }
 
-    if(++pos === factory.length){
-
-        pos = 0;
-    }
+    // if(++pos === factory.length){
+    //
+    //     pos = 0;
+    // }
 
     return items;
 }
