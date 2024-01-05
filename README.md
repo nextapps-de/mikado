@@ -10,7 +10,7 @@
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <img src="https://img.shields.io/badge/build-passing-brightgreen">
-<img src="https://img.shields.io/badge/coverage-81%25-yellow">
+<img src="https://img.shields.io/badge/coverage-85%25-yellow">
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 

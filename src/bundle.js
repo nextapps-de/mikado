@@ -346,6 +346,8 @@ MikadoOptions.async;
 MikadoOptions.on;
 /** @export */
 MikadoOptions.hydrate;
+/** @export */
+MikadoOptions.shadow;
 
 /** @export */
 EventOptions.prevent;

@@ -10,6 +10,7 @@ import Observer from "./array.js";
  *   async: (boolean|undefined),
  *   on: (Object<string, Function>|undefined),
  *   hydrate: (boolean|undefined),
+ *   shadow: (ShadowRoot|boolean|undefined),
  *   observe: (Observer|undefined),
  *   state: *
  * }}

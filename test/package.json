@@ -2,7 +2,7 @@
   "public": false,
   "preferGlobal": false,
   "scripts": {
-    "compile": "cd ../ && npx mikado-compile test/tpl/ --force --module --pretty && cd test/",
+    "compile": "cd ../ && npx mikado-compile test/tpl/ --force --module --pretty --compact && cd test/",
     "build": "cd ../ && npm run build:bundle:debug && cd test/",
     "test": "npx intern",
     "test:serve": "npx intern serveOnly",

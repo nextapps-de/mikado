@@ -144,6 +144,7 @@ type MikadoOptions = {
     pool?: boolean|number;
     state?: Object;
     observe?: Mikado.array;
+    shadow?: boolean;
     on?: {[event: string]: Function};
 }
 

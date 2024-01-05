@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.201 (Light/Debug)
+ * Mikado.js v0.8.204 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -177,6 +177,7 @@ function D(a, b = {}) {
   this.root = b.root || b.mount || null;
   this.recycle = !!b.recycle;
   this.state = b.state || {};
+  this.shadow = b.shadow || null;
   this.key = a.key || "";
   this.j = {};
   c = a.fn;
@@ -193,6 +194,7 @@ function D(a, b = {}) {
 }
 n = D.prototype;
 n.mount = function(a, b) {
+  "boolean" === typeof this.shadow && this.shadow && (this.shadow = a = a.attachShadow({mode:"open"}));
   const c = a._mki;
   var e = this.root !== a;
   if (c === this) {
@@ -232,11 +234,11 @@ n.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.h || (b && this.length && (this.h = this.g[0].cloneNode(), z(this, this.tpl.tpl, [], "", this.h) && E(this)), this.tpl && (this.h = z(this, this.tpl.tpl, [], ""), E(this)));
+  this.h || (b && this.length && (this.h = this.g[0].cloneNode(!0), z(this, this.tpl.tpl, [], "", this.h) && E(this)), this.tpl && (this.h = z(this, this.tpl.tpl, [], ""), E(this)));
   return this;
 };
 function E(a) {
-  a.tpl.m && (a.tpl.fn.length && console.error("The template '" + a.name + "' might not have been initialized properly. There are " + a.tpl.fn.length + " template functions left which wasn't assigned. Please post an example to Mikado Github issues."), a.tpl.fn = a.tpl.m, a.tpl.m = null);
+  a.tpl.m && (a.tpl.fn = a.tpl.m, a.tpl.m = null);
   a.tpl = null;
 }
 n.render = function(a, b) {

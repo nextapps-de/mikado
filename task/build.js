@@ -70,42 +70,24 @@ let parameter = (function(opt){
 
     compilation_level: /*options["DEBUG"] ? "SIMPLE" :*/ "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
     use_types_for_optimization: true,
-    //new_type_inf: true,
-    //jscomp_warning: "newCheckTypes",
-    //jscomp_error: "strictCheckTypes",
-    //jscomp_error: "newCheckTypesExtraChecks",
     generate_exports: true,
     export_local_property_definitions: true,
-    language_in: "ECMASCRIPT_2015",
+    //language_in: "ECMASCRIPT_2015",
     language_out: language_out || "ECMASCRIPT_2020",
     process_closure_primitives: true,
     summary_detail_level: 3,
     warning_level: "VERBOSE",
     //emit_use_strict: true,
-
-    //output_manifest: "log/manifest.log",
-    //output_module_dependencies: "log/module_dependencies.log",
-    //property_renaming_report: "log/property_renaming.log",
-    //create_source_map: "log/source_map.log",
-    //variable_renaming_report: "log/variable_renaming.log",
     strict_mode_input: true,
     //assume_function_wrapper: true,
-
-    //chunk_output_type: "ES_MODULES",
-
-    //transform_amd_modules: true,
     process_common_js_modules: true,
     module_resolution: "BROWSER",
-    //dependency_mode: "SORT_ONLY",
-    //js_module_root: "./",
     entry_point: "./tmp/bundle.js",
-    //manage_closure_dependencies: true,
     dependency_mode: "PRUNE",
     rewrite_polyfills: use_polyfill || false
 
     //isolation_mode: "IIFE"
     //output_wrapper: "%output%"
-
     //formatting: "PRETTY_PRINT"
 });
 

@@ -78,6 +78,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
     this.recycle = !!options.recycle;
     /** @type {*} */
     this.state = options.state || {};
+    /** @type {ShadowRoot|boolean} */
+    this.shadow = options.shadow || null;
 
     /** @const {string} */
     this.key = template.key || "";
@@ -247,6 +249,13 @@ Mikado.prototype.mount = function (target, hydrate) {
 
         this.cancel();
     }
+
+
+    if ("boolean" == typeof this.shadow && this.shadow) {
+
+        this.shadow = target = target.attachShadow({ mode: "open" });
+    }
+
     const target_instance = target._mki,
           root_changed = this.root !== target;
 
@@ -275,7 +284,6 @@ Mikado.prototype.mount = function (target, hydrate) {
         if (hydrate) {
 
             this.dom = collection_to_array(target.children);
-            //this.dom = collection_to_array(target.childNodes);
             this.length = this.dom.length;
         } else {
 
@@ -330,7 +338,7 @@ Mikado.prototype.mount = function (target, hydrate) {
         if (hydrate && this.length) {
 
             /** @private */
-            this.factory = this.dom[0].cloneNode();
+            this.factory = this.dom[0].cloneNode(!0);
             construct(this, /** @type {TemplateDOM} */this.tpl.tpl, [], "", this.factory) && finishFactory(this);
         }
 
@@ -355,11 +363,7 @@ function finishFactory(self) {
 
     if (self.tpl.fc) {
 
-        if (self.tpl.fn.length) {
-
-            console.error("The template '" + self.name + "' might not have been initialized properly. There are " + self.tpl.fn.length + " template functions left which wasn't assigned. Please post an example to Mikado Github issues.");
-        }
-
+        // self.tpl.fn could have further template functions
 
         self.tpl.fn = self.tpl.fc;
         self.tpl.fc = null;
