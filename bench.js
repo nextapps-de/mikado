@@ -523,7 +523,7 @@ function validate(item, index){
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
         (section.tagName.toLowerCase() === "section") || (section = section.firstElementChild);
 
-    index && (section = _root.children[index]);
+    index && (section = (section.parentElement || _root).children[index]);
 
     const dataset = section.dataset;
     if(dataset.id !== item.id) return msg("dataset.id", dataset.id + " should be " + item.id);
