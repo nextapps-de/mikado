@@ -29,6 +29,26 @@ Open the link from the command line message in your browser http://localhost:808
 
 A page will open up including a report of a full test cycle.
 
+#### Compile Changes
+
+When you made changes to the test template you will need to compile them by:
+
+```bash
+npm run compile
+```
+
+When you made changes to the Mikado library you will need to build the version used within `test/index.html`, e.g. on default:
+
+```bash
+npm run build
+```
+
+You can also make builds from the **project root folder**:
+
+```bash
+run build:bundle:debug
+```
+
 ### Node.js (SSR)
 
 ... not available yet

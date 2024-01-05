@@ -5,6 +5,7 @@ const { expect, assert } = intern.getPlugin("chai");
 import { checkDOM } from "../common.js";
 import template from "../tpl/template.js";
 import template_static from "../tpl/static.js";
+import template_svg from "../tpl/svg.js";
 import data from "../data.js";
 
 describe("Render Template", function(){
@@ -219,5 +220,24 @@ describe("Render Template", function(){
 
         expect(view.state).to.equal(null);
         expect(view.root).to.equal(null);
+    });
+
+    it("Should have been rendered SVG properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_svg, { root: root_1 });
+
+        view.render();
+        expect(view.length).to.equal(1);
+
+        //const node = root_1.firstElementChild;
+        //
+        // setTimeout(function(){
+        //
+        //     window.document.body.append(node);
+        //
+        // }, 1000)
+
+        view.clear().destroy();
     });
 });

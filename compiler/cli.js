@@ -18,7 +18,9 @@ const parameter = parse_argv(process.argv, {
     watch: 1, w: 1,
     compact: 1, c: 1,
     inline: 1, i: 1,
-    help: 1, h: 1, info: 1
+    help: 1, h: 1, info: 1,
+    module: 1,
+    es5: 1
 });
 
 const extension = (parameter.extension || parameter.ext || parameter.e || parameter[2] || "html").replace(/^\./, "");

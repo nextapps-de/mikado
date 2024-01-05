@@ -327,6 +327,8 @@ TemplateDOM.event;
 TemplateDOM.key;
 /** @export */
 TemplateDOM.cache;
+/** @export */
+TemplateDOM.svg;
 
 /** @export */
 MikadoOptions.root;

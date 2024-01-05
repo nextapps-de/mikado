@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.200 (Bundle/Debug)
+ * Mikado.js v0.8.201 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -119,7 +119,7 @@ function F(a, b, c, d) {
 }
 function K(a, b, c, d, e, g) {
   g || (a.m = 1);
-  const f = e || (b.tag ? b.B ? document.createElementNS("http://www.w3.org/2000/svg", b.tag) : document.createElement(b.tag) : document.createTextNode(b.text));
+  const f = e || (b.tag ? b.svg ? document.createElementNS("http://www.w3.org/2000/svg", b.tag) : document.createElement(b.tag) : document.createTextNode(b.text));
   let k, h;
   if (h = b.class) {
     "object" === typeof h ? (c.push(new J(k = {_c:""}, f, d)), (h = h[0]) ? L(a, h, ["_c", c.length - 1]) : a.m = 0) : e || (f.className = h);
