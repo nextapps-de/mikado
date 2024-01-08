@@ -10,6 +10,7 @@ import {
     SUPPORT_REACTIVE,
     SUPPORT_DOM_HELPERS,
     SUPPORT_EVENTS,
+    SUPPORT_COMPILE,
 
     MIKADO_DOM,
     MIKADO_LIVE_POOL,
@@ -24,7 +25,7 @@ import Observer from "./array.js";
 import { Cache } from "./factory.js";
 import { escape, sanitize } from "./sanitize.js";
 import "./helper.js";
-//import compile from "./compile.js";
+import compile from "./compile.js";
 
 import {
     setHtml,
@@ -57,22 +58,17 @@ import {
     unlisten
 } from "./event.js";
 
-/*
-if(SUPPORT_COMPILE){
-
-    // Mikado global methods
-    // --------------------------------
-
-    Mikado.compile = compile;
-}
-*/
-
 // Mikado global methods
 // --------------------------------
 
 Mikado["once"] = once;
 Mikado["register"] = register;
 Mikado["unregister"] = unregister;
+
+if(SUPPORT_COMPILE){
+
+    Mikado["compile"] = compile;
+}
 
 // Mikado global properties
 // --------------------------------
@@ -375,11 +371,10 @@ if(RELEASE !== "bundle.module" && RELEASE !== "light.module"){
             return Mikado;
         });
     }
-    // CommonJS (Node.js)
+    // CommonJS
     else if(typeof root["exports"] === "object"){
 
-        /** @export */
-        root["module"].exports = Mikado;
+        root["exports"] = Mikado;
     }
     // Global (window)
     else{

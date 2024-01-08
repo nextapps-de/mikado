@@ -21,7 +21,7 @@ export const REACTIVE_ONLY = false;
 /** @define {boolean} */
 export const SUPPORT_REACTIVE = REACTIVE_ONLY || true;
 /** @define {boolean} */
-export const SUPPORT_COMPILE = false;
+export const SUPPORT_COMPILE = true;
 /** @define {boolean} */
 export const SUPPORT_EVENTS = true;
 

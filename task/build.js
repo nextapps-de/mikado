@@ -4,8 +4,9 @@ const fs = require('fs');
 console.log("Start build .....");
 //console.log("----------------------");
 
+fs.rmSync("tmp/", { recursive: true });
+fs.mkdirSync("tmp");
 //fs.existsSync("log") || fs.mkdirSync("log");
-fs.existsSync("tmp") || fs.mkdirSync("tmp");
 fs.existsSync("dist") || fs.mkdirSync("dist");
 
 let flag_str = "";
@@ -36,8 +37,6 @@ var options = (function(argv){
             else{
 
                 if(val === "false") val = false;
-
-                //flag_str += " --define='" + index + "=" + val + "'";
                 arr[index] = val;
             }
         }
@@ -51,7 +50,7 @@ var options = (function(argv){
 
 const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "--light");
 const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
-//const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
+const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
 
 let parameter = (function(opt){
 
@@ -122,23 +121,13 @@ const files = [
     //"store.js",
     "proxy.js",
     "array.js",
-    //"compile.js",
+    "compile.js",
     //"polyfill.js"
 ];
 
 //const prename = require('./prename.json');
 
 files.forEach(function(file){
-
-    let src = String(fs.readFileSync("src/" + file));
-
-    if(file === "config.js"){
-
-        for(let opt in options){
-
-            src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
-        }
-    }
 
     // if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
     //
@@ -151,16 +140,32 @@ files.forEach(function(file){
     //     }
     // }
 
-    fs.writeFileSync("tmp/" + file, src);
+    files.forEach(function(file){
+
+        if(file === "config.js"){
+
+            let src = String(fs.readFileSync("src/" + file));
+
+            for(let opt in options){
+
+                src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
+            }
+
+            fs.writeFileSync("tmp/" + file, src);
+        }
+        else{
+
+            fs.copyFileSync("src/" + file, "tmp/" + file);
+        }
+    });
 });
 
 //console.log("----------------------");
 
-var filename = "dist/mikado." + (options["RELEASE"] || "custom") + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
-
+const filename = "dist/mikado." + (options["RELEASE"] || "custom") + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
 const executable = process.platform === "win32" ?  "\"node_modules/google-closure-compiler-windows/compiler.exe\"" :
                    process.platform === "darwin" ? "\"node_modules/google-closure-compiler-osx/compiler\"" :
-                                                   "java -jar node_modules/google-closure-compiler-java/compiler.jar"
+                                                   "java -jar node_modules/google-closure-compiler-java/compiler.jar";
 
 exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_file='" + filename + "' && exit 0", function(){
 
@@ -207,7 +212,7 @@ exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_fi
 
 function hashCode(str) {
 
-    var hash = 0, i, chr;
+    let hash = 0, i, chr;
 
     if(str.length === 0){
 

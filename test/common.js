@@ -49,3 +49,15 @@ export function checkDOM(root, data, skip_index){
         root = root.nextElementSibling;
     }
 }
+
+export function copy(store){
+
+    for(let i = 0; i < store.length; i++){
+
+        // de-referencing data instead of modifying original test data
+
+        store[i] = Object.assign({}, store[i], { style: "padding-right: 10px;" });
+    }
+
+    return store;
+}

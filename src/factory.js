@@ -401,6 +401,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
         let mikado;
 
+        // val is equal 1 when a cached structure was re-used by the compiler
+
         if(typeof val === "string"){
 
             mikado = includes[val];
@@ -438,7 +440,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
                 includes[val] = mikado = new Mikado(template, options);
             }
         }
-        else{
+        else if(val !== 1){
 
             const index = self.inc.length;
 
@@ -483,7 +485,10 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
             mikado = new Mikado(tpl, options);
         }
 
-        self.inc.push(mikado);
+        if(val !== 1){
+
+            self.inc.push(mikado);
+        }
     }
 
     if(cache){

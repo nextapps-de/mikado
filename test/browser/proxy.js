@@ -2,22 +2,10 @@ const { describe, it } = intern.getPlugin("interface.bdd");
 const { registerSuite } = intern.getPlugin("interface.object");
 const { expect, assert } = intern.getPlugin("chai");
 
-import { checkDOM } from "../common.js";
+import { checkDOM, copy } from "../common.js";
 import template from "../tpl/template.js";
 import template_proxy from "../tpl/proxy.js";
 import data from "../data.js";
-
-function copy(store){
-
-    for(let i = 0; i < store.length; i++){
-
-        // de-referencing data instead of modifying original test data
-
-        store[i] = Object.assign({}, store[i], { style: "padding-right: 10px;" });
-    }
-
-    return store;
-}
 
 describe("Reactive Proxy", function(){
 

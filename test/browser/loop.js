@@ -171,4 +171,10 @@ describe("Loop partials", function(){
 
         view.clear().destroy();
     });
+
+    it("Should identify repeated include structures", function(){
+
+        // template has 4 includes, 2 of them has same structure = 3 includes at total
+        expect(template_inline.fn.length).to.equal(3);
+    });
 });

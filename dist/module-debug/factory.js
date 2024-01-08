@@ -330,6 +330,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
 
             let mikado;
 
+            // val is equal 1 when a cached structure was re-used by the compiler
+
             if ("string" == typeof val) {
 
                 mikado = includes[val];
@@ -363,7 +365,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
                     // because Mikado partials which was registered by Mikado.register() are globally shared.
                     includes[val] = mikado = new Mikado(template, options);
                 }
-            } else {
+            } else if (1 !== val) {
 
                 const index = self.inc.length;
 
@@ -405,7 +407,10 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
                 mikado = new Mikado(tpl, options);
             }
 
-            self.inc.push(mikado);
+            if (1 !== val) {
+
+                self.inc.push(mikado);
+            }
         }
 
     if (cache) {

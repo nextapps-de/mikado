@@ -39,7 +39,8 @@ export let Template;
  *   attr: (Object<string, string|Array<string>>|undefined),
  *   event: (Object<string, string|Array<string>>|undefined),
  *   child: (TemplateDOM|Array<TemplateDOM>|undefined),
- *   inc: (string|undefined),
+ *   inc: (string|number|undefined),
+ *   if: (string|undefined),
  *   key: (string|undefined),
  *   cache: (boolean|undefined),
  *   svg: (number|undefined)

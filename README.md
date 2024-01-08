@@ -98,6 +98,7 @@ Packed with a smart routing feature for event delegation, Mikado gives you every
     - <a href="#auto-naming">Auto Naming</a>
     - <a href="#prebuilt-cache">Prebuilt Cache</a>
     - <a href="#watcher">Watcher (Auto-Compile)</a>
+    - <a href="#runtime-compiler">Runtime Compiler</a>
 10. <a href="#expressions">Template Expressions</a>
     - <a href="#insertion">Value Insertion</a>
     - <a href="#inline-js">JS Inline Code</a>
@@ -418,9 +419,9 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#compiler">Runtime Compiler</a>
+            <a href="#runtime-compiler">Runtime Compiler</a>
         </td>
-        <td>-</td>
+        <td>✓</td>
         <td>-</td>
     </tr>
     <tr></tr>
@@ -1669,7 +1670,112 @@ store[0].class = "inactive";
 store[0].value = "bar";
 ```
 
+<a name="runtime-compiler"></a>
+
+## Inline Compiler
+
+> If a page has set a `Content-Security-Policy` (CSP) header field, using the inline compiler has disadvantage when not configure `script-src 'unsafe-eval'`. It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful.
+
+The inline compiler uses the performance optimized `inline` strategy for every task, you can't switch it. The compiler property flag `cache="true"` or `cache="false"` on a template root is not supported, therefore you can't use 2 of the most performant strategies. But they are just slightly faster, so this shouldn't be an issue.
+
+Those features aren't supported by the inline compiler:
+
+- `cache="true"` or `cache="false"` on a template root
+- using any other compiler strategy than `inline`
+- detect and replace repeating inline includes
+- detect and solve/unroll non-dynamic expressions, e.g. ``<h1>{{ "foor" + "bar " }}</h1>`` will transform to a static content `<h1>foobar</h1>` and removes the expression completely
+- runtime-ready templates aren't available on page load (they need to compile)
+
+### HTML5 Templates
+
+Define some HTML template structure:
+
+```html
+<template id="user-list">
+  <!-- just a single outer root element allowed: --> 
+  <table>
+    <tr>
+      <td>User:</td>
+      <td>{{ data.user }}</td>
+    </tr>
+    <tr>
+      <td>Tweets:</td>
+      <td>{{ data.tweets.length }}</td>
+    </tr>
+  </table>
+</template>
+```
+
+> Template definitions used by the inline compiler needs manual naming when used as named includes.
+
+The template name will derive from `<template id="user-list">` or `<template name="user-list">` and becomes `user-list`. 
+When using named includes you will need to use this name for referencing, e.g. `<div include="user-list">"`.
+
+Compile the template and use it for creating a Mikado view instance:
+
+```js
+const template = document.getElementById("user-list");
+const tpl = Mikado.compile(template);
+const view = new Mikado(tpl, { /* options */ });
+
+view.render(data);
+```
+
+When the template was get through element ID you can use a shortcut:
+
+```js
+const tpl = Mikado.compile("user-list");
+```
+
+Also, you can compile the template and use it for registration as a named include referenced by another template e.g. `<div include="user-list">"`:
+
+```js
+Mikado.register(Mikado.compile("user-list"));
+```
+
+You can use non-template elements for defining templates also:
+
+```css
+#user-list{ display: none }
+```
+
+```html
+<!-- just a single outer root element allowed: --> 
+<table id="user-list">
+  <tr>
+    <td>User:</td>
+    <td>{{ data.user }}</td>
+  </tr>
+  <tr>
+    <td>Tweets:</td>
+    <td>{{ data.tweets.length }}</td>
+  </tr>
+</table>
+```
+
+Last but not least you can pass the template markup as a string:
+
+```js
+const tpl_str = `
+<table name="user-list">
+  <tr>
+    <td>User:</td>
+    <td>{{ data.user }}</td>
+  </tr>
+  <tr>
+    <td>Tweets:</td>
+    <td>{{ data.tweets.length }}</td>
+  </tr>
+</table>`;
+
+const tpl = Mikado.compile(tpl_str);
+const view = new Mikado(tpl, { /* options */ });
+
+view.render(data);
+```
+
 <a name="event"></a>
+
 ## Routing & Event Delegation
 
 > All the special attributes used to assign event routing within templates are inherited from the native inline listener name but without the prefix `on`, e.g. to bind routing for an "onclick" just use `click`.

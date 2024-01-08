@@ -1,3 +1,5 @@
+type TemplateName = string;
+
 declare class Mikado {
     constructor(template: Template, options?: MikadoOptions);
     name: string;
@@ -49,15 +51,15 @@ declare namespace Mikado {
     const eventCache: boolean;
     const eventBubble: boolean;
 
-    function once(root: HTMLElement, template: Template|string, data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
-    //function compile(node: HTMLTemplateElement|string): Mikado;
+    function once(root: HTMLElement, template: Template|TemplateName, data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
+    function compile(node: HTMLTemplateElement|HTMLElement|string): Template;
 
     function route(name: string, fn: Function, options: RouteOptions): Mikado;
     function listen(event: string, options?: EventListenerOptions|boolean): Mikado;
     function unlisten(event: string, options?: EventListenerOptions|boolean): Mikado;
     function dispatch(route: string, target?: HTMLElement, event?: Event): Mikado;
-    function register(template: Template|string, options: MikadoOptions): Mikado;
-    function unregister(template: string|Template): Mikado;
+    function register(template: Template|TemplateName, options: MikadoOptions): Mikado;
+    function unregister(template: TemplateName|Template): Mikado;
 
     class array {
         constructor(array?: Array<Object>);
@@ -128,7 +130,7 @@ type TemplateDOM = {
     attr?: {[attribute: string]: string|[string]};
     event?: {[event: string]: string|[string]};
     child?: TemplateDOM|Array<TemplateDOM>;
-    inc?: string;
+    inc?: string|number;
     key?: string;
     cache?: boolean;
     svg?: 1;

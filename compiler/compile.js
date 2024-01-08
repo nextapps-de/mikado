@@ -136,6 +136,10 @@ module.exports = function(src, dest, options, _recall){
 
     if(json){
 
+        // The task definition payload.
+        // The compiler function don't use dynamic vars from the outside,
+        // to provide full support for parallel processing.
+
         const index = {
 
             // the actual index of element p[i]
@@ -150,6 +154,12 @@ module.exports = function(src, dest, options, _recall){
 
             // the actual index of inc[i]
             inc: 0,
+
+            // a state to identify if one of the 3 include types was applied
+            included: false,
+
+            // a cache to identify repeating template structures
+            cache: {},
 
         // SSR only:
         // --------------------------
@@ -167,10 +177,7 @@ module.exports = function(src, dest, options, _recall){
             compression: compression,
 
             // a state to identify if inline js code was used in template
-            inline_code: false,
-
-            // a state to identify if one of the 3 include types was applied
-            included: false
+            inline_code: false
         };
 
         fn.index = index;
@@ -282,6 +289,8 @@ fn:${ !inc.length ? "null" : "[" + inc.join(",") + "]" }
         console.log(src + " > " + dest);
     }
 };
+
+// template normalization
 
 function prepare_template(nodes, src, csr, svg){
 
@@ -681,28 +690,28 @@ function create_schema(root, inc, fn, index, attr, mode){
                         //const sanitize = value.includes("{{!!");
                         //const escape = !sanitize && value.includes("{{!");
 
-                        if(value.includes("{{") && value.includes("}}")){
+                        if(/{{[\s\S]+}}/.test(value)){
 
-                            let bind = value.includes("{{==") || value.includes("{{#==");
-                            let proxy = value.includes("{{=") || value.includes("{{#=");
-                            let truthy = /{{[!]?\?/.test(value);
-                            let escape = /{{[?]?!/.test(value);
+                            //let bind = value.includes("{{==") || value.includes("{{#==");
+                            let proxy = /{{([!?#]+)?=/.test(value);
+                            let truthy = /{{!?\?/.test(value);
+                            let escape = /{{\??!/.test(value);
                             let tmp = escape_single_quotes_expression(value);
 
                             if(truthy || escape){
 
-                                tmp = tmp.replace(/{{[!?]?[!?]?/g, "{{");
+                                tmp = tmp.replace(/{{[!?]+/g, "{{");
                             }
 
                             if(proxy){
 
-                                proxy = tmp.replace(/{{=+(.*)?}}/ig, "$1")
-                                         .trim()
-                                         .replace(/^data\./, "")
-                                         .replace(/^data\[['"](.*)['"]]/, "$1");
+                                proxy = tmp.replace(/{{#?=+(.*)?}}/ig, "$1")
+                                           .trim()
+                                           .replace(/^data\./, "")
+                                           .replace(/^data\[['"](.*)['"]]/, "$1");
                             }
 
-                            tmp = tmp.replace(/{{=+/g, "{{")
+                            tmp = tmp.replace(/{{[#=]+/g, "{{")
                                     //.replace(/{{!(!)?/g, "{{")
                                     .replace(/"(\s+)?{{(\s+)?/g, "(")
                                     .replace(/(\s+)?}}(\s+)?"/g, ")")
@@ -991,25 +1000,48 @@ function create_schema(root, inc, fn, index, attr, mode){
                             }
 
                             const data_str = root.for ? root.for.trim() + (root.range ? '.slice(' + (root.range[0] || 0) + (root.range[1] ? ',' + ((root.range[0] || 0) + root.range[1]) : '') + ')' : '') : "data";
+                            let current_inc = index.inc;
+                            let cached;
+
+                            // when there is no child it must be a text or a html declaration on root level
+                            root.child || (root.child =
+                                root.text ? { text: root.text } :
+                                root.html ? { html: root.html } : null);
+
+                            if(root.child){
+
+                                const cache = JSON.stringify(root.child);
+                                const tmp = index.cache[cache];
+
+                                if(tmp || tmp === 0){
+
+                                    cached = true;
+                                    current_inc = tmp;
+                                }
+                                else{
+
+                                    index.cache[cache] = current_inc;
+                                }
+                            }
 
                             // inline includes could be merged?
 
                             if(root.if){
 
-                                fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ')[' + root.if.trim() + '?"render":"clear"](' + data_str + ',state)');
-                                index.ssr += (root.extract ? "" : ">") + "'+(" + escape_single_quotes(root.if.trim()) + "?this.fn[" + index.inc + "]." + (root.for ? "render" : "apply") + "(" + escape_single_quotes(data_str) + ",state" + (root.for ? "" : ",index") + "):\"\")+'";
+                                fn.push('this.inc[' + current_inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ')[' + root.if.trim() + '?"render":"clear"](' + data_str + ',state)');
+                                index.ssr += (root.extract ? "" : ">") + "'+(" + escape_single_quotes(root.if.trim()) + "?this.fn[" + current_inc + "]." + (root.for ? "render" : "apply") + "(" + escape_single_quotes(data_str) + ",state" + (root.for ? "" : ",index") + "):\"\")+'";
                                 index.included = true;
                             }
                             else if(root.for){
 
-                                fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(' + data_str + ',state)');
-                                index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + index.inc + "].render(" + escape_single_quotes(data_str) + ",state)+'";
+                                fn.push('this.inc[' + current_inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(' + data_str + ',state)');
+                                index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + current_inc + "].render(" + escape_single_quotes(data_str) + ",state)+'";
                                 index.included = true;
                             }
                             else{
 
-                                fn.push('this.inc[' + index.inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(data,state)');
-                                index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + index.inc + "].apply(data,state,index)+'";
+                                fn.push('this.inc[' + current_inc + '].mount(' + (mode === "inline" || mode !== "compact" ? "_o.n" : "_p[" + index.current + "].n") + ').render(data,state)');
+                                index.ssr += (root.extract ? "" : ">") + "'+this.fn[" + current_inc + "].apply(data,state,index)+'";
                                 index.included = true;
                             }
 
@@ -1018,40 +1050,43 @@ function create_schema(root, inc, fn, index, attr, mode){
                             delete root.range;
                             delete root.if;
 
-                            index.inc++;
+                            if(!cached){
 
-                            // The compiler unshift includes, because the client then can take them by faster arr.pop()
-                            const _fn = [];
-                            inc.unshift(_fn);
+                                index.inc++;
 
-                            // when there is no child it must be a text or a html declaration on root level
-                            root.child || (root.child =
-                                root.text ? { text: root.text } :
-                                root.html ? { html: root.html } : null);
+                                // The compiler unshift includes, because the client then can take them by faster arr.pop()
+                                const _fn = [];
+                                inc.unshift(_fn);
 
-                            // inline includes
-                            if(root.child){
+                                // inline includes
+                                if(root.child){
 
-                                _fn.root = root;
-                                _fn.inc = root.child;
-                                _fn.index = {
-                                    current: -1,
-                                    count: 0,
-                                    last: -1,
-                                    inc: 0,
-                                    indent: index.indent,
-                                    ssr: "",
-                                    inline_code: false,
-                                    included: false,
-                                    compression: index.compression,
-                                    csr: index.csr
-                                };
+                                    _fn.root = root;
+                                    _fn.inc = root.child;
+                                    _fn.index = {
+                                        current: -1,
+                                        count: 0,
+                                        last: -1,
+                                        inc: 0,
+                                        cache: index.cache,
+                                        indent: index.indent,
+                                        ssr: "",
+                                        inline_code: false,
+                                        included: false,
+                                        compression: index.compression,
+                                        csr: index.csr
+                                    };
 
-                                create_schema(root.child, inc, _fn, _fn.index, false, mode);
+                                    create_schema(root.child, inc, _fn, _fn.index, false, mode);
+                                }
+                                else{
+
+                                    _fn.inc = root.inc;
+                                }
                             }
                             else{
 
-                                _fn.inc = root.inc;
+                                root.inc = 1;
                             }
 
                             delete root.child;
