@@ -1672,7 +1672,9 @@ store[0].value = "bar";
 
 <a name="runtime-compiler"></a>
 
-## Inline Compiler
+## Runtime Compiler
+
+Alternatively of using the `npx mikado-compile` you can also compile templates during runtime.
 
 > If a page has set a `Content-Security-Policy` (CSP) header field, using the inline compiler has disadvantage when not configure `script-src 'unsafe-eval'`. It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful.
 
