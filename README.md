@@ -1676,11 +1676,11 @@ store[0].value = "bar";
 
 Alternatively of using the `npx mikado-compile` you can also compile templates during runtime.
 
-> If a page has set a `Content-Security-Policy` (CSP) header field, using the inline compiler has disadvantage when not configure `script-src 'unsafe-eval'`. It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful.
+> If a page has set a `Content-Security-Policy` (CSP) header field, using the runtime compiler has disadvantage when not configure `script-src 'unsafe-eval'`. It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful.
 
-The inline compiler uses the performance optimized `inline` strategy for every task, you can't switch it. The compiler property flag `cache="true"` or `cache="false"` on a template root is not supported, therefore you can't use 2 of the most performant strategies. But they are just slightly faster, so this shouldn't be an issue.
+The runtime compiler uses the performance optimized `inline` strategy for every task, you can't switch it. The compiler property flag `cache="true"` or `cache="false"` on a template root is not supported, therefore you can't use 2 of the most performant strategies. But they are just slightly faster, so this shouldn't be an issue.
 
-Those features aren't supported by the inline compiler:
+Those features aren't supported by the runtime compiler:
 
 - `cache="true"` or `cache="false"` on a template root
 - using any other compiler strategy than `inline`
@@ -1708,7 +1708,7 @@ Define some HTML template structure:
 </template>
 ```
 
-> Template definitions used by the inline compiler needs manual naming when used as named includes.
+> Template definitions used by the runtime compiler needs manual naming when used as named includes.
 
 The template name will derive from `<template id="user-list">` or `<template name="user-list">` and becomes `user-list`. 
 When using named includes you will need to use this name for referencing, e.g. `<div include="user-list">"`.
