@@ -82,10 +82,10 @@ A Guide for new developers (the most simple example, just takes 3 minutes):
 ## Table of contents
 
 Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes <a href="#benchmark">templating performance</a> to a new level and provides you **keyed**, **non-keyed** recycling and also **reactive paradigm** switchable out of the box.
-On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively during the client's runtime.
+On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively within the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Packed with a smart routing feature for event delegation, Mikado gives you everything you'll need to build realtime applications on a cutting edge performance level.
+Packed with a smart routing feature for event delegation and full support for web components using the shadow dom, Mikado gives you everything you'll need to build realtime applications on a cutting edge performance level.
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
