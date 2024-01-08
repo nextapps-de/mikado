@@ -629,7 +629,7 @@ if(!REACTIVE_ONLY){
                     this.update(node, item, state, x, 1);
                 }
 
-                if(SUPPORT_REACTIVE && this.proxy && (/*!this.recycle ||*/ !item[MIKADO_PROXY])){
+                if(SUPPORT_REACTIVE && this.proxy && (/* !this.recycle || */ !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, node, item);
                 }

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.205 (Light/Debug)
+ * Mikado.js v0.8.206 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -149,8 +149,6 @@ n._h = function(a) {
   }
   this.n.innerHTML = a;
 };
-/*
- this.recycle ||*/
 const C = Object.create(null);
 function D(a, b = {}) {
   if (!(this instanceof D)) {

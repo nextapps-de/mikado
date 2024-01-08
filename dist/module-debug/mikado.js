@@ -556,7 +556,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
                 this.update(node, item, state, x, 1);
             }
 
-            if (this.proxy && /*!this.recycle ||*/!item._mkx) {
+            if (this.proxy && /* !this.recycle || */!item._mkx) {
 
                 data[x] = apply_proxy(this, node, item);
             }
