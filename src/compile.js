@@ -487,7 +487,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
                                .replace(/^\(([^ ]+)\)$/g, "$1") // ( value )
                                .trim();
 
-        // ... skip dead code elimination for the inline compile
+        // ... skip resolving static content inside dynamic expressions for the inline compile
 
         if(truthy){
 

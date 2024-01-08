@@ -21,6 +21,9 @@
 <a href="#compiler">Template Compiler</a> &ensp;&bull;&ensp;
 <a href="#ssr">Server-Side-Rendering</a> &ensp;&bull;&ensp;
 <a href="#express">Express Render Engine</a> &ensp;&bull;&ensp;
+<a href="#proxy">Reactive</a> &ensp;&bull;&ensp;
+<a href="#hydration">Hydration</a> &ensp;&bull;&ensp;
+<a href="#shadow">Web Components (Shadow DOM)</a> &ensp;&bull;&ensp;
 <a href="CHANGELOG.md">Changelog</a>
 
 When you are coming from any previous version: <a href="doc/migrate-0.8.md">Migration Guide 0.8.x</a>
@@ -150,10 +153,11 @@ Packed with a smart routing feature for event delegation, Mikado gives you every
     - <a href="#strict-proxy">Strict-Proxy Mode</a>
 22. <a href="#pools">Template Pools</a>
 23. <a href="#hydration">Hydration</a>
-24. <a href="#full-template">Full Template Example</a>
-25. <a href="#best-practices">Best Practices</a>
-26. <a href="#concept">Concept of Shared Components</a>
-27. <a href="#builds">Custom Builds</a>
+24. <a href="#shadow">Web Components (Shadow DOM)</a>
+25. <a href="#full-template">Full Template Example</a>
+26. <a href="#best-practices">Best Practices</a>
+27. <a href="#concept">Concept of Shared Components</a>
+28. <a href="#builds">Custom Builds</a>
     - <a href="#build-flags">Supported Build Flags</a>
 
 <a name="get-latest"></a>
@@ -933,78 +937,6 @@ Observable array-like methods (optional, not included in mikado.light.js):
     </tr>
 </table>
 
-<!--
-<a name="compiler-html5"></a>
-
-### 2. Variant: Using HTML5 Templates
-
-Define in HTML:
-
-```html
-<template id="user-list">
-  <table>
-    <tr>
-      <td>User:</td>
-      <td>{{ data.user }}</td>
-    </tr>
-    <tr>
-      <td>Tweets:</td>
-      <td>{{ data.tweets.length }}</td>
-    </tr>
-  </table>
-</template>
-```
-
-Use runtime compiler:
-
-```js
-var tpl = Mikado.compile(document.getElementById("user-list"));
-```
-
-Alternatively (supports just templates/elements with IDs):
-
-```js
-var tpl = Mikado.compile("user-list");
-```
-
-Create a mikado view:
-
-```js
-var view = new Mikado(tpl);
-```
-
-<a name="compiler-string"></a>
-
-### 3. Variant: Using Template String
-
-Define HTML as string:
-
-```js
-const template = `<table>
-        <tr>
-            <td>User:</td>
-            <td>{{ data.user }}</td>
-        </tr>
-        <tr>
-            <td>Tweets:</td>
-            <td>{{ data.tweets.length }}</td>
-        </tr>
-    </table>`;
-```
-
-Use runtime compiler:
-
-```js
-var tpl = Mikado.compile(template);
-```
-
-Create a mikado view:
-
-```js
-var view = new Mikado(tpl);
-```
--->
-
 <a name="get-started"></a>
 ## Getting Started (Basic Example)
 
@@ -1280,72 +1212,6 @@ console.log("finished.");
 ## Compile Templates
 
 <a name="compiler"></a>
-
-<!--
-#### Compiler Methods
-
-<table>
-    <tr></tr>
-    <tr>
-        <td>Method</td>
-        <td>Notes</td>
-    </tr>
-    <tr>
-        <td><a href="#mikado-compile">Mikado Compiler (CLI)</a></td>
-        <td>
-            <ul>
-                <li>instant performance</li>
-                <li>recommended for production</li>
-                <li>bundle templates easily out of the box</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-service">Compiler Service (Server)</a></td>
-        <td>
-            <ul>
-                <li>server-side</li>
-                <li>good for production</li>
-                <li>bundle not required</li>
-                <li>best caching/re-using capabilities</li>
-                <li>enable live updates</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-html5">HTML5 Templates (Runtime)</a></td>
-        <td>
-            <ul>
-                <li>requires compiling during runtime</li>
-                <li>good for development</li>
-                <li>bundle templates requires additional tooling (like webpack)</li>
-            </ul>
-        </td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><a href="#compiler-string">Template String (Runtime)</a></td>
-        <td>
-            <ul>
-                <li>requires compiling during runtime</li>
-                <li>compiling strings comes with an extra cost</li>
-                <li>good for development</li>
-                <li>bundle templates easily out of the box</li>
-            </ul>
-        </td>
-    </tr>
-</table>
-
-**Note:** Choosing a specific compiler method has no impact on the render performance.
--->
-
-<a name="mikado-compile"></a>
-
-<!--
-### 1. Variant: Using Dedicated Compiler (Recommended)
--->
 
 Define an HTML-like template and use double curly brackets to markup dynamic expressions which should be calculated and replaced during runtime:
 
@@ -1688,7 +1554,7 @@ Those features aren't supported by the runtime compiler:
 - detect and solve/unroll non-dynamic expressions, e.g. ``<h1>{{ "foor" + "bar " }}</h1>`` will transform to a static content `<h1>foobar</h1>` and removes the expression completely
 - runtime-ready templates aren't available on page load (they need to compile)
 
-### HTML5 Templates
+#### Examples
 
 Define some HTML template structure:
 
@@ -3492,7 +3358,73 @@ view.mount(document.querySelector("main"), /* hydrate? */ true);
 
 > When a hydration breaks because it isn't compatible for some reason, it fully skips this process silently (logs a message when DEBUG was enabled) and falls back to a construction of a factory instead.
 
+<a name="shadow"></a>
+
+## Web Components (Shadow DOM)
+
+When using shadow DOM to build web components the compiler needs to apply a different strategy.
+Therefore, you will need 2 additional template tags:
+
+1. `<component/>` as the outer root will enable rendering on a shadow root
+2. `<template/>` will identify your template from the rest of markup
+
+```html
+<component>
+  <!-- optional styles/scripts/etc. -->
+  <link href="css/component.css" rel="stylesheet">
+  <script src="js/component.js"></script>
+  <style>#user-list{ width: 100%; }</style>
+  <script>window.username = "John";</script>
+  <!-- components requires the template tag -->
+  <template>
+    <!-- single outer root element: -->
+    <table id="user-list">
+      <tr>
+        <td>User:</td>
+        <td>{{ window.username }}</td>
+      </tr>
+      <tr>
+        <td>Tweets:</td>
+        <td>{{ data.tweets.length }}</td>
+      </tr>
+    </table>
+  </template>
+</component>
+```
+
+> You can't use any template expressions outside `<template/>`.
+
+You can also render any normal template (non-components) to a plain dedicated shadow root by using the `shadow: true` option:
+
+```js
+const view = new Mikado(tpl, { shadow: true });
+```
+
+Theoretically you can put the `<link/>`, `<style/>` and `<script/>` inside a normal non-component template by also using the `shadow: true` option.
+But there is one important difference. Within a normal template those tags could be re-rendered and this might end in re-initializing of all those assets.
+Within a web component there is a top level scope, which is created once and will stay for all your further template tasks.
+The template will render on a new "hidden" element `<root/>` which is part of the top level scope.
+That is because the view needs to be mounted to an element, and the top level scope of shadow root couldn't be mounted because of mixed content.
+Don't rely on the existence of `<root/>`, when using static templates or `view.once()` it might not exist.
+
+Assume when mounted a web component template to an element `<main>`, the DOM structure looks like:
+
+```
+<main>
+  #shadow-root
+    <link/>
+    <style/>
+    <script/>
+    <root>
+      #template
+      #template
+      #template
+      ...
+    </root>
+```
+
 <a name="full-template"></a>
+
 ## Full Template Example
 
 Use this almost complete template example to check if you know everything about the template mechanism:
