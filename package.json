@@ -20,9 +20,12 @@
     "url": "https://github.com/nextapps-de/mikado/issues",
     "email": "info@nextapps.de"
   },
-  "main": "src/mikado.js",
-  "module": "dist/module/mikado.js",
-  "browser": "src/bundle.js",
+  "main": "ssr/index.js",
+  "module": "dist/mikado.bundle.module.min.js",
+  "browser": {
+    "ssr/index.js": "dist/mikado.bundle.min.js",
+    "dist/mikado.bundle.module.min.js": "dist/mikado.bundle.module.min.js"
+  },
   "types": "./index.d.ts",
   "bin": {
     "mikado-compile": "compiler/cli.js"
