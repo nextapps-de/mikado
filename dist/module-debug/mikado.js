@@ -493,7 +493,6 @@ export function once(root, template, data, state, callback) {
             });
         });
     }
-
     const is_shadow = template.cmp,
           is_component = is_shadow && is_shadow.length;
 
