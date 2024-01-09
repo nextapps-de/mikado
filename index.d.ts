@@ -30,10 +30,10 @@ declare class Mikado {
     index(node: HTMLElement): number;
     node(index: number): HTMLElement;
 
-    route(name: string, fn: Function, options: RouteOptions): Mikado;
+    route(name: string, fn: Function|null, options?: RouteOptions): Mikado;
     listen(event: string, options?: EventListenerOptions|boolean): Mikado;
     unlisten(event: string): Mikado;
-    dispatch(name: string, target?: HTMLElement, event?: Event, self?: EventTarget): Mikado;
+    dispatch(name: string, target?: HTMLElement, event?: Event): Mikado;
 
     move(node: HTMLElement|number, index: number): Mikado;
     before(node_a: HTMLElement|number, node_b: HTMLElement|number): Mikado;
@@ -59,7 +59,7 @@ declare namespace Mikado {
     function once(root: HTMLElement, template: Template|TemplateName, callback?: true): Promise<void>;
     function compile(node: HTMLTemplateElement|HTMLElement|string): Template;
 
-    function route(name: string, fn: Function, options: RouteOptions): Mikado;
+    function route(name: string, fn: Function|null, options?: RouteOptions): Mikado;
     function listen(event: string, options?: EventListenerOptions|boolean): Mikado;
     function unlisten(event: string): Mikado;
     function dispatch(route: string, target?: HTMLElement, event?: Event): Mikado;

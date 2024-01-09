@@ -486,9 +486,9 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
  * @param {string} value
  * @param {boolean} attr
  * @param {Object<string, string>} attributes
- * @param index
- * @param inc
- * @param fn
+ * @param {Object=} index
+ * @param {Array<Array<String>|Function>=} inc
+ * @param {Array<String>|Object=} fn
  */
 
 function handle_value(root, key, value, attr, attributes, index, inc, fn){

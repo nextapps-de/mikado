@@ -7,34 +7,49 @@ import { SUPPORT_REACTIVE, MIKADO_PROXY } from "./config.js";
 const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
     /**
-     * @param obj
-     * @param proxy
+     * @param {!Object} obj
+     * @param {ProxyHandler} proxy
      * @constructor
      */
 
     function Proxy(obj, proxy){
 
-        /** @private @const {Array<Cache>} */
+        /**
+         * @private
+         * @const {Array<Cache>}
+         */
         this.path = proxy.path;
-        /** @private @const {Object<string, Array<string, number>>} */
+
+        /**
+         * @private
+         * @const {Object<string, Array<string, number>>}
+         */
         this.fn = proxy.fn;
+
+        // register properties
 
         for(const key in obj){
 
             this.define(obj, key, obj[key]);
         }
 
-        // proxy check (visible)
+        // add proxy check (visible)
+
         obj[MIKADO_PROXY] = this;
 
         return obj;
     }
 
-    //Proxy.prototype["_proxy"] = true;
+    /**
+     * @param {Object} obj
+     * @param {string} key
+     * @param {*} val
+     * @this {!ProxyHandler}
+     */
 
     Proxy.prototype.define = function(obj, key, val){
 
-        const self = /** @type {!ProxyHandler} */ (this);
+        const self = this;
 
         Object.defineProperty(obj, key, {
 
@@ -43,6 +58,9 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
                 return val;
             },
             set: function(newVal){
+
+                // we can't use this scope as cache, although it would be nice.
+                // the dom cache needs to be exported stateful.
 
                 //if(val !== newVal){
 
@@ -95,6 +113,9 @@ function get(target, prop){
 
 function set(target, prop, value){
 
+    // we can't use the data as cache, although it would be nice.
+    // the dom cache needs to be exported stateful.
+
     //if(target[prop] !== value){
 
         proxy_loop(this, value, prop);
@@ -119,6 +140,7 @@ function proxy_loop(handler, value, prop){
 
         for(let i = 0; i < exp.length; i++){
 
+            // tmp = [ Function Name, DOM Cache, <Attribute Key> ]
             const tmp = exp[i];
             const fn = tmp[0];
             const cache = /** @type {Cache} */ (handler.path[tmp[1]]);

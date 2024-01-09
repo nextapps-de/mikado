@@ -9,9 +9,9 @@ const events = {};
 /** @type {Object<string, boolean|EventListenerOptions>} */
 const event_options = {};
 /** @type {Object<string, Function>} */
-const routes = /** @type {Object<string, Function>} */ (SUPPORT_EVENTS && Object.create(null));
+const routes = SUPPORT_EVENTS ? Object.create(null) : null;
 /** @type {Object<string, Boolean|EventOptions>} */
-const options = /** @type {Object<string, Boolean|EventOptions>} */ (SUPPORT_EVENTS && Object.create(null));
+const options = SUPPORT_EVENTS ? Object.create(null) : null;
 
 // The most outer element which is covered by Mikado event system is document.body
 const doc = document.documentElement || document.body.parentNode;
@@ -19,6 +19,11 @@ const has_touch = "ontouchstart" in window;
 const has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
 
 let tap_fallback;
+
+/**
+ * @param {!Event} event
+ * @param {string=} type
+ */
 
 function handler(event, type){
 
@@ -173,9 +178,10 @@ function handler(event, type){
 
 /**
  * @param {!string} route
- * @param {!Function} fn
+ * @param {Function|null} fn
  * @param {EventOptions=} option
  */
+
 export function route(route, fn, option){
 
     if(DEBUG){
@@ -203,9 +209,10 @@ export function route(route, fn, option){
 
 /**
  * @param {!string} route
- * @param {!Element} target
+ * @param {Element=} target
  * @param {Event=} event
  */
+
 export function dispatch(route, target, event){
 
     if(DEBUG){
@@ -229,6 +236,7 @@ export function dispatch(route, target, event){
  * @param {!string} event
  * @param {EventListenerOptions|boolean=} options
  */
+
 export function listen(event, options){
 
     if(!events[event]){
@@ -245,6 +253,7 @@ export function listen(event, options){
  * @param {string} event
  * @returns {Mikado}
  */
+
 export function unlisten(event){
 
     if(events[event]){
@@ -325,9 +334,9 @@ if(has_touch || has_pointer){
 }
 
 /**
- * @param add_or_remove
- * @param type
- * @param handler
+ * @param {boolean|number} add_or_remove
+ * @param {string} type
+ * @param {Function} handler
  * @param {EventListenerOptions|boolean=} options
  */
 

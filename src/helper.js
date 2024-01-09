@@ -6,13 +6,16 @@ import Mikado from "./mikado.js";
 if(SUPPORT_DOM_HELPERS){
 
     /**
-     * Move template node to absolute position
-     * @param node
-     * @param position
+     * Move a template node to an absolute position (moveTo)
+     * @param {!Element|number} node
+     * @param {!number} position
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
-    Mikado.prototype.move = function(node, position){
+
+    Mikado.prototype.move =
+    Mikado.prototype.moveTo = function(node, position){
 
         let index;
 
@@ -40,13 +43,16 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Shift template node by relative position
-     * @param a
-     * @param offset
+     * Shift a template node by relative position (shiftBy)
+     * @param {!Element|number} a
+     * @param {!number} offset
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
-    Mikado.prototype.shift = function(a, offset){
+
+    Mikado.prototype.shift =
+    Mikado.prototype.shiftBy = function(a, offset){
 
         if(!offset){
 
@@ -113,12 +119,14 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Move up
-     * @param a
-     * @param offset
+     * Move a template node up by offset (shift up)
+     * @param {!Element|number} a
+     * @param {number=} offset
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
+
     Mikado.prototype.up = function(a, offset){
 
         if(!offset || (offset > 0)){
@@ -130,12 +138,14 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Move down
-     * @param a
-     * @param offset
+     * Move a template node down by offset (shift down)
+     * @param {!Element|number} a
+     * @param {number=} offset
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
+
     Mikado.prototype.down = function(a, offset){
 
         if(!offset || (offset > 0)){
@@ -147,34 +157,39 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Move to start
-     * @param a
+     * Move a template node to the start (becomes the first element)
+     * @param {!Element|number} a
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
+
     Mikado.prototype.first = function(a){
 
         return this.shift(a, -this.length);
     }
 
     /**
-     * Move to end
-     * @param a
+     * Move a template node to the end (becomes the last element)
+     * @param {!Element|number} a
      * @return {Mikado}
      * @this Mikado
      */
+
     Mikado.prototype.last = function(a){
 
         return this.shift(a, this.length);
     }
 
     /**
-     * Move template node before position
-     * @param tmp_a
-     * @param tmp_b
+     * Move a template node before a specific position
+     * @param {!Element|number} tmp_a
+     * @param {!Element|number} tmp_b
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
+
     Mikado.prototype.before = function(tmp_a, tmp_b){
 
         if(typeof tmp_a !== "number"){
@@ -211,12 +226,14 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Move template node after position
-     * @param tmp_a
-     * @param tmp_b
+     * Move a template node after a specific position
+     * @param {!Element|number} tmp_a
+     * @param {!Element|number} tmp_b
      * @return {Mikado}
      * @this Mikado
+     * @const
      */
+
     Mikado.prototype.after = function(tmp_a, tmp_b){
 
         if(typeof tmp_a !== "number"){
@@ -253,11 +270,12 @@ if(SUPPORT_DOM_HELPERS){
     }
 
     /**
-     * Swap template nodes
-     * @param a
-     * @param b
+     * Swap two template nodes
+     * @param {!Element|number} a
+     * @param {!Element|number} b
      * @returns Mikado
      * @this Mikado
+     * @const
      */
 
     Mikado.prototype.swap = function(a, b){

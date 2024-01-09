@@ -116,7 +116,10 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
         /** @const {string} */
         this.key = template.key || "";
-        /** @private @dict {Object<string, Element>} */
+        /**
+         * @private
+         * @dict {Object<string, Element>}
+         */
         this.live = {};
     }
 
