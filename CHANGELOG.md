@@ -1,9 +1,11 @@
 ## 0.8.2
 
 - Web Components (Shadow DOM)
-- Runtime Compiler
+- Runtime Compiler incl. support for Web Components
 - Mikado-Compile detect and replace repeated inline includes (not supported by the runtime compiler)
 - New callbacks `mount`, `unmount`
+- Improve `Mikado.once()`: supports Web Components, improved async mode, access the low level factory constructor which performs 20% faster
+- `Mikado.once()` will apply the best strategy for each scenario: 1. static non-looped templates, 2. static looped templates, 3. dynamic non-looped templates, 4. dynamic looped templates
 
 ## 0.8.1
 
