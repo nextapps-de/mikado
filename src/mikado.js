@@ -27,7 +27,8 @@ import {
     MIKADO_TPL_KEY,
     //MIKADO_TPL_INDEX,
     MIKADO_TPL_PATH,
-    MIKADO_NODE_CACHE, MIKADO_PROXY
+    MIKADO_NODE_CACHE,
+    MIKADO_PROXY
 } from "./config.js";
 // <-- COMPILER BLOCK
 
@@ -538,28 +539,31 @@ export function once(root, template, data, state, callback){
 
     let mikado;
 
-    if(typeof data === "function" || data === true){
+    if(SUPPORT_ASYNC){
 
-        callback = data;
-        data = null;
-    }
-    else if(typeof state === "function" || state === true){
+        if(typeof data === "function" || data === true){
 
-        callback = state;
-        state = null;
-    }
+            callback = data;
+            data = null;
+        }
+        else if(typeof state === "function" || state === true){
 
-    if(callback){
+            callback = state;
+            state = null;
+        }
 
-        return new Promise(function(resolve){
+        if(callback){
 
-            requestAnimationFrame(function(){
+            return new Promise(function(resolve){
 
-                once(root, template, data, state);
-                if(typeof callback === "function") callback();
-                resolve();
+                requestAnimationFrame(function(){
+
+                    once(root, template, data, state);
+                    if(typeof callback === "function") callback();
+                    resolve();
+                });
             });
-        });
+        }
     }
 
     const is_shadow = SUPPORT_WEB_COMPONENTS && template.cmp;

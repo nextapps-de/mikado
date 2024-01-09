@@ -316,7 +316,7 @@ You can also load modules via CDN:
     </tr>
     <tr>
         <td>
-            Template Engine
+            Template Render Engine
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -372,7 +372,7 @@ You can also load modules via CDN:
     <tr></tr>
     <tr>
         <td>
-            <a href="#expression">Extended Template Expressions</a>
+            <a href="#expression">Template Expressions</a>
         </td>
         <td>✓</td>
         <td>✓</td>
@@ -392,6 +392,22 @@ You can also load modules via CDN:
         </td>
         <td>✓</td>
         <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#shadow">Shadow DOM</a>
+        </td>
+        <td>✓</td>
+        <td>✓</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <a href="#shadow">Web Components</a>
+        </td>
+        <td>✓</td>
+        <td>-</td>
     </tr>
     <tr></tr>
     <tr>
@@ -443,8 +459,8 @@ You can also load modules via CDN:
     </tr>
     <tr>
         <td>File Size (gzip)</td>
-        <td>7.1 kb</td>
-        <td>3.4 kb</td>
+        <td>9.3 kb</td>
+        <td>3.7 kb</td>
     </tr>
 </table>
 
@@ -3442,7 +3458,7 @@ Therefore, you will need 2 additional template tags:
 
 > You can't use any template expressions outside `<template/>`.
 
-You can also render any normal template (non-components) to a plain dedicated shadow root by using the `shadow: true` option:
+You can also render any normal template (non-components) to a plain dedicated shadow root by using the `shadow: true` option (also supported by the light bundle):
 
 ```js
 const view = new Mikado(tpl, { shadow: true });
