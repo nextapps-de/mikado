@@ -287,6 +287,8 @@ if(SUPPORT_REACTIVE){
 /** @export */
 Template.tpl;
 /** @export */
+Template.cmp;
+/** @export */
 Template.key;
 /** @export */
 Template.cache;

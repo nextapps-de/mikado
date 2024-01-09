@@ -1,15 +1,5 @@
 
 
-/**
- * @typedef {{
- *   path: Array<Cache>,
- *   fn: Object<string, Array<string, number>>,
- *   get: Function,
- *   set: Function
- * }}
- */
-let ProxyHandler;
-
 const proxy = window.Proxy || function () {
 
     /**

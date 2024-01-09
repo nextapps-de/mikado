@@ -12,7 +12,7 @@ const event_types = {
     keyup: 1,
     mousedown: 1,
     mouseenter: 1,
-    mouseleave: 1, // TODO: mouseleave event does not bubble
+    mouseleave: 1,
     mousemove: 1,
     mouseout: 1,
     mouseover: 1,
@@ -34,21 +34,26 @@ const event_types = {
     scroll: 1
 };
 
-function escape_single_quotes(str) {
-
-    return str.replace(/\\([\s\S])|(')/ig, "\\$1$2");
-}
-
-function escape_single_quotes_expression(str) {
-
-    //console.log(str.replace(/{{(.*)?(\\)?([\s\S])|(')([^}]+)?/ig, "{{$1$2$3$4$5"))
-
-    return str.replace(/{{(.*)?(\\)?([\s\S])|(')(.*)?(}})/ig, "{{$1$2$3$4$5$6");
-}
+// function escape_single_quotes(str){
+//
+//     return str.replace(/\\([\s\S])|(')/ig, "\\$1$2");
+// }
+//
+// function escape_single_quotes_expression(str){
+//
+//     //console.log(str.replace(/{{(.*)?(\\)?([\s\S])|(')([^}]+)?/ig, "{{$1$2$3$4$5"))
+//
+//     return str.replace(/{{(.*)?(\\)?([\s\S])|(')(.*)?(}})/ig, "{{$1$2$3$4$5$6");
+// }
 
 function replaceComments(str) {
 
     return str.replace(/<!--(.*?)-->/g, "");
+}
+
+function strip(str) {
+
+    return str.replace(/({{|}})/g, "").trim();
 }
 
 let message = 0,
@@ -159,12 +164,12 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
                 const pos = value.indexOf("{{@");
 
                 if (-1 !== pos) {
+                    const pos_end = value.indexOf("}}", pos),
+                          js = value.substring(pos + 3, pos_end).trim();
 
-                    const pos_end = value.indexOf("}}", pos);
+                    js && _fn.push(js);
 
-                    tpl.js = value.substring(pos + 3, pos_end);
                     value = value.substring(0, pos) + value.substring(pos_end + 2);
-                    value && _fn.push(value);
                 }
 
                 if (value && value.trim()) {
@@ -182,7 +187,8 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
             }
         }
 
-        return tpl.js || value && value.trim() ? tpl : null;
+        return (/*tpl.js ||*/value && value.trim() ? tpl : null
+        );
     }
 
     let attributes = node.attributes;
@@ -261,7 +267,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
 
                 case "js":
 
-                    tpl.js = strip(attr_value);
+                    // already pushed to fn stack
                     break;
 
                 case "key":
@@ -293,7 +299,8 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
         }
     }
 
-    const children = node.childNodes,
+    // process <template/> contents
+    const children = (node.content || node).childNodes,
           length = children.length;
 
 
@@ -338,20 +345,24 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
 
     if (length) {
 
-        for (let i = 0; i < length; i++) {
+        for (let i = 0, child; i < length; i++) {
 
-            if (8 === children[i].nodeType) {
+            child = children[i];
+
+            // skip comments
+
+            if (8 === child.nodeType) {
 
                 continue;
             }
 
             _index.count++;
 
-            const tmp = /** @type {TemplateDOM} */compile(children[i], null, _inc, _fn, _index, 1);
+            const tmp = /** @type {TemplateDOM} */compile(child, null, _inc, _fn, _index, 1);
 
             if (tmp) {
 
-                if (1 === length && (3 === children[i].nodeType || !tmp.text) && (!tpl.js || !tmp.js)) {
+                if (1 === length && (3 === child.nodeType || !tmp.text) && (!tpl.js || !tmp.js)) {
 
                     if (tmp.js) tpl.js = tmp.js;
                     if (tmp.html) tpl.html = tmp.html;
@@ -370,6 +381,35 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
     }
 
     if (!_recursive) {
+
+        if ("COMPONENT" === tpl.tag) {
+            let json = tpl.child,
+                shadow = [];
+
+
+            for (let i = 0, child; i < json.length; i++) {
+
+                child = json[i];
+
+                if ("TEMPLATE" === child.tag) {
+
+                    const tmp = child.child.length ? child.child[0] : child.child;
+                    json = tmp;
+
+                    if (child.name) tmp.name = child.name;
+                    if (child.id) tmp.id = child.id;
+                    if (child.key) tmp.key = child.key;
+                    if (child.cache) tmp.cache = child.cache;
+                } else {
+
+                    shadow.push(child);
+                }
+            }
+
+            template.tpl = json;
+            template.cmp = shadow;
+        }
+
 
         if (1 === _inc.length && 0 === _inc[0].length) {
 
@@ -426,31 +466,28 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
             tmp = replaceComments(value);
 
 
-        if (truthy) {
-
-            tmp = tmp.replace(/{{[!?]+/g, "{{");
-        }
-
         if (proxy) {
+
+            if (truthy || escape) {
+
+                tmp = tmp.replace(/{{[!?]+/g, "{{");
+            }
 
             proxy = tmp.replace(/{{#?=+(.*)?}}/ig, "$1").trim().replace(/^data\./, "").replace(/^data\[['"](.*)['"]]/, "$1");
         }
 
-        tmp = tmp.replace(/{{[#=]+/g, "{{").replace(/"(\s+)?{{(\s+)?/g, "(").replace(/(\s+)?}}(\s+)?"/g, ")").replace(/{{(\s+)?/g, "'+(").replace(/(\s+)?}}/g, ")+'");
+        tmp = tmp.replace(/{{[!?#=]+/g, "{{").replace(/"(\s+)?{{(\s+)?/g, "(").replace(/(\s+)?}}(\s+)?"/g, ")").replace(/{{(\s+)?/g, "'+(").replace(/(\s+)?}}/g, ")+'");
 
         tmp = ("'" + tmp + "'").replace(/^""\+/g, "").replace(/^''\+/g, "").replace(/\+''$/g, "").replace(/\+""$/g, "").replace(/['"]\)\+''\+\(['"]/g, "") // ")+''+("
         .replace(/['"](\s+)?\+(\s+)?['"]/g, "") // ' + '
         .replace(/^\(([^ ]+)\)$/g, "$1") // ( value )
         .trim();
 
-        // ... skip dead code elimination for the inline compile
+        // ... skip resolving static content inside dynamic expressions for the inline compile
 
         if (truthy) {
 
-            tmp = "(" + (tmp + "||" + tmp + "===0?" + (escape ? attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")" : tmp) + ":'')");
-        } else if (escape) {
-
-            tmp = attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")";
+            tmp = "(" + (tmp + "||" + tmp + "===0?" + tmp + ":'')");
         }
 
         if ("text" === key && root.tag) {
@@ -562,9 +599,4 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
         delete root.range;
         delete root.if;
     }
-}
-
-function strip(str) {
-
-    return str.replace(/{{/g, "").replace(/}}/g, "").trim();
 }

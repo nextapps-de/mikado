@@ -2,6 +2,7 @@ const { describe, it } = intern.getPlugin("interface.bdd");
 const { registerSuite } = intern.getPlugin("interface.object");
 const { expect, assert } = intern.getPlugin("chai");
 import { checkDOM, copy } from "../common.js";
+//import compile from "../../src/compile.js";
 import data from "../data.js";
 
 const template = `
@@ -97,6 +98,42 @@ const template_include = `
         <div if="data" foreach="data" include="template"></div>
     </div>
 </main>
+`;
+
+const template_shadow = `
+<component>
+    <!-- optional styles/scripts/etc. -->
+    <style>table{ width: 100%; opacity: 0.5 }</style>
+    <script>window.footer = "foobar";</script>
+    <!-- components requires the template tag -->
+    <template>
+        <!-- single outer root element: -->
+        <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{index}}" root>
+            <div class="{{data.class}}" style="padding-right: 10px;" tap="attach">
+                <div class="title" click="delegate:root">{{data.title}}</div>
+                <div class="content" click="delegate:foo">{{#data.content}}</div>
+                <div class="footer" data-footer="{{ window.footer }}">{{data.footer}}</div>
+            </div>
+        </section>
+    </template>
+</component>
+`;
+
+const template_scope = `
+<div>
+    {{@ let value = 'test'; }}
+    <div>{{ value }}</div>
+    {{@ value += '|test' }}
+    <div>{{
+        value
+    }}</div>
+    {{@ value += (function(d){
+
+        return '|' + d.test;
+
+    }(data)); }}
+    <div>{{ value }}</div>
+</div>
 `;
 
 describe("Compile Template", function(){
@@ -355,6 +392,38 @@ describe("Compile Template", function(){
 
         expect(node.tagName.toLowerCase()).to.equal("main");
         expect(node.children.length).to.equal(0);
+
+        view.clear().destroy();
+    });
+
+    it("Should render web components properly (Runtime Compiler)", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const tpl = Mikado.compile(template_shadow);
+        const view = new Mikado(tpl, { mount: root_1 }).render(data);
+        let tmp;
+
+        expect(tmp = root_1.shadowRoot).to.exist;
+        expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
+        expect((tmp = tmp.nextElementSibling).tagName).to.equal("SCRIPT");
+        expect((tmp = tmp.nextElementSibling).tagName).to.equal("ROOT");
+        expect(tmp).to.equal(view.root);
+        checkDOM(tmp.firstElementChild, data);
+
+        view.clear().destroy();
+    });
+
+    it("Should handle inline scripts properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const tpl = Mikado.compile(template_scope);
+        const view = new Mikado(tpl, { mount: root_1 }).render({ test: "foobar" });
+        let tmp;
+
+        expect(view.length).to.equal(1);
+        expect((tmp = root_1.firstElementChild.firstElementChild).textContent).to.equal("test");
+        expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test");
+        expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test|foobar");
 
         view.clear().destroy();
     });

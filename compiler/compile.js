@@ -128,6 +128,35 @@ module.exports = function(src, dest, options, _recall){
     let tpl_key, tpl_cache;
     let fn = [];
     let inc = [fn];
+    let shadow;
+
+    if(json && json.child && json.child.tag === "component"){
+
+        json = json.child.child;
+        shadow = [];
+
+        for(let i = 0, child; i < json.length; i++){
+
+            child = json[i];
+
+            if(child.tag === "template"){
+
+                json = child;
+                const tmp = csr && json.child.length ? json.child[0] : json.child;
+
+                if(child.name) tmp.name = child.name;
+                if(child.id) tmp.id = child.id;
+                if(child.key) tmp.key = child.key;
+                if(child.cache) tmp.cache = child.cache;
+            }
+            else{
+
+                shadow.push(child);
+            }
+        }
+
+        //shadow.push({ tag: "root" });
+    }
 
     if(json) {
 
@@ -225,6 +254,7 @@ module.exports = function(src, dest, options, _recall){
         }
 
         json = pretty ? JSON.stringify(json, null, 2) : JSON.stringify(json);
+        if(shadow) shadow = pretty ? JSON.stringify(shadow, null, 2) : JSON.stringify(shadow);
     }
 
     // json = json.replace(/"name":/g, "\"n\":")
@@ -248,12 +278,13 @@ module.exports = function(src, dest, options, _recall){
     //            .replace(/"key":/g, "\"k\":");
 
     // matches inside content should not occur, because the last " is escaped and didn't match here
-    json = json.replace(/"(name|tag|attr|class|text|html|style|child|js|event|include|inc|for|if|key|cache|bind|svg)":/g, '$1:');
+    json = json.replace(/"(name|tag|attr|class|text|html|style|child|js|event|include|inc|for|if|key|cache|svg)":/g, '$1:');
+    if(shadow) shadow = shadow.replace(/"(name|tag|attr|class|text|style|child|svg)":/g, '$1:');
 
     for(let i = 0; i < inc.length; i++){
 
         if(inc[i].length){
-            mode !== "compact" && inc[i].unshift("let _o,_v");
+            ((tpl_cache && tpl_cache !== "false") || mode !== "compact") && inc[i].unshift("let _o,_v");
             inc[i] =
 `function(data,state,index,_p){
   ${ (inc[i].join(pretty ? ";\n  " : ";") + ";").replaceAll(",_v)};", ",_v)}").replaceAll("=_v};", "=_v}") }
@@ -268,7 +299,7 @@ module.exports = function(src, dest, options, _recall){
     let js =
 `export default{
 name:"${ template_name }",${ tpl_key ? '\nkey:"' + tpl_key + '",' : "" }${ tpl_cache && tpl_cache !== "false" ? '\ncache:true,' : "" }
-tpl:${ json },
+tpl:${ json },${ shadow ? "\ncmp:" + shadow + "," : "" }
 fn:${ !inc.length ? "null" : "[" + inc.join(",") + "]" }
 }`;
 
@@ -674,7 +705,7 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                     if(key === "js" && !attr){
 
-                        if(value && (value = value.replace(/;(\s)+?$/, "").trim())){
+                        if(value && (value = value.replace(/;(.*)$/, "").trim())){
 
                             fn.push(value);
                             index.ssr += "';" + value + (value.endsWith(";") ? "" : ";") + "_o+='";
@@ -698,12 +729,12 @@ function create_schema(root, inc, fn, index, attr, mode){
                             let escape = /{{\??!/.test(value);
                             let tmp = escape_single_quotes_expression(value);
 
-                            if(truthy || escape){
-
-                                tmp = tmp.replace(/{{[!?]+/g, "{{");
-                            }
-
                             if(proxy){
+
+                                if(truthy || escape){
+
+                                    tmp = tmp.replace(/{{[!?]+/g, "{{");
+                                }
 
                                 proxy = tmp.replace(/{{#?=+(.*)?}}/ig, "$1")
                                            .trim()
@@ -711,7 +742,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                            .replace(/^data\[['"](.*)['"]]/, "$1");
                             }
 
-                            tmp = tmp.replace(/{{[#=]+/g, "{{")
+                            tmp = tmp.replace(/{{[[!?#=]+/g, "{{")
                                     //.replace(/{{!(!)?/g, "{{")
                                     .replace(/"(\s+)?{{(\s+)?/g, "(")
                                     .replace(/(\s+)?}}(\s+)?"/g, ")")
@@ -744,27 +775,30 @@ function create_schema(root, inc, fn, index, attr, mode){
                             }
                             else{
 
+                                let tmp_ssr = tmp;
+
                                 if(truthy){
 
-                                    tmp = "(" + (tmp + "||" + tmp + "===0?" + (escape ? (attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")") : tmp) + ":''") + ")";
+                                    tmp = "(" + (tmp + "||" + tmp + "===0?" + tmp + ":''") + ")";
+                                    tmp_ssr = "(" + (tmp + "||" + tmp + "===0?" + (escape ? (attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")") : tmp) + ":''") + ")";
                                 }
                                 else if(escape){
 
-                                    tmp = attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")";
+                                    tmp_ssr = attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")";
                                 }
 
                                 if(key === "text" && root.tag){
 
-                                    index.ssr += (root.extract ? "" : ">") + "'+" + /*escape_single_quotes*/(tmp) + "+'";
+                                    index.ssr += (root.extract ? "" : ">") + "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
                                     index.count++;
                                 }
                                 else if(key === "text"){
 
-                                    index.ssr += "'+" + /*escape_single_quotes*/(tmp) + "+'";
+                                    index.ssr += "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
                                 }
                                 else if(attr){
 
-                                    index.ssr += "'+((_val=" + /*escape_single_quotes*/(tmp) + ')===false?\'\':\' ' + key + '="\'+_val+\'"\')+\'';
+                                    index.ssr += "'+((_val=" + /*escape_single_quotes*/(tmp_ssr) + ')===false?\'\':\' ' + key + '="\'+_val+\'"\')+\'';
                                 }
                                 // else{
                                 //
@@ -1124,6 +1158,12 @@ function create_schema(root, inc, fn, index, attr, mode){
                     index.included = false;
 
                     create_schema(child[i], inc, fn, index, false, mode);
+
+                    if(!child[i].tag && !child[i].text){
+
+                        child.splice(i, 1);
+                        i--;
+                    }
                 }
             }
 

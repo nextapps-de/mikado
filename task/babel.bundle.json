@@ -16,6 +16,7 @@
         "SUPPORT_KEYED": true,
         "SUPPORT_POOLS": true,
         "SUPPORT_CALLBACKS": true,
+        "SUPPORT_WEB_COMPONENTS": true,
         "SUPPORT_COMPILE": true,
 
         "MIKADO_DOM": "_mkd",

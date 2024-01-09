@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.206 (Light/Debug)
+ * Mikado.js v0.8.209 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -168,7 +168,7 @@ function D(a, b = {}) {
   if (!a) {
     throw Error("Initialization Error: Template is not defined.");
   }
-  if (!a.tpl || !a.name) {
+  if (!a.tpl) {
     throw Error("Initialization Error: Template isn't supported.");
   }
   this.g = [];
@@ -176,7 +176,7 @@ function D(a, b = {}) {
   this.root = b.root || b.mount || null;
   this.recycle = !!b.recycle;
   this.state = b.state || {};
-  this.shadow = b.shadow || null;
+  this.shadow = b.shadow || !!a.cmp;
   this.key = a.key || "";
   this.j = {};
   c = a.fn;
@@ -193,7 +193,10 @@ function D(a, b = {}) {
 }
 n = D.prototype;
 n.mount = function(a, b) {
-  "boolean" === typeof this.shadow && this.shadow && (this.shadow = a = a.attachShadow({mode:"open"}));
+  if (!a) {
+    throw Error("No target was passed to .mount()");
+  }
+  this.shadow && (a = a.shadowRoot || a.attachShadow({mode:"open"}));
   const c = a._mki;
   var e = this.root !== a;
   if (c === this) {
@@ -203,7 +206,9 @@ n.mount = function(a, b) {
     this.g = a._mkd;
     this.length = this.g.length;
   } else if (c) {
-    c.clear(), a._mkd = this.g = [], this.length = 0;
+    if (c.clear(), a._mkd = this.g = [], this.length = 0, a.firstChild || a.shadowRoot) {
+      a.textContent = "";
+    }
   } else {
     if (b) {
       var g = a.children;
@@ -214,7 +219,9 @@ n.mount = function(a, b) {
       this.g = d;
       this.length = this.g.length;
     } else {
-      this.g = [], this.length = 0, a.firstChild && (a.textContent = "");
+      if (this.g = [], this.length = 0, a.firstChild || a.shadowRoot) {
+        a.textContent = "";
+      }
     }
     a._mkd = this.g;
   }
@@ -239,6 +246,42 @@ n.mount = function(a, b) {
 function E(a) {
   a.tpl.m && (a.tpl.fn = a.tpl.m, a.tpl.m = null);
   a.tpl = null;
+}
+function F(a, b, c, e, g) {
+  if (!a) {
+    throw Error("Root element is not defined.");
+  }
+  if (!b) {
+    throw Error("Template is not defined.");
+  }
+  if ("function" === typeof c || !0 === c) {
+    g = c, c = null;
+  } else if ("function" === typeof e || !0 === e) {
+    g = e, e = null;
+  }
+  if (g) {
+    return new Promise(function(d) {
+      requestAnimationFrame(function() {
+        F(a, b, c, e);
+        "function" === typeof g && g();
+        d();
+      });
+    });
+  }
+  if (c || b.fn) {
+    var h = new D(b);
+    if (c && Array.isArray(c)) {
+      for (let d = 0; d < c.length; d++) {
+        a.append(h.create(c[d], e, d));
+      }
+    } else {
+      a.append(h.create(c, e));
+    }
+    h.destroy();
+  } else {
+    h = z({}, b.tpl, [], "", null, 1), a.append(h);
+  }
+  return D;
 }
 n.render = function(a, b) {
   if (!this.root) {
@@ -289,7 +332,7 @@ n.render = function(a, b) {
             let r, v;
             for (f = d + 1; f < u; f++) {
               if (!r && f < m && c[f]._mkk === y && (r = f + 1), !v && f < h && a[f][g] === B && (v = f + 1), r && v) {
-                r >= v ? (k = c[r - 1], this.root.insertBefore(k, t), this.update(k, x, b, d, 1), r === v ? (1 < f - d && this.root.insertBefore(t, c[r]), c[d] = c[f], (c[f] = t) || console.error("Error")) : (F(c, r - 1, d), A++)) : (k = v - 1 + A, this.root.insertBefore(t, c[k] || null), F(c, d, (k > m ? m : k) - 1), A--, d--);
+                r >= v ? (k = c[r - 1], this.root.insertBefore(k, t), this.update(k, x, b, d, 1), r === v ? (1 < f - d && this.root.insertBefore(t, c[r]), c[d] = c[f], (c[f] = t) || console.error("Error")) : (G(c, r - 1, d), A++)) : (k = v - 1 + A, this.root.insertBefore(t, c[k] || null), G(c, d, (k > m ? m : k) - 1), A--, d--);
                 k = 1;
                 break;
               }
@@ -328,12 +371,12 @@ n.replace = function(a, b, c, e) {
         k !== d && this.root.insertBefore(d, k);
       }
     } else {
-      this.pool && (g = this.i.get(h)) && (this.i.delete(h), G(this, a), this.g[e] = g, a.replaceWith(g));
+      this.pool && (g = this.i.get(h)) && (this.i.delete(h), H(this, a), this.g[e] = g, a.replaceWith(g));
     }
   } else {
     this.recycle && (g = a);
   }
-  g ? !this.apply || this.apply(b, c || this.state, e, g._mkp || p(g, this.h._mkp, this.cache)) : (b = this.create(b, c, e, 1), (this.key || this.pool) && G(this, a), this.g[e] = b, a.replaceWith(b));
+  g ? !this.apply || this.apply(b, c || this.state, e, g._mkp || p(g, this.h._mkp, this.cache)) : (b = this.create(b, c, e, 1), (this.key || this.pool) && H(this, a), this.g[e] = b, a.replaceWith(b));
   return this;
 };
 n.update = function(a, b, c, e) {
@@ -358,10 +401,10 @@ n.add = function(a, b, c) {
   let e;
   "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, e = c < this.length) : "number" === typeof c ? (0 > c && (c += this.length), e = c < this.length) : c = this.length;
   a = this.create(a, b, c, 1);
-  e ? (this.root.insertBefore(a, this.g[c]), F(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
+  e ? (this.root.insertBefore(a, this.g[c]), G(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
   return this;
 };
-function F(a, b, c, e) {
+function G(a, b, c, e) {
   const g = e || a[b];
   e && b++;
   if (b < c) {
@@ -398,7 +441,7 @@ n.remove = function(a, b) {
   !a && b >= c ? (a = this.g, b = a.length, this.root.textContent = "", this.root._mkd = this.g = [], c = 0) : (a = this.g.splice(a, b), c -= b);
   const e = this.pool && !this.key, g = this.key || this.pool;
   for (let h = 0, d; h < b; h++) {
-    d = a[e ? b - h - 1 : h], c && d.remove(), g && G(this, d);
+    d = a[e ? b - h - 1 : h], c && d.remove(), g && H(this, d);
   }
   this.length = c;
   return this;
@@ -409,7 +452,7 @@ n.index = function(a) {
 n.node = function(a) {
   return this.g[a];
 };
-function G(a, b) {
+function H(a, b) {
   if (a.key) {
     var c = b._mkk;
     a.j[c] = null;
@@ -437,23 +480,7 @@ n.destroy = function() {
   this.root && (this.root._mkd = this.root._mki = null);
   this.i = this.l = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.h = null;
 };
-D.once = function(a, b, c, e, g) {
-  const h = new D(b);
-  "function" === typeof e && (g = e, e = null);
-  if (g) {
-    const d = g;
-    g = function() {
-      h.destroy();
-      d();
-    };
-  }
-  if (!a) {
-    throw Error("Root element is not defined.");
-  }
-  a.append(h.create(c, e));
-  g || h.destroy();
-  return D;
-};
+D.once = F;
 D.register = function(a, b) {
   let c, e;
   if ("string" === typeof a) {
@@ -473,9 +500,9 @@ D.unregister = function(a) {
   b && (b instanceof D && b.destroy(), C[a] = null);
   return D;
 };
-const H = window;
-let I;
-(I = H.define) && I.amd ? I([], function() {
+const I = window;
+let J;
+(J = I.define) && J.amd ? J([], function() {
   return D;
-}) : "object" === typeof H.exports ? H.exports = D : H.Mikado = D;
+}) : "object" === typeof I.exports ? I.exports = D : I.Mikado = D;
 }).call(this);

@@ -1,3 +1,10 @@
+## 0.8.2
+
+- Web Components (Shadow DOM)
+- Runtime Compiler
+- Mikado-Compile detect and replace repeated inline includes (not supported by the runtime compiler)
+- New callbacks `mount`, `unmount`
+
 ## 0.8.1
 
 - A whole re-build of the library

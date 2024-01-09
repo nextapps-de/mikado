@@ -2,15 +2,10 @@
 <h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado.svg" alt="Mikado - Webs fastest templating engine" width="500px"><p></p></h1>
 <h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also providing the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
 
-<!--
-<a target="_blank" href="https://coveralls.io/github/nextapps-de/mikado?branch=master"><img src="https://coveralls.io/repos/github/nextapps-de/mikado/badge.svg?branch=master"></a>
-<a target="_blank" href="https://travis-ci.org/nextapps-de/mikado"><img src="https://travis-ci.org/nextapps-de/flexsearch.svg?branch=master"></a>
-<a target="_blank" href="https://www.codacy.com/app/ts-thomas/Mikado?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nextapps-de/mikado&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a896e010f6b4429aa7bc9a89550320a7"/></a>
--->
-
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <img src="https://img.shields.io/badge/build-passing-brightgreen">
 <img src="https://img.shields.io/badge/coverage-85%25-yellow">
+<img src="https://img.shields.io/badge/typed-87%25-yellow">
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
@@ -54,29 +49,6 @@ Mikado was getting so much positive feedback and also feature requests. Help kee
 5. <a href="demo/basic/demo.dev.html">Basic Example + Events (Development Sources)</a>
 6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
 7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
--->
-
-<!--
-#### First Steps
-
-Mikado is based on living standards and uses a similar templating notation style like "mustache" or "handlebars".
-You do not have to learn a new language, you just need some basic skills you probably already have.
-**It will take 3 minutes to become productive.** Don't let that confuse you with the size of this documentation, because it will show you a lot of in-depth details.
-You will do not need these details to start with. If you would like to know more you get a chance to go deeper.
-
-Also, all compiled dist files will work out of the box, no TypeScript, no Webpack, no module loader, no external tools are required.
-
-A Guide for new developers (the most simple example, just takes 3 minutes):
-
-- Load a <a href="https://rawcdn.githack.com/nextapps-de/mikado/master/dist/mikado.min.js">bundle</a> through a script tag resource
-- Write and <a href="#compiler">compile</a> a simple template
-- Load the "es5" version of the compiled template through a script tag resource
-- Create a Mikado instance by passing in the name of the template and mount the root to this new created instance
-  - `const view = new Mikado("template").mount(root);`
-- Just use `view.render(data)` over and over for all jobs: add / remove / clear / update / reconcile / ...
-- That's it!
-
-<a href="demo/basic/basic.html">Final Source Code</a>
 -->
 
 ## Table of contents
@@ -332,6 +304,7 @@ You can also load modules via CDN:
 > Loading modules via CDN commonly expects to build/bundle your app properly before distribution. Do not load them via CDN in production.
 
 <a name="feature-comparison"></a>
+
 ### Feature Comparison "Bundle vs. Light"
 
 <table>
@@ -771,7 +744,7 @@ Static methods (not included in mikado.light.js):
 <!-- - <a href="#mikado.compile">**compile**(\<template | string\>)</a> -->
 - Mikado.<a href="#mikado.route">**route**(name, function, \<options\>)</a>
 - Mikado.<a href="#mikado.listen">**listen**(event, \<options\>)</a>
-- Mikado.<a href="#mikado.unlisten">**unlisten**(event, \<options\>)</a>
+- Mikado.<a href="#mikado.unlisten">**unlisten**(event)</a>
 - Mikado.<a href="#mikado.dispatch">**dispatch**(route, \<target\>, \<event\>)</a>
 - Mikado.<a href="#mikado.escape">**escape**(text)</a> : <small>_string_</small>
 - Mikado.<a href="#mikado.sanitize">**sanitize**(text)</a> : <small>_string_</small>
@@ -796,7 +769,7 @@ Instance methods (not included in mikado.light.js):
 
 - view.<a href="#view.route">**route**(name, function, \<options\>)</a>
 - view.<a href="#view.listen">**listen**(event, \<options\>)</a>
-- view.<a href="#view.unlisten">**unlisten**(event, \<options\>)</a>
+- view.<a href="#view.unlisten">**unlisten**(event)</a>
 - view.<a href="#view.dispatch">**dispatch**(name, \<target\>, \<event\>)</a>
 
 View manipulation helpers (optional, not included in mikado.light.js):
@@ -1672,6 +1645,9 @@ view.route("show-user", function(target, event) {
 view.route("delete-user", function(target, event) {
     // target was delegated to "root" by using the colon expression
     alert(target.dataset.id); 
+    // when target is delegated you can still get the
+    // original element where the event was fired:
+    const anchor = event.target;
 });
 ```
 
@@ -1831,6 +1807,8 @@ Unregister listener:
 ```js
 Mikado.unlisten("click");
 ```
+
+> Mikado will store the original `EventListenerOptions` when calling `.listen(event)` under the hood, to make sure the listener will be removed properly.
 
 <a name="view.dispatch"></a>
 #### Dispatch Routes
@@ -1996,6 +1974,7 @@ view.render();
 ```
 
 <a name="view.create"></a>
+
 #### Create Components
 
 Just create a component from a template without adding/assigning/rendering them to the root ("orphan"):
@@ -2007,9 +1986,11 @@ var partial = view.create(data);
 Orphans are not a part of the internal render tree of a view. The construction of orphan components is also really fast.
 
 <a name="modify-views"></a>
+
 ## Modify Views
 
 <a name="view.add"></a>
+
 Add one data item to the end:
 
 ```js
@@ -2031,6 +2012,7 @@ view.add(data, -1);
 ```
 
 <a name="view.append"></a>
+
 Append multiple data items to the end:
 
 ```js
@@ -2052,6 +2034,7 @@ view.append(data, -1);
 ```
 
 <a name="view.remove"></a>
+
 Remove a specific template node:
 
 > Parameter: `remove(position, <count>)`
@@ -2096,6 +2079,7 @@ view.remove(node, -20);
 ```
 
 <a name="view.clear"></a>
+
 Remove all:
 
 ```js
@@ -2103,6 +2087,7 @@ view.clear();
 ```
 
 <a name="view.replace"></a>
+
 Replace a data item/node:
 
 ```js
@@ -2114,6 +2099,7 @@ view.replace(index, data);
 ```
 
 <a name="view.update"></a>
+
 Update a single data item/node:
 
 ```js
@@ -2125,9 +2111,11 @@ view.update(index, data);
 ```
 
 <a name="helpers"></a>
+
 #### Common View Helpers
 
 <a name="view.node"></a>
+
 Get a components root element by a specific index:
 
 ```js
@@ -2135,6 +2123,7 @@ var node = view.node(index);
 ```
 
 <a name="view.index"></a>
+
 Get the index from a specific components root element:
 
 ```js
@@ -2142,6 +2131,7 @@ var index = view.index(node);
 ```
 
 <a name="view.length"></a>
+
 Get the length of all components currently rendered:
 
 ```js
@@ -2149,12 +2139,14 @@ var length = view.length;
 ```
 
 <a name="view.name"></a>
+
 Get the current template name which is assigned to a Mikado instance:
 
 ```js
 var name = view.name;
 ```
 <a name="view.root"></a>
+
 Get the mounted root element on which the template is assigned to:
 
 ```js
@@ -2162,6 +2154,7 @@ var element = view.root;
 ```
 
 <a name="manipulate"></a>
+
 ## Manipulate Views
 
 Mikado provides you several optional helper functions to manipulate the DOM and also keep them in sync with the internal view state. Using the helper functions also will gain performance.
@@ -2171,6 +2164,7 @@ Mikado provides you several optional helper functions to manipulate the DOM and 
 Helpers let you apply simple transformations without running through the whole render loop of the template. Reconciliation isn't the holy grail, it is just for your laziness. In certain situations it is just more efficient to apply a known transformation directly instead of altering the data and request a whole render task.
 
 <a name="view.move"></a>
+
 Move a data item/node to a specific index position:
 
 ```js
@@ -2179,6 +2173,7 @@ view.move(node, -15); // 15 from end
 ```
 
 <a name="view.first"></a><a name="view.last"></a>
+
 Move a data item/node to the top or bottom:
 
 ```js
@@ -2187,6 +2182,7 @@ view.last(node);
 ```
 
 <a name="view.up"></a><a name="view.down"></a>
+
 Move a data item/node by 1 index up or down:
 
 ```js
@@ -2202,6 +2198,7 @@ view.down(node, 3);
 ```
 
 <a name="view.shift"></a>
+
 Shift a data item/node relatively by a specific offset (both directions):
 
 ```js
@@ -2210,6 +2207,7 @@ view.shift(node, -3);
 ```
 
 <a name="view.before"></a><a name="view.after"></a>
+
 Move a data item/node before or after another data item/node:
 
 ```js
@@ -2218,6 +2216,7 @@ view.after(node_a, node_b);
 ```
 
 <a name="view.swap"></a>
+
 Swap two data items/nodes:
 
 ```js
@@ -2225,6 +2224,7 @@ view.swap(node_a, node_b);
 ```
 
 <a name="cache"></a>
+
 ## DOM State Caching
 
 Caching of DOM properties can greatly increase performance (up to 20x). There are just a few situations where caching will not improve performance, it fully depends on your application.
@@ -2245,6 +2245,7 @@ const view = new Mikado(template, {
 It is very recommended reading the next section to understand how caching is working.
 
 <a name="cache-concept"></a>
+
 #### State Caching Concept
 
 Let's take a simple template as an example:
@@ -2291,6 +2292,7 @@ You have 2 options in this situation:
 2. Using the <a href="#cache-helpers">DOM Cache Helpers</a> Mikado provides you exactly for this situation.
 
 <a name="cache-helpers"></a>
+
 #### DOM Cache Helpers (optional)
 
 > Caching helpers let you apply manual changes to the DOM easily without going out of sync with the corresponding view instance.
@@ -2300,6 +2302,7 @@ You have 2 options in this situation:
 A well implemented application can still save between 20 and 40% of unnecessary DOM access just by using those helpers everywhere. On regular implementations it is almost between 50% and 70%.
 
 <a name="view.setAttribute"></a>
+
 Set an attribute of a node (will not replace old attributes):
 
 ```js
@@ -2316,6 +2319,7 @@ Mikado.setAttribute(node, {
 ```
 
 <a name="Mikado.getAttribute"></a>
+
 Get an attribute value of a node:
 
 ```js
@@ -2323,6 +2327,7 @@ var attr = Mikado.getAttribute(node, "href");
 ```
 
 <a name="Mikado.removeAttribute"></a>
+
 Remove an attribute of a node:
 
 ```js
@@ -2336,6 +2341,7 @@ var attr = Mikado.removeAttribute(node, ["href", "target"]);
 ```
 
 <a name="Mikado.hasAttribute"></a>
+
 Check existence of a nodes attribute:
 
 ```js
@@ -2343,6 +2349,7 @@ var href = Mikado.hasAttribute(node, "href");
 ```
 
 <a name="Mikado.setClass"></a>
+
 Set class name of a node (fully replaces old classes):
 
 ```js
@@ -2354,6 +2361,7 @@ Mikado.setClass(node, ["class_a", "class_b"]);
 ```
 
 <a name="Mikado.addClass"></a>
+
 Add a classname to a node:
 
 ```js
@@ -2367,6 +2375,7 @@ Mikado.addClass(node, ["class_a", "class_b"]);
 ```
 
 <a name="Mikado.getClass"></a>
+
 Get all classnames of a node (returns an array):
 
 ```js
@@ -2374,6 +2383,7 @@ var classList = Mikado.getClass(node);
 ```
 
 <a name="Mikado.toggleClass"></a>
+
 Toggle classnames of a node:
 
 ```js
@@ -2402,6 +2412,7 @@ var classList = Mikado.toggleClass(node, {
 ```
 
 <a name="Mikado.hasClass"></a>
+
 Check existence of a nodes classnames:
 
 ```js
@@ -2409,6 +2420,7 @@ var class_a = Mikado.hasClass(node, "class_a");
 ```
 
 <a name="Mikado.removeClass"></a>
+
 Removes a classnames of a node:
 
 ```js
@@ -2421,25 +2433,28 @@ Removes multiple classnames of a node:
 Mikado.removeClass(node, ["class_a", "class_b"]);
 ```
 
-<a name="Mikado.setCSS"></a>
+<a name="Mikado.setCss"></a>
+
 Set the whole elements inline style tag `style="..."` (fully replaces old styles):
 
 ```js
-Mikado.setCSS(node, "top: 0; padding-right: 10px");
+Mikado.setCss(node, "top: 0; padding-right: 10px");
 ```
 
 ```js
-Mikado.setCSS(node, ["top: 0", "padding-right: 10px"]);
+Mikado.setCss(node, ["top: 0", "padding-right: 10px"]);
 ```
 
-<a name="Mikado.getCSS"></a>
+<a name="Mikado.getCss"></a>
+
 Get all inline styles of a nodes style tag:
 
 ```js
-var css = Mikado.getCSS(node);
+var css = Mikado.getCss(node);
 ```
 
 <a name="Mikado.setStyle"></a>
+
 Set a specific inline style of a node (will not replace old styles):
 
 ```js
@@ -2453,6 +2468,7 @@ Mikado.setStyle(node, { "top": 0, "padding-right": "10px" });
 ```
 
 <a name="Mikado.getStyle"></a>
+
 Get a specific inline style value of a node:
 
 ```js
@@ -2460,6 +2476,7 @@ var padding = Mikado.getStyle(node, "padding-right");
 ```
 
 <a name="Mikado.setText"></a>
+
 Set text of an element or text node:
 
 ```js
@@ -2467,27 +2484,31 @@ Mikado.setText(node, "This is a title.");
 ```
 
 <a name="Mikado.getText"></a>
+
 Get text of an element or text node:
 
 ```js
 var text = Mikado.getText(node);
 ```
 
-<a name="Mikado.setHTML"></a>
+<a name="Mikado.setHtml"></a>
+
 Set inner HTML of an element:
 
 ```js
-Mikado.setHTML(node, "<b>This is a title.</b>");
+Mikado.setHtml(node, "<b>This is a title.</b>");
 ```
 
-<a name="Mikado.getHTML"></a>
+<a name="Mikado.getHtml"></a>
+
 Get inner HTML of an element:
 
 ```js
-var html = Mikado.getHTML(node);
+var html = Mikado.getHtml(node);
 ```
 
 <a name="view.state"></a>
+
 ## View State
 
 Every Mikado instance has by default a state object you can access by `view.state`.
@@ -2554,30 +2575,39 @@ When using `foreach` the keyword `data` within nested template expressions refer
 If you need the root data element within nested templates then just assign the data to the `state` or pass a temporary state object as 2nd parameter by simply using `.render(data, data)`. Now you can access the root data element via `state` through all the template scopes.
 
 <a name="callbacks"></a>
+
 ## Custom Callbacks
+
+> The 2nd parameter `view` of custom callbacks points to the Mikado view instance.
 
 Define custom callbacks during initialization:
 
 ```js
 var view = new Mikado(template, {
   on: {
-    create: function(node) {
+    create: function(node, view) {
       console.log("created:", node);
     },
-    recycle: function(node) {
+    recycle: function(node, view) {
       console.log("recycled:", node);
     },
-    insert: function(node) {
+    insert: function(node, view) {
       console.log("inserted:", node);
     },
-    update: function(node) {
+    update: function(node, view) {
       console.log("updated:", node);
     },
-    replace: function(node) {
+    replace: function(node, view) {
       console.log("replaced:", node);
     },
-    remove: function(node) {
+    remove: function(node, view) {
       console.log("removed:", node);
+    },
+    mount: function(root, view) {
+      console.log("mounted:", root);
+    },
+    unmount: function(root, view) {
+      console.log("unmounted:", root);
     }
   }
 });
@@ -2621,11 +2651,13 @@ var view = new Mikado(template, {
 </table>
 
 <a name="static"></a>
+
 ## Static Templates
 
 When a template has no dynamic expressions (within curly brackets) which needs to be evaluated during runtime Mikado will handle those templates as _static_ and skips the dynamic render part. You can render static views without passing data.
 
 <a name="mikado.once"></a>
+
 #### Once (One-time rendering)
 
 When a template just needs to be rendered once you can theoretically create, mount, render and destroy as follows:
@@ -2663,6 +2695,7 @@ So using `Mikado.once` is great when initializing your app and building the shap
 If a view was destroyed you will need to create the Mikado instance again when re-using.
 
 <a name="ssr"></a>
+
 ## Server-Side Rendering (SSR)
 
 Just use the same template syntax (or same source files also served for the client).
@@ -2690,6 +2723,7 @@ Supported Options (mixable):
 - `csr` when set to "false" it fully unlocks template restrictions applied by the support of client-side-rendering
 
 <a name="ssr-exclusive"></a>
+
 ### SSR-exclusive Mode
 
 By explicitly setting the option `csr` to "false" you can switch into SSR-exclusive mode where the limitation of having one outer element as the template root is unlocked, also there is an `extract` directive to place logical placeholder elements, which will be self-extracted when rendered.
@@ -2720,6 +2754,7 @@ const view = await mikado.compile("view/start.html", {
 > Those templates aren't supported by the client render engine, also you can't hydrate them.
 
 <a name="express"></a>
+
 ## Express Render Engine
 
 ```js
@@ -2746,6 +2781,7 @@ app.set("view engine", "html");
 ```
 
 <a name="express-options"></a>
+
 #### Custom Options
 
 You can set options by Express `app.set`:
@@ -2770,6 +2806,7 @@ mikado.options = {
 ```
 
 <a name="express-render"></a>
+
 #### Render Views
 
 Register a route and render the file `./view/start.html`:
@@ -2782,6 +2819,7 @@ app.get("/", function(req, res){
 ```
 
 <a name="includes"></a>
+
 ## Includes
 
 Partials gets its own instance under the hood. This performance gain also makes a template factory re-usable when the same partials are shared across different views.
@@ -2838,6 +2876,7 @@ The "section" from above could be also included by another one (and so on):
 ```
 
 <a name="loop-partials"></a>
+
 ## Loop Partials
 
 Assume the template example from above is a tweet (title, article, footer).
@@ -2868,6 +2907,7 @@ The **_offset_** attribute could also be negative to reverse the boundary direct
 ```
 
 <a name="inline-loops"></a>
+
 ### Inline Loops
 
 You can also loop through an inline partial. Mikado will extract and referencing this partial to its own instance under the hood.
@@ -2931,6 +2971,7 @@ In this example every foreach-expression is wrong (you will find the right examp
 ```
 
 <a name="conditional" id="conditional"></a>
+
 ## Conditional Template Structures
 
 ```html
@@ -2991,6 +3032,7 @@ Also, try to assign computations outside a loop by using the state to delegate v
 ```
 
 <a name="proxy" id="proxy"></a>
+
 ## Reactive Properties (Proxy)
 
 Mikado provides you a reactive approach to listen for changes to the data and apply them accordingly to the DOM.
@@ -3062,6 +3104,7 @@ On the upper example nothing on the DOM will change when you set the values `tes
 Set `item.value = "bar"` will work properly.
 
 <a name="limitations"></a>
+
 ### Limitations
 
 Actually there are some limitations on template expressions.
@@ -3099,6 +3142,7 @@ var data = {
 Just use plain property notation within the curly brackets.
 
 <a name="strict-proxy"></a>
+
 ### Strict-Proxy Mode
 
 Whenever **all** your template expressions are just using proxy notation it enables a special "strict-proxy" mode under the hood, which further boosts performance from every update to a maximum. This mode has no advantage when every render loop has to apply almost new items.
@@ -3136,6 +3180,7 @@ This won't enable it:
 Also using conditionals, includes, loops and inline Javascript will prevent switching to the "strict-proxy" mode. You can't switch this mode by yourself. It just activates when conditions are met.
 
 <a name="observable"></a>
+
 ### Observable Array (Virtual NodeList)
 
 In addition to react on changes of property values you can additionally also listen to changes made to the Array index of the store.
@@ -3263,6 +3308,7 @@ console.log(store instanceof Mikado.Array); // -> true
 The proxy feature theoretically allows all those checks but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Alternatively you can use an `instanceof` check for identification.
 
 <a name="pools"></a>
+
 ## Template Pools
 
 Using pools greatly enhance the strategy of keyed and non-keyed recycling. Mikado detects automatically if it needs to use keyed or non-keyed pooling and will apply different strategies optimized for each of them.
@@ -3286,6 +3332,7 @@ const view = new Mikado(tpl, { pool: true, recycle: true });
 > In keyed mode you should only use an unbounded pool size, when the total amount of data is very limited (e.g. less than 300 items). To be safe you should always limit the pool when using keyed recycling.
 
 <a name="mikado.flush"></a>
+
 #### Flush Pools
 
 You can delete pool contents at any time:
@@ -3295,6 +3342,7 @@ view.flush();
 ```
 
 <a name="hydration"></a>
+
 ## Hydration
 
 Hydration is a concept where the server is sending some basic HTML structure (or the whole App/Page) and the client consumes those contents into its own rendering system. This will improve several performance aspects of page loading (e.g. the Lighthouse test) but also it enables you to have server-side-rendered content by also providing a full PWA (aka "Single-Page-Application") experience at the same time.
@@ -3531,6 +3579,7 @@ Each template part explained:
 - `selected="data.active === 'yes'"` when dynamic attribute values results to boolean "false" (not string) it will be removed from the element, because some attributes enables just by their existence (consider an option element having selected="false" will end up also as a truthy selection state)
 
 <a name="best-practices"></a>
+
 ## Best Practices
 
 When you are focus on performance you should take those settings as a goal:
@@ -3546,13 +3595,13 @@ When you are focus on performance you should take those settings as a goal:
 - In larger applications, it might be better to destroy views when they are closed by the user to free memory instead of saving too much on the options.
 
 <a name="concept"></a>
-## Concept of Shared Components
 
-There are four kinds of synchronized pools under the hood. Three of them are shared across all template instances to make them re-usable. They also save memory and skip redundant re-calculations.
+## Concept of Shared Components
 
 <br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
 
 <a name="builds" id="builds"></a>
+
 ## Custom Builds
 
 Perform a full standard build (bundle.min.js):
@@ -3584,6 +3633,7 @@ npm run build:custom ENABLE_CACHE=true SUPPORT_POOLS=true LANGUAGE_OUT=ECMASCRIP
 The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a hash based on the used build flags).
 
 <a name="build-flags" id="builds"></a>
+
 ##### Supported Build Flags
 
 <table>
@@ -3618,6 +3668,12 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     </tr>
     <tr></tr>
     <tr>
+        <td>SUPPORT_WEB_COMPONENTS</td>
+        <td>true, false</td>
+        <td>Support for web components (Shadow DOM)</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td>SUPPORT_DOM_HELPERS</td>
         <td>true, false</td>
         <td>DOM Manipulation Helpers</td>
@@ -3645,6 +3701,12 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
         <td>SUPPORT_REACTIVE</td>
         <td>true, false</td>
         <td>Use reactive data binding</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>REACTIVE_ONLY</td>
+        <td>true, false</td>
+        <td>Use a full reactive approach for all views, exclude <code>.render()</code> and dependencies from build (default: false)</td>
     </tr>
     <tr></tr>
     <tr>
@@ -3676,5 +3738,5 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
 
 ---
 
-Copyright 2019-2023 Nextapps GmbH<br>
+Copyright 2019-2024 Nextapps GmbH<br>
 Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache 2.0 License</a><br>

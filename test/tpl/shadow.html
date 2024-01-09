@@ -1,0 +1,16 @@
+<component>
+    <!-- optional styles/scripts/etc. -->
+    <style>table{ width: 100%; opacity: 0.5 }</style>
+    <script>window.footer = "foobar";</script>
+    <!-- components requires the template tag -->
+    <template>
+        <!-- single outer root element: -->
+        <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{index}}" root>
+            <div class="{{data.class}}" style="padding-right: 10px;" tap="attach">
+                <div class="title" click="delegate:root">{{data.title}}</div>
+                <div class="content" click="delegate:foo">{{#data.content}}</div>
+                <div class="footer" data-footer="{{ window.footer }}">{{data.footer}}</div>
+            </div>
+        </section>
+    </template>
+</component>

@@ -9,9 +9,9 @@ declare class Mikado {
 
     mount(target: HTMLElement, hydrate?: boolean): Mikado;
     render(data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
-    render(data?: Object|Array<Object>, state?: Object, callback?: boolean): Promise<void>;
+    render(data?: Object|Array<Object>, state?: Object, callback?: true): Promise<void>;
     render(data?: Object|Array<Object>, callback?: Function): Mikado;
-    render(data?: Object|Array<Object>, callback?: boolean): Promise<void>;
+    render(data?: Object|Array<Object>, callback?: true): Promise<void>;
 
     add(data: Object, state?: Object, position?: number): Mikado;
     add(data: Object, position?: number): Mikado;
@@ -32,7 +32,7 @@ declare class Mikado {
 
     route(name: string, fn: Function, options: RouteOptions): Mikado;
     listen(event: string, options?: EventListenerOptions|boolean): Mikado;
-    unlisten(event: string, options?: EventListenerOptions|boolean): Mikado;
+    unlisten(event: string): Mikado;
     dispatch(name: string, target?: HTMLElement, event?: Event, self?: EventTarget): Mikado;
 
     move(node: HTMLElement|number, index: number): Mikado;
@@ -52,11 +52,16 @@ declare namespace Mikado {
     const eventBubble: boolean;
 
     function once(root: HTMLElement, template: Template|TemplateName, data?: Object|Array<Object>, state?: Object, callback?: Function): Mikado;
+    function once(root: HTMLElement, template: Template|TemplateName, data?: Object|Array<Object>, state?: Object, callback?: true): Promise<void>;
+    function once(root: HTMLElement, template: Template|TemplateName, data?: Object|Array<Object>, callback?: Function): Mikado;
+    function once(root: HTMLElement, template: Template|TemplateName, data?: Object|Array<Object>, callback?: true): Promise<void>;
+    function once(root: HTMLElement, template: Template|TemplateName, callback?: Function): Mikado;
+    function once(root: HTMLElement, template: Template|TemplateName, callback?: true): Promise<void>;
     function compile(node: HTMLTemplateElement|HTMLElement|string): Template;
 
     function route(name: string, fn: Function, options: RouteOptions): Mikado;
     function listen(event: string, options?: EventListenerOptions|boolean): Mikado;
-    function unlisten(event: string, options?: EventListenerOptions|boolean): Mikado;
+    function unlisten(event: string): Mikado;
     function dispatch(route: string, target?: HTMLElement, event?: Event): Mikado;
     function register(template: Template|TemplateName, options: MikadoOptions): Mikado;
     function unregister(template: TemplateName|Template): Mikado;
@@ -116,6 +121,7 @@ declare namespace Mikado {
 type Template = {
     name: string;
     tpl: TemplateDOM;
+    cmp?: TemplateDOM;
     fn: Array<Function>|null;
     key?: string;
     cache?: boolean;
@@ -147,7 +153,18 @@ type MikadoOptions = {
     state?: Object;
     observe?: Mikado.array;
     shadow?: boolean;
-    on?: {[event: string]: Function};
+    on?: MikadoCallbacks;
+}
+
+type MikadoCallbacks = {
+    create?: Function;
+    update?: Function;
+    replace?: Function;
+    recycle?: Function;
+    insert?: Function;
+    remove?: Function;
+    mount?: Function;
+    unmount?: Function;
 }
 
 type RouteOptions = {

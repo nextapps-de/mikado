@@ -1,20 +1,8 @@
 // COMPILER BLOCK -->
+import { ProxyHandler } from "./type.js";
 import { Cache } from "./factory.js";
-import {
-    SUPPORT_REACTIVE,
-    MIKADO_PROXY
-} from "./config.js";
+import { SUPPORT_REACTIVE, MIKADO_PROXY } from "./config.js";
 // <-- COMPILER BLOCK
-
-/**
- * @typedef {{
- *   path: Array<Cache>,
- *   fn: Object<string, Array<string, number>>,
- *   get: Function,
- *   set: Function
- * }}
- */
-let ProxyHandler;
 
 const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 

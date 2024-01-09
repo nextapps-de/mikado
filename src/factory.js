@@ -1,5 +1,5 @@
 // COMPILER BLOCK -->
-import { TemplateDOM, Template, MikadoOptions } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
 import {
     SUPPORT_DOM_HELPERS,
     DEBUG,
@@ -401,7 +401,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
         let mikado;
 
-        // val is equal 1 when a cached structure was re-used by the compiler
+        // val is equal 1 when a cached structure was re-used by the compiler,
+        // it just needs push to the path
 
         if(typeof val === "string"){
 
@@ -477,8 +478,10 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
                 state: self.state,
                 mount: /** @type {Element} */ (node),
                 hydrate: !!vnode,
-                // Includes should be treated as non-async,
-                // because async is already controlled by initial render.
+                // Includes are treated as non-async,
+                // because async is already controlled by initial render
+                // and therefore there are already async
+                // this also makes callback handling more simple
                 //async: false // default
             };
 
@@ -517,23 +520,13 @@ function init_proxy(self, key, payload){
 }
 
 /**
- * @typedef {{
- *   _s: (string|undefined),
- *   _t: (string|undefined),
- *   _c: (string|undefined),
- *   _h: (string|undefined)
- * }}
- */
-export let NodeCache;
-
-/**
  * @constructor
  * @const
  */
 
 export function Cache(cache, node, vpath){
 
-    /** @const @type {NodeCache} */
+    /** @const {NodeCache} */
     this.c = cache;
     /** @const {Element|Node|CSSStyleDeclaration} */
     this.n = node;

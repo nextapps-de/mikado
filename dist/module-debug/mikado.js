@@ -63,10 +63,10 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
         throw new Error("Initialization Error: Template is not defined.");
     }
 
-    if (!template.tpl || !template.name) {
+    if (!template.tpl /*|| !template.name*/) {
 
-        throw new Error("Initialization Error: Template isn't supported.");
-    }
+            throw new Error("Initialization Error: Template isn't supported.");
+        }
 
     /** @type {Array<!Element>} */
     this.dom = [];
@@ -78,8 +78,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
     this.recycle = !!options.recycle;
     /** @type {*} */
     this.state = options.state || {};
-    /** @type {ShadowRoot|boolean} */
-    this.shadow = options.shadow || null;
+    /** @type {boolean} */
+    this.shadow = options.shadow || !!template.cmp;
 
     /** @const {string} */
     this.key = template.key || "";
@@ -127,8 +127,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
     this.timer = 0;
 
 
-    /** @private {Object} */
-    this.on = options.on || {};
+    /** @private {MikadoCallbacks|null} */
+    this.on = options.on || null;
     {
 
         /**
@@ -245,15 +245,61 @@ export function unregister(name) {
 
 Mikado.prototype.mount = function (target, hydrate) {
 
-    if (this.timer) {
+    if (!target) {
 
-        this.cancel();
+        throw new Error("No target was passed to .mount()");
     }
 
 
-    if ("boolean" == typeof this.shadow && this.shadow) {
+    // cancel async render task if scheduled
+    this.timer && this.cancel();
 
-        this.shadow = target = target.attachShadow({ mode: "open" });
+
+    if (this.shadow) {
+
+        const cmp = /** @type {Array<TemplateDOM>} */this.tpl.cmp;
+
+        target = target.shadowRoot || target.attachShadow({ mode: "open" });
+
+        // if(!shadow){
+
+        // target = target.attachShadow({ mode: "open" });
+
+        if (cmp && cmp.length) {
+
+            const tmp = target.lastElementChild;
+
+            if (tmp /*&& tmp.tagName === "ROOT"*/) {
+
+                    target = tmp;
+                } else {
+                cmp.push({ tag: "root" });
+
+                /** @type {TemplateDOM} */
+
+
+                for (let i = 0, node; i < cmp.length; i++) {
+
+                    node = construct(this, /** @type {TemplateDOM} */cmp[i], [], "");
+                    target.append(node);
+
+                    if (i === cmp.length - 1) {
+
+                        target = /** @type {Element} */node;
+                    }
+                }
+            }
+        }
+        //}
+
+        //else{
+
+        // console.log(cmp)
+        //
+        // target = cmp && cmp.length
+        //     ? shadow.lastElementChild /*.querySelector("root")*/
+        //     : shadow;
+        //}
     }
 
     const target_instance = target._mki,
@@ -277,6 +323,14 @@ Mikado.prototype.mount = function (target, hydrate) {
         target_instance.clear();
         target._mkd = this.dom = [];
         this.length = 0;
+
+        if (target.firstChild || target.shadowRoot) {
+
+            target.textContent = "";
+        }
+
+        const callback = this.on && this.on.unmount;
+        callback && callback(target, target_instance);
     } else {
 
         // initial mount
@@ -290,7 +344,7 @@ Mikado.prototype.mount = function (target, hydrate) {
             this.dom = [];
             this.length = 0;
 
-            if (target.firstChild) {
+            if (target.firstChild || target.shadowRoot) {
 
                 target.textContent = "";
             }
@@ -352,6 +406,9 @@ Mikado.prototype.mount = function (target, hydrate) {
         }
     }
 
+    const callback = this.on && this.on.mount;
+    callback && callback(target, this);
+
     return this;
 };
 
@@ -391,19 +448,34 @@ function collection_to_array(collection) {
 }
 
 /**
- * @param {Element} root
+ * @param {Element|ShadowRoot} root
  * @param {Template} template
- * @param {Array<Object>|Object=} data
- * @param {*=} state
- * @param {Function=} callback
+ * @param {Array<Object>|Object|Function|boolean=} data
+ * @param {*|Function|boolean=} state
+ * @param {Function|boolean=} callback
  * @const
  */
 
 export function once(root, template, data, state, callback) {
 
-    const mikado = new Mikado(template);
+    if (!root) {
 
-    if ("function" == typeof state) {
+        throw new Error("Root element is not defined.");
+    }
+
+    if (!template) {
+
+        throw new Error("Template is not defined.");
+    }
+
+
+    let mikado;
+
+    if ("function" == typeof data || !0 === data) {
+
+        callback = data;
+        data = null;
+    } else if ("function" == typeof state || !0 === state) {
 
         callback = state;
         state = null;
@@ -411,24 +483,63 @@ export function once(root, template, data, state, callback) {
 
     if (callback) {
 
-        const fn = callback;
+        return new Promise(function (resolve) {
 
-        callback = function () {
+            requestAnimationFrame(function () {
 
-            mikado.destroy();
-            fn();
-        };
+                once(root, template, data, state);
+                if ("function" == typeof callback) callback();
+                resolve();
+            });
+        });
     }
 
-    if (!root) {
+    const is_shadow = template.cmp,
+          is_component = is_shadow && is_shadow.length;
 
-        throw new Error("Root element is not defined.");
+
+    if (is_shadow && !is_component) {
+
+        // switch to shadow root
+
+        root = root.shadowRoot || root.attachShadow({ mode: "open" });
     }
 
+    if (!data && !is_component && !template.fn) {
 
-    root.append(mikado.create(data, state));
+        // static non-looped templates
+        // uses the low-level template factory constructor
 
-    if (!callback) {
+        const node = construct(
+        /** @type {!Mikado} */{},
+        /** @type {TemplateDOM} */template.tpl, [], "", null, 1);
+
+        root.append(node);
+    } else {
+
+        mikado = new Mikado(template);
+
+        if (is_component) {
+
+            // full declared web components needs to be mounted
+
+            root = mikado.mount(root).root;
+        }
+
+        if (data && Array.isArray(data)) {
+
+            // looped templates
+
+            for (let i = 0; i < data.length; i++) {
+
+                root.append(mikado.create(data[i], state, i));
+            }
+        } else {
+
+            // dynamic non-looped templates + web components
+
+            root.append(mikado.create(data, state));
+        }
 
         mikado.destroy();
     }
@@ -674,8 +785,8 @@ Mikado.prototype.replace = function (node, data, state, index) {
         node.replaceWith(clone);
     }
 
-    const callback = this.on.replace;
-    callback && callback(node);
+    const callback = this.on && this.on.replace;
+    callback && callback(node, this);
 
     //profiler_end("replace");
 
@@ -777,8 +888,8 @@ Mikado.prototype.update = function (node, data, state, index) {
 
     //profiler_end("update");
 
-    const callback = this.on.update;
-    callback && callback(node);
+    const callback = this.on && this.on.update;
+    callback && callback(node, this);
 
     return this;
 };
@@ -850,8 +961,8 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
         if (_update_pool) this.live[key] = node;
     }
 
-    const callback = this.on[factory ? "create" : "recycle"];
-    callback && callback(node);
+    const callback = this.on && this.on[factory ? "create" : "recycle"];
+    callback && callback(node, this);
 
     //profiler_end("create");
 
@@ -939,8 +1050,8 @@ Mikado.prototype.add = function (data, state, index) {
         this.dom[this.length++] = node;
     }
 
-    const callback = this.on.insert;
-    callback && callback(node);
+    const callback = this.on && this.on.insert;
+    callback && callback(node, this);
 
     //profiler_end("add");
 
@@ -1275,7 +1386,7 @@ Mikado.prototype.remove = function (index, count) {
 
     const reverse = this.pool && !this.key,
           checkout = this.key || this.pool,
-          callback = this.on.remove;
+          callback = this.on && this.on.remove;
 
 
     // TODO
@@ -1302,7 +1413,7 @@ Mikado.prototype.remove = function (index, count) {
         node = nodes[reverse ? count - x - 1 : x];
         length && node.remove(); //this.root.removeChild(node);
         checkout && this.checkout(node);
-        callback && callback(node);
+        callback && callback(node, this);
     }
 
     // if(resize){

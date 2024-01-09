@@ -24,6 +24,8 @@ export const SUPPORT_REACTIVE = REACTIVE_ONLY || true;
 export const SUPPORT_COMPILE = true;
 /** @define {boolean} */
 export const SUPPORT_EVENTS = true;
+/** @define {boolean} */
+export const SUPPORT_WEB_COMPONENTS = true;
 
 /** @define {string} */
 export const MIKADO_NODE_CACHE = "_mkc";

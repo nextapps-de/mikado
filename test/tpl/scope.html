@@ -1,0 +1,14 @@
+<div>
+    {{@ let value = 'test'; }}
+    <div>{{ value }}</div>
+    {{@ value += '|test' }}
+    <div>{{
+        value
+    }}</div>
+    {{@ value += (function(d){
+
+        return '|' + d.test;
+
+    }(data)); }}
+    <div>{{ value }}</div>
+</div>

@@ -1,15 +1,16 @@
 
 import Mikado from "./mikado.js";
 
-//if(SUPPORT_EVENTS){
-
 /** @type {Object<string, boolean|number>} */
 const events = {},
+      event_options = {},
       routes = /** @type {Object<string, Function>} */Object.create(null),
       options = /** @type {Object<string, Boolean|EventOptions>} */Object.create(null),
       doc = document.documentElement || document.body.parentNode,
       has_touch = "ontouchstart" in window,
       has_pointer = !has_touch && window.PointerEvent && navigator.maxTouchPoints;
+/** @type {Object<string, boolean|EventListenerOptions>} */
+
 /** @type {Object<string, Function>} */
 
 /** @type {Object<string, Boolean|EventOptions>} */
@@ -193,6 +194,7 @@ export function listen(event, options) {
 
         register_event(1, event, handler, options);
         events[event] = 1;
+        event_options[event] = options || null;
     }
 
     return this;
@@ -200,15 +202,15 @@ export function listen(event, options) {
 
 /**
  * @param {string} event
- * @param {EventListenerOptions|boolean=} options
  * @returns {Mikado}
  */
-export function unlisten(event, options) {
+export function unlisten(event) {
 
     if (events[event]) {
 
-        register_event(0, event, handler, options);
+        register_event(0, event, handler, event_options[event]);
         events[event] = 0;
+        event_options[event] = null;
     }
 
     return this;
@@ -306,4 +308,3 @@ function register_event(add_or_remove, type, handler, options) {
     // Capturing by default, since we need the event dispatched from window
     options || !1 === options ? options : !0);
 }
-//}
