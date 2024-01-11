@@ -1631,23 +1631,45 @@ const view = new Mikado(tpl, { /* options */ });
 view.render(data);
 ```
 
-### Using Inline Cove
+### Using Inline Code
 
-The runtime compiler does not support all places of inserting code.
+The runtime compiler does not support all places of inserting inline code expressions. In some situations it might produce issues like here:
 
 ```html
 <table id="user-list">
-  
+  <tbody foreach="data.entries">
+  {{@
+    /* this will be replaced by the browser! */ 
+    const value = "test";
+  }}
   <tr>
-    <td>User:</td>
-    <td>{{ data.user }}</td>
+    <td>Value: {{ value }}</td>
   </tr>
-  <tr>
-    <td>Tweets:</td>
-    <td>{{ data.tweets.length }}</td>
-  </tr>
+  </tbody>
 </table>
 ```
+
+The runtime compiler didn't parse the template by string, instead the compiler creates a dom structure when passing a template as string.
+On the example above the `{{@ ... }}` expression is treated as a text node by the browser.
+Since the position isn't allowed to place text nodes (after `<table>`, `<tbody>`, `<tr>`) the browser moves this text node up to the outer scope of the table. But the inline code is now executed within the first outer template function, instead the inline loop template function needs the value and is running in its own scope.
+
+In this situation you can store values on `state` to pass through inline looped partials.
+Or you can use the `<script>` tag in combination with the js-expression. The latter will keep the hierarchy, because those tags won't move outside by the browser:
+
+```html
+<table id="user-list">
+  <tbody foreach="data.entries">
+    <script>{{@ const value = "test"; }}</script>
+    <tr>
+      <td>Value: {{ value }}</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+> Don't forget to use the expression notation, otherwise it will be inserted as a normal code element.
+
+> When the `<script>` just including js-inline code expression it won't be added to the template as a script element.
 
 <a name="event"></a>
 
