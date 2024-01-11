@@ -1,9 +1,9 @@
 /** @define {string} */
 export const RELEASE = "custom";
 /** @define {boolean} */
-export const DEBUG = true;
+export const DEBUG = false;
 /** @define {boolean} */
-export const PROFILER = true;
+export const PROFILER = false;
 /** @define {boolean} */
 export const SUPPORT_CACHE = true;
 /** @define {boolean} */
