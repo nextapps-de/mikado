@@ -3,6 +3,8 @@ export const RELEASE = "custom";
 /** @define {boolean} */
 export const DEBUG = true;
 /** @define {boolean} */
+export const PROFILER = true;
+/** @define {boolean} */
 export const SUPPORT_CACHE = true;
 /** @define {boolean} */
 export const SUPPORT_CACHE_HELPERS = true;

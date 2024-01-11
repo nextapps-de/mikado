@@ -1,0 +1,38 @@
+<main id="{{ data.view }}">
+    <table>
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Title</th>
+                <th>Media</th>
+                <th>Category</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th include="pager"></th>
+            </tr>
+        </thead>
+        <tbody foreach="data.entries">
+            {{@ const datestr = new Date(data.date).toLocaleString(); }}
+            <tr key="data.id" data-id="{{ data.id }}" root>
+                {{@ const datestr2 = datestr; }}
+                <td>{{ index + 1 }}</td>
+                <td>{{= data.title }}</td>
+                <td>{{# data.media }}</td>
+                <td>{{? data.category }}</td>
+                <td>{{! data.comment }}</td>
+                <td>{{ datestr2 }}</td>
+                <td style="opacity: {{ state.selected === data.id ? '1': '0.5' }}">
+                    <select change="select-active:root">
+                        <option value="on" selected="{{ data.mode === 'on' }}">Enabled</option>
+                        <option value="off" selected="{{ data.mode === 'off' }}">Disabled</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot if="!data.entries.length">
+            <tr>
+                <td colspan="7">No entries found.</td>
+            </tr>
+        </tfoot>
+    </table>
+</main>

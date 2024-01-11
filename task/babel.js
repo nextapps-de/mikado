@@ -6,25 +6,24 @@ const minify = process.argv[2] && process.argv[2].toLowerCase().includes("releas
 console.log("Start build .....");
 console.log('Bundle: ' + ('module' /* 'custom' */) + (debug ?  ":debug" : (minify ?  ":min" : "")));
 
-//fs.existsSync("log") || fs.mkdirSync("log");
-fs.existsSync("tmp") || fs.mkdirSync("tmp");
+fs.rmSync("tmp/", { recursive: true });
+fs.mkdirSync("tmp");
 fs.existsSync("dist") || fs.mkdirSync("dist");
 
 const files = [
 
+    //"config.js",
     "mikado.js",
     "bundle.js",
-    //"config.js",
     "event.js",
     "helper.js",
-    //"type.js",
+    "type.js",
     "cache.js",
     "factory.js",
     "sanitize.js",
     "proxy.js",
     "array.js",
-    "compile.js",
-    //"polyfill.js"
+    "compile.js"
 ];
 
 files.forEach(function(file){

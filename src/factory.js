@@ -1,8 +1,8 @@
 // COMPILER BLOCK -->
-import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
 import {
     SUPPORT_DOM_HELPERS,
     DEBUG,
+    PROFILER,
     SUPPORT_CACHE,
     SUPPORT_KEYED,
     SUPPORT_POOLS,
@@ -19,8 +19,10 @@ import {
     MIKADO_NODE_CACHE
 } from "./config.js";
 // <-- COMPILER BLOCK
+import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
 import Mikado, { includes } from "./mikado.js";
 import { listen } from "./event.js";
+import { tick } from "./profiler.js";
 
 /**
  * @param {Element} root
@@ -31,6 +33,7 @@ import { listen } from "./event.js";
 
 export function create_path(root, path, _use_cache){
 
+    PROFILER && tick("factory.path");
     //profiler_start("create_path");
 
     const length = path.length;
@@ -66,6 +69,7 @@ export function create_path(root, path, _use_cache){
             node_parent[MIKADO_NODE_CACHE] = cache = {};
         }
 
+        PROFILER && tick("cache.create");
         new_path[x] = new Cache(cache, node, "");
     }
 
@@ -87,6 +91,7 @@ function resolve(root, path, cache){
 
     let node;
 
+    PROFILER && tick("factory.resolve");
     //profiler_start("resolve");
 
     for(let i = 0, length = path.length, tmp = ""; i < length; i++){
@@ -142,6 +147,8 @@ function resolve(root, path, cache){
 
 export function construct(self, tpl, path, vpath, vnode, _recursive){
 
+    PROFILER && tick("factory.construct");
+
     if(SUPPORT_REACTIVE){
 
         if(!_recursive){
@@ -163,6 +170,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
     if((val = tpl.class)){
 
         if(typeof val === "object"){
+
+            PROFILER && tick("cache.create");
 
             /*cache ||*/ path.push(new Cache(cache = {"_c": ""}, node, vpath));
 
@@ -192,6 +201,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
             if(typeof item === "object"){
 
+                PROFILER && tick("cache.create");
+
                 cache || path.push(new Cache(cache = {}, node, vpath));
                 cache["_a" + key] = false;
 
@@ -214,25 +225,24 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
         }
     }
 
-    if((val = tpl.event)){
+    if(SUPPORT_EVENTS && (val = tpl.event)){
 
         for(const key in val){
 
             if(!vnode){
 
                 node.setAttribute(key, val[key]);
-
-                if(SUPPORT_EVENTS){
-
-                    listen(key);
-                }
             }
+
+            listen(key);
         }
     }
 
     if((val = tpl.style)){
 
         if(typeof val === "object"){
+
+            PROFILER && tick("cache.create");
 
             path.push(new Cache(cache || (cache = {}), node.style, vpath + "@"));
             cache["_s"] = "";
@@ -283,6 +293,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
             (cache || (cache = {}))["_t"] = val;
 
+            PROFILER && tick("cache.create");
             path.push(new Cache(cache, /** @type {Element|Node} */ (child), vpath));
 
             if(SUPPORT_REACTIVE){
@@ -375,6 +386,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
         if(typeof val === "object"){
 
+            PROFILER && tick("cache.create");
+
             cache || path.push(new Cache(cache = {}, node, vpath));
             cache["_h"] = "";
 
@@ -397,8 +410,10 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
     }
     else if((val = tpl.inc /*|| tpl.for || tpl.if*/)){
 
-        cache || path.push(new Cache(null, node, vpath));
+        PROFILER && tick("cache.create");
+        PROFILER && tick("template.include");
 
+        cache || path.push(new Cache(null, node, vpath));
         let mikado;
 
         // val is equal 1 when a cached structure was re-used by the compiler,
@@ -515,6 +530,8 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
 function init_proxy(self, key, payload){
 
+    PROFILER && tick("proxy.init");
+
     self.proxy || (self.proxy = {});
     (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }
@@ -546,8 +563,12 @@ Cache.prototype._a = function(key, value){
 
         if(this.c["_a" + key] === value){
 
+            PROFILER && tick("cache.match");
             return;
         }
+
+        PROFILER && tick("cache.miss");
+        PROFILER && tick("cache.attr");
 
         this.c["_a" + key] = value;
     }
@@ -568,8 +589,12 @@ Cache.prototype._t = function(text){
 
         if(this.c["_t"] === text){
 
+            PROFILER && tick("cache.match");
             return;
         }
+
+        PROFILER && tick("cache.miss");
+        PROFILER && tick("cache.text");
 
         this.c["_t"] = text;
     }
@@ -588,8 +613,12 @@ Cache.prototype._c = function(classname){
 
         if(this.c["_c"] === classname){
 
+            PROFILER && tick("cache.match");
             return;
         }
+
+        PROFILER && tick("cache.miss");
+        PROFILER && tick("cache.class");
 
         this.c["_c"] = classname;
     }
@@ -608,8 +637,12 @@ Cache.prototype._s = function(css){
 
         if(this.c["_s"] === css){
 
+            PROFILER && tick("cache.match");
             return;
         }
+
+        PROFILER && tick("cache.miss");
+        PROFILER && tick("cache.style");
 
         this.c["_s"] = css;
     }
@@ -628,8 +661,12 @@ Cache.prototype._h = function(html){
 
         if(this.c["_h"] === html){
 
+            PROFILER && tick("cache.match");
             return;
         }
+
+        PROFILER && tick("cache.miss");
+        PROFILER && tick("cache.html");
 
         this.c["_h"] = html;
     }

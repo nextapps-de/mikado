@@ -3,7 +3,7 @@
   "preferGlobal": false,
   "scripts": {
     "compile": "cd ../ && npx mikado-compile test/tpl/ --force --module --pretty --compact && cd test/",
-    "build": "cd ../ && npm run build:bundle:debug && cd test/",
+    "build": "cd ../ && npm run build:bundle:debug && npm run build:bundle:profiler && cd test/",
     "test": "npx intern",
     "test:serve": "npx intern serveOnly",
     "coverage": "echo http://localhost:8080/jscoverage.html?test/index.html && java -jar JSCover-all.jar -ws --document-root=../ --report-dir=report --only-instrument-reg=\"/dist/.*\"",

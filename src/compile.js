@@ -1,7 +1,7 @@
 // COMPILER BLOCK -->
 import { DEBUG, SUPPORT_WEB_COMPONENTS, SUPPORT_EVENTS, SUPPORT_REACTIVE } from "./config.js";
-import { Template, TemplateDOM } from "./type.js";
 // <-- COMPILER BLOCK
+import { Template, TemplateDOM } from "./type.js";
 
 const event_types = SUPPORT_EVENTS && {
 
@@ -128,7 +128,9 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
         }
     );
 
-    const tpl = _recursive ? template : template.tpl;
+    const tpl = _recursive
+        ? template
+        : template.tpl;
 
     if(!_recursive){
 
@@ -157,44 +159,49 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
         node = /** @type {HTMLTemplateElement} */ (node);
 
-        if(!template.name){
-
-            template.name = node.getAttribute("name") || node.id || ("tpl-" + counter++);
-        }
-
         if(node.content){
 
-            node = node.content.firstElementChild;
-        }
-        else if(node.tagName === "TEMPLATE"){
+            if(!template.name){
 
-            node = node.firstElementChild;
+                template.name = node.id || node.getAttribute("name");
+            }
+
+            node = node.content.firstElementChild;
         }
     }
 
     const tagName = node.tagName;
 
-    if(tagName){
+    if(!tagName || tagName === "SCRIPT"){
 
-        tpl["tag"] = tagName;
-    }
-    else{
+        // a text node or inline code has no tag
 
         let value;
 
-        if(node && (value = node.nodeValue)){
+        if((value = (tagName ? node.firstChild : node).nodeValue)){
 
             if(value && value.trim()){
 
-                const pos = value.indexOf("{{@");
+                if(value.includes("{{@")){
 
-                if(pos !== -1){
-
-                    const pos_end = value.indexOf("}}", pos);
-                    const js = value.substring(pos + 3, pos_end).trim();
+                    let js = value.replace(/{{@([\s\S]+)}}/g, "$1").trim();
+                    value = /{{[\s\S]+}}/.test(js) ? js.replace(/{{([\s\S]+)}}/g, "{{$1}}") : "";
+                    js && (js = js.replace(/{{([\s\S]+)}}/g, ""));
                     js && _fn.push(js);
 
-                    value = value.substring(0, pos) + value.substring(pos_end + 2);
+                    // using the script tag allows the runtime compiler
+                    // to place code to a specific place
+
+                    if(tagName === "SCRIPT"){
+
+                        if(value.trim()){
+
+                            tpl.text = value;
+                            tpl.tag = tagName;
+                        }
+
+                        return tpl;
+                    }
                 }
 
                 if(value && value.trim()){
@@ -213,23 +220,34 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
             }
         }
 
-        return /*tpl.js ||*/ (value && value.trim()) ? tpl : null;
+        if(!tagName){
+
+            return /*tpl.js ||*/ (value && value.trim()) ? tpl : null;
+        }
+    }
+
+    if(tagName){
+
+        tpl.tag = tagName;
     }
 
     let attributes = node.attributes;
 
-    if(attributes.length){
+    if(attributes && attributes.length){
 
         const tmp = {};
 
-        // attribute normalization
+        // collect and normalize attributes
 
         for(let i = 0; i < attributes.length; i++){
 
             let attr_name = attributes[i].nodeName;
             let attr_value = node.getAttribute(attr_name);
 
-            if(attr_name === "foreach") attr_name = "for";
+            // the foreach needs to be handled in the switch below,
+            // otherwise it could collide with native "for" attribute
+
+            // if(attr_name === "foreach") attr_name = "for";
             if(attr_name === "include") attr_name = "inc";
 
             tmp[attr_name] = attr_value;
@@ -248,24 +266,6 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
                 case "class":
                 case "style":
 
-                    handler = attr_name;
-                    break;
-
-                case "offset":
-
-                    attr_name = "range";
-                    tpl.range = attr_value;
-                    // fallthrough
-
-                case "limit":
-
-                    attr_name = "range";
-                    tpl.range = (tpl.range || 0) + "," + attr_value;
-                    // fallthrough
-
-                case "range":
-
-                    tpl.range = (tpl.range || attr_value).split(",").map(item => parseInt(item, 10) || 0);
                     handler = attr_name;
                     break;
 
@@ -292,7 +292,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 case "js":
 
-                    // already pushed to fn stack
+                    // is already pushed to fn stack
                     break;
 
                 case "key":
@@ -312,6 +312,17 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
                     }
                     else{
 
+                        // derive template name from outer element when it is not a template
+                        // skip, when it is an expression
+
+                        if(!_recursive && (attr_name === "id" || attr_name === "name") && !template.name){
+
+                            if(!/{{[\s\S]+}}/.test(attr_value)){
+
+                                template.name = attr_value;
+                            }
+                        }
+
                         attr = tpl.attr || (tpl.attr = {});
                     }
 
@@ -325,9 +336,11 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
         }
     }
 
+    // from here all attributes was processed by handle_value()
+
     // process <template/> contents
     const children = (node.content || node).childNodes;
-    const length = children.length;
+    let length = children.length;
 
     if(_index.included){
 
@@ -336,7 +349,11 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
         // The compiler unshift includes, because the client then can take them by faster arr.pop()
         _fn = /** @type {Object} */ ([]);
-        _inc.unshift(_fn);
+
+        if(tpl.for || tpl.if){
+
+            _inc.unshift(_fn);
+        }
 
         // when there is no child it must be a text or a html declaration on root level
         tpl.child || (tpl.child =
@@ -362,13 +379,17 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
             _fn.inc = tpl.inc;
         }
 
+        // for, range and if are fully contained inside render function
+
+        delete tpl.for;
+        delete tpl.if;
+
         // it's different from native compiler, all children will be filled non-recursively
         // delete of tpl.child will run at the bottom of the last loop
 
         //delete tpl.child;
         delete tpl.text;
         delete tpl.html;
-        delete tpl.for;
     }
 
     if(length){
@@ -398,20 +419,29 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
                     if(tmp.html) tpl.html = tmp.html;
                     if(tmp.text) tpl.text = tmp.text;
                 }
-                else{
+                else if(tmp.text || tmp.tag){
 
                     (tpl.child || (tpl.child = [])).push(tmp);
                 }
             }
         }
 
-        if(tpl.child && tpl.child.length === 1){
+        if(tpl.child){
 
-            tpl.child = tpl.child[0];
+            if(tpl.child.length === 1){
+
+                tpl.child = tpl.child[0];
+            }
         }
     }
 
     if(!_recursive){
+
+        if(!template.name){
+
+            // use a default name
+            template.name = "tpl-" + counter++;
+        }
 
         if(SUPPORT_WEB_COMPONENTS){
 
@@ -458,14 +488,11 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
                     _inc[i].root.inc = _inc[i].inc[0];
                     delete _inc[i].root.child;
                 }
-            }
-
-            for(let i = 0; i < _inc.length; i++){
 
                 if(_inc[i].length){
 
                     _inc[i].unshift("let _o,_v");
-                    _inc[i] = Function("data", "state", "index", "_p", '"use strict";' + (_inc[i].join(";") + ";")/*.replaceAll(",_v)};", ",_v)}").replaceAll("=_v};", "=_v}")*/ );
+                    _inc[i] = Function("data", "state", "index", "_p", '"use strict";' + _inc[i].join(";"));
                 }
                 else{
 
@@ -484,7 +511,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
  * @param {TemplateDOM} root
  * @param {string} key
  * @param {string} value
- * @param {boolean} attr
+ * @param {boolean} attr Indicates weather the key is a native attribute key
  * @param {Object<string, string>} attributes
  * @param {Object=} index
  * @param {Array<Array<String>|Function>=} inc
@@ -610,6 +637,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
 
     // handle includes
     // special attributes are not a part of element attributes
+    // the key is "for" but related value is on attributes.foreach
 
     if((key === "for" || key === "if" || key === "inc") && !attr && !index.included){
 
@@ -621,7 +649,11 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
             fn.push('_o=_p[' + index.current + ']');
         }
 
-        const data_str = attributes.for ? attributes.for.trim() + (attributes.range ? '.slice(' + (attributes.range[0] || 0) + (attributes.range[1] ? ',' + ((attributes.range[0] || 0) + attributes.range[1]) : '') + ')' : '') : "data";
+        // IMPORTANT
+        // the handle_value() function has not all attributes on root
+        // use attributes instead, which has attr.foreach instead of root.for
+
+        const data_str = attributes.foreach ? attributes.foreach.trim() : "data";
         let current_inc = index.inc;
 
         // TODO: it needs the "root.child" already to be filled at this point
@@ -652,7 +684,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
             fn.push('this.inc[' + current_inc + '].mount(' + "_o.n" + ')[' + attributes.if.trim() + '?"render":"clear"](' + data_str + ',state)');
             index.included = true;
         }
-        else if(attributes.for){
+        else if(attributes.foreach){
 
             fn.push('this.inc[' + current_inc + '].mount(' + "_o.n" + ').render(' + data_str + ',state)');
             index.included = true;
@@ -662,10 +694,5 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
             fn.push('this.inc[' + current_inc + '].mount(' + "_o.n" + ').render(data,state)');
             index.included = true;
         }
-
-        // for, range and if are fully contained inside render function
-        delete root.for;
-        delete root.range;
-        delete root.if;
     }
 }

@@ -1,6 +1,6 @@
 const { expect, assert } = intern.getPlugin("chai");
 
-export function checkDOM(root, data, skip_index){
+export function checkDOM(root, data, data_index){
 
     /*
     <section data-id="{{data.id}}" data-date="{{data.date}}" data-index="{{index}}" root>
@@ -18,7 +18,7 @@ export function checkDOM(root, data, skip_index){
         expect(node.tagName.toLowerCase()).to.equal("section");
         expect(node.getAttribute("data-id")).to.equal(data[i].id);
         expect(node.getAttribute("data-date")).to.equal(data[i].date);
-        skip_index || expect(node.getAttribute("data-index")).to.equal(String(i));
+        data_index === null || expect(node.getAttribute("data-index")).to.equal(String(data_index ? data[i].index : i));
         expect(node.getAttribute("root")).to.equal("");
 
         node = node.firstElementChild;
@@ -60,4 +60,18 @@ export function copy(store){
     }
 
     return store;
+}
+
+export function escape(string){
+
+    const symbols = /[&<>"']/g;
+    const escape = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+
+    return string.replace(symbols, match => escape[match]);
 }

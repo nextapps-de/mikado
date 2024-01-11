@@ -4,8 +4,8 @@
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <img src="https://img.shields.io/badge/build-passing-brightgreen">
-<img src="https://img.shields.io/badge/coverage-86%25-yellow">
-<img src="https://img.shields.io/badge/typed-90%25-brightgreen">
+<img src="https://img.shields.io/badge/coverage-87%25-yellow">
+<img src="https://img.shields.io/badge/typed-91%25-brightgreen">
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
@@ -1629,6 +1629,24 @@ const tpl = Mikado.compile(tpl_str);
 const view = new Mikado(tpl, { /* options */ });
 
 view.render(data);
+```
+
+### Using Inline Cove
+
+The runtime compiler does not support all places of inserting code.
+
+```html
+<table id="user-list">
+  
+  <tr>
+    <td>User:</td>
+    <td>{{ data.user }}</td>
+  </tr>
+  <tr>
+    <td>Tweets:</td>
+    <td>{{ data.tweets.length }}</td>
+  </tr>
+</table>
 ```
 
 <a name="event"></a>
@@ -3508,7 +3526,7 @@ Use this almost complete template example to check if you know everything about 
         </tr>
       </thead>
       <tbody foreach="data.entries">
-        {{@ const datestr = data.date && new Date(data.date).toISOString(); }}
+        <script>{{@ const datestr = new Date(data.date).toLocaleString() }}</script>
         <tr key="data.id" data-id="{{ data.id }}" root>
           <td>{{ index + 1 }}</td>
           <td>{{= data.title }}</td>
@@ -3516,11 +3534,11 @@ Use this almost complete template example to check if you know everything about 
           <td>{{? data.category }}</td>
           <td>{{! data.comment }}</td>
           <td>{{ datestr }}</td>
-          <td style="opacity: {{ state.selected === data.id '1' ? '0.5' }}">
-              <select change="select-active:root">
-                <option value="on" selected="data.mode === 'on'">Enabled</option>
-                <option value="off" selected="data.mode === 'off'">Disabled</option>
-              </select>
+          <td style="opacity: {{ state.selected === data.id ? '1' : '0.5' }}">
+            <select change="select-active:root">
+              <option value="on" selected="{{ data.mode === 'on' }}">Enabled</option>
+              <option value="off" selected="{{ data.mode === 'off' }}">Disabled</option>
+            </select>
           </td>
         </tr>
       </tbody>
@@ -3554,23 +3572,23 @@ view.render({
     media: "<img src='img1.jpg'>",
     category: null,
     comment: "Some <script>untrusted</script> content",
+    mode: "off"
+  },{
+    id: 2,
+    date: "2023-12-02T15:00:00",
+    title: "A simple title 2",
+    media: "<video src='mov2.mp4'>",
+    category: null,
+    comment: "Some <script>untrusted</script> content",
     mode: "on"
   },{
-      id: 2,
-      date: "2023-12-02T15:00:00",
-      title: "A simple title 2",
-      media: "<video src='mov2.mp4'>",
-      category: null,
-      comment: "Some <script>untrusted</script> content",
-      mode: "off"
-  },{
-      id: 3,
-      date: "2023-12-03T16:00:00",
-      title: "A simple title 3",
-      media: "<img src='img3.jpg'>",
-      category: null,
-      comment: "Some <script>untrusted</script> content",
-      mode: "on"
+    id: 3,
+    date: "2023-12-03T16:00:00",
+    title: "A simple title 3",
+    media: "<img src='img3.jpg'>",
+    category: null,
+    comment: "Some <script>untrusted</script> content",
+    mode: "off"
   }]
 });
 ```

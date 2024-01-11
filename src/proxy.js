@@ -1,8 +1,10 @@
 // COMPILER BLOCK -->
+import { SUPPORT_REACTIVE, MIKADO_PROXY, PROFILER } from "./config.js";
+// <-- COMPILER BLOCK
+
 import { ProxyHandler } from "./type.js";
 import { Cache } from "./factory.js";
-import { SUPPORT_REACTIVE, MIKADO_PROXY } from "./config.js";
-// <-- COMPILER BLOCK
+import { tick } from "./profiler.js";
 
 const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
@@ -49,6 +51,8 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
     Proxy.prototype.define = function(obj, key, val){
 
+        PROFILER && tick("proxy.define");
+
         const self = this;
 
         Object.defineProperty(obj, key, {
@@ -85,6 +89,8 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
 export default function proxy_create(obj, path, fn){
 
+    PROFILER && tick("proxy.create");
+
     const self = obj[MIKADO_PROXY];
 
     if(self){
@@ -93,12 +99,16 @@ export default function proxy_create(obj, path, fn){
         return /** @type {Proxy} */ (obj);
     }
 
+    PROFILER && tick("proxy.new");
+
     /** @type {!ProxyHandler} */
     const proxy_handler = { path, fn, get, set };
     return new proxy(obj, proxy_handler);
 }
 
 function get(target, prop){
+
+    PROFILER && tick("proxy.read");
 
     // proxy check (hidden)
     return prop === MIKADO_PROXY ? this : target[prop];
@@ -112,6 +122,8 @@ function get(target, prop){
  */
 
 function set(target, prop, value){
+
+    PROFILER && tick("proxy.write");
 
     // we can't use the data as cache, although it would be nice.
     // the dom cache needs to be exported stateful.
@@ -147,7 +159,13 @@ function proxy_loop(handler, value, prop){
 
             if(!cache.c || cache.c[fn + (tmp[2] || "")] !== value){
 
+                PROFILER && tick("cache.miss");
+
                 cache[fn](tmp[2] || value, value);
+            }
+            else{
+
+                PROFILER && tick("cache.match");
             }
         }
     }

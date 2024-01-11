@@ -1,6 +1,8 @@
 
+import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
 import Mikado, { includes } from "./mikado.js";
 import { listen } from "./event.js";
+import { tick } from "./profiler.js";
 
 /**
  * @param {Element} root
@@ -10,7 +12,6 @@ import { listen } from "./event.js";
  */
 
 export function create_path(root, path, _use_cache) {
-
     //profiler_start("create_path");
 
     const length = path.length,
@@ -179,9 +180,9 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
             if (!vnode) {
 
                 node.setAttribute(key, val[key]);
-
-                listen(key);
             }
+
+            listen(key);
         }
     }
 
@@ -321,7 +322,6 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
     } else if (val = tpl.inc /*|| tpl.for || tpl.if*/) {
 
             cache || path.push(new Cache(null, node, vpath));
-
             let mikado;
 
             // val is equal 1 when a cached structure was re-used by the compiler,
@@ -453,7 +453,6 @@ Cache.prototype._a = function (key, value) {
     if (this.c) {
 
         if (this.c["_a" + key] === value) {
-
             return;
         }
 
@@ -473,7 +472,6 @@ Cache.prototype._t = function (text) {
     if (this.c) {
 
         if (this.c._t === text) {
-
             return;
         }
 
@@ -493,7 +491,6 @@ Cache.prototype._c = function (classname) {
     if (this.c) {
 
         if (this.c._c === classname) {
-
             return;
         }
 
@@ -513,7 +510,6 @@ Cache.prototype._s = function (css) {
     if (this.c) {
 
         if (this.c._s === css) {
-
             return;
         }
 
@@ -533,7 +529,6 @@ Cache.prototype._h = function (html) {
     if (this.c) {
 
         if (this.c._h === html) {
-
             return;
         }
 

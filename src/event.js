@@ -1,8 +1,9 @@
 // COMPILER BLOCK -->
-import { EventOptions } from "./type.js";
-import { DEBUG, MIKADO_EVENT_CACHE, SUPPORT_EVENTS } from "./config.js";
+import { DEBUG, MIKADO_EVENT_CACHE, PROFILER, SUPPORT_EVENTS } from "./config.js";
 // <-- COMPILER BLOCK
+import { EventOptions } from "./type.js";
 import Mikado from "./mikado.js";
+import { tick } from "./profiler.js";
 
 /** @type {Object<string, boolean|number>} */
 const events = {};
@@ -26,6 +27,8 @@ let tap_fallback;
  */
 
 function handler(event, type){
+
+    PROFILER && tick("event.trigger");
 
     type || (type = event.type);
 
@@ -57,6 +60,8 @@ function handler(event, type){
 
         while(target && (target !== doc)){
 
+            PROFILER && tick("event.bubble");
+
             let route;
 
             if((type === "click") && tap_fallback){
@@ -87,6 +92,8 @@ function handler(event, type){
                     // continue bubble up the dom tree to find the custom defined root element
 
                     while((root = root.parentElement) !== doc){
+
+                        PROFILER && tick("event.bubble");
 
                         if(root.hasAttribute(attr)){
 
@@ -138,6 +145,10 @@ function handler(event, type){
             cache || (event_target[MIKADO_EVENT_CACHE + type] = null);
         }
     }
+    else{
+
+        PROFILER && tick("event.cache");
+    }
 
     if(cache) for(let i = 0, tmp; i < cache.length; i++){
 
@@ -166,6 +177,8 @@ function handler(event, type){
                 }
             }
 
+            PROFILER && tick("route.call");
+
             //fn(target, event, event_target);
             fn(target, event);
         }
@@ -183,6 +196,8 @@ function handler(event, type){
  */
 
 export function route(route, fn, option){
+
+    PROFILER && tick("route.set");
 
     if(DEBUG){
 
@@ -215,6 +230,8 @@ export function route(route, fn, option){
 
 export function dispatch(route, target, event){
 
+    PROFILER && tick("route.dispatch");
+
     if(DEBUG){
 
         if(!route){
@@ -241,6 +258,8 @@ export function listen(event, options){
 
     if(!events[event]){
 
+        PROFILER && tick("event.listen");
+
         register_event(1, event, handler, options);
         events[event] = 1;
         event_options[event] = options || null;
@@ -257,6 +276,8 @@ export function listen(event, options){
 export function unlisten(event){
 
     if(events[event]){
+
+        PROFILER && tick("event.unlisten");
 
         register_event(0, event, handler, event_options[event]);
         events[event] = 0;
@@ -341,6 +362,8 @@ if(has_touch || has_pointer){
  */
 
 function register_event(add_or_remove, type, handler, options){
+
+    PROFILER && tick(add_or_remove ? "event.register" : "event.unregister");
 
     if(type === "tap"){
 

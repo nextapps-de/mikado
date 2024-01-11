@@ -41,11 +41,11 @@ describe("Modify Views", function(){
         // add does not update index of other components
         view.add(data[2], 1)
         expect(view.length).to.equal(3);
-        checkDOM(root_1.firstElementChild, [data[0], data[2], data[1]], /* skip index */ true);
+        checkDOM(root_1.firstElementChild, [data[0], data[2], data[1]], /* data index */ null);
 
         view.add(data[3], -1);
         expect(view.length).to.equal(4);
-        checkDOM(root_1.firstElementChild, [data[0], data[2], data[3], data[1]], /* skip index */ true);
+        checkDOM(root_1.firstElementChild, [data[0], data[2], data[3], data[1]], /* data index */ null);
 
         view.clear().destroy();
     });
@@ -63,11 +63,11 @@ describe("Modify Views", function(){
         // append does not update index of other components
         view.append([data[3], data[4]], 1);
         expect(view.length).to.equal(5);
-        checkDOM(root_1.firstElementChild, [data[0], data[3], data[4], data[1], data[2]], /* skip index */ true);
+        checkDOM(root_1.firstElementChild, [data[0], data[3], data[4], data[1], data[2]], /* data index */ null);
 
         view.append([data[5], data[6]], -1);
         expect(view.length).to.equal(7);
-        checkDOM(root_1.firstElementChild, [data[0], data[3], data[4], data[1], data[5], data[6], data[2]], /* skip index */ true);
+        checkDOM(root_1.firstElementChild, [data[0], data[3], data[4], data[1], data[5], data[6], data[2]], /* data index */ null);
 
         view.clear().destroy();
     });
@@ -81,27 +81,27 @@ describe("Modify Views", function(){
         view.remove(root_1.firstElementChild);
         expect(view.length).to.equal(9);
         expect(root_1.children.length).to.equal(9);
-        checkDOM(root_1.firstElementChild, data.slice(1, 10), /* skip index */ true);
+        checkDOM(root_1.firstElementChild, data.slice(1, 10), /* data index */ null);
 
         view.remove(root_1.firstElementChild, 2);
         expect(view.length).to.equal(7);
         expect(root_1.children.length).to.equal(7);
-        checkDOM(root_1.firstElementChild, data.slice(3, 10), /* skip index */ true);
+        checkDOM(root_1.firstElementChild, data.slice(3, 10), /* data index */ null);
 
         view.remove(0);
         expect(view.length).to.equal(6);
         expect(root_1.children.length).to.equal(6);
-        checkDOM(root_1.firstElementChild, data.slice(4, 10), /* skip index */ true);
+        checkDOM(root_1.firstElementChild, data.slice(4, 10), /* data index */ null);
 
         view.remove(-1);
         expect(view.length).to.equal(5);
         expect(root_1.children.length).to.equal(5);
-        checkDOM(root_1.firstElementChild, data.slice(4, 9), /* skip index */ true);
+        checkDOM(root_1.firstElementChild, data.slice(4, 9), /* data index */ null);
 
         view.remove(-2, 2);
         expect(view.length).to.equal(3);
         expect(root_1.children.length).to.equal(3);
-        checkDOM(root_1.firstElementChild, data.slice(4, 7), /* skip index */ true);
+        checkDOM(root_1.firstElementChild, data.slice(4, 7), /* data index */ null);
 
         view.clear().destroy();
     });

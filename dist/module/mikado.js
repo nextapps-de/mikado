@@ -6,14 +6,11 @@
  * https://github.com/nextapps-de/mikado
  */
 
-//import "./event.js";
-//import "./helper.js";
-//import "./proxy.js";
-//import "./compile.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks } from "./type.js";
 import Observer from "./array.js";
-
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
+import { tick } from "./profiler.js";
 
 /** @const {Object<string, Mikado|Array<Template, MikadoOptions>>} */
 export const includes = Object.create(null);
@@ -67,7 +64,10 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
 
     /** @const {string} */
     this.key = template.key || "";
-    /** @private @dict {Object<string, Element>} */
+    /**
+     * @private
+     * @dict {Object<string, Element>}
+     */
     this.live = {};
 
     /** @type {Array<Function>} */
@@ -219,22 +219,24 @@ Mikado.prototype.mount = function (target, hydrate) {
 
     if (this.shadow) {
 
+        // Actually the MIKADO_CLASS will append to the templates root element,
+        // but it would be better to have it on the mounting element
+        // TODO improve getting the root withing components by assigning MIKADO_ROOT to the mounting element
+
         const cmp = /** @type {Array<TemplateDOM>} */this.tpl.cmp;
-
+        // also when cmp: [] has no definitions at top level scope
         target = target.shadowRoot || target.attachShadow({ mode: "open" });
-
-        // if(!shadow){
-
-        // target = target.attachShadow({ mode: "open" });
 
         if (cmp && cmp.length) {
 
+            // the root is always the last element
             const tmp = target.lastElementChild;
 
             if (tmp /*&& tmp.tagName === "ROOT"*/) {
 
                     target = tmp;
                 } else {
+                // push root as the last element
                 cmp.push({ tag: "root" });
 
                 /** @type {TemplateDOM} */
@@ -247,21 +249,12 @@ Mikado.prototype.mount = function (target, hydrate) {
 
                     if (i === cmp.length - 1) {
 
+                        // the root element is the last one
                         target = /** @type {Element} */node;
                     }
                 }
             }
         }
-        //}
-
-        //else{
-
-        // console.log(cmp)
-        //
-        // target = cmp && cmp.length
-        //     ? shadow.lastElementChild /*.querySelector("root")*/
-        //     : shadow;
-        //}
     }
 
     const target_instance = target._mki,
@@ -280,14 +273,14 @@ Mikado.prototype.mount = function (target, hydrate) {
         this.length = this.dom.length;
     } else if (target_instance) {
 
-        // different template, same root
-
         target_instance.clear();
+
+        // different template
+
         target._mkd = this.dom = [];
         this.length = 0;
 
-        if (target.firstChild || target.shadowRoot) {
-
+        if (target.firstChild) {
             target.textContent = "";
         }
 
@@ -306,8 +299,7 @@ Mikado.prototype.mount = function (target, hydrate) {
             this.dom = [];
             this.length = 0;
 
-            if (target.firstChild || target.shadowRoot) {
-
+            if (target.firstChild) {
                 target.textContent = "";
             }
         }
@@ -736,7 +728,6 @@ Mikado.prototype.replace = function (node, data, state, index) {
  */
 
 Mikado.prototype.update = function (node, data, state, index) {
-
     //profiler_start("update");
 
     if (!this.apply) {
@@ -846,7 +837,6 @@ Mikado.prototype.cancel = function () {
  */
 
 Mikado.prototype.create = function (data, state, index, _update_pool) {
-
     //profiler_start("create");
 
     let keyed = this.key;
@@ -908,7 +898,6 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
  */
 
 Mikado.prototype.add = function (data, state, index) {
-
     //profiler_start("add");
 
     let has_index;
@@ -1097,6 +1086,8 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
                         }
 
                         // fast path optimization when distance is equal (skips finding on next turn)
+
+                        //steps++;
                         if (idx_a === idx_b) {
 
                             if (1 < y - x) {
@@ -1105,7 +1096,6 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
                             }
 
                             a[x] = a[y];
-
 
                             //steps++;
                             a[y] = /** @type {!Element} */a_x;
@@ -1116,8 +1106,6 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
 
                             shift++;
                         }
-
-                        //steps++;
                     }
                     // shift down (move current => target)
                     else {
@@ -1130,8 +1118,9 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
                             //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 
                             shift--;
-                            x--;
+
                             //steps++;
+                            x--;
                         }
 
                     found = 1;
@@ -1197,7 +1186,6 @@ function splice(arr, pos_old, pos_new, insert) {
  */
 
 Mikado.prototype.append = function (data, state, index) {
-
     //profiler_start("append");
 
     let has_index;

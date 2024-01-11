@@ -1,36 +1,55 @@
 
 
+import { ProxyHandler } from "./type.js";
+import { Cache } from "./factory.js";
+import { tick } from "./profiler.js";
+
 const proxy = window.Proxy || function () {
 
     /**
-     * @param obj
-     * @param proxy
+     * @param {!Object} obj
+     * @param {ProxyHandler} proxy
      * @constructor
      */
 
     function Proxy(obj, proxy) {
 
-        /** @private @const {Array<Cache>} */
+        /**
+         * @private
+         * @const {Array<Cache>}
+         */
         this.path = proxy.path;
-        /** @private @const {Object<string, Array<string, number>>} */
+
+        /**
+         * @private
+         * @const {Object<string, Array<string, number>>}
+         */
         this.fn = proxy.fn;
+
+        // register properties
 
         for (const key in obj) {
 
             this.define(obj, key, obj[key]);
         }
 
-        // proxy check (visible)
+        // add proxy check (visible)
+
         obj._mkx = this;
 
         return obj;
     }
 
-    //Proxy.prototype["_proxy"] = true;
+    /**
+     * @param {Object} obj
+     * @param {string} key
+     * @param {*} val
+     * @this {!ProxyHandler}
+     */
 
     Proxy.prototype.define = function (obj, key, val) {
 
-        const self = /** @type {!ProxyHandler} */this;
+        const self = this;
 
         Object.defineProperty(obj, key, {
 
@@ -39,6 +58,9 @@ const proxy = window.Proxy || function () {
                 return val;
             },
             set: function (newVal) {
+
+                // we can't use this scope as cache, although it would be nice.
+                // the dom cache needs to be exported stateful.
 
                 //if(val !== newVal){
 
@@ -73,7 +95,6 @@ export default function proxy_create(obj, path, fn) {
     }
 
     /** @type {!ProxyHandler} */
-
     return new proxy(obj, { path, fn, get, set });
 }
 
@@ -91,6 +112,9 @@ function get(target, prop) {
  */
 
 function set(target, prop, value) {
+
+    // we can't use the data as cache, although it would be nice.
+    // the dom cache needs to be exported stateful.
 
     //if(target[prop] !== value){
 
@@ -115,6 +139,8 @@ function proxy_loop(handler, value, prop) {
     if (exp) {
 
         for (let i = 0; i < exp.length; i++) {
+
+            // tmp = [ Function Name, DOM Cache, <Attribute Key> ]
             const tmp = exp[i],
                   fn = tmp[0],
                   cache = /** @type {Cache} */handler.path[tmp[1]];
@@ -123,7 +149,7 @@ function proxy_loop(handler, value, prop) {
             if (!cache.c || cache.c[fn + (tmp[2] || "")] !== value) {
 
                 cache[fn](tmp[2] || value, value);
-            }
+            } else {}
         }
     }
 }

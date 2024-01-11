@@ -1,7 +1,7 @@
 // COMPILER BLOCK -->
 import {
-    SUPPORT_DOM_HELPERS,
     DEBUG,
+    PROFILER,
     SUPPORT_CACHE,
     SUPPORT_KEYED,
     SUPPORT_POOLS,
@@ -9,18 +9,19 @@ import {
     SUPPORT_ASYNC,
     SUPPORT_REACTIVE,
     SUPPORT_EVENTS,
+    SUPPORT_DOM_HELPERS,
 
     MIKADO_DOM,
     MIKADO_LIVE_POOL,
     MIKADO_CLASS,
     MIKADO_TPL_KEY,
-    //MIKADO_TPL_INDEX,
     MIKADO_TPL_PATH,
     MIKADO_NODE_CACHE,
     MIKADO_PROXY
 } from "./config.js";
 // <-- COMPILER BLOCK
 import Mikado, { apply_proxy } from "./mikado.js";
+import { tick } from "./profiler.js";
 
 const proto = Array.prototype;
 /** @type {Proxy} */
@@ -57,6 +58,8 @@ export default function Observer(array){
 
         return new Observer(array);
     }
+
+    PROFILER && tick("observer.create");
 
     this.mikado = null;
 
@@ -106,6 +109,8 @@ export default function Observer(array){
 
 Observer.prototype.mount = function(mikado){
 
+    PROFILER && tick("observer.mount");
+
     this.mikado = mikado;
     return this;
 }
@@ -117,6 +122,8 @@ Observer.prototype.mount = function(mikado){
  */
 
 Observer.prototype.define = function(key){
+
+    PROFILER && tick("observer.define");
 
     Object.defineProperty(this, /** @type {string} */ (key), {
 
@@ -158,6 +165,8 @@ const handler = /** @type {!ProxyHandler} */ ({
      */
 
     set: function(target, prop, value){
+
+        PROFILER && tick("observer.write");
 
         let index_by_number;
 
@@ -253,12 +262,24 @@ const handler = /** @type {!ProxyHandler} */ ({
     }
 });
 
+if(PROFILER){
+
+    handler.get = function(target, prop){
+
+        PROFILER && tick("observer.read");
+
+        return target[prop];
+    }
+}
+
 /**
  * @param {number} a
  * @param {number} b
  */
 
 Observer.prototype.swap = function(a, b){
+
+    PROFILER && tick("observer.swap");
 
     //const self = proxy ? this : this.proto;
     const tmp = this[b];
@@ -273,6 +294,8 @@ Observer.prototype.swap = function(a, b){
  */
 
 Observer.prototype.set = function(array){
+
+    PROFILER && tick("observer.set");
     
     this.splice();
     return this.concat(array);
@@ -287,6 +310,7 @@ Observer.prototype.set = function(array){
 
 Observer.prototype.splice = function(start, count, insert){
 
+    PROFILER && tick("observer.splice");
     DEBUG && debug(this.mikado);
 
     skip = true;
@@ -316,6 +340,7 @@ Observer.prototype.splice = function(start, count, insert){
 
 Observer.prototype.push = function(data){
 
+    PROFILER && tick("observer.push");
     DEBUG && debug(this.mikado);
 
     skip = true;
@@ -331,6 +356,7 @@ Observer.prototype.push = function(data){
 
 Observer.prototype.unshift = function(data){
 
+    PROFILER && tick("observer.unshift");
     DEBUG && debug(this.mikado);
 
     skip = true;
@@ -345,6 +371,7 @@ Observer.prototype.unshift = function(data){
 
 Observer.prototype.pop = function(){
 
+    PROFILER && tick("observer.pop");
     DEBUG && debug(this.mikado);
 
     skip = true;
@@ -360,6 +387,7 @@ Observer.prototype.pop = function(){
 
 Observer.prototype.shift = function(){
 
+    PROFILER && tick("observer.shift");
     DEBUG && debug(this.mikado);
 
     skip = true;
@@ -374,6 +402,8 @@ Observer.prototype.shift = function(){
  */
 
 Observer.prototype.concat = function(arr){
+
+    PROFILER && tick("observer.concat");
 
     const length = arr.length;
     for(let i = 0; i < length; i++) this.push(arr[i]);
@@ -409,6 +439,8 @@ Observer.prototype.slice = proto.slice;
 
 Observer.prototype.map = function(fn, self){
 
+    PROFILER && tick("observer.map");
+
     if(self){
 
         fn = fn.bind(this);
@@ -429,6 +461,8 @@ Observer.prototype.map = function(fn, self){
  */
 
 Observer.prototype.filter = function(fn, self){
+
+    PROFILER && tick("observer.filter");
 
     if(self){
 
@@ -475,6 +509,8 @@ Observer.prototype.filter = function(fn, self){
 
 Observer.prototype.indexOf = function(search){
 
+    PROFILER && tick("observer.indexOf");
+
     for(let i = 0, len = this.length; i < len; i++){
 
         if(this[i] === search){
@@ -493,6 +529,8 @@ Observer.prototype.indexOf = function(search){
 
 Observer.prototype.lastIndexOf = function(search){
 
+    PROFILER && tick("observer.lastIndexOf");
+
     for(let i = this.length - 1; i >= 0; i--){
 
         if(this[i] === search){
@@ -510,6 +548,8 @@ Observer.prototype.lastIndexOf = function(search){
 
 Observer.prototype.forEach = function(fn){
 
+    PROFILER && tick("observer.forEach");
+
     for(let i = 0, length = this.length; i < length; i++){
 
         fn(this[i]);
@@ -524,6 +564,7 @@ Observer.prototype.forEach = function(fn){
 
 Observer.prototype.transaction = function(fn){
 
+    PROFILER && tick("observer.transaction");
     DEBUG && debug(this.mikado);
 
     skip = true;

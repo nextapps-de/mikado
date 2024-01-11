@@ -5,7 +5,8 @@
       "define": {
         "RELEASE": "module",
         "DEBUG": false,
-        "POLYFILL": true,
+        "POLYFILL": false,
+        "PROFILER": false,
         "REACTIVE_ONLY": false,
         "SUPPORT_CACHE": true,
         "SUPPORT_EVENTS": true,
@@ -44,9 +45,8 @@
     "babel-plugin-transform-undefined-to-void"
   ],
   "ignore": [
-    "bundle.js",
     "config.js",
-    "type.js"
+    "profiler.js"
   ],
   "minified": false,
   "compact": false,

@@ -248,9 +248,26 @@ module.exports = function(src, dest, options, _recall){
             inc = [];
         }
 
-        for(let i = 0; i < inc.length; i++){
+        for(let i = 0, tmp; i < inc.length; i++){
 
-            inc[i].root && (inc[i].root.inc = inc[i].inc);
+            tmp = inc[i];
+
+            if(tmp.root) {
+
+                // when a child was a plain "js" inline code it needs to resolve the array
+
+                if(tmp.inc && tmp.inc.length /* === 1*/){
+
+                    if(tmp.inc.length > 1){
+
+                        throw new CompilerError("Each template, also embedded templates by using 'foreach' or 'if' directives, does not have more than one single element as the outer root. Instead " + tmp.inc.length + " elements (" + tmp.inc.map(item => item.tag).join(", ") + ") was provided.");
+                    }
+
+                    tmp.inc = tmp.inc[0];
+                }
+
+                tmp.root.inc = tmp.inc;
+            }
         }
 
         json = pretty ? JSON.stringify(json, null, 2) : JSON.stringify(json);
@@ -351,9 +368,8 @@ function prepare_template(nodes, src, csr, svg){
                         if(text.includes("{{@")){
 
                             child.js = text.substring(text.indexOf("{{@") + 3, text.indexOf("}}", text.indexOf("{{@"))).trim();
-                            delete child.text;
-
                             text = text.substring(0, text.indexOf("{{@")) + text.substring(text.indexOf("}}", text.indexOf("{{@")) + 2);
+                            delete child.text;
                         }
 
                         if(text.trim()){
@@ -401,7 +417,7 @@ function prepare_template(nodes, src, csr, svg){
 
                             for(let key in child.attr){
 
-                                if(key !== "if" && key !== "foreach" && key !== "include" && key !== "inc" && key !== "limit" && key !== "offset" && key !== "range"){
+                                if(key !== "if" && key !== "foreach" && key !== "include" && key !== "inc" /*&& key !== "limit" && key !== "offset" && key !== "range"*/){
 
                                     delete child.attr[key];
                                 }
@@ -504,6 +520,7 @@ function prepare_template(nodes, src, csr, svg){
                                                  .replace(regex_strip_surrounding_quotes, "$1");
                         }
 
+                        /*
                         if(child.attr.offset){
 
                             child.range = child.attr.offset;
@@ -526,6 +543,7 @@ function prepare_template(nodes, src, csr, svg){
 
                             child.range = child.range.split(",").map(item => parseInt(item, 10) || 0);
                         }
+                        */
 
                         let text = child.attr.js;
 
@@ -681,9 +699,19 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                 create_schema(root[i], inc, fn, index, false, mode);
 
-                if(root[i].constructor === Object){
+                // when a child just include "js" as inline code it needs to remove
 
-                    index.count++;
+                if(!root[i].text && !root[i].tag){
+
+                    root.splice(i, 1);
+                    i--;
+                }
+                else{
+
+                    if(root[i].constructor === Object){
+
+                        index.count++;
+                    }
                 }
             }
         }
@@ -699,13 +727,13 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                 // child needs to be added recursively at last attribute
 
-                if(key !== "child" && key !== "range" && root.hasOwnProperty(key)){
+                if(key !== "child" /*&& key !== "range"*/ && root.hasOwnProperty(key)){
 
                     let value = root[key];
 
                     if(key === "js" && !attr){
 
-                        if(value && (value = value.replace(/;(.*)$/, "").trim())){
+                        if(value && (value = value.replace(/;\s?$/, "").trim())){
 
                             fn.push(value);
                             index.ssr += "';" + value + (value.endsWith(";") ? "" : ";") + "_o+='";
@@ -1020,6 +1048,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                         // handle includes
                         // special attributes are not a part of element attributes
 
+                        // the main difference to the inline compiler is that here all attributes including
+                        // the full child scope are already collected by an additional pre-processing loop,
+                        // the inline compiler has to solve this task within one loop.
+
                         if((key === "for" || key === "if" || key === "inc") && !attr && !index.included){
 
                             if(index.count !== index.last){
@@ -1033,7 +1065,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 }
                             }
 
-                            const data_str = root.for ? root.for.trim() + (root.range ? '.slice(' + (root.range[0] || 0) + (root.range[1] ? ',' + ((root.range[0] || 0) + root.range[1]) : '') + ')' : '') : "data";
+                            const data_str = root.for ? root.for.trim() /*+ (root.range ? '.slice(' + (root.range[0] || 0) + (root.range[1] ? ',' + ((root.range[0] || 0) + root.range[1]) : '') + ')' : '')*/ : "data";
                             let current_inc = index.inc;
                             let cached;
 
@@ -1079,18 +1111,17 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 index.included = true;
                             }
 
-                            // for, range and if are fully contained inside render function
-                            delete root.for;
-                            delete root.range;
-                            delete root.if;
-
                             if(!cached){
 
                                 index.inc++;
-
-                                // The compiler unshift includes, because the client then can take them by faster arr.pop()
                                 const _fn = [];
-                                inc.unshift(_fn);
+
+                                // skip named includes from pushing to the stack
+                                if(root.for || root.if){
+
+                                    // The compiler unshift includes, because the client then can take them by faster arr.pop()
+                                    inc.unshift(_fn);
+                                }
 
                                 // inline includes
                                 if(root.child){
@@ -1122,6 +1153,11 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 root.inc = 1;
                             }
+
+                            // for, range and if are fully contained inside render function
+                            delete root.for;
+                            //delete root.range;
+                            delete root.if;
 
                             delete root.child;
                             delete root.text;

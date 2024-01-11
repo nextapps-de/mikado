@@ -1,8 +1,8 @@
 const { describe, it } = intern.getPlugin("interface.bdd");
 const { registerSuite } = intern.getPlugin("interface.object");
 const { expect, assert } = intern.getPlugin("chai");
-import { checkDOM, copy } from "../common.js";
-//import compile from "../../src/compile.js";
+import { checkDOM, copy, escape } from "../common.js";
+import compile from "../../src/compile.js";
 import data from "../data.js";
 
 const template = `
@@ -136,6 +136,47 @@ const template_scope = `
 </div>
 `;
 
+const template_full = `
+<main cache="true" id="{{ data.view }}">
+  <table>
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Title</th>
+        <th>Media</th>
+        <th>Category</th>
+        <th>Comment</th>
+        <th>Date</th>
+        <th include="pager"></th>
+      </tr>
+    </thead>
+    <tbody foreach="data.entries">
+      <script>{{@ const datestr = new Date(data.date).toLocaleString(); }}</script>
+      <tr key="data.id" data-id="{{ data.id }}" root>
+        <script>{{@ const datestr2 = datestr; }}</script>
+        <td>{{ index + 1 }}</td>
+        <td>{{= data.title }}</td>
+        <td>{{# data.media }}</td>
+        <td>{{? data.category }}</td>
+        <td>{{! data.comment }}</td>
+        <td>{{ datestr2 }}</td>
+        <td style="opacity: {{ state.selected === data.id ? '1': '0.5' }}">
+          <select change="select-active:root">
+            <option value="on" selected="{{ data.mode === 'on' }}">Enabled</option>
+            <option value="off" selected="{{ data.mode === 'off' }}">Disabled</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot if="!data.entries.length">
+      <tr>
+        <td colspan="7">No entries found.</td>
+      </tr>
+    </tfoot>
+  </table>
+</main>
+`;
+
 describe("Compile Template", function(){
 
     it("Should compile basic template properly", function(){
@@ -244,7 +285,6 @@ describe("Compile Template", function(){
 
         expect(node.children.length).to.equal(data.length);
         expect(node.firstElementChild.tagName.toLowerCase()).to.equal("section");
-
         checkDOM(node.firstElementChild, data);
 
         node = node.nextElementSibling;
@@ -277,14 +317,12 @@ describe("Compile Template", function(){
 
         expect(node.children.length).to.equal(data.length);
         expect(node.firstElementChild.tagName.toLowerCase()).to.equal("section");
-
         checkDOM(node.firstElementChild, data);
 
         node = node.nextElementSibling;
 
         expect(node.children.length).to.equal(data.length);
         expect(node.firstElementChild.tagName.toLowerCase()).to.equal("section");
-
         checkDOM(node.firstElementChild, data);
 
         view.clear().destroy();
@@ -398,7 +436,7 @@ describe("Compile Template", function(){
 
     it("Should render web components properly (Runtime Compiler)", function(){
 
-        const root_1 = document.getElementById("root-1");
+        const root_1 = document.getElementById("root-3");
         const tpl = Mikado.compile(template_shadow);
         const view = new Mikado(tpl, { mount: root_1 }).render(data);
         let tmp;
@@ -424,6 +462,83 @@ describe("Compile Template", function(){
         expect((tmp = root_1.firstElementChild.firstElementChild).textContent).to.equal("test");
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test");
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test|foobar");
+
+        view.clear().destroy();
+    });
+
+    it("Should render a complex template properly", function(){
+
+        // the named include "pager" needs to be registered before use
+        const tpl_pager = Mikado.compile("<template name='pager'><div class='pager'></div></template>")
+        Mikado.register(tpl_pager);
+
+        const root_1 = document.getElementById("root-1");
+        const tpl = Mikado.compile(template_full);
+        const view = new Mikado(tpl, { mount: root_1 });
+
+        view.render({
+            view: "video",
+            entries: [{
+                id: 1,
+                date: "2023-12-01T14:00:00",
+                title: "A simple title 1",
+                media: "<img src='img1.jpg'>",
+                category: null,
+                comment: "Some <script>untrusted</script> content",
+                mode: "off"
+            },{
+                id: 2,
+                date: "2023-12-02T15:00:00",
+                title: "A simple title 2",
+                media: "<video src='mov2.mp4'>",
+                category: null,
+                comment: "Some <script>untrusted</script> content",
+                mode: "on"
+            },{
+                id: 3,
+                date: "2023-12-03T16:00:00",
+                title: "A simple title 3",
+                media: "<img src='img3.jpg'>",
+                category: null,
+                comment: "Some <script>untrusted</script> content",
+                mode: "off"
+            }]
+        });
+
+        expect(view.length).to.equal(1);
+        expect(view.root.querySelector("tr th:last-child").children.length).to.equal(1);
+        expect(view.root.querySelector("tbody").children.length).to.equal(3);
+        expect(view.root.querySelector("tbody > tr").children.length).to.equal(7);
+        expect(view.root.querySelector("tfoot").children.length).to.equal(0);
+
+        let tmp = view.root.querySelector("tbody > tr > td");
+        expect(tmp.textContent).to.equal("1");
+        tmp = tmp.nextElementSibling;
+        expect(tmp.textContent).to.equal("A simple title 1");
+        tmp = tmp.nextElementSibling;
+        expect(tmp.innerHTML).to.equal('<img src="img1.jpg">');
+        tmp = tmp.nextElementSibling;
+        expect(tmp.innerHTML).to.equal("");
+        tmp = tmp.nextElementSibling;
+        expect(tmp.textContent).to.equal("Some <script>untrusted</script> content");
+        expect(tmp.innerHTML).to.equal(escape("Some <script>untrusted</script> content"));
+        tmp = tmp.nextElementSibling;
+        expect(tmp.textContent).to.equal(new Date("2023-12-01T14:00:00").toLocaleString());
+        tmp = tmp.nextElementSibling;
+        expect(tmp.style.opacity).to.equal("0.5");
+        tmp = tmp.firstElementChild.firstElementChild;
+        expect(tmp.selected).to.equal(false);
+        expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        view.render({
+            view: "video",
+            entries: []
+        });
+
+        expect(view.length).to.equal(1);
+        expect(view.root.querySelector("thead th:last-child").children.length).to.equal(1);
+        expect(view.root.querySelector("tbody").children.length).to.equal(0);
+        expect(view.root.querySelector("tfoot").children.length).to.equal(1);
 
         view.clear().destroy();
     });

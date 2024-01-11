@@ -7,10 +7,9 @@
  */
 
 // COMPILER BLOCK -->
-import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks } from "./type.js";
 import {
-    SUPPORT_DOM_HELPERS,
     DEBUG,
+    PROFILER,
     SUPPORT_CACHE,
     SUPPORT_KEYED,
     SUPPORT_POOLS,
@@ -19,27 +18,23 @@ import {
     SUPPORT_REACTIVE,
     SUPPORT_EVENTS,
     SUPPORT_WEB_COMPONENTS,
+    SUPPORT_DOM_HELPERS,
     REACTIVE_ONLY,
 
     MIKADO_DOM,
     MIKADO_LIVE_POOL,
     MIKADO_CLASS,
     MIKADO_TPL_KEY,
-    //MIKADO_TPL_INDEX,
     MIKADO_TPL_PATH,
     MIKADO_NODE_CACHE,
     MIKADO_PROXY
 } from "./config.js";
 // <-- COMPILER BLOCK
-
-//import "./event.js";
-//import "./helper.js";
-//import "./proxy.js";
-//import "./compile.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks } from "./type.js";
 import Observer from "./array.js";
-
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
+import { tick } from "./profiler.js";
 
 /** @const {Object<string, Mikado|Array<Template, MikadoOptions>>} */
 export const includes = Object.create(null);
@@ -64,6 +59,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
         return new Mikado(template, options);
     }
+
+    PROFILER && tick("mikado.new");
 
     if(typeof template === "string"){
 
@@ -215,6 +212,8 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
 export function register(tpl, options){
 
+    PROFILER && tick("mikado.register");
+
     let name, re_assign;
 
     if(typeof tpl === "string"){
@@ -268,6 +267,8 @@ export function register(tpl, options){
 
 export function unregister(name){
 
+    PROFILER && tick("mikado.unregister");
+
     if(typeof name === "object"){
 
         name = /** @type {string} */ (name.name);
@@ -305,6 +306,8 @@ export function unregister(name){
 
 Mikado.prototype.mount = function(target, hydrate){
 
+    PROFILER && tick("view.mount");
+
     if(DEBUG){
 
         if(!target){
@@ -321,50 +324,43 @@ Mikado.prototype.mount = function(target, hydrate){
 
     if(this.shadow){
 
-        const cmp = SUPPORT_WEB_COMPONENTS && /** @type {Array<TemplateDOM>} */ (this.tpl.cmp);
+        // Actually the MIKADO_CLASS will append to the templates root element,
+        // but it would be better to have it on the mounting element
+        // TODO improve getting the root withing components by assigning MIKADO_ROOT to the mounting element
 
+        const cmp = SUPPORT_WEB_COMPONENTS && /** @type {Array<TemplateDOM>} */ (this.tpl.cmp);
+        // also when cmp: [] has no definitions at top level scope
         target = target.shadowRoot || target.attachShadow({ mode: "open" });
 
-       // if(!shadow){
+        if(cmp && cmp.length){
 
-           // target = target.attachShadow({ mode: "open" });
+            // the root is always the last element
+            const tmp = target.lastElementChild;
 
-            if(cmp && cmp.length){
+            if(tmp /*&& tmp.tagName === "ROOT"*/){
 
-                const tmp = target.lastElementChild;
+                target = tmp;
+            }
+            else{
 
-                if(tmp /*&& tmp.tagName === "ROOT"*/){
+                /** @type {TemplateDOM} */
+                const root = { tag: "root" };
+                // push root as the last element
+                cmp.push(root);
 
-                    target = tmp;
-                }
-                else{
+                for(let i = 0, node; i < cmp.length; i++){
 
-                    /** @type {TemplateDOM} */
-                    const root = { tag: "root" };
-                    cmp.push(root);
+                    node = construct(this, /** @type {TemplateDOM} */ (cmp[i]), [], "");
+                    target.append(node);
 
-                    for(let i = 0, node; i < cmp.length; i++){
+                    if(i === cmp.length - 1){
 
-                        node = construct(this, /** @type {TemplateDOM} */ (cmp[i]), [], "");
-                        target.append(node);
-
-                        if(i === cmp.length - 1){
-
-                            target = /** @type {Element} */ (node);
-                        }
+                        // the root element is the last one
+                        target = /** @type {Element} */ (node);
                     }
                 }
             }
-        //}
-
-        //else{
-
-            // console.log(cmp)
-            //
-            // target = cmp && cmp.length
-            //     ? shadow.lastElementChild /*.querySelector("root")*/
-            //     : shadow;
-        //}
+        }
     }
 
     const target_instance = target[MIKADO_CLASS];
@@ -383,14 +379,17 @@ Mikado.prototype.mount = function(target, hydrate){
     }
     else if(target_instance){
 
-        // different template, same root
+        // different template
+
+        PROFILER && tick("mikado.unmount");
 
         target_instance.clear();
         target[MIKADO_DOM] = this.dom = [];
         this.length = 0;
 
-        if(target.firstChild || target.shadowRoot){
+        if(target.firstChild){
 
+            PROFILER && tick("mount.reset");
             target.textContent = "";
         }
 
@@ -411,8 +410,9 @@ Mikado.prototype.mount = function(target, hydrate){
             this.dom = [];
             this.length = 0;
 
-            if(target.firstChild || target.shadowRoot){
+            if(target.firstChild){
 
+                PROFILER && tick("mount.reset");
                 target.textContent = "";
             }
         }
@@ -505,6 +505,8 @@ function finishFactory(self){
 
 function collection_to_array(collection){
 
+    PROFILER && tick("collection_to_array");
+
     const length = collection.length;
     const array = new Array(length);
 
@@ -568,6 +570,8 @@ export function once(root, template, data, state, callback){
             });
         }
     }
+
+    PROFILER && tick("mikado.once");
 
     const is_shadow = SUPPORT_WEB_COMPONENTS && template.cmp;
     const is_component = is_shadow && is_shadow.length;
@@ -681,6 +685,8 @@ if(!REACTIVE_ONLY){
                 });
             }
         }
+
+        PROFILER && tick("view.render");
 
         //profiler_start("render");
 
@@ -798,6 +804,8 @@ if(!REACTIVE_ONLY){
 
 Mikado.prototype.replace = function(node, data, state, index){
 
+    PROFILER && tick("view.replace");
+
     //profiler_start("replace");
 
     if(typeof index === "undefined"){
@@ -899,6 +907,7 @@ Mikado.prototype.replace = function(node, data, state, index){
 
 Mikado.prototype.update = function(node, data, state, index, _skip_check){
 
+    PROFILER && tick("view.update");
     //profiler_start("update");
 
     if(!this.apply){
@@ -1012,6 +1021,8 @@ if(SUPPORT_ASYNC){
     /** @const */
     Mikado.prototype.cancel = function(){
 
+        PROFILER && tick("view.cancel");
+
         //if(this.timer){
 
             cancelAnimationFrame(this.timer);
@@ -1033,6 +1044,7 @@ if(SUPPORT_ASYNC){
 
 Mikado.prototype.create = function(data, state, index, _update_pool){
 
+    PROFILER && tick("view.create");
     //profiler_start("create");
 
     let keyed = SUPPORT_KEYED && this.key;
@@ -1042,11 +1054,15 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
     // 1. keyed pool (shared)
     if(SUPPORT_POOLS && keyed && this.pool && (pool = this.pool_keyed) && (node = pool.get(key))){
 
+        PROFILER && tick("pool.out");
+
         found = 1;
         pool.delete(key);
     }
     // 2. non-keyed pool (shared)
     else if(SUPPORT_POOLS && (!keyed || this.recycle) && this.pool && (pool = this.pool_shared) && pool.length){
+
+        PROFILER && tick("pool.out");
 
         node = pool.pop();
     }
@@ -1073,6 +1089,8 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
    // }
 
     if(factory){
+
+        PROFILER && tick("factory.clone");
 
         node = node.cloneNode(true);
     }
@@ -1101,6 +1119,7 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
 
 Mikado.prototype.add = function(data, state, index){
 
+    PROFILER && tick("view.add");
     //profiler_start("add");
 
     let has_index;
@@ -1192,6 +1211,8 @@ Mikado.prototype.add = function(data, state, index){
 
 export function apply_proxy(self, node, data){
 
+    PROFILER && tick("proxy.apply");
+
     return proxy_create(
         data,
         node[MIKADO_TPL_PATH] || create_path(node, self.factory[MIKADO_TPL_PATH], SUPPORT_CACHE && self.cache),
@@ -1212,6 +1233,8 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
      */
 
     Mikado.prototype.reconcile = function(b, state, x, render){
+
+        PROFILER && tick("view.reconcile");
 
         const a = this.dom;
         const live = this.live;
@@ -1320,6 +1343,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                                     }
                                 }
 
+                                PROFILER && tick("view.reconcile.steps");
                                 //steps++;
                             }
                             else{
@@ -1330,6 +1354,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                                 shift++;
                             }
 
+                            PROFILER && tick("view.reconcile.steps");
                             //steps++;
                         }
                         // shift down (move current => target)
@@ -1344,6 +1369,8 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                             shift--;
                             x--;
+
+                            PROFILER && tick("view.reconcile.steps");
                             //steps++;
                         }
 
@@ -1378,6 +1405,8 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
  */
 
 function splice(arr, pos_old, pos_new, insert){
+
+    PROFILER && tick("splice");
 
     const tmp = insert || arr[pos_old];
 
@@ -1415,6 +1444,7 @@ if(!REACTIVE_ONLY){
 
     Mikado.prototype.append = function(data, state, index){
 
+        PROFILER && tick("view.append");
         //profiler_start("append");
 
         let has_index;
@@ -1449,6 +1479,8 @@ if(!REACTIVE_ONLY){
      */
 
     Mikado.prototype.clear = function(){
+
+        PROFILER && tick("view.clear");
 
         if(this.length){
 
@@ -1557,6 +1589,8 @@ Mikado.prototype.remove = function(index, count){
 
     for(let x = 0, node; x < count; x++){
 
+        PROFILER && tick("view.remove");
+
         node = nodes[reverse ? count - x - 1 : x];
         length && node.remove(); //this.root.removeChild(node);
         checkout && this.checkout(node);
@@ -1583,6 +1617,8 @@ Mikado.prototype.remove = function(index, count){
 
 Mikado.prototype.index = function(node){
 
+    PROFILER && tick("view.index");
+
     return this.dom.indexOf(node);
 };
 
@@ -1593,6 +1629,8 @@ Mikado.prototype.index = function(node){
  */
 
 Mikado.prototype.node = function(index){
+
+    PROFILER && tick("view.node");
 
     return this.dom[index];
 };
@@ -1606,6 +1644,8 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
      */
 
     Mikado.prototype.checkout = function(node){
+
+        PROFILER && tick("view.checkout");
 
         let key;
 
@@ -1624,11 +1664,15 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
 
             if(key){
 
+                PROFILER && tick("pool.in");
+
                 // always adding to keyed shared-pool increases the probability of matching keys
                 // but requires resizing of limited pools
                 this.pool_keyed.set(key, node);
 
                 if(this.pool !== true && (this.pool_keyed.size > this.pool)){
+
+                    PROFILER && tick("pool.resize");
 
                     this.pool_keyed.delete(
                         (/*this.pool_keyed._keys ||*/ this.pool_keyed.keys()).next().value
@@ -1641,6 +1685,8 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
 
                 if(this.pool === true || (length < this.pool)){
 
+                    PROFILER && tick("pool.in");
+
                     // add to non-keyed shared-pool
                     this.pool_shared[length] = node;
                 }
@@ -1652,6 +1698,8 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
 if(SUPPORT_POOLS){
 
     Mikado.prototype.flush = function(){
+
+        PROFILER && tick("view.flush");
 
         this.pool_shared = [];
 
@@ -1669,6 +1717,8 @@ if(SUPPORT_POOLS){
  */
 
 Mikado.prototype.destroy = function(){
+
+    PROFILER && tick("view.destroy");
 
     for(let i = 0, inc; i < this.inc.length; i++){
 

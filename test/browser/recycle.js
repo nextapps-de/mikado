@@ -91,14 +91,14 @@ describe("Recycle Template", function(){
         expect(view.length).to.equal(90);
         expect(root_1.children[1]._test).to.equal("98");
         expect(root_1.children[88]._test).to.equal("1");
-        checkDOM(root_1.firstElementChild, items);
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
 
         view.render(data);
 
         expect(view.length).to.equal(100);
         expect(root_1.children[1]._test).to.equal("1");
         expect(root_1.children[98]._test).to.equal("98");
-        checkDOM(root_1.firstElementChild, data);
+        checkDOM(root_1.firstElementChild, data, /* data index */ true);
 
         view.clear().destroy();
     });
@@ -117,7 +117,7 @@ describe("Recycle Template", function(){
 
         view.render(data.slice(50));
         expect(view.length).to.equal(50);
-        checkDOM(root_1.firstElementChild, data.slice(50));
+        checkDOM(root_1.firstElementChild, data.slice(50), /* data index */ true);
 
         const items = data.slice().reverse();
 
@@ -125,7 +125,7 @@ describe("Recycle Template", function(){
         expect(view.length).to.equal(100);
         expect(root_1.children[1]._test).to.equal("98");
         expect(root_1.children[98]._test).to.equal("1");
-        checkDOM(root_1.firstElementChild, items);
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
 
         view.clear().destroy();
     });

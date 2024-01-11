@@ -1,12 +1,10 @@
-const child_process = require('child_process');
-const fs = require('fs');
+const child_process = require("child_process");
+const fs = require("fs");
 
 console.log("Start build .....");
-//console.log("----------------------");
 
 fs.rmSync("tmp/", { recursive: true });
 fs.mkdirSync("tmp");
-//fs.existsSync("log") || fs.mkdirSync("log");
 fs.existsSync("dist") || fs.mkdirSync("dist");
 
 let flag_str = "";
@@ -109,20 +107,19 @@ if(custom){
 
 const files = [
 
+    "config.js",
+    "type.js",
     "mikado.js",
     "bundle.js",
-    "config.js",
     "event.js",
     "helper.js",
-    "type.js",
     "cache.js",
     "factory.js",
     "sanitize.js",
-    //"export.js",
-    //"store.js",
     "proxy.js",
     "array.js",
     "compile.js",
+    "profiler.js",
     //"polyfill.js"
 ];
 

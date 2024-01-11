@@ -1,11 +1,13 @@
 
+import { EventOptions } from "./type.js";
 import Mikado from "./mikado.js";
+import { tick } from "./profiler.js";
 
 /** @type {Object<string, boolean|number>} */
 const events = {},
       event_options = {},
-      routes = /** @type {Object<string, Function>} */Object.create(null),
-      options = /** @type {Object<string, Boolean|EventOptions>} */Object.create(null),
+      routes = Object.create(null),
+      options = Object.create(null),
       doc = document.documentElement || document.body.parentNode,
       has_touch = "ontouchstart" in window,
       has_pointer = !has_touch && window.PointerEvent && navigator.maxTouchPoints;
@@ -19,6 +21,11 @@ const events = {},
 // The most outer element which is covered by Mikado event system is document.body
 
 let tap_fallback;
+
+/**
+ * @param {!Event} event
+ * @param {string=} type
+ */
 
 function handler(event, type) {
 
@@ -130,7 +137,7 @@ function handler(event, type) {
 
             cache || (event_target["_mke" + type] = null);
         }
-    }
+    } else {}
 
     if (cache) for (let i = 0, tmp; i < cache.length; i++) {
 
@@ -171,9 +178,10 @@ function handler(event, type) {
 
 /**
  * @param {!string} route
- * @param {!Function} fn
+ * @param {Function|null} fn
  * @param {EventOptions=} option
  */
+
 export function route(route, fn, option) {
 
     if (!route) {
@@ -199,9 +207,10 @@ export function route(route, fn, option) {
 
 /**
  * @param {!string} route
- * @param {!Element} target
+ * @param {Element=} target
  * @param {Event=} event
  */
+
 export function dispatch(route, target, event) {
 
     if (!route) {
@@ -223,6 +232,7 @@ export function dispatch(route, target, event) {
  * @param {!string} event
  * @param {EventListenerOptions|boolean=} options
  */
+
 export function listen(event, options) {
 
     if (!events[event]) {
@@ -239,6 +249,7 @@ export function listen(event, options) {
  * @param {string} event
  * @returns {Mikado}
  */
+
 export function unlisten(event) {
 
     if (events[event]) {
@@ -318,9 +329,9 @@ if (has_touch || has_pointer) {
 }
 
 /**
- * @param add_or_remove
- * @param type
- * @param handler
+ * @param {boolean|number} add_or_remove
+ * @param {string} type
+ * @param {Function} handler
  * @param {EventListenerOptions|boolean=} options
  */
 

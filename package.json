@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nextapps-de/mikado/",
   "author": "Thomas Wilkerling",
   "copyright": "Nextapps GmbH",
-  "version": "0.8.211",
+  "version": "0.8.212",
   "license": "Apache-2.0",
   "keywords": [
     "Templating",
@@ -23,8 +23,8 @@
   "main": "ssr/index.js",
   "module": "dist/mikado.bundle.module.min.js",
   "browser": {
-    "ssr/index.js": "dist/mikado.bundle.min.js",
-    "dist/mikado.bundle.module.min.js": "dist/mikado.bundle.module.min.js"
+    "ssr/index.js": "./dist/mikado.bundle.min.js",
+    "dist/mikado.bundle.module.min.js": "./dist/mikado.bundle.module.min.js"
   },
   "types": "./index.d.ts",
   "bin": {
@@ -51,6 +51,7 @@
     "build:module:bundle:debug": "node task/build RELEASE=bundle.module POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_WEB_COMPONENTS=true SUPPORT_COMPILE=true && exit 0",
     "build:module:light": "node task/build RELEASE=light.module POLYFILL=false DEBUG=false SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_WEB_COMPONENTS=false SUPPORT_COMPILE=false && exit 0",
     "build:module:light:debug": "node task/build RELEASE=light.module POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=false SUPPORT_DOM_HELPERS=false SUPPORT_CACHE_HELPERS=false SUPPORT_ASYNC=false SUPPORT_REACTIVE=false SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=false SUPPORT_WEB_COMPONENTS=false SUPPORT_COMPILE=false && exit 0",
+    "build:bundle:profiler": "node task/build RELEASE=bundle.profiler POLYFILL=false DEBUG=true SUPPORT_CACHE=true SUPPORT_EVENTS=true SUPPORT_DOM_HELPERS=true SUPPORT_CACHE_HELPERS=true SUPPORT_ASYNC=true SUPPORT_REACTIVE=true SUPPORT_KEYED=true SUPPORT_POOLS=true SUPPORT_CALLBACKS=true SUPPORT_WEB_COMPONENTS=true SUPPORT_COMPILE=true PROFILER=true && exit 0",
     "build:custom": "node task/build RELEASE=custom",
     "build:all": "npm version --no-git-tag-version patch && npm run build:bundle && npm run build:bundle:debug && npm run build:light && npm run build:light:debug && npm run build:es5 && npm run build:es5:debug && npm run build:module && npm run build:module:debug && npm run build:module:min && npm run build:module:bundle && npm run build:module:bundle:debug && npm run build:module:light && npm run build:module:light:debug",
     "test": "npm run build:test && npm run build:light && npx mikado-compile test/template.html -f && npx mikado-compile test/proxy.html -f && npx mikado-compile test/keyed.html -f && npx mikado-compile test/bench/template/ -f && cd test && npm install && npm run test"

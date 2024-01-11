@@ -1,3 +1,4 @@
+// COMPILER BLOCK -->
 import {
     DEBUG,
     RELEASE,
@@ -19,6 +20,7 @@ import {
     MIKADO_TPL_PATH,
     MIKADO_NODE_CACHE
 } from "./config.js";
+// <-- COMPILER BLOCK
 import { Template, TemplateDOM, MikadoOptions, EventOptions } from "./type.js";
 import Mikado, { once, register, unregister } from "./mikado.js";
 import Observer from "./array.js";
@@ -313,6 +315,8 @@ TemplateDOM.text;
 TemplateDOM.html;
 /** @export */
 TemplateDOM.for;
+/** @export */
+TemplateDOM.foreach;
 /** @export */
 TemplateDOM.if;
 /** @export */

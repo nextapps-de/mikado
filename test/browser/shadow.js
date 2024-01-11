@@ -14,11 +14,11 @@ describe("Render Web Components", function(){
 
     it("Should render web components properly", function(){
 
-        const root_1 = document.getElementById("root-1");
-        const view = new Mikado(template_shadow, { mount: root_1 }).render(data);
+        const root = document.getElementById("root-3");
+        const view = new Mikado(template_shadow, { mount: root }).render(data);
         let tmp;
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
         tmp._test = true;
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("SCRIPT");
@@ -29,7 +29,7 @@ describe("Render Web Components", function(){
 
         view.render(data);
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
         expect(tmp._test).to.be.true;
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("SCRIPT");
@@ -43,18 +43,18 @@ describe("Render Web Components", function(){
 
     it("Should render empty web components properly", function(){
 
-        const root_1 = document.getElementById("root-1");
-        const view = new Mikado(template_shadow_empty, { mount: root_1 }).render(data);
+        const root = document.getElementById("root-3");
+        const view = new Mikado(template_shadow_empty, { mount: root }).render(data);
         let tmp;
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect(tmp).to.equal(view.root);
         expect((tmp = tmp.firstElementChild).tagName).to.equal("SECTION");
         checkDOM(tmp, data);
 
         view.render(data);
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect(tmp).to.equal(view.root);
         expect((tmp = tmp.firstElementChild).tagName).to.equal("SECTION");
         checkDOM(tmp, data);
@@ -64,16 +64,16 @@ describe("Render Web Components", function(){
 
     it("Should render web components by option properly", function(){
 
-        const root_1 = document.getElementById("root-1");
+        const root = document.getElementById("root-3");
         const view = new Mikado(template_shadow_option, {
-            mount: root_1,
+            mount: root,
             shadow: true,
             recycle: true
         }).render({ data: data });
 
         let tmp;
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect(tmp).to.equal(view.root);
         expect((tmp = tmp.firstElementChild).tagName).to.equal("MAIN");
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
@@ -85,7 +85,7 @@ describe("Render Web Components", function(){
 
         view.render({ data: data });
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect(tmp).to.equal(view.root);
         expect((tmp = tmp.firstElementChild).tagName).to.equal("MAIN");
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
@@ -100,31 +100,31 @@ describe("Render Web Components", function(){
 
     it("Should render once web components properly", function(){
 
-        const root_1 = document.getElementById("root-1");
-        Mikado.once(root_1, template_shadow, data);
+        const root = document.getElementById("root-3");
+        Mikado.once(root, template_shadow, data);
         let tmp;
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("SCRIPT");
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("ROOT");
         checkDOM(tmp.firstElementChild, data);
 
-        root_1.textContent = "";
+        root.textContent = "";
     });
 
     it("Should render once empty web components properly", function(){
 
-        const root_1 = document.getElementById("root-1");
-        Mikado.once(root_1, template_shadow_empty, data);
+        const root = document.getElementById("root-3");
+        Mikado.once(root, template_shadow_empty, data);
         let tmp;
 
-        expect(tmp = root_1.shadowRoot).to.exist;
+        expect(tmp = root.shadowRoot).to.exist;
         expect((tmp = tmp.firstElementChild).tagName).to.equal("STYLE");
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("SCRIPT");
         expect((tmp = tmp.nextElementSibling).tagName).to.equal("ROOT");
         checkDOM(tmp.firstElementChild, data);
 
-        root_1.textContent = "";
+        root.textContent = "";
     });
 });

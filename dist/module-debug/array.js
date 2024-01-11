@@ -1,10 +1,17 @@
 
 import Mikado, { apply_proxy } from "./mikado.js";
+import { tick } from "./profiler.js";
 
 const proto = Array.prototype,
       proxy = window.Proxy;
+/** @type {Proxy} */
 
+/** @type {boolean} */
 let skip = !1;
+
+/**
+ * @param {Mikado=} mikado
+ */
 
 function debug(mikado) {
 
@@ -68,13 +75,12 @@ export default function Observer(array) {
             this.define(i);
         }
 
-        //size = length;
         this.define("length");
     }
 }
 
 /**
- * @param {Mikado=} mikado
+ * @param {!Mikado} mikado
  * @const
  */
 
@@ -85,14 +91,14 @@ Observer.prototype.mount = function (mikado) {
 };
 
 /**
- * @param key
+ * @param {string|number} key
  * @private
  * @const
  */
 
 Observer.prototype.define = function (key) {
 
-    Object.defineProperty(this, key, {
+    Object.defineProperty(this, /** @type {string} */key, {
 
         get: /** @this {Observer} */function () {
 
@@ -116,17 +122,18 @@ Observer.prototype.define = function (key) {
     return this;
 };
 
-const handler = {
+const handler = /** @type {!ProxyHandler} */{
+
+    // actually we do not need a trap for the getter
 
     // get: function(target, prop){
-    //
     //     return target[prop];
     // },
 
     /**
      * @param {Observer} target
-     * @param prop
-     * @param value
+     * @param {string|number} prop
+     * @param {Object|number} value
      * @return {boolean}
      */
 
@@ -143,7 +150,6 @@ const handler = {
 
             if (prop === "" + index) {
 
-                prop = index;
                 index_by_number = !0;
             }
         }
@@ -154,87 +160,65 @@ const handler = {
 
             skip = !0;
 
-            if (mikado /*&& !mikado.skip*/) {
+            if (mikado) {
 
-                    const target_length = target.length;
+                const target_length = target.length;
 
-                    if (index_by_number) {
+                if (index_by_number) {
 
-                        debug(mikado);
+                    prop = /** @type {number} */prop;
 
-                        const mikado_length = mikado.length;
+                    debug(mikado);
 
-                        if (target_length !== mikado_length) {
+                    const mikado_length = mikado.length;
 
-                            target.length = mikado_length;
+                    if (target_length !== mikado_length) {
+
+                        target.length = mikado_length;
+                    }
+
+                    let node;
+
+                    if (prop >= mikado_length) {
+
+                        mikado.add(value);
+                        target.length++;
+                    } else if (prop < mikado_length) {
+
+                        node = mikado.dom[prop];
+
+                        // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
+                        // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
+
+                        if (mikado.recycle || mikado.key && node._mkk === value[mikado.key]) {
+
+                            mikado.update(node, value, null, prop);
+                        } else {
+
+                            mikado.replace(node, value, null, prop);
                         }
+                    }
+                } else {
 
-                        // if(mikado.stealth && (target[prop] === value)){
-                        //
-                        //     skip = false;
-                        //     return true;
-                        // }
+                    if ("length" === prop) {
 
-                        //const view = mikado.view;
-                        let node;
+                        value = /** @type {number} */value;
 
-                        if (prop >= mikado_length) {
-
-                            mikado.add(value /*, view*/);
-                            target.length++;
-                        } else if (prop < mikado_length) {
-
-                            node = mikado.dom[prop];
-
-                            // let tmp, key;
-
-                            // if(replace_key && (node["_key"] !== (key = value[replace_key]))){
-                            //
-                            //     if((tmp = mikado.live[key])){
-                            //
-                            //         const idx = tmp["_idx"];
-                            //         const item = target[idx];
-                            //         target[idx] = target[prop];
-                            //         target[prop] = item;
-                            //
-                            //         mikado.arrange(node, tmp, value, view, prop);
-                            //         //has_moved = true;
-                            //     }
-                            //     else{
-                            //
-                            //         mikado.replace(node, value, view, prop);
-                            //     }
-                            // }
-                            // else{
-                            //
-                            //     mikado.update(node, value, view, prop);
-                            // }
-
-                            // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
-                            // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
-
-                            if (mikado.recycle || mikado.key && node._mkk === value[mikado.key]) {
-
-                                mikado.update(node, value, null, prop);
-                            } else {
-
-                                mikado.replace(node, value, null, prop);
-                            }
-                        }
-                    } else {
-
-                        if ("length" === prop && value < target_length) {
+                        if (value < target_length) {
 
                             mikado.remove(value, target_length - value);
                         }
                     }
                 }
+            }
 
             skip = !1;
         }
 
         if (index_by_number && mikado.proxy && (!mikado.recycle || !value._mkx)) {
 
+            prop = /** @type {number} */prop;
+            value = /** @type {Object} */value;
             value = apply_proxy(mikado, mikado.dom[prop], value);
         }
 
@@ -245,16 +229,24 @@ const handler = {
     }
 };
 
+/**
+ * @param {number} a
+ * @param {number} b
+ */
+
 Observer.prototype.swap = function (a, b) {
 
-    //skip = true;
     //const self = proxy ? this : this.proto;
     const tmp = this[b];
     this[b] = this[a];
     this[a] = tmp;
-    //skip = false;
+
     return this;
 };
+
+/**
+ * @param {Array} array
+ */
 
 Observer.prototype.set = function (array) {
 
@@ -270,7 +262,6 @@ Observer.prototype.set = function (array) {
  */
 
 Observer.prototype.splice = function (start, count, insert) {
-
     debug(this.mikado);
 
     skip = !0;
@@ -294,8 +285,11 @@ Observer.prototype.splice = function (start, count, insert) {
     return tmp;
 };
 
-Observer.prototype.push = function (data) {
+/**
+ * @param {Object<string, number|string>} data
+ */
 
+Observer.prototype.push = function (data) {
     debug(this.mikado);
 
     skip = !0;
@@ -305,8 +299,11 @@ Observer.prototype.push = function (data) {
     skip = !1;
 };
 
-Observer.prototype.unshift = function (data) {
+/**
+ * @param {Object<string, number|string>} data
+ */
 
+Observer.prototype.unshift = function (data) {
     debug(this.mikado);
 
     skip = !0;
@@ -315,8 +312,11 @@ Observer.prototype.unshift = function (data) {
     skip = !1;
 };
 
-Observer.prototype.pop = function () {
+/**
+ * @return {Object<string, number|string>}
+ */
 
+Observer.prototype.pop = function () {
     debug(this.mikado);
 
     skip = !0;
@@ -326,8 +326,11 @@ Observer.prototype.pop = function () {
     return tmp;
 };
 
-Observer.prototype.shift = function () {
+/**
+ * @return {Object<string, number|string>}
+ */
 
+Observer.prototype.shift = function () {
     debug(this.mikado);
 
     skip = !0;
@@ -337,10 +340,14 @@ Observer.prototype.shift = function () {
     return tmp;
 };
 
-Observer.prototype.concat = function (b) {
+/**
+ * @param {Array<Object<string, number|string>>} arr
+ */
 
-    const length = b.length;
-    for (let i = 0; i < length; i++) this.push(b[i]);
+Observer.prototype.concat = function (arr) {
+
+    const length = arr.length;
+    for (let i = 0; i < length; i++) this.push(arr[i]);
     return this;
 };
 
@@ -366,6 +373,11 @@ Observer.prototype.reverse = proto.reverse;
 
 Observer.prototype.slice = proto.slice;
 
+/**
+ * @param {Function} fn
+ * @param {boolean} self
+ */
+
 Observer.prototype.map = function (fn, self) {
 
     if (self) {
@@ -381,6 +393,11 @@ Observer.prototype.map = function (fn, self) {
 
     return this;
 };
+
+/**
+ * @param {Function} fn
+ * @param {boolean} self
+ */
 
 Observer.prototype.filter = function (fn, self) {
 
@@ -420,6 +437,11 @@ Observer.prototype.filter = function (fn, self) {
     return this;
 };
 
+/**
+ * @param {*} search
+ * @return number
+ */
+
 Observer.prototype.indexOf = function (search) {
 
     for (let i = 0, len = this.length; i < len; i++) {
@@ -432,6 +454,11 @@ Observer.prototype.indexOf = function (search) {
 
     return -1;
 };
+
+/**
+ * @param {*} search
+ * @return number
+ */
 
 Observer.prototype.lastIndexOf = function (search) {
 
@@ -446,16 +473,25 @@ Observer.prototype.lastIndexOf = function (search) {
     return -1;
 };
 
+/**
+ * @param {Function} fn
+ */
+
 Observer.prototype.forEach = function (fn) {
 
     for (let i = 0, length = this.length; i < length; i++) {
 
         fn(this[i]);
     }
+
+    return this;
 };
 
-Observer.prototype.transaction = function (fn) {
+/**
+ * @param {Function} fn
+ */
 
+Observer.prototype.transaction = function (fn) {
     debug(this.mikado);
 
     skip = !0;
@@ -471,4 +507,6 @@ Observer.prototype.transaction = function (fn) {
         this.mikado.render(this);
         skip = !1;
     }
+
+    return this;
 };
