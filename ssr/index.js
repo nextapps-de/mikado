@@ -92,6 +92,12 @@ module.exports = class MikadoSSR{
             if(cache) return cache;
         }
 
+        if(options){
+
+            // force SSR when mikado.options was replaced
+            options.ssr = true;
+        }
+
         options = options ? Object.assign({}, this.options, options)
                           : this.options;
 

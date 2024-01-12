@@ -1,4 +1,4 @@
-//process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "production";
 const express = require("express");
 const mikado = require("../express");
 const ssr = require("../ssr");
@@ -8,20 +8,20 @@ const state = {};
 // Example Setup Direct SSR (No Express)
 // -----------------------------------
 
-mikado.options = {
-    cache: true,
-    compress: true,
-    csr: false,
-    ssr: true,
-    state: state,
-    extension: ["html"]
-};
+mikado.options.debug = false;
+mikado.options.compression = true;
+mikado.options.state = state;
+mikado.options.cache = true;
+mikado.options.csr = true
 
 // dynamic route:
 
 app.post("/ssr/:template/", express.json(), function(req, res){
 
-    res.send(ssr.compile("tpl/" + req.params.template).render(req.body, state)).end();
+    const tpl = ssr.compile("tpl/" + req.params.template)
+    const html = tpl.render(req.body, state);
+
+    res.send(html).end();
 });
 
 
@@ -46,7 +46,10 @@ app.set("view debug", true);
 
 app.post("/express/:template/", express.json(), function(req, res){
 
-    res.render(req.params.template, { data: req.body, state });
+    res.render(req.params.template, {
+        data: req.body,
+        state
+    });
 });
 
 // Start Server
@@ -57,6 +60,5 @@ app.use("/", express.static("../", { index: "test/index.html" }));
 app.listen("8080", function(err){
 
     if(err) throw err;
-
-    console.info("Backend@" + process.pid + " listening on http://localhost");
+    console.info("Server running on http://localhost:8080");
 });
