@@ -1,8 +1,6 @@
-type TemplateName = string;
-
 declare class Mikado {
-    constructor(template: Template, options?: MikadoOptions);
-    name: string;
+    constructor(template: Template|TemplateName, options?: MikadoOptions);
+    name: TemplateName;
     root: HTMLElement|null;
     state: Object;
     length: number;
@@ -118,8 +116,10 @@ declare namespace Mikado {
     function sanitize(text: string): string;
 }
 
+type TemplateName = string;
+
 type Template = {
-    name: string;
+    name: TemplateName;
     tpl: TemplateDOM;
     cmp?: TemplateDOM;
     fn: Array<Function>|null;

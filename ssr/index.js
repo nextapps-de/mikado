@@ -35,6 +35,11 @@ module.exports = class MikadoSSR{
         const inc = template.inc;
         const root = inc.pop();
 
+        if(!root){
+
+            return null;
+        }
+
         if(typeof root.inc === "string"){
 
             return MikadoSSR.compile(root.inc, options);

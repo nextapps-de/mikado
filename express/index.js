@@ -21,7 +21,7 @@ function engine(filePath, data, callback){
         }
     }
 
-    return callback(/* err */ null, MikadoSSR.compile(filePath).apply(data));
+    return callback(/* err */ null, MikadoSSR.compile(filePath).render(data.data, data.state));
 }
 
 //engine.__express = engine;

@@ -1,56 +1,62 @@
-#!/usr/bin/env node
+//process.env.NODE_ENV = "production";
+const express = require("express");
+const mikado = require("../express");
+const ssr = require("../ssr");
+const app = express();
+const state = {};
 
-const ws = require("web-servo");
-let port = process.argv[2] || 8080;
+// Example Setup Direct SSR (No Express)
+// -----------------------------------
 
-// if(!port){
-//
-//     if(/^win/.test(process.platform)){
-//
-//         port = 80;
-//     }
-//     else{
-//
-//         port = 8080;
-//     }
-// }
+mikado.options = {
+    cache: true,
+    compress: true,
+    csr: false,
+    ssr: true,
+    state: state,
+    extension: ["html"]
+};
 
-ws.config({
+// dynamic route:
 
-    "server": {
-        "port": port,
-        "dir": "../",
-        "exitOnError": false,
-        "ssl": {
-            "enabled": false,
-            "key": "",
-            "cert": ""
-        }
-    },
-    "page": {
-        "default": "test/index.html"
-    },
-    "methods": {
-        "allowed": [
-            "OPTIONS",
-            "GET",
-            "POST",
-            "HEAD",
-            "PUT",
-            "PATCH",
-            "DELETE"
-            //"COPY",
-            //"LINK",
-            //"UNLINK",
-            //"TRACE",
-            //"CONNECT"
-        ]
-    }
+app.post("/ssr/:template/", express.json(), function(req, res){
+
+    res.send(ssr.compile("tpl/" + req.params.template).render(req.body, state)).end();
 });
 
-//ws.setConfigVar('server.port', port);
-ws.silent().start();
 
-console.info("Server listening on: http://localhost" + (+port !== 80 ? ":" + port : ""));
-console.log("-----------------------------------------------------");
-console.log("Hit CTRL-C to stop the server...");
+
+// Example Setup Express
+// -----------------------------------
+
+app.set("views", [
+    __dirname + "/tpl"
+    // ...
+]);
+
+// register engine to filetype .html
+app.engine("html", mikado);
+// enable engine fore filetype .html
+app.set("view engine", "html");
+app.set("view compression", false /*env === "production"*/);
+app.set("view cache", 200);
+app.set("view debug", true);
+
+// dynamic route:
+
+app.post("/express/:template/", express.json(), function(req, res){
+
+    res.render(req.params.template, { data: req.body, state });
+});
+
+// Start Server
+// -----------------------------------
+
+app.use("/", express.static("../", { index: "test/index.html" }));
+
+app.listen("8080", function(err){
+
+    if(err) throw err;
+
+    console.info("Backend@" + process.pid + " listening on http://localhost");
+});

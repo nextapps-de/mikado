@@ -1639,7 +1639,7 @@ The runtime compiler does not support all places of inserting inline code expres
 <table id="user-list">
   <tbody foreach="data.entries">
   {{@
-    /* this will be replaced by the browser! */ 
+    /* the browser will move this before <table>! */ 
     const value = "test";
   }}
   <tr>

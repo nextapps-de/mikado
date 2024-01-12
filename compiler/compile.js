@@ -206,7 +206,10 @@ module.exports = function(src, dest, options, _recall){
             compression: compression,
 
             // a state to identify if inline js code was used in template
-            inline_code: false
+            inline_code: false,
+
+            // a state to identify if compiler was requested from SSR
+            is_ssr: ssr
         };
 
         fn.index = index;
@@ -815,23 +818,28 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     tmp_ssr = attr ? "this.attr(" + tmp + ")" : "this.text(" + tmp + ")";
                                 }
 
-                                if(key === "text" && root.tag){
+                                if(key === "text" || key === "html"){
 
-                                    index.ssr += (root.extract ? "" : ">") + "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
-                                    index.count++;
-                                }
-                                else if(key === "text"){
+                                    if(root.tag){
 
-                                    index.ssr += "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
+                                        index.ssr += (root.extract ? "" : ">") + "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
+                                        index.count++;
+                                    }
+                                    else{
+
+                                        index.ssr += "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
+                                    }
                                 }
                                 else if(attr){
 
+                                    // native dom attributes
                                     index.ssr += "'+((_val=" + /*escape_single_quotes*/(tmp_ssr) + ')===false?\'\':\' ' + key + '="\'+_val+\'"\')+\'';
                                 }
-                                // else{
-                                //
-                                //     index.ssr += ' ' + key + '="\'+' + tmp + '+\'"';
-                                // }
+                                else{
+
+                                    // e.g. when "style" or "class"
+                                    index.ssr += ' ' + key + '="\'+' + tmp + '+\'"';
+                                }
 
                                 if(key === "style" && root.tag){
 
@@ -1039,7 +1047,7 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 index.ssr += (root.tag ? ">" : "") + escape_single_quotes(value.replace(/\\n/g, " "));
                             }
-                            else if(key !== "tag" && key !== "root" && key !== "for" && key !== "if" && key !== "inc"){
+                            else if(key !== "tag" /*&& key !== "root"*/ && key !== "for" && key !== "if" && key !== "inc"){
 
                                 index.ssr += ' ' + key + (value ? '="' + escape_single_quotes(value) + '"' : "");
                             }
@@ -1117,7 +1125,9 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 const _fn = [];
 
                                 // skip named includes from pushing to the stack
-                                if(root.for || root.if){
+                                // except on SSR mode, because named includes are stored on the TemplateDOM structure
+                                // and this don't exist on SSR, so we need something to pass the named include
+                                if(root.for || root.if || (index.is_ssr && root.inc)){
 
                                     // The compiler unshift includes, because the client then can take them by faster arr.pop()
                                     inc.unshift(_fn);
@@ -1139,7 +1149,8 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         inline_code: false,
                                         included: false,
                                         compression: index.compression,
-                                        csr: index.csr
+                                        csr: index.csr,
+                                        is_ssr: index.is_ssr
                                     };
 
                                     create_schema(root.child, inc, _fn, _fn.index, false, mode);
@@ -1172,7 +1183,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                 }
             }
 
-            if(root.tag && !root.text && !index.inc && !root.extract){
+            if(root.tag && !root.text && !root.html && !index.inc && !root.extract){
 
                 index.ssr += ">";
             }
