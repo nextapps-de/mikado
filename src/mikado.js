@@ -697,13 +697,17 @@ if(!REACTIVE_ONLY){
             if(!this.apply){
 
                 this.dom[0] || this.add();
-            }
-            else if(DEBUG){
-
-                console.warn("When calling .render() by passing no data nothing will happen!");
+                return this;
             }
 
-            return this;
+            // a template could have just expressions without accessing data
+
+            // else if(DEBUG){
+            //
+            //     console.warn("When calling .render() by passing no data nothing will happen!");
+            // }
+            //
+            // return this;
         }
 
         let count;
@@ -752,7 +756,7 @@ if(!REACTIVE_ONLY){
 
                 if(key && (node[MIKADO_TPL_KEY] !== item[key])){
 
-                    return this.reconcile(/** @type {Array} */ (data), state, x, 1);
+                    return this.reconcile(/** @type {Array} */ (data), state, x);
                 }
                 else{
 
@@ -1227,12 +1231,12 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
      * @param {Array=} b
      * @param {*=} state
      * @param {number=} x
-     * @param {boolean|number=} render
+     * @param {boolean|number=} _skip_render
      * @returns {Mikado}
      * @const
      */
 
-    Mikado.prototype.reconcile = function(b, state, x, render){
+    Mikado.prototype.reconcile = function(b, state, x, _skip_render){
 
         PROFILER && tick("view.reconcile");
 
@@ -1271,7 +1275,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(a_x_key === b_x_key){
 
-                        if(render){
+                        if(!_skip_render){
 
                             this.update(a_x, b_x, state, x, 1);
                         }
@@ -1282,7 +1286,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                 if(ended || !live[b_x_key]){
 
-                    if(render){
+                    if(!_skip_render){
 
                         // TODO make better decision weather to insert before or replace
                         if(ended || !this.pool){
@@ -1319,7 +1323,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(/** @type {Node} */ (tmp_a), /** @type {Node} */ (a_x));
 
-                            if(render){
+                            if(!_skip_render){
 
                                 this.update(tmp_a, b_x, state, x, 1);
                             }

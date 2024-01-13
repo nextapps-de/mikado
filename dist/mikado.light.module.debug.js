@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.215 (Bundle/Debug)
+ * Mikado.js v0.8.216 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -245,8 +245,8 @@ n.render = function(a, b) {
     throw Error("Another template is already assigned to this root. Please use '.mount(root_element)' before calling '.render()' to switch the context of a template.");
   }
   var c = this.length;
-  if (!a) {
-    return this.apply ? console.warn("When calling .render() by passing no data nothing will happen!") : this.g[0] || this.add(), this;
+  if (!a && !this.apply) {
+    return this.g[0] || this.add(), this;
   }
   if (Array.isArray(a)) {
     var e = a.length;

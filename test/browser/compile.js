@@ -177,6 +177,44 @@ const template_full = `
 </main>
 `;
 
+const template_crazy = `
+<div>
+    <div>{{ "This" }} is {{ "some " + 'crazy\\'\\""' }} template</div>
+    <!--
+        some comment
+    -->
+    <div style="/* some comment */">
+        This{{
+            // some comment
+            " is "
+        }}some {{
+            (function(value){
+                return /* some comment */ value;
+            }('crazy'))
+        }}{{@ const whitespace = ' ';  }}{{ whitespace }}template
+    </div>
+    <div>
+        {{@
+            // some comment
+            let /**
+                 * some comment
+                 */ test = 1;
+        }}
+        {{ test }}
+        {{@ test++ }}
+        <!-- some comment -->
+        {{ test }}
+        {{@ test++ }}
+        {{ test === 3 }}
+    </div>
+    {{@ const val = "block";  }}
+    <div style="display: {{ val }}" data-id="{{ val }}">
+        {{@ const html = decodeURIComponent('%3Cb>bold%3C/b>')  }}
+        {{# html }}
+    </div>
+</div>
+`;
+
 describe("Compile Template", function(){
 
     it("Should compile basic template properly", function(){
@@ -542,6 +580,28 @@ describe("Compile Template", function(){
 
         view.clear().destroy();
     });
+
+    // TODO
+    // it("Should have been rendered crazy templates properly", function(){
+    //
+    //     const root_1 = document.getElementById("root-1");
+    //     const tpl = compile(template_crazy);
+    //     const view = new Mikado(tpl, { root: root_1 });
+    //
+    //     view.render();
+    //     expect(view.length).to.equal(1);
+    //
+    //     let node = root_1.firstElementChild;
+    //
+    //     expect(node.children.length).to.equal(4);
+    //     expect(node.children[0].textContent).to.equal(`This is some crazy'"" template`);
+    //     expect(node.children[1].textContent).to.equal("This is some crazy template");
+    //     expect(node.children[2].textContent).to.equal("12true");
+    //     expect(node.children[3].style.display).to.equal("block");
+    //     expect(node.children[3].innerHTML).to.equal("<b>bold</b>");
+    //
+    //     view.clear().destroy();
+    // });
 
     // TODO not supported by inline compiler
     // it("Should compile repeated include structures properly", function(){

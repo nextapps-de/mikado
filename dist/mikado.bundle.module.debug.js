@@ -1,103 +1,106 @@
 /**!
- * Mikado.js v0.8.215 (Bundle/Module/Debug)
+ * Mikado.js v0.8.216 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
  * https://github.com/nextapps-de/mikado
  */
 var m;
-const n = {}, w = {}, z = Object.create(null), aa = Object.create(null), ba = document.documentElement || document.body.parentNode, A = "ontouchstart" in window, B = !A && window.PointerEvent && navigator.maxTouchPoints;
-let ca;
-function C(a, b) {
+const n = {}, w = {}, z = Object.create(null), A = Object.create(null), aa = document.documentElement || document.body.parentNode, B = "ontouchstart" in window, C = !B && window.PointerEvent && navigator.maxTouchPoints;
+E.eventCache = !1;
+E.eventBubble = !1;
+let ba;
+function F(a, b) {
   b || (b = a.type);
-  var c = a.target;
-  let d;
-  if ("undefined" === typeof d) {
-    for (; c && c !== ba;) {
-      var e = void 0;
-      "click" === b && ca && (e = c.getAttribute("tap"));
-      e || (e = c.getAttribute(b));
-      if (e) {
-        var g = e.indexOf(":"), f = c;
-        if (-1 < g) {
-          var h = e.substring(0, g);
-          g = e.substring(g + 1);
-          for (e = ""; (f = f.parentElement) !== ba;) {
-            if (f.hasAttribute(g)) {
-              e = h;
+  const c = a.target, d = E.eventCache;
+  var e = E.eventBubble;
+  let g;
+  d && (g = c["_mke" + b]);
+  if ("undefined" === typeof g) {
+    for (var f = c; f && f !== aa;) {
+      var h = void 0;
+      "click" === b && ba && (h = f.getAttribute("tap"));
+      h || (h = f.getAttribute(b));
+      if (h) {
+        var k = h.indexOf(":"), l = f;
+        if (-1 < k) {
+          const q = h.substring(0, k);
+          k = h.substring(k + 1);
+          for (h = ""; (l = l.parentElement) !== aa;) {
+            if (l.hasAttribute(k)) {
+              h = q;
               break;
             }
           }
-          e || console.warn("Event root '" + g + "' was not found for the event: '" + h + "'.");
+          h || console.warn("Event root '" + k + "' was not found for the event: '" + q + "'.");
         }
-        if (e) {
-          d || (d = []);
-          d.push([e, f]);
+        if (h && (g || (g = [], d && (c["_mke" + b] = g)), g.push([h, l]), l = A[h], !e || l && (l.stop || l.cancel))) {
           break;
         }
       }
-      c = c.parentElement;
+      f = f.parentElement;
     }
+    d && (g || (c["_mke" + b] = null));
   }
-  if (d) {
-    for (let k = 0, l; k < d.length; k++) {
-      if (l = d[k], e = l[0], c = z[e]) {
-        f = l[1];
-        if (h = aa[e]) {
-          h.prevent && a.preventDefault(), h.stop && a.stopImmediatePropagation(), h.once && (z[e] = null);
+  if (g) {
+    for (let q = 0, p; q < g.length; q++) {
+      if (p = g[q], e = p[0], f = z[e]) {
+        h = p[1];
+        if (l = A[e]) {
+          l.prevent && a.preventDefault(), l.stop && a.stopImmediatePropagation(), l.once && (z[e] = null, d && (c["_mke" + b] = null));
         }
-        c(f, a);
+        f(h, a);
       } else {
         console.warn("The route '" + e + "' is not defined for the event '" + b + "'.");
       }
     }
   }
 }
-function da(a, b) {
-  n[a] || (E(1, a, C, b), n[a] = 1, w[a] = b || null);
+function ca(a, b) {
+  n[a] || (G(1, a, F, b), n[a] = 1, w[a] = b || null);
   return this;
 }
-let F, G, ea;
-if (A || B) {
+let H, I, da;
+if (B || C) {
   function a(d) {
     var e = d;
     (d = d.touches) && (e = d[0]);
-    F = e.clientX;
-    G = e.clientY;
+    H = e.clientX;
+    I = e.clientY;
   }
   function b(d) {
-    const e = F, g = G;
+    const e = H, g = I;
     var f = d, h = d.changedTouches;
     h && (f = h[0]);
-    F = f.clientX;
-    G = f.clientY;
-    15 > Math.abs(F - e) && 15 > Math.abs(G - g) && C(d, "tap");
+    H = f.clientX;
+    I = f.clientY;
+    15 > Math.abs(H - e) && 15 > Math.abs(I - g) && F(d, "tap");
   }
   const c = {passive:!1, capture:!0};
-  ea = function(d) {
-    E(d, B ? "pointerdown" : "touchstart", a, c);
-    E(d, B ? "pointerup" : "touchend", b, c);
+  da = function(d) {
+    G(d, C ? "pointerdown" : "touchstart", a, c);
+    G(d, C ? "pointerup" : "touchend", b, c);
   };
 }
-function E(a, b, c, d) {
+function G(a, b, c, d) {
   if ("tap" === b) {
-    if (A || B) {
-      ea(a);
+    if (B || C) {
+      da(a);
       return;
     }
-    ca = !0;
+    ba = !0;
     b = "click";
   }
   window[(a ? "add" : "remove") + "EventListener"](b, c, d || !1 === d ? d : !0);
 }
-;function H(a, b, c) {
+;function J(a, b, c) {
   const d = b.length, e = [], g = {};
-  for (let k = 0, l, r, p, t, q, v = null; k < d; k++) {
+  for (let k = 0, l, q, p, t, r, v = null; k < d; k++) {
     l = b[k];
-    if (r = l.v) {
-      if (t = p = g[r], !t) {
+    if (q = l.v) {
+      if (t = p = g[q], !t) {
         let u = void 0;
-        var f = a, h = r;
+        var f = a, h = q;
         for (let D = 0, y = h.length, x = ""; D < y; D++) {
           const Q = h[D];
           x += Q;
@@ -110,31 +113,31 @@ function E(a, b, c, d) {
     } else {
       t = p = a;
     }
-    c && q !== p && (q = p, p._mkc = v = {});
-    e[k] = new I(v, t, "");
+    c && r !== p && (r = p, p._mkc = v = {});
+    e[k] = new K(v, t, "");
   }
   return a._mkp = e;
 }
-function J(a, b, c, d, e, g) {
+function L(a, b, c, d, e, g) {
   g || (a.m = 1);
   const f = e || (b.tag ? b.svg ? document.createElementNS("http://www.w3.org/2000/svg", b.tag) : document.createElement(b.tag) : document.createTextNode(b.text));
   let h, k;
   if (k = b.class) {
-    "object" === typeof k ? (c.push(new I(h = {_c:""}, f, d)), (k = k[0]) ? K(a, k, ["_c", c.length - 1]) : a.m = 0) : e || (f.className = k);
+    "object" === typeof k ? (c.push(new K(h = {_c:""}, f, d)), (k = k[0]) ? M(a, k, ["_c", c.length - 1]) : a.m = 0) : e || (f.className = k);
   }
   if (k = b.attr) {
-    for (const r in k) {
-      let p = k[r];
-      "object" === typeof p ? (h || c.push(new I(h = {}, f, d)), h["_a" + r] = !1, (p = p[0]) ? K(a, p, ["_a", c.length - 1, r]) : a.m = 0) : e || f.setAttribute(r, p);
+    for (const q in k) {
+      let p = k[q];
+      "object" === typeof p ? (h || c.push(new K(h = {}, f, d)), h["_a" + q] = !1, (p = p[0]) ? M(a, p, ["_a", c.length - 1, q]) : a.m = 0) : e || f.setAttribute(q, p);
     }
   }
   if (k = b.event) {
-    for (const r in k) {
-      e || f.setAttribute(r, k[r]), da(r);
+    for (const q in k) {
+      e || f.setAttribute(q, k[q]), ca(q);
     }
   }
   if (k = b.style) {
-    "object" === typeof k ? (c.push(new I(h || (h = {}), f.style, d + "@")), h._s = "", (k = k[0]) ? K(a, k, ["_s", c.length - 1]) : a.m = 0) : e || (f.style.cssText = k);
+    "object" === typeof k ? (c.push(new K(h || (h = {}), f.style, d + "@")), h._s = "", (k = k[0]) ? M(a, k, ["_s", c.length - 1]) : a.m = 0) : e || (f.style.cssText = k);
   }
   if (k = b.text) {
     if ("object" === typeof k) {
@@ -142,8 +145,8 @@ function J(a, b, c, d, e, g) {
       k = k[0];
       b.tag ? (d += "|", l = !e && f.firstChild, l || (l = document.createTextNode(k), f.appendChild(l))) : h = {};
       (h || (h = {}))._t = k;
-      c.push(new I(h, l, d));
-      k ? K(a, k, ["_t", c.length - 1]) : a.m = 0;
+      c.push(new K(h, l, d));
+      k ? M(a, k, ["_t", c.length - 1]) : a.m = 0;
     } else {
       e || (b.tag ? f.textContent = k : f.nodeValue = k);
     }
@@ -152,9 +155,9 @@ function J(a, b, c, d, e, g) {
       return console.warn("Hydration failed of template '" + a.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
     }
     k.constructor !== Array && (k = [k]);
-    for (let r = 0, p, t = k.length; r < t; r++) {
-      if (p = k[r], d = r ? d + "+" : d + ">", b = J(a, p, c, d, e, 1), e) {
-        if (r < t - 1 && (e = e.nextSibling, !e)) {
+    for (let q = 0, p, t = k.length; q < t; q++) {
+      if (p = k[q], d = q ? d + "+" : d + ">", b = L(a, p, c, d, e, 1), e) {
+        if (q < t - 1 && (e = e.nextSibling, !e)) {
           return console.warn("Hydration failed of template '" + a.name + "' because the existing DOM structure was incompatible. Falls back to factory construction instead."), null;
         }
       } else {
@@ -162,27 +165,27 @@ function J(a, b, c, d, e, g) {
       }
     }
   } else if (k = b.html) {
-    "object" === typeof k ? (h || c.push(new I(h = {}, f, d)), h._h = "", (k = k[0]) ? K(a, k, ["_h", c.length - 1]) : a.m = 0) : e || (f.innerHTML = k);
+    "object" === typeof k ? (h || c.push(new K(h = {}, f, d)), h._h = "", (k = k[0]) ? M(a, k, ["_h", c.length - 1]) : a.m = 0) : e || (f.innerHTML = k);
   } else if (k = b.inc) {
-    h || c.push(new I(null, f, d));
+    h || c.push(new K(null, f, d));
     if ("string" === typeof k) {
-      l = L[k];
+      l = N[k];
       if (!l) {
         throw Error("The partial template '" + k + "' which is included by the root template '" + a.name + "' was not registered. When using named includes make sure you register all your includes by Mikado.register(tpl) before instantiating the Mikado view instance.");
       }
-      if (!(l instanceof M)) {
+      if (!(l instanceof E)) {
         d = l[0];
         if (b = l[1]) {
           b.async = !1, e && (b.root = e, b.hydrate = !0);
         }
-        L[k] = l = new M(d, b);
+        N[k] = l = new E(d, b);
       }
     } else if (1 !== k) {
       d = a.inc.length;
       if (!a.tpl.fn.length) {
         throw Error("The template '" + a.name + "|" + d + "' has conflicts. It should provide a handler entry, but wasn't found.");
       }
-      l = new M({name:a.name + "|" + d, tpl:k, key:k.key, cache:k.cache, fn:a.tpl.fn}, {recycle:a.recycle, cache:a.cache, pool:a.pool, state:a.state, mount:f, hydrate:!!e});
+      l = new E({name:a.name + "|" + d, tpl:k, key:k.key, cache:k.cache, fn:a.tpl.fn}, {recycle:a.recycle, cache:a.cache, pool:a.pool, state:a.state, mount:f, hydrate:!!e});
     }
     1 !== k && a.inc.push(l);
   }
@@ -190,16 +193,16 @@ function J(a, b, c, d, e, g) {
   g || (f._mkp = c);
   return f;
 }
-function K(a, b, c) {
+function M(a, b, c) {
   a.proxy || (a.proxy = {});
   (a.proxy[b] || (a.proxy[b] = [])).push(c);
 }
-function I(a, b, c) {
+function K(a, b, c) {
   this.c = a;
   this.n = b;
   this.v = c;
 }
-m = I.prototype;
+m = K.prototype;
 m._a = function(a, b) {
   if (this.c) {
     if (this.c["_a" + a] === b) {
@@ -245,7 +248,7 @@ m._h = function(a) {
   }
   this.n.innerHTML = a;
 };
-const ha = window.Proxy || function() {
+const fa = window.Proxy || function() {
   function a(b, c) {
     this.path = c.path;
     this.fn = c.fn;
@@ -260,20 +263,20 @@ const ha = window.Proxy || function() {
     Object.defineProperty(b, c, {get:function() {
       return d;
     }, set:function(g) {
-      fa(e, d = g, c);
+      ea(e, d = g, c);
     }});
   };
   return a;
 }();
-function ia(a, b) {
+function ha(a, b) {
   return "_mkx" === b ? this : a[b];
 }
-function ja(a, b, c) {
-  fa(this, c, b);
+function ia(a, b, c) {
+  ea(this, c, b);
   a[b] = c;
   return !0;
 }
-function fa(a, b, c) {
+function ea(a, b, c) {
   if (c = a.fn[c]) {
     for (let d = 0; d < c.length; d++) {
       const e = c[d], g = e[0], f = a.path[e[1]];
@@ -283,17 +286,17 @@ function fa(a, b, c) {
     }
   }
 }
-;const L = Object.create(null);
-function M(a, b = {}) {
-  if (!(this instanceof M)) {
-    return new M(a, b);
+;const N = Object.create(null);
+function E(a, b = {}) {
+  if (!(this instanceof E)) {
+    return new E(a, b);
   }
   if ("string" === typeof a) {
-    var c = L[a];
+    var c = N[a];
     if (!c) {
       throw Error("The template '" + a + "' is not registered.");
     }
-    if (c instanceof M) {
+    if (c instanceof E) {
       return c;
     }
     a = c[0];
@@ -328,10 +331,10 @@ function M(a, b = {}) {
   this.on = b.on || null;
   this.proxy = null;
   this.m = 0;
-  (a = b.observe) && (new N(a)).mount(this);
+  (a = b.observe) && (new O(a)).mount(this);
   this.root ? this.mount(this.root, b.hydrate) : this.j = null;
 }
-m = M.prototype;
+m = E.prototype;
 m.mount = function(a, b) {
   if (!a) {
     throw Error("No target was passed to .mount()");
@@ -347,7 +350,7 @@ m.mount = function(a, b) {
       } else {
         c.push({tag:"root"});
         for (let g = 0, f; g < c.length; g++) {
-          f = J(this, c[g], [], ""), a.append(f), g === c.length - 1 && (a = f);
+          f = L(this, c[g], [], ""), a.append(f), g === c.length - 1 && (a = f);
         }
       }
     }
@@ -396,15 +399,15 @@ m.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.j || (b && this.length && (this.j = this.g[0].cloneNode(!0), J(this, this.tpl.tpl, [], "", this.j) && O(this)), this.tpl && (this.j = J(this, this.tpl.tpl, [], ""), O(this)));
+  this.j || (b && this.length && (this.j = this.g[0].cloneNode(!0), L(this, this.tpl.tpl, [], "", this.j) && P(this)), this.tpl && (this.j = L(this, this.tpl.tpl, [], ""), P(this)));
   (b = this.on && this.on.mount) && b(a, this);
   return this;
 };
-function O(a) {
+function P(a) {
   a.tpl.B && (a.tpl.fn = a.tpl.B, a.tpl.B = null);
   a.tpl = null;
 }
-function ka(a, b, c, d, e) {
+function ja(a, b, c, d, e) {
   if (!a) {
     throw Error("Root element is not defined.");
   }
@@ -420,7 +423,7 @@ function ka(a, b, c, d, e) {
   if (e) {
     return new Promise(function(h) {
       requestAnimationFrame(function() {
-        ka(a, b, c, d);
+        ja(a, b, c, d);
         "function" === typeof e && e();
         h();
       });
@@ -429,7 +432,7 @@ function ka(a, b, c, d, e) {
   var f = (g = b.cmp) && g.length;
   g && !f && (a = a.shadowRoot || a.attachShadow({mode:"open"}));
   if (c || f || b.fn) {
-    g = new M(b);
+    g = new E(b);
     f && (a = g.mount(a).root);
     if (c && Array.isArray(c)) {
       for (f = 0; f < c.length; f++) {
@@ -440,9 +443,9 @@ function ka(a, b, c, d, e) {
     }
     g.destroy();
   } else {
-    g = J({}, b.tpl, [], "", null, 1), a.append(g);
+    g = L({}, b.tpl, [], "", null, 1), a.append(g);
   }
-  return M;
+  return E;
 }
 m.render = function(a, b, c, d) {
   if (!this.root) {
@@ -471,10 +474,10 @@ m.render = function(a, b, c, d) {
     }
   }
   var g = this.length;
-  if (!a) {
-    return this.apply ? console.warn("When calling .render() by passing no data nothing will happen!") : this.g[0] || this.add(), this;
+  if (!a && !this.apply) {
+    return this.g[0] || this.add(), this;
   }
-  if (Array.isArray(a) || a instanceof N) {
+  if (Array.isArray(a) || a instanceof O) {
     if (d = a.length, !d) {
       return this.remove(0, g);
     }
@@ -494,15 +497,15 @@ m.render = function(a, b, c, d) {
       k = this.g[e];
       l = a[e];
       if (f && k._mkk !== l[f]) {
-        return la(this, a, b, e);
+        return ka(this, a, b, e);
       }
       this.update(k, l, b, e, 1);
-      this.proxy && !l._mkx && (a[e] = P(this, k, l));
+      this.proxy && !l._mkx && (a[e] = R(this, k, l));
     }
   }
   if (e < d) {
     for (; e < d; e++) {
-      g = a[e], this.add(g, b), !this.proxy || this.recycle && g._mkx || (a[e] = P(this, this.g[e], g));
+      g = a[e], this.add(g, b), !this.proxy || this.recycle && g._mkx || (a[e] = R(this, this.g[e], g));
     }
   } else {
     d < g && this.remove(d, g - d);
@@ -526,12 +529,12 @@ m.replace = function(a, b, c, d) {
         h !== f && this.root.insertBefore(f, h);
       }
     } else {
-      this.pool && (e = this.l.get(g)) && (this.l.delete(g), R(this, a), this.g[d] = e, a.replaceWith(e));
+      this.pool && (e = this.l.get(g)) && (this.l.delete(g), S(this, a), this.g[d] = e, a.replaceWith(e));
     }
   } else {
     this.recycle && (e = a);
   }
-  e ? this.m && b._mkx || !this.apply || this.apply(b, c || this.state, d, e._mkp || H(e, this.j._mkp, this.cache)) : (b = this.create(b, c, d, 1), (this.key || this.pool) && R(this, a), this.g[d] = b, a.replaceWith(b));
+  e ? this.m && b._mkx || !this.apply || this.apply(b, c || this.state, d, e._mkp || J(e, this.j._mkp, this.cache)) : (b = this.create(b, c, d, 1), (this.key || this.pool) && S(this, a), this.g[d] = b, a.replaceWith(b));
   (d = this.on && this.on.replace) && d(a, this);
   return this;
 };
@@ -543,7 +546,7 @@ m.update = function(a, b, c, d) {
     return this;
   }
   "undefined" === typeof d && ("number" === typeof a ? (d = 0 > a ? this.length + a - 1 : a, a = this.g[d]) : d = this.index(a));
-  this.apply(b, c || this.state, d, a._mkp || H(a, this.j._mkp, this.cache));
+  this.apply(b, c || this.state, d, a._mkp || J(a, this.j._mkp, this.cache));
   (b = this.on && this.on.update) && b(a, this);
   return this;
 };
@@ -556,8 +559,8 @@ m.create = function(a, b, c, d) {
   let e = this.key;
   const g = e && a[e];
   let f, h, k, l;
-  e && this.pool && (h = this.l) && (f = h.get(g)) ? (l = 1, h.delete(g)) : (!e || this.recycle) && this.pool && (h = this.A) && h.length ? f = h.pop() : (f = k = this.j, k || (this.j = f = k = J(this, this.tpl.tpl, [], ""), O(this)));
-  this.apply && this.apply(a, b || this.state, c, f._mkp || H(f, this.j._mkp, !!k || this.cache));
+  e && this.pool && (h = this.l) && (f = h.get(g)) ? (l = 1, h.delete(g)) : (!e || this.recycle) && this.pool && (h = this.A) && h.length ? f = h.pop() : (f = k = this.j, k || (this.j = f = k = L(this, this.tpl.tpl, [], ""), P(this)));
+  this.apply && this.apply(a, b || this.state, c, f._mkp || J(f, this.j._mkp, !!k || this.cache));
   k && (f = f.cloneNode(!0));
   e && (l || (f._mkk = g), d && (this.o[g] = f));
   (a = this.on && this.on[k ? "create" : "recycle"]) && a(f, this);
@@ -567,40 +570,40 @@ m.add = function(a, b, c) {
   let d;
   "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, d = c < this.length) : "number" === typeof c ? (0 > c && (c += this.length), d = c < this.length) : c = this.length;
   a = this.create(a, b, c, 1);
-  d ? (this.root.insertBefore(a, this.g[c]), S(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
+  d ? (this.root.insertBefore(a, this.g[c]), T(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
   (c = this.on && this.on.insert) && c(a, this);
   return this;
 };
-function P(a, b, c) {
+function R(a, b, c) {
   {
-    b = b._mkp || H(b, a.j._mkp, a.cache);
+    b = b._mkp || J(b, a.j._mkp, a.cache);
     a = a.proxy;
     const d = c._mkx;
-    d ? d.path = b : c = new ha(c, {path:b, fn:a, get:ia, set:ja});
+    d ? d.path = b : c = new fa(c, {path:b, fn:a, get:ha, set:ia});
   }
   return c;
 }
-function la(a, b, c, d) {
+function ka(a, b, c, d) {
   const e = a.g, g = a.o, f = a.key;
-  let h = b.length, k = e.length, l = k > h ? k : h, r = 0;
+  let h = b.length, k = e.length, l = k > h ? k : h, q = 0;
   for (d || (d = 0); d < l; d++) {
     var p = void 0;
     if (d < h) {
-      var t = b[d], q = d >= k;
+      var t = b[d], r = d >= k;
       let v, u, D;
-      a.proxy && !t._mkx && (b[d] = P(a, e[d], t));
-      if (!q && (v = e[d], u = t[f], D = v._mkk, D === u)) {
+      a.proxy && !t._mkx && (b[d] = R(a, e[d], t));
+      if (!r && (v = e[d], u = t[f], D = v._mkk, D === u)) {
         a.update(v, t, c, d, 1);
         continue;
       }
-      if (q || !g[u]) {
-        q || !a.pool ? (k++, l = k > h ? k : h, a.add(t, c, d)) : a.replace(v, t, c, d);
+      if (r || !g[u]) {
+        r || !a.pool ? (k++, l = k > h ? k : h, a.add(t, c, d)) : a.replace(v, t, c, d);
         continue;
       }
       let y, x;
-      for (q = d + 1; q < l; q++) {
-        if (!y && q < k && e[q]._mkk === u && (y = q + 1), !x && q < h && b[q][f] === D && (x = q + 1), y && x) {
-          y >= x ? (p = e[y - 1], a.root.insertBefore(p, v), a.update(p, t, c, d, 1), y === x ? (1 < q - d && a.root.insertBefore(v, e[y]), e[d] = e[q], (e[q] = v) || console.error("Error")) : (S(e, y - 1, d), r++)) : (t = x - 1 + r, a.root.insertBefore(v, e[t] || null), S(e, d, (t > k ? k : t) - 1), r--, d--);
+      for (r = d + 1; r < l; r++) {
+        if (!y && r < k && e[r]._mkk === u && (y = r + 1), !x && r < h && b[r][f] === D && (x = r + 1), y && x) {
+          y >= x ? (p = e[y - 1], a.root.insertBefore(p, v), a.update(p, t, c, d, 1), y === x ? (1 < r - d && a.root.insertBefore(v, e[y]), e[d] = e[r], (e[r] = v) || console.error("Error")) : (T(e, y - 1, d), q++)) : (t = x - 1 + q, a.root.insertBefore(v, e[t] || null), T(e, d, (t > k ? k : t) - 1), q--, d--);
           p = 1;
           break;
         }
@@ -610,7 +613,7 @@ function la(a, b, c, d) {
   }
   return a;
 }
-function S(a, b, c, d) {
+function T(a, b, c, d) {
   const e = d || a[b];
   d && b++;
   if (b < c) {
@@ -647,7 +650,7 @@ m.remove = function(a, b) {
   !a && b >= c ? (a = this.g, b = a.length, this.root.textContent = "", this.root._mkd = this.g = [], c = 0) : (a = this.g.splice(a, b), c -= b);
   const d = this.pool && !this.key, e = this.key || this.pool, g = this.on && this.on.remove;
   for (let f = 0, h; f < b; f++) {
-    h = a[d ? b - f - 1 : f], c && h.remove(), e && R(this, h), g && g(h, this);
+    h = a[d ? b - f - 1 : f], c && h.remove(), e && S(this, h), g && g(h, this);
   }
   this.length = c;
   return this;
@@ -658,7 +661,7 @@ m.index = function(a) {
 m.node = function(a) {
   return this.g[a];
 };
-function R(a, b) {
+function S(a, b) {
   if (a.key) {
     var c = b._mkk;
     a.o[c] = null;
@@ -680,36 +683,36 @@ m.flush = function() {
 };
 m.destroy = function() {
   for (let a = 0, b; a < this.inc.length; a++) {
-    b = this.inc[a], L[b.name] || b.destroy();
+    b = this.inc[a], N[b.name] || b.destroy();
   }
   this.key && (this.root && (this.root._mkl = null), this.o = null);
   this.root && (this.root._mkd = this.root._mki = null);
   this.proxy = this.on = this.l = this.A = this.g = this.root = this.tpl = this.apply = this.inc = this.state = this.j = null;
 };
-const T = Array.prototype, U = window.Proxy;
+const U = Array.prototype, la = window.Proxy;
 let V = !1;
 function W(a) {
   if (!a) {
     throw Error("The observable array was not assigned to a Mikado instance. You need to pass in the observable array when initiating a Mikado instance.");
   }
 }
-function N(a) {
-  if (a instanceof N) {
+function O(a) {
+  if (a instanceof O) {
     return a;
   }
-  if (!(this instanceof N)) {
-    return new N(a);
+  if (!(this instanceof O)) {
+    return new O(a);
   }
   this.h = null;
   const b = a ? a.length : 0;
-  if (U) {
+  if (la) {
     if (b) {
       for (let c = 0; c < b; c++) {
         this[c] = a[c];
       }
     }
     this.length = b;
-    this.i = {splice:T.splice.bind(this), pop:T.pop.bind(this), shift:T.shift.bind(this), unshift:T.unshift.bind(this), push:T.push.bind(this)};
+    this.i = {splice:U.splice.bind(this), pop:U.pop.bind(this), shift:U.shift.bind(this), unshift:U.unshift.bind(this), push:U.push.bind(this)};
     return new Proxy(this, ma);
   }
   this.i = a || [];
@@ -718,8 +721,8 @@ function N(a) {
   }
   na(this, "length");
 }
-N.prototype.mount = function(a) {
-  this.h !== a && (a.mount(this.h.root), this.h = a);
+O.prototype.mount = function(a) {
+  this.h !== a && (this.h && a.mount(this.h.root), this.h = a);
   return this;
 };
 function na(a, b) {
@@ -748,11 +751,11 @@ const ma = {set:function(a, b, c) {
     }
     V = !1;
   }
-  !d || !e.proxy || e.recycle && c._mkx || (c = P(e, e.g[b], c));
-  (U ? a : a.i)[b] = c;
+  !d || !e.proxy || e.recycle && c._mkx || (c = R(e, e.g[b], c));
+  (la ? a : a.i)[b] = c;
   return !0;
 }};
-m = N.prototype;
+m = O.prototype;
 m.swap = function(a, b) {
   const c = this[b];
   this[b] = this[a];
@@ -779,7 +782,7 @@ m.push = function(a) {
   V = !0;
   this.h.add(a);
   this[this.length] = a;
-  U && this.length++;
+  la && this.length++;
   V = !1;
 };
 m.unshift = function(a) {
@@ -812,9 +815,9 @@ m.concat = function(a) {
   }
   return this;
 };
-m.sort = T.sort;
-m.reverse = T.reverse;
-m.slice = T.slice;
+m.sort = U.sort;
+m.reverse = U.reverse;
+m.slice = U.slice;
 m.map = function(a, b) {
   b && (a = a.bind(this));
   for (let c = 0, d = this.length; c < d; c++) {
@@ -847,7 +850,7 @@ m.lastIndexOf = function(a) {
   }
   return -1;
 };
-m.includes = T.includes;
+m.includes = U.includes;
 m.forEach = function(a) {
   for (let b = 0, c = this.length; b < c; b++) {
     a(this[b]);
@@ -856,8 +859,8 @@ m.forEach = function(a) {
 };
 const X = document.createElement("div"), oa = document.createTextNode(""), Y = document.createElement("div");
 X.appendChild(oa);
-m = M.prototype;
-m.move = M.prototype.moveTo = function(a, b) {
+m = E.prototype;
+m.move = E.prototype.moveTo = function(a, b) {
   let c;
   "number" === typeof a ? (c = a, a = this.g[c]) : c = this.index(a);
   0 > b && (b = this.length + b - 1);
@@ -969,10 +972,10 @@ function sa(a, b, c, d, e, g) {
     var l;
     if ((l = (k ? a.firstChild : a).nodeValue) && l && l.trim()) {
       if (l.includes("{{@")) {
-        var r = l.replace(/{{@([\s\S]+)}}/g, "$1").trim();
-        l = /{{[\s\S]+}}/.test(r) ? r.replace(/{{([\s\S]+)}}/g, "{{$1}}") : "";
-        r && (r = r.replace(/{{([\s\S]+)}}/g, ""));
-        r && d.push(r);
+        var q = l.replace(/{{@([\s\S]+)}}/g, "$1").trim();
+        l = /{{[\s\S]+}}/.test(q) ? q.replace(/{{([\s\S]+)}}/g, "{{$1}}") : "";
+        q && (q = q.replace(/{{([\s\S]+)}}/g, ""));
+        q && d.push(q);
         if ("SCRIPT" === k) {
           return l.trim() && (h.text = l, h.tag = k), h;
         }
@@ -986,15 +989,15 @@ function sa(a, b, c, d, e, g) {
   k && (h.tag = k);
   if ((l = a.attributes) && l.length) {
     k = {};
-    for (r = 0; r < l.length; r++) {
-      let v = l[r].nodeName, u = a.getAttribute(v);
+    for (q = 0; q < l.length; q++) {
+      let v = l[q].nodeName, u = a.getAttribute(v);
       "include" === v && (v = "inc");
       k[v] = u;
     }
     l = k;
     for (var p in l) {
       k = l[p];
-      var t = void 0, q = void 0;
+      var t = void 0, r = void 0;
       switch(p) {
         case "class":
         case "style":
@@ -1019,9 +1022,9 @@ function sa(a, b, c, d, e, g) {
         case "cache":
           break;
         default:
-          pa[p] ? q = h.event || (h.event = {}) : (g || "id" !== p && "name" !== p || f.name || /{{[\s\S]+}}/.test(k) || (f.name = k), q = h.attr || (h.attr = {})), t = p;
+          pa[p] ? r = h.event || (h.event = {}) : (g || "id" !== p && "name" !== p || f.name || /{{[\s\S]+}}/.test(k) || (f.name = k), r = h.attr || (h.attr = {})), t = p;
       }
-      t && ta(q || h, t, k, !!q, l, e, d);
+      t && ta(r || h, t, k, !!r, l, e, d);
     }
   }
   p = (a.content || a).childNodes;
@@ -1029,8 +1032,8 @@ function sa(a, b, c, d, e, g) {
   e.u && (e.u = !1, e.inc++, d = [], (h.for || h.if) && c.unshift(d), h.child || (h.child = h.text ? {text:h.text} : h.html ? {html:h.html} : null), t ? (d.root = h, d.inc = h.child || (h.child = []), d.index = e = {current:-1, count:0, last:-1, inc:0, u:!1}) : d.inc = h.inc, delete h.for, delete h.if, delete h.text, delete h.html);
   if (t) {
     for (let v = 0, u; v < t; v++) {
-      if (u = p[v], 8 !== u.nodeType && (e.count++, q = sa(u, null, c, d, e, 1))) {
-        1 !== t || 3 !== u.nodeType && q.text || h.js && q.js ? (q.text || q.tag) && (h.child || (h.child = [])).push(q) : (q.js && (h.js = q.js), q.html && (h.html = q.html), q.text && (h.text = q.text));
+      if (u = p[v], 8 !== u.nodeType && (e.count++, r = sa(u, null, c, d, e, 1))) {
+        1 !== t || 3 !== u.nodeType && r.text || h.js && r.js ? (r.text || r.tag) && (h.child || (h.child = [])).push(r) : (r.js && (h.js = r.js), r.html && (h.html = r.html), r.text && (h.text = r.text));
       }
     }
     h.child && 1 === h.child.length && (h.child = h.child[0]);
@@ -1124,68 +1127,68 @@ function za(a) {
   }
   return c;
 }
-;M.once = ka;
-M.register = function(a, b) {
+;E.once = ja;
+E.register = function(a, b) {
   let c, d;
   if ("string" === typeof a) {
-    if (c = d = a, a = L[c], a instanceof M || (a = a[0]), !a) {
+    if (c = d = a, a = N[c], a instanceof E || (a = a[0]), !a) {
       throw Error("The template '" + c + "' was not found.");
     }
   } else {
     c = a.name;
   }
-  L[c] && (d ? console.info("The template '" + c + "' was replaced by a new definition.") : console.warn("The template '" + c + "' was already registered and is getting overwritten. When this isn't your intention, then please check your template names about uniqueness and collision!"));
-  L[c] = [a, b];
-  return M;
+  N[c] && (d ? console.info("The template '" + c + "' was replaced by a new definition.") : console.warn("The template '" + c + "' was already registered and is getting overwritten. When this isn't your intention, then please check your template names about uniqueness and collision!"));
+  N[c] = [a, b];
+  return E;
 };
-M.unregister = function(a) {
+E.unregister = function(a) {
   "object" === typeof a && (a = a.name);
-  const b = L[a];
-  b && (b instanceof M && b.destroy(), L[a] = null);
-  return M;
+  const b = N[a];
+  b && (b instanceof E && b.destroy(), N[a] = null);
+  return E;
 };
-M.compile = sa;
-M.setText = function(a, b) {
+E.compile = sa;
+E.setText = function(a, b) {
   let c = a._mkc, d, e;
   c ? e = c._t : a._mkc = c = {};
   e !== b && (c._t = b, 3 === a.nodeType && (d = a) || (d = a.firstChild) ? d.nodeValue = b : a.textContent = b);
 };
-M.getText = function(a) {
+E.getText = function(a) {
   let b = a._mkc, c, d;
   b ? d = b._t : a._mkc = b = {};
   "string" !== typeof d && (3 === a.nodeType && (c = a) || (c = a.firstChild) ? b._t = d = c.nodeValue : b._t = d = a.textContent);
   return d;
 };
-M.setHtml = function(a, b) {
+E.setHtml = function(a, b) {
   let c = a._mkc, d;
   c ? d = c._h : a._mkc = c = {};
   d !== b && (a.innerHTML = b, c._h = b, c._t = null);
 };
-M.getHtml = function(a) {
+E.getHtml = function(a) {
   let b = a._mkc, c;
   b ? c = b._h : a._mkc = b = {};
   "string" !== typeof c && (b._h = c = a.innerHTML);
   return c;
 };
-M.setClass = function(a, b) {
+E.setClass = function(a, b) {
   let c = a._mkc, d;
   c ? d = c._c : a._mkc = c = {};
   "object" === typeof b && (b = b.join(" "));
   d !== b && (c._c = b, a.className = b);
 };
-M.getClass = function(a) {
+E.getClass = function(a) {
   let b = a._mkc, c;
   b ? c = b._c : a._mkc = b = {};
   "string" !== typeof c && (b._c = c = a.className);
   return c.split(va);
 };
-M.hasClass = function(a, b) {
+E.hasClass = function(a, b) {
   const c = Z(a);
   let d = c[b];
   "number" !== typeof d && (c[b] = d = a.classList.contains(b) ? 1 : 0);
   return !!d;
 };
-M.toggleClass = function(a, b, c) {
+E.toggleClass = function(a, b, c) {
   const d = Z(a);
   if ("object" === typeof b) {
     if (b.constructor === Array) {
@@ -1201,7 +1204,7 @@ M.toggleClass = function(a, b, c) {
     ya(a, b, c, d);
   }
 };
-M.removeClass = function(a, b) {
+E.removeClass = function(a, b) {
   const c = Z(a);
   if ("object" === typeof b) {
     for (let g = 0; g < b.length; g++) {
@@ -1212,7 +1215,7 @@ M.removeClass = function(a, b) {
     0 !== c[b] && (c[b] = 0, a.classList.remove(b));
   }
 };
-M.addClass = function(a, b) {
+E.addClass = function(a, b) {
   const c = Z(a);
   if ("object" === typeof b) {
     for (let g = 0; g < b.length; g++) {
@@ -1223,7 +1226,7 @@ M.addClass = function(a, b) {
     c[b] || (c[b] = 1, a.classList.add(b));
   }
 };
-M.setAttribute = function(a, b, c) {
+E.setAttribute = function(a, b, c) {
   let d = a._mkc;
   d || (a._mkc = d = {});
   if ("object" === typeof b) {
@@ -1234,12 +1237,12 @@ M.setAttribute = function(a, b, c) {
     wa(a, b, c, d);
   }
 };
-M.getAttribute = xa;
-M.hasAttribute = function(a, b) {
+E.getAttribute = xa;
+E.hasAttribute = function(a, b) {
   a = xa(a, b);
   return !(!a && "" !== a);
 };
-M.removeAttribute = function(a, b) {
+E.removeAttribute = function(a, b) {
   let c = a._mkc;
   c || (a._mkc = c = {});
   if ("object" === typeof b) {
@@ -1251,24 +1254,24 @@ M.removeAttribute = function(a, b) {
     !1 !== c["_a" + b] && (c["_a" + b] = !1, a.removeAttribute(b));
   }
 };
-M.setCss = function(a, b) {
+E.setCss = function(a, b) {
   let c = a._mkc, d;
   c ? d = c._s : a._mkc = c = {};
   d !== b && (c._s = b, a.style.cssText = b);
 };
-M.getCss = function(a) {
+E.getCss = function(a) {
   let b = a._mkc, c;
   b ? c = b._s : a._mkc = b = {};
   "string" !== typeof c && (b._s = c = a.style.cssText);
   return c;
 };
-M.getStyle = function(a, b) {
+E.getStyle = function(a, b) {
   const c = za(a);
   let d = c[b];
   "string" !== typeof d && (c[b] = d = a.style.getPropertyValue(b));
   return d;
 };
-M.setStyle = function(a, b, c) {
+E.setStyle = function(a, b, c) {
   const d = za(a), e = a.style;
   if ("object" === typeof b) {
     for (const f in b) {
@@ -1280,15 +1283,15 @@ M.setStyle = function(a, b, c) {
     d[b] !== c && (d[b] = c, (e || a.style).setProperty(b, c));
   }
 };
-M.escape = function(a) {
+E.escape = function(a) {
   X.i !== a && (oa.nodeValue = a, X.h = X.innerHTML, X.i = a);
   return X.h;
 };
-M.sanitize = function(a) {
+E.sanitize = function(a) {
   Y.h !== a && (Y.innerHTML = a, Y.h = a, Y.i = Y.textContent);
   return Y.i;
 };
-M.prototype.route = M.route = function(a, b, c) {
+E.prototype.route = E.route = function(a, b, c) {
   if (!a) {
     throw Error("Missing route name.");
   }
@@ -1297,10 +1300,10 @@ M.prototype.route = M.route = function(a, b, c) {
   }
   z[a] && console.info("A new handler was re-assigned to the route '" + a + "'.");
   z[a] = b;
-  c && (aa[a] = c);
+  c && (A[a] = c);
   return this;
 };
-M.prototype.dispatch = M.dispatch = function(a, b, c) {
+E.prototype.dispatch = E.dispatch = function(a, b, c) {
   if (!a) {
     throw Error("Missing route name.");
   }
@@ -1310,11 +1313,11 @@ M.prototype.dispatch = M.dispatch = function(a, b, c) {
   z[a](b || this, c || window.event);
   return this;
 };
-M.prototype.listen = M.listen = da;
-M.prototype.unlisten = M.unlisten = function(a) {
-  n[a] && (E(0, a, C, w[a]), n[a] = 0, w[a] = null);
+E.prototype.listen = E.listen = ca;
+E.prototype.unlisten = E.unlisten = function(a) {
+  n[a] && (G(0, a, F, w[a]), n[a] = 0, w[a] = null);
   return this;
 };
-M.Array = N;
-export default M;
+E.Array = O;
+export default E;
 

@@ -88,7 +88,7 @@ Observer.prototype.mount = function (mikado) {
 
     if (this.mikado !== mikado) {
 
-        mikado.mount(this.mikado.root);
+        this.mikado && mikado.mount(this.mikado.root);
         this.mikado = mikado;
     }
 

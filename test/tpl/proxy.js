@@ -48,12 +48,12 @@ tpl:{
     class: [
       "class"
     ],
-    style: [
-      "style"
-    ],
     event: {
       "tap": "attach"
-    }
+    },
+    style: [
+      "style"
+    ]
   }
 },
 fn:[function(data,state,index,_p){

@@ -8,6 +8,7 @@ import data from "../data.js";
 import template_static from "../tpl/static.js";
 import template_svg from "../tpl/svg.js";
 import template_full from "../tpl/full.js";
+import template_crazy from "../tpl/crazy.js";
 
 describe("[Express] Render Template", function(){
 
@@ -282,6 +283,24 @@ describe("[Express] Render Template", function(){
         expect((tmp = root_1.firstElementChild.firstElementChild).textContent).to.equal("test");
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test");
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test|foobar");
+    });
+
+    it("Should have been rendered crazy templates properly", function(){
+
+        const template = fetch("/express/crazy/");
+        const root_1 = document.getElementById("root-1");
+        root_1.innerHTML = template;
+
+        expect(root_1.children.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(4);
+        expect(node.children[0].textContent).to.equal(`This is some crazy'"" template`);
+        expect(node.children[1].textContent).to.equal("This is some crazy template");
+        expect(node.children[2].textContent.trim()).to.equal("12true");
+        expect(node.children[3].style.display).to.equal("block");
+        expect(node.children[3].innerHTML).to.equal("<b>bold</b>");
     });
 });
 

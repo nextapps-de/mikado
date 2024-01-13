@@ -3352,6 +3352,8 @@ store[store.length] = { ... };
 var first = store[0];
 ```
 
+<a name="array.set"></a>
+
 You can replace the array contents by:
 
 ```js
@@ -3359,46 +3361,55 @@ var items = [ ... ];
 store.set(items);
 ```
 
-<a name="array.concat"></a><a name="array.indexOf"></a><a name="array.lastIndexOf"></a><a name="array.includes"></a><a name="array.filter"></a><a name="array.map"></a><a name="array.reverse"></a><a name="array.sort"></a><a name="array.swap"></a><a name="array.forEach"></a><a name="array.set"></a>
+<a name="array.concat"></a>
+<a name="array.indexOf"></a>
+<a name="array.lastIndexOf"></a>
+<a name="array.includes"></a>
+<a name="array.filter"></a>
+<a name="array.map"></a>
+<a name="array.reverse"></a>
+<a name="array.sort"></a>
+<a name="array.swap"></a>
+<a name="array.forEach"></a>
 
 A list of all supported array prototypes:
 
 - length
-- push
-- pop
-- shift
-- unshift
-- slice
-- splice
-- concat
-- indexOf
-- lastIndexOf
-- includes
-- filter
-- map
-- reverse
-- sort
-- swap
-- forEach
-- set (this will replace the array contents)
+- push(obj)
+- pop()
+- shift(obj)
+- unshift(obj)
+- slice(index, count)
+- splice(index, count, insert)
+- concat(arr)
+- indexOf(obj)
+- lastIndexOf(obj)
+- includes(obj)
+- filter(fn)
+- map(fn)
+- reverse()
+- sort(fn)
+- swap(a, b)
+- forEach(fn)
+- set(arr) (used to replace the array contents)
 
 These methods are implemented without some extensions like parameter chaining, e.g. `array.push(a, b, c)` is not available, instead, you have to call push for each item one by one.
 
-There are some methods which slightly differs from the original implementation of native Arrays. These methods will apply changes **_in place_** and returning the original reference instead of applying on a copy:
+There are some methods which slightly differs from the original implementation of native Arrays. The following methods will apply changes **_in place_** and returning the original reference instead of making a copy:
 
 - concat
 - filter
 - map
 
-Whenever you need the original native Array behavior you can simply do that by:
+Whenever you need the original native Array behavior including all extensions and variants you can simply do that by:
 
 ```js
-var new_array = [ ... ];
-var copy = Array.prototype.concat.call(store, new_array);
+const new_array = [ ... ];
+const copy = Array.prototype.concat.call(store, new_array);
 ```
 
 ```js
-var copy = Array.prototype.filter.call(store, function(){ ... });
+const copy = Array.prototype.map.call(store, obj => obj);
 ```
 
 In a situation when falling back to the non-proxy polyfill because of missing support for native Proxy, there is a limitation.
@@ -3760,7 +3771,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     <tr>
         <td>DEBUG</td>
         <td>true, false</td>
-        <td>Output debug information to the console (do not enable for production)</td>
+        <td>Output debug information to the console (default: false)</td>
     </tr>
     <tr></tr>
     <tr>
@@ -3844,7 +3855,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     </tr>
     <tr></tr>
     <tr>
-        <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br></td>
+        <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br><br><br></td>
         <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT_2015<br>ECMASCRIPT_2016<br>ECMASCRIPT_2017<br>ECMASCRIPT_2018<br>ECMASCRIPT_2019<br>ECMASCRIPT_2020<br>ECMASCRIPT_2021<br>ECMASCRIPT_NEXT<br>STABLE</td>
         <td>Target language</td>
     </tr>

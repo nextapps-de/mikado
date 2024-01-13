@@ -601,12 +601,17 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
         if (!this.apply) {
 
             this.dom[0] || this.add();
-        } else {
-
-            console.warn("When calling .render() by passing no data nothing will happen!");
+            return this;
         }
 
-        return this;
+        // a template could have just expressions without accessing data
+
+        // else if(DEBUG){
+        //
+        //     console.warn("When calling .render() by passing no data nothing will happen!");
+        // }
+        //
+        // return this;
     }
 
     let count;
@@ -652,7 +657,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
 
             if (key && node._mkk !== item[key]) {
 
-                return this.reconcile( /** @type {Array} */data, state, x, 1);
+                return this.reconcile( /** @type {Array} */data, state, x);
             } else {
 
                 this.update(node, item, state, x, 1);
@@ -1063,12 +1068,12 @@ export function apply_proxy(self, node, data) {
  * @param {Array=} b
  * @param {*=} state
  * @param {number=} x
- * @param {boolean|number=} render
+ * @param {boolean|number=} _skip_render
  * @returns {Mikado}
  * @const
  */
 
-Mikado.prototype.reconcile = function (b, state, x, render) {
+Mikado.prototype.reconcile = function (b, state, x, _skip_render) {
     const a = this.dom,
           live = this.live,
           key = this.key;
@@ -1102,7 +1107,7 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
 
                 if (a_x_key === b_x_key) {
 
-                    if (render) {
+                    if (!_skip_render) {
 
                         this.update(a_x, b_x, state, x, 1);
                     }
@@ -1113,7 +1118,7 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
 
             if (ended || !live[b_x_key]) {
 
-                if (render) {
+                if (!_skip_render) {
 
                     // TODO make better decision weather to insert before or replace
                     if (ended || !this.pool) {
@@ -1149,7 +1154,7 @@ Mikado.prototype.reconcile = function (b, state, x, render) {
                         // when distance is 1 it will always move before, no predecessor check necessary
                         this.root.insertBefore( /** @type {Node} */tmp_a, /** @type {Node} */a_x);
 
-                        if (render) {
+                        if (!_skip_render) {
 
                             this.update(tmp_a, b_x, state, x, 1);
                         }

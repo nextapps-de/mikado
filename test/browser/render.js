@@ -7,6 +7,7 @@ import template from "../tpl/template.js";
 import template_static from "../tpl/static.js";
 import template_svg from "../tpl/svg.js";
 import template_full from "../tpl/full.js";
+import template_crazy from "../tpl/crazy.js";
 import data from "../data.js";
 
 describe("Render Template", function(){
@@ -27,38 +28,6 @@ describe("Render Template", function(){
         const view = new Mikado(template, { mount: root_1 }).render(data[0]);
 
         checkDOM(root_1.firstElementChild, [data[0]]);
-
-        view.clear().destroy();
-    });
-
-    it("Should not have been rendered", function(){
-
-        const root_1 = document.getElementById("root-1");
-        const view = Mikado(template, { mount: root_1 });
-
-        view.render(); // console.warn
-
-        expect(view.length).to.equal(0);
-        expect(view.root["_mkd"].length).to.equal(0);
-        expect(view.root.innerHTML).to.equal("");
-
-        view.render([]);
-
-        expect(view.length).to.equal(0);
-        expect(view.root["_mkd"].length).to.equal(0);
-        expect(view.root.innerHTML).to.equal("");
-
-        view.render(null); // console.warn
-
-        expect(view.length).to.equal(0);
-        expect(view.root["_mkd"].length).to.equal(0);
-        expect(view.root.innerHTML).to.equal("");
-
-        view.render(undefined); // console.warn
-
-        expect(view.length).to.equal(0);
-        expect(view.root["_mkd"].length).to.equal(0);
-        expect(view.root.innerHTML).to.equal("");
 
         view.clear().destroy();
     });
@@ -311,6 +280,26 @@ describe("Render Template", function(){
         expect(view.root.querySelector("thead th:last-child").children.length).to.equal(1);
         expect(view.root.querySelector("tbody").children.length).to.equal(0);
         expect(view.root.querySelector("tfoot").children.length).to.equal(1);
+
+        view.clear().destroy();
+    });
+
+    it("Should have been rendered crazy templates properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_crazy, { root: root_1 });
+
+        view.render();
+        expect(view.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(4);
+        expect(node.children[0].textContent).to.equal(`This is some crazy'"" template`);
+        expect(node.children[1].textContent).to.equal("This is some crazy template");
+        expect(node.children[2].textContent.trim()).to.equal("12true");
+        expect(node.children[3].style.display).to.equal("block");
+        expect(node.children[3].innerHTML).to.equal("<b>bold</b>");
 
         view.clear().destroy();
     });

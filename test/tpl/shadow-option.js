@@ -66,10 +66,10 @@ tpl:{
           class: [
             ""
           ],
-          style: "padding-right:10px;",
           event: {
             "tap": "attach"
-          }
+          },
+          style: "padding-right:10px;"
         }
       }
     }

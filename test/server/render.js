@@ -250,6 +250,24 @@ describe("[SSR] Render Template", function(){
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test");
         expect((tmp = tmp.nextElementSibling).textContent).to.equal("test|test|foobar");
     });
+
+    it("Should have been rendered crazy templates properly", function(){
+
+        const template = fetch("/ssr/crazy/");
+        const root_1 = document.getElementById("root-1");
+        root_1.innerHTML = template;
+
+        expect(root_1.children.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(4);
+        expect(node.children[0].textContent).to.equal(`This is some crazy'"" template`);
+        expect(node.children[1].textContent).to.equal("This is some crazy template");
+        expect(node.children[2].textContent.trim()).to.equal("12true");
+        expect(node.children[3].style.display).to.equal("block");
+        expect(node.children[3].innerHTML).to.equal("<b>bold</b>");
+    });
 });
 
 function fetch(url, data){

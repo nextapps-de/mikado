@@ -1,0 +1,35 @@
+<div>
+    <div>{{ "This" }} is {{ "some " + 'crazy\'\""' }} template</div>
+    <!--
+        some comment
+    -->
+    <div style="/* some comment */">
+        This{{
+            // some comment
+            " is "
+        }}some {{
+            (function(value){
+                return /* some comment */ value;
+            }('crazy'))
+        }}{{@ const whitespace = ' ';  }}{{ whitespace }}template
+    </div>
+    <div>
+        {{@
+            // some comment
+            let /**
+                 * some comment
+                 */ test = 1;
+        }}
+        {{ test }}
+        {{@ test++ }}
+        <!-- some comment -->
+        {{ test }}
+        {{@ test++ }}
+        {{ test === 3 }}
+    </div>
+    {{@ const val = "block";  }}
+    <div style="display: {{ val }}" data-id="{{ val }}">
+        {{@ const html = decodeURIComponent('%3Cb>bold%3C/b>')  }}
+        {{# html }}
+    </div>
+</div>

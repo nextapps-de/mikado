@@ -5,6 +5,7 @@ import Observer from "./array.js";
 import { Cache } from "./factory.js";
 import { escape, sanitize } from "./sanitize.js";
 import "./helper.js";
+import "./event.js";
 import compile from "./compile.js";
 
 import { setHtml, getHtml, setText, getText, getAttribute, hasAttribute, removeAttribute, setAttribute, getClass, setClass, hasClass, toggleClass, removeClass, addClass, getCss, setCss, getStyle, setStyle } from "./cache.js";
@@ -23,9 +24,15 @@ Mikado.compile = compile;
 // Mikado global properties
 // --------------------------------
 
-/** @export */
+/**
+ * @export
+ * @nocollapse
+ */
 Mikado.eventCache;
-/** @export */
+/**
+ * @export
+ * @nocollapse
+ */
 Mikado.eventBubble;
 
 // Mikado public instance properties

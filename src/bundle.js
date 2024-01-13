@@ -27,6 +27,7 @@ import Observer from "./array.js";
 import { Cache } from "./factory.js";
 import { escape, sanitize } from "./sanitize.js";
 import "./helper.js";
+import "./event.js";
 import compile from "./compile.js";
 
 import {
@@ -77,9 +78,15 @@ if(SUPPORT_COMPILE){
 
 if(SUPPORT_EVENTS){
 
-    /** @export */
+    /**
+     * @export
+     * @nocollapse
+     */
     Mikado.eventCache;
-    /** @export */
+    /**
+     * @export
+     * @nocollapse
+     */
     Mikado.eventBubble;
 }
 

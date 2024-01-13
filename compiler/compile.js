@@ -5,6 +5,7 @@ const { resolve } = require("path");
 const regex_strip_expressions = /\{\{([=@!#]+)?(.*)?}}/ig;
 const regex_strip_surrounding_quotes = /^['"](.*)['"]$/ig;
 const regex_html_encode = /{{#(.*)?<(.*)?>(.*)?}}/ig;
+const regex_js_comments = /\/\*[\s\S]*?\*\/|(?<=[^:])\/\/.*\r\n/g;
 const event_types = {
     "tap": 1,
     "change": 1,
@@ -365,14 +366,102 @@ function prepare_template(nodes, src, csr, svg){
 
                     if(text.trim()){
 
-                        // text nodes could have smt. like whitespace: pre
-                        //text = text.replace(/\s+/g, " ");
+                        // the combination of: {{@ ... }}{{ ... }}{{@ ... }}{{ ... }}
+                        // needs to split into separate text nodes to keep hierarchy
 
                         if(text.includes("{{@")){
 
-                            child.js = text.substring(text.indexOf("{{@") + 3, text.indexOf("}}", text.indexOf("{{@"))).trim();
-                            text = text.substring(0, text.indexOf("{{@")) + text.substring(text.indexOf("}}", text.indexOf("{{@")) + 2);
-                            delete child.text;
+                            // const cmp = text.split(/({{|}})/);
+                            //
+                            // // reset text node state,
+                            // // skip processing when consumed
+                            //
+                            // text = "";
+                            // delete child.text;
+                            //
+                            // for(let x = 0, tmp; x < cmp.length; x++){
+                            //
+                            //     tmp = cmp[x].trim();
+                            //     if(!tmp) continue;
+                            //
+                            //     if(tmp === "{{"){
+                            //
+                            //         tmp = cmp[++x];
+                            //         x++;
+                            //
+                            //         const exp = tmp[0];
+                            //
+                            //         if(exp === "@"){
+                            //
+                            //             const js = tmp.substring(1).replace(regex_js_comments, "").trim();
+                            //
+                            //             if(js){
+                            //
+                            //                 if(child.js){
+                            //
+                            //                     child = {};
+                            //                     nodes.child.splice(++i, 0, child);
+                            //                 }
+                            //
+                            //                 child.js = js;
+                            //             }
+                            //
+                            //             continue;
+                            //         }
+                            //
+                            //         tmp = "{{" + tmp + "}}";
+                            //     }
+                            //
+                            //     child.text = text = tmp;
+                            //
+                            //     //console.log(child)
+                            // }
+                            //
+                            // console.log(nodes.child)
+
+                            let pos_start = text.indexOf("{{@");
+
+                            //console.log(text)
+
+                            while(pos_start > -1){
+
+
+                                const pos_end = text.indexOf("}}", pos_start);
+                                const js = text.substring(pos_start + 3, pos_end).replace(regex_js_comments, "").trim();
+
+                                if(js){
+
+                                    if(child.js){
+
+                                        child = {};
+                                        nodes.child.splice(++i, 0, child);
+                                    }
+
+                                    child.js = js;
+                                }
+
+                                text = text.substring(0, pos_start) + text.substring(pos_end + 2);
+                                pos_start = text && text.indexOf("{{@");
+
+                                if(text){
+
+                                    if(pos_start > -1){
+
+                                        child.text = text.substring(0, pos_start).trim();
+                                        text = text.substring(pos_start);
+                                        pos_start = text.indexOf("{{@");
+                                    }
+                                    else{
+
+                                        child.text = text.trim();
+                                    }
+                                }
+
+                                if(!child.text){
+
+                                    delete child.text;
+                                }
+                            }
                         }
 
                         if(text.trim()){
@@ -392,6 +481,8 @@ function prepare_template(nodes, src, csr, svg){
                             nodes.child.splice(i--, 1);
                             continue;
                         }
+
+                        //console.log(child)
                     }
                     else{
 
@@ -469,6 +560,13 @@ function prepare_template(nodes, src, csr, svg){
                             if(typeof child.style === "object"){
 
                                 child.style = child.style.join("");
+                            }
+
+                            child.style = child.style.replace(/\/\*(.*?)\*\//, "").trim();
+
+                            if(!child.style){
+
+                                delete child.style;
                             }
                         }
 
@@ -726,6 +824,51 @@ function create_schema(root, inc, fn, index, attr, mode){
                 index.indent++;
             }
 
+            if(root.js && !attr){
+
+                let value = root.js;
+
+                if(value && (value = value.trim().replace(/;\s?$/, ""))){
+
+                    fn.push(value);
+                    index.ssr += "';" + value + (value.endsWith(";") ? "" : ";") + "_o+='";
+                    index.inline_code = true;
+                }
+
+                delete root.js;
+            }
+
+            // NON-SSR: push style and text/html to last, because they increase the path
+
+            if(!index.is_ssr){
+
+                if(root.style){
+
+                    const tmp = root.style;
+                    delete root.style;
+                    root.style = tmp;
+                }
+            }
+            else{
+
+                if(root.html){
+
+                    const tmp = root.html;
+                    delete root.html;
+                    root.html = tmp;
+                }
+            }
+
+            // when in SSR mode a text or html will close the tag
+            // so this needs to be the very last
+
+            if(root.text){
+
+                const tmp = root.text;
+                delete root.text;
+                root.text = tmp;
+            }
+
             for(let key in root){
 
                 // child needs to be added recursively at last attribute
@@ -733,19 +876,6 @@ function create_schema(root, inc, fn, index, attr, mode){
                 if(key !== "child" /*&& key !== "range"*/ && root.hasOwnProperty(key)){
 
                     let value = root[key];
-
-                    if(key === "js" && !attr){
-
-                        if(value && (value = value.replace(/;\s?$/, "").trim())){
-
-                            fn.push(value);
-                            index.ssr += "';" + value + (value.endsWith(";") ? "" : ";") + "_o+='";
-                            index.inline_code = true;
-                        }
-
-                        delete root[key];
-                        continue;
-                    }
 
                     if(typeof value === "string"){
 
@@ -778,9 +908,11 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     .replace(/"(\s+)?{{(\s+)?/g, "(")
                                     .replace(/(\s+)?}}(\s+)?"/g, ")")
                                     .replace(/{{(\s+)?/g, "'+(")
-                                    .replace(/(\s+)?}}/g, ")+'");
+                                    .replace(/(\s+)?}}/g, ")+'")
                                     //.replace(/^'\+\(/, "")
-                                    //.replace(/\)\+'$/, "");
+                                    //.replace(/\)\+'$/, "")
+                                    .replace(regex_js_comments, "")
+                                    .trim();
 
                             //console.log(("'" + tmp + "'"))
 
@@ -790,8 +922,11 @@ function create_schema(root, inc, fn, index, attr, mode){
                                                    .replace(/\+""$/g, "")
                                                     //.replace(/^\(/g, '')
                                                     //.replace(/\)$/g, '')
-                                                   .replace(/['"]\)\+''\+\(['"]/g, "") // ")+''+("
-                                                   .replace(/['"](\s+)?\+(\s+)?['"]/g, "") // ' + '
+                                                   .replace(/"\)\+''\+\("/g, "") // ")+''+("
+                                                   .replace(/'\)\+''\+\('/g, "") // ')+''+('
+                                                   .replace(/\+''\+/g, "+") // +''+
+                                                   .replace(/'(\s+)?\+(\s+)?'/g, "") // ' + '
+                                                   .replace(/"(\s+)?\+(\s+)?"/g, "") // " + "
                                                    .replace(/^\(([^ ]+)\)$/g, "$1") // ( value )
                                                    .trim();
 
@@ -823,7 +958,6 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     if(root.tag){
 
                                         index.ssr += (root.extract ? "" : ">") + "'+" + /*escape_single_quotes*/(tmp_ssr) + "+'";
-                                        index.count++;
                                     }
                                     else{
 
@@ -841,7 +975,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     index.ssr += ' ' + key + '="\'+' + tmp + '+\'"';
                                 }
 
-                                if(key === "style" && root.tag){
+                                if(key === "style" || key === "text"){
 
                                     index.count++;
                                 }
