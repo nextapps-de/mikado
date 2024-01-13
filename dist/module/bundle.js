@@ -212,6 +212,8 @@ Observer.prototype.indexOf;
 /** @export */
 Observer.prototype.lastIndexOf;
 /** @export */
+Observer.prototype.includes;
+/** @export */
 Observer.prototype.forEach;
 /** @export */
 Observer.prototype.swap;

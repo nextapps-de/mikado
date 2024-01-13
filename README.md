@@ -133,6 +133,7 @@ Packed with a smart routing feature for event delegation and full support for we
     - <a href="#build-flags">Supported Build Flags</a>
 
 <a name="get-latest"></a>
+
 ## Get Latest
 
 > Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including unminified modules).
@@ -465,6 +466,7 @@ You can also load modules via CDN:
 </table>
 
 <a name="benchmark"></a>
+
 ## Benchmark Ranking (Rendering Performance)
 
 Run the benchmark (non-keyed recycle):<br>
@@ -728,6 +730,7 @@ The values represent operations per second, each benchmark task has to process a
 The **_index_** is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
 
 <a name="api"></a>
+
 ## API Overview
 
 > Most of these methods are optional, you can just use **_view.render(data)_** to apply all changes automatically.
@@ -857,9 +860,11 @@ Observable array-like methods (optional, not included in mikado.light.js):
 - observable.<a href="#array.filter">**filter**(fn)</a>
 - observable.<a href="#array.indexOf">**indexOf**(object)</a> : <small>_number_</small>
 - observable.<a href="#array.lastIndexOf">**lastIndexOf**(object)</a> : <small>_number_</small>
+- observable.<a href="#array.includes">**includes**(object)</a> : <small>_boolean_</small>
 - observable.<a href="#array.forEach">**forEach**(fn)</a>
 
 <a name="options"></a>
+
 ## Mikado Options
 
 > Each Mikado instance, also named includes/partials can have their own options. Except inline partials always inherits the same options from its parent. For this reason you should prefer named includes over inlining in certain situations.
@@ -927,6 +932,7 @@ Observable array-like methods (optional, not included in mikado.light.js):
 </table>
 
 <a name="get-started"></a>
+
 ## Getting Started (Basic Example)
 
 The Mikado Compiler requires Node.js to be installed. This is probably the simplest step in this guide.
@@ -1011,6 +1017,7 @@ Mikado(template).mount(HTMLelement).render(data);
 ```
 
 <a name="conventions"></a>
+
 ## Rules and Conventions
 
 There is just a single convention you always need to keep in mind:
@@ -1050,6 +1057,7 @@ Wrapping everything into a single outer root element by doing this:
 You can also use a `<div>` or any other element as a template root (also custom elements). The root element can also hold two special attributes `key` and `cache`. We will come later to it.
 
 <a name="advanced_example"></a>
+
 ## Advanced Example
 
 A bit more complex template:
@@ -1072,6 +1080,7 @@ You can use <u>any</u> Javascript within the {{ ... }} curly bracket notation. T
 > To use Javascript outside an element's context you need to prevent concatenation of the returned value. For this purpose, the curly brackets need to be followed by **@** e.g. `{{@ ... }}`.
 
 <a name="identifier"></a>
+
 Within a template there are several **reserved keywords** you can use as an identifier:
 
 <table>
@@ -1198,6 +1207,7 @@ console.log("finished.");
 ```
 
 <a name="compiler"></a>
+
 ## Compile Templates
 
 <a name="compiler"></a>
@@ -1276,6 +1286,7 @@ Supported flags as attributes on the template root:
 Using the flag attributes are the most performant variants but also cost you some flexibility, because the cache strategy couldn't be changed in runtime, it needs to change in markup before compilation.
 
 <a name="auto-naming"></a>
+
 ### Auto Naming
 
 There is a new naming system which will apply by default. The name of your html files will be used as unique identifiers of your templates.
@@ -1306,6 +1317,7 @@ npx mikado-compile ./tpl/partial/
 This might also work, but it is better not to do.
 
 <a name="prebuilt-cache"></a>
+
 ### Prebuilt Cache Strategy
 
 The option `{ cache: true/false }` when creating a Mikado instance could be better declared withing templates on their root element, let the compiler produce more optimized code for this strategy.
@@ -1325,6 +1337,7 @@ Also use this approach when set `cache="false"`:
 ```
 
 <a name="watcher"></a>
+
 ### Watcher (Auto-Compile)
 
 A perfect fit for your local development environment is spawning a watcher to automatically compile files when they get changed. Just use the same command line you would also use for a full compilation and append the flag `--watch` or `-w` to it:
@@ -1336,6 +1349,7 @@ npx mikado-compile ./tpl/ --watch
 Don't close the console, otherwise the watcher will stop. You can stop the watcher explicitly by pressing `CTRL + C`.
 
 <a name="expressions"></a>
+
 ## Template Expressions
 
 > The template notation expects double curly brackets `{{ ... }}` for any kind of dynamic expressions.
@@ -1343,6 +1357,7 @@ Don't close the console, otherwise the watcher will stop. You can stop the watch
 > Except when using {{@ ... }} for inline code notation, the returned value of every dynamic expression will be replaced to its position.
 
 <a name="insertion"></a>
+
 ### Value Insertion `{{ ... }}`
 
 ```html
@@ -1407,6 +1422,7 @@ view.render();
 ```
 
 <a name="inline-js"></a>
+
 ### JS Inline Code `{{@ ... }}`
 
 The inline code expression is the only one which doesn't return a value to be rendered in place, it just executes.
@@ -1438,6 +1454,7 @@ view.render({ title: "title" });
 ```
 
 <a name="truthy"></a>
+
 ### Truthy Values `{{? ... }}`
 
 This will just output the result when it is not `null`, `undefined`, `NaN` or `false`.
@@ -1458,6 +1475,7 @@ view.render([{
 ```
 
 <a name="escape-ssr"></a>
+
 ### Escape Values `{{! ... }}` (SSR only)
 
 This will escape the value before return. This is just important for the server-side-rendering part, the client automatically escape contents by default (except when using the HTML-expression).
@@ -1470,6 +1488,7 @@ view.render({ value: "<b>html is not allowed</b>" });
 ```
 
 <a name="html"></a>
+
 ### HTML Contents `{{# ... }}`
 
 This will allow for inserting HTML returned string.
@@ -1484,6 +1503,7 @@ view.render({ value: "<b>html is allowed</b>" });
 ```
 
 <a name="mikado.escape"></a><a name="mikado.sanitize"></a>
+
 #### Sanitizer
 
 Mikado provides you high performant helper function you can use in this context to escape contents or to sanitize.
@@ -1503,6 +1523,7 @@ view.render({
 Using the sanitizer will remove the tags completely, whereas when escaping the content aren't removed but just escaped.
 
 <a name="bindings"></a>
+
 ### Reactive Bindings `{{= ... }}`
 
 Define properties by using pure data object notation without any javascript inside:
@@ -3245,6 +3266,8 @@ It also uses native Proxy which fully falls back to a legacy observer, when not 
 
 > Semantically the observable array you will get from `Mikado.Array()` is equal to an array-like Javascript Array.
 
+<a name="mikado.array"></a>
+
 Create an observable array:
 
 ```js
@@ -3258,35 +3281,58 @@ var items = [ ... ];
 var store = new Mikado.Array(items);
 ```
 
-Every observable array needs to bind to a mounted Mikado instance, because it needs to apply render tasks somewhere:
+Every observable array requires binding to a **mounted** Mikado instance, because it needs to apply render tasks somewhere:
 
 ```js
 var view = Mikado(template, { observe: store, mount: root });
 ```
 
-Now the observable array is linked with your instance. Whenever you change the array all changes apply automatically to the corresponding template.
+<a name="array.mount"></a>
+
+You can also mount an observable array to a Mikado instance (and also switch mounting):
+
+```js
+const store = new Mikado.Array();
+const view = Mikado(template, { mount: root });
+
+store.mount(view);
+```
+
+Now the observable array is linked with your instance. Whenever you change the array all changes will apply automatically to the corresponding DOM components.
 
 You can use all common array built-ins, e.g.:
+
+<a name="array.push"></a>
 
 ```js
 store.push({ ... });
 ```
 
+<a name="array.pop"></a>
+
 ```js
 var last = store.pop();
 ```
+
+<a name="array.unshift"></a>
 
 ```js
 store.unshift({ ... });
 ```
 
+<a name="array.shift"></a>
+
 ```js
 var first = store.shift();
 ```
 
+<a name="array.slice"></a>
+
 ```js
 store.slice(3, 1);
 ```
+
+<a name="array.splice"></a>
 
 ```js
 store.splice(0, 1, { ... });
@@ -3306,6 +3352,15 @@ store[store.length] = { ... };
 var first = store[0];
 ```
 
+You can replace the array contents by:
+
+```js
+var items = [ ... ];
+store.set(items);
+```
+
+<a name="array.concat"></a><a name="array.indexOf"></a><a name="array.lastIndexOf"></a><a name="array.includes"></a><a name="array.filter"></a><a name="array.map"></a><a name="array.reverse"></a><a name="array.sort"></a><a name="array.swap"></a><a name="array.forEach"></a><a name="array.set"></a>
+
 A list of all supported array prototypes:
 
 - length
@@ -3318,13 +3373,16 @@ A list of all supported array prototypes:
 - concat
 - indexOf
 - lastIndexOf
+- includes
 - filter
 - map
 - reverse
 - sort
 - swap
+- forEach
+- set (this will replace the array contents)
 
-These methods are implemented, without some extensions like parameter chaining, e.g. `array.push(a, b, c)` is not available, instead, you have to call push for each item one by one.
+These methods are implemented without some extensions like parameter chaining, e.g. `array.push(a, b, c)` is not available, instead, you have to call push for each item one by one.
 
 There are some methods which slightly differs from the original implementation of native Arrays. These methods will apply changes **_in place_** and returning the original reference instead of applying on a copy:
 
@@ -3332,7 +3390,7 @@ There are some methods which slightly differs from the original implementation o
 - filter
 - map
 
-When you need the original native behavior you can simply do that by:
+Whenever you need the original native Array behavior you can simply do that by:
 
 ```js
 var new_array = [ ... ];

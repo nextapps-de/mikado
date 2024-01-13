@@ -20,6 +20,12 @@ const events = {},
 
 // The most outer element which is covered by Mikado event system is document.body
 
+/** @type {boolean} */
+Mikado.eventCache = !1;
+/** @type {boolean} */
+Mikado.eventBubble = !1;
+
+
 let tap_fallback;
 
 /**
@@ -34,9 +40,7 @@ function handler(event, type) {
     const event_target = event.target,
           use_event_cache = Mikado.eventCache,
           use_bubble = Mikado.eventBubble;
-    // disabled by default:
 
-    // disabled by default:
 
     let cache;
 

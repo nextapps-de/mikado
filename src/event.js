@@ -19,6 +19,14 @@ const doc = document.documentElement || document.body.parentNode;
 const has_touch = "ontouchstart" in window;
 const has_pointer = !has_touch && window["PointerEvent"] && navigator["maxTouchPoints"];
 
+if(SUPPORT_EVENTS){
+
+    /** @type {boolean} */
+    Mikado.eventCache = false;
+    /** @type {boolean} */
+    Mikado.eventBubble = false;
+}
+
 let tap_fallback;
 
 /**
@@ -33,9 +41,7 @@ function handler(event, type){
     type || (type = event.type);
 
     const event_target = event.target;
-    // disabled by default:
     const use_event_cache = Mikado.eventCache;
-    // disabled by default:
     const use_bubble = Mikado.eventBubble;
 
     let cache;

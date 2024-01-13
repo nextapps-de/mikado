@@ -74,6 +74,7 @@ declare namespace Mikado {
         forEach(handler: Function): void;
         indexOf(search: Object): number;
         lastIndexOf(search: Object): number;
+        includes(search: Object): boolean;
         map(handler: Function, self?: any): array;
         pop(): Object;
         push(data: Object): void;

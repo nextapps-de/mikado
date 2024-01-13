@@ -86,7 +86,12 @@ export default function Observer(array) {
 
 Observer.prototype.mount = function (mikado) {
 
-    this.mikado = mikado;
+    if (this.mikado !== mikado) {
+
+        mikado.mount(this.mikado.root);
+        this.mikado = mikado;
+    }
+
     return this;
 };
 
@@ -465,6 +470,8 @@ Observer.prototype.lastIndexOf = function (search) {
 
     return -1;
 };
+
+Observer.prototype.includes = proto.includes;
 
 /**
  * @param {Function} fn
