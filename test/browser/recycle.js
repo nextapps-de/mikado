@@ -2,7 +2,7 @@ const { describe, it } = intern.getPlugin("interface.bdd");
 const { registerSuite } = intern.getPlugin("interface.object");
 const { expect, assert } = intern.getPlugin("chai");
 
-import { checkDOM } from "../common.js";
+import { checkDOM, shuffle } from "../common.js";
 import template from "../tpl/template.js";
 import template_keyed from "../tpl/keyed.js";
 import data from "../data.js";
@@ -126,6 +126,118 @@ describe("Recycle Template", function(){
         expect(root_1.children[1]._test).to.equal("98");
         expect(root_1.children[98]._test).to.equal("1");
         checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+        view.clear().destroy();
+    });
+
+    it("Should have been handle live pool properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_keyed, { mount: root_1, pool: true, cache: true });
+        let items = data.slice(0, 50);
+
+        view.render(items);
+        expect(view.length).to.equal(50);
+        checkDOM(root_1.firstElementChild, data.slice(0, 50), /* data index */ true);
+
+        // add test marker
+        root_1.children[1]._test = "1";
+        root_1.children[48]._test = "48";
+
+        items = items.reverse();
+
+        // enabled keyed pool will execute .replace() under the hood
+        view.render(items);
+        expect(view.length).to.equal(50);
+        expect(root_1.children[1]._test).to.equal("48");
+        expect(root_1.children[48]._test).to.equal("1");
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+        items = items.reverse();
+
+        for(let i = 0; i < items.length; i++){
+
+            view.replace(i, items[i]);
+        }
+
+        expect(view.length).to.equal(50);
+        expect(root_1.children[1]._test).to.equal("1");
+        expect(root_1.children[48]._test).to.equal("48");
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+        view.clear().destroy();
+    });
+
+    it("Should have been reconcile DOM properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        let view = new Mikado(template_keyed, { mount: root_1, pool: true, cache: true });
+        let items = data.slice(0, 30);
+
+        // full shuffle
+
+        for(let i = 0; i < 50; i++){
+
+            items = shuffle(items);
+            view.render(items);
+            checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+            for(let x = 0; x < root_1.children.length; x++){
+
+                expect(view.dom[x]).to.equal(root_1.children[x]);
+                expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
+            }
+        }
+
+        // new items in, old items out, some items stay, size increase or decrease
+
+        for(let i = 0; i < 100; i++){
+
+            items = shuffle(data.slice());
+            items = items.splice(0, 15).concat(items.splice(15, (Math.random() * 30) | 0));
+            view.render(items);
+            checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+            for(let x = 0; x < root_1.children.length; x++){
+
+                expect(view.dom[x]).to.equal(root_1.children[x]);
+                expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
+            }
+        }
+
+        view.clear().destroy();
+
+        view = new Mikado(template_keyed, { mount: root_1, pool: false, cache: true });
+        items = data.slice();
+
+        for(let i = 0; i < 50; i++){
+
+            items = shuffle(items);
+            view.render(items);
+            checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+            for(let x = 0; x < root_1.children.length; x++){
+
+                expect(view.dom[x]).to.equal(root_1.children[x]);
+                expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
+            }
+        }
+
+        // new items in, old items out, some items stay, size increase or decrease
+
+        for(let i = 0; i < 100; i++){
+
+            items = shuffle(data.slice());
+            items = items.splice(0, 15).concat(items.splice(15, (Math.random() * 30) | 0));
+            view.render(items);
+            checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+            for(let x = 0; x < root_1.children.length; x++){
+
+                expect(view.dom[x]).to.equal(root_1.children[x]);
+                expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
+            }
+        }
 
         view.clear().destroy();
     });

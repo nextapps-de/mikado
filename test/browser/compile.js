@@ -472,6 +472,15 @@ describe("Compile Template", function(){
         view.clear().destroy();
     });
 
+    it("Should unregister templates properly", function(){
+
+        const tpl = Mikado.compile(template);
+        Mikado.register(tpl);
+        Mikado.unregister(tpl);
+
+        // todo
+    });
+
     it("Should render web components properly (Runtime Compiler)", function(){
 
         const root_1 = document.getElementById("root-3");

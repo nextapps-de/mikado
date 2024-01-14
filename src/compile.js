@@ -206,7 +206,8 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 if(value && value.trim()){
 
-                    if(/{{[!?]?#/.test(value)){
+                    //if(/{{[!?]?#/.test(value)){
+                    if(value.includes("{{#")){
 
                         handle_value(tpl, "html", value, false, null, _index, _inc, _fn);
                     }
@@ -526,7 +527,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
         let proxy = SUPPORT_REACTIVE && /{{([!?#]+)?=/.test(value);
         let truthy = /{{!?\?/.test(value);
         let escape = /{{\??!/.test(value);
-        let tmp = replaceComments(value);
+        let tmp = value; //replaceComments(value);
 
         if(SUPPORT_REACTIVE && proxy){
 
@@ -545,14 +546,18 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
                  .replace(/"(\s+)?{{(\s+)?/g, "(")
                  .replace(/(\s+)?}}(\s+)?"/g, ")")
                  .replace(/{{(\s+)?/g, "'+(")
-                 .replace(/(\s+)?}}/g, ")+'");
+                 .replace(/(\s+)?}}/g, ")+'")
+                 .trim();
 
         tmp = ("'" + tmp + "'").replace(/^""\+/g, "")
                                .replace(/^''\+/g, "")
                                .replace(/\+''$/g, "")
                                .replace(/\+""$/g, "")
-                               .replace(/['"]\)\+''\+\(['"]/g, "") // ")+''+("
-                               .replace(/['"](\s+)?\+(\s+)?['"]/g, "") // ' + '
+                               .replace(/"\)\+''\+\("/g, "") // ")+''+("
+                               .replace(/'\)\+''\+\('/g, "") // ')+''+('
+                               .replace(/\+''\+/g, "+") // +''+
+                               .replace(/'(\s+)?\+(\s+)?'/g, "") // ' + '
+                               .replace(/"(\s+)?\+(\s+)?"/g, "") // " + "
                                .replace(/^\(([^ ]+)\)$/g, "$1") // ( value )
                                .trim();
 
@@ -563,12 +568,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
             tmp = "(" + (tmp + "||" + tmp + "===0?" + tmp + ":''") + ")";
         }
 
-        if(key === "text" && root.tag){
-
-            index.count++;
-        }
-
-        if(key === "style" && root.tag){
+        if((key === "text" || key === "style") && root.tag){
 
             index.count++;
         }

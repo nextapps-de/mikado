@@ -226,7 +226,7 @@ const handler = /** @type {!ProxyHandler} */ ({
                         // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
                         // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
 
-                        if(mikado.recycle || (mikado.key && (node[MIKADO_TPL_KEY] === value[mikado.key]))){
+                        if(mikado.recycle || (SUPPORT_KEYED && mikado.key && (node[MIKADO_TPL_KEY] === value[mikado.key]))){
 
                             mikado.update(node, value, null, prop);
                         }

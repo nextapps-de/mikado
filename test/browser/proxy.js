@@ -103,6 +103,37 @@ describe("Reactive Proxy", function(){
         view.clear().destroy();
     });
 
+    it("Should have been execute transaction properly", function(){
+
+        const items = copy(data.slice(0, 10));
+        const root_1 = document.getElementById("root-1");
+        const store = Mikado.Array(items);
+        const view = new Mikado(template_proxy, { root: root_1, observe: store });
+
+        // transaction is a replacement for render() supporting reconciling
+        //view.render(store);
+
+        store.transaction(function(){
+
+            store[0].id = "foo";
+            store[1].id = "bar";
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal("foo");
+        expect(root_1.children[1].dataset.id).to.equal("bar");
+
+        store.transaction(function(){
+
+            store[0].id = "bar";
+            store[1].id = "foo";
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal("bar");
+        expect(root_1.children[1].dataset.id).to.equal("foo");
+
+        view.clear().destroy();
+    });
+
     it("Should have been used push properly", function(){
 
         const items = copy(data.slice(0, 10));

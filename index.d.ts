@@ -86,6 +86,7 @@ declare namespace Mikado {
         splice(start?: number, count?: number, insert?: Object): Array<Object>;
         swap(index_a: number, index_b: number): array;
         unshift(data: Object): void;
+        transaction(fn: Function): array;
     }
 
     function getClass(target: HTMLElement): Array<string>;

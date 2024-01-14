@@ -146,4 +146,18 @@ describe("Modify Views", function(){
 
         expect(view.index(view.root.children[10])).to.equal(10);
     });
+
+    it("Should have been escaped text properly", function(){
+
+        expect(Mikado.escape("<b>bold</b>")).to.equal("&lt;b&gt;bold&lt;/b&gt;");
+        // cache:
+        expect(Mikado.escape("<b>bold</b>")).to.equal("&lt;b&gt;bold&lt;/b&gt;");
+    });
+
+    it("Should have been sanitized text properly", function(){
+
+        expect(Mikado.sanitize("<b>bold</b>")).to.equal("bold");
+        // cache:
+        expect(Mikado.sanitize("<b>bold</b>")).to.equal("bold");
+    });
 });

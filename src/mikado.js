@@ -827,8 +827,7 @@ Mikado.prototype.replace = function(node, data, state, index){
 
     let tmp, update;
 
-    // handle key matches in live pool (having two instances of the same component with the same key on the same view model isn't allowed)
-    // TODO: provide transaction feature to optimize reconciling when proxy index access modifies in a batch
+    // The main difference of replace() to update() is that replace() will properly handle the keyed live pool.
 
     if(SUPPORT_KEYED && this.key){
 
@@ -839,20 +838,30 @@ Mikado.prototype.replace = function(node, data, state, index){
             if(tmp !== node){
 
                 const index_old = this.index(tmp);
+                const node_a = index_old < index ? tmp : node;
+                const node_b = index_old < index ? node : tmp;
+                let next = this.dom[index_old < index ? index_old + 1 : index + 1]; // node_a.nextSibling;
 
                 this.dom[index] = tmp;
                 this.dom[index_old] = node;
 
-                const node_a = index_old < index ? tmp : node;
-                const node_b = index_old < index ? node : tmp;
-                const prev = node_a.nextElementSibling;
+                // if(next === node_b){
+                //
+                //     this.root.insertBefore(node_b, node_a);
+                // }
+                // else{
 
-                this.root.insertBefore(node_a, node_b);
+                    if(next !== node_b){
 
-                if(prev !== node_b){
+                        this.root.insertBefore(node_a, node_b);
+                    }
+                    else{
 
-                    this.root.insertBefore(node_b, prev);
-                }
+                        next = node_a;
+                    }
+
+                    this.root.insertBefore(node_b, next);
+                //}
             }
         }
         else if(SUPPORT_POOLS && this.pool && (tmp = this.pool_keyed.get(key))){
@@ -944,31 +953,9 @@ Mikado.prototype.update = function(node, data, state, index, _skip_check){
 
     node = /** @type {Element} */ (node);
 
-    // if(SUPPORT_STORAGE){
-    //
-    //     if(SUPPORT_REACTIVE && this.proxy){
-    //
-    //         if(this.stealth && ((/*this.store ?*/ this.store[index] /*: node["_data"]*/) === data)){
-    //
-    //             return this;
-    //         }
-    //
-    //         data["_proxy"] || (data = proxy_create(data, node["_path"] || this.create_path(node), this.proxy));
-    //     }
-    //
-    //     if(this.store){
-    //
-    //         if(SUPPORT_REACTIVE) this.skip = 1;
-    //         this.store[index] = data;
-    //         if(SUPPORT_REACTIVE) this.skip = 0;
-    //     }
-    //     else if(this.loose){
-    //
-    //         node["_data"] = data;
-    //     }
-    // }
+    // Is keyed handling also needed in update?
+    // .replace() = .update() + keyed handling
 
-    // TODO is this check also needed in update?
     /*
     if(!_skip_check){
 
@@ -1226,6 +1213,16 @@ export function apply_proxy(self, node, data){
 
 if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
+    // Since there don't exist a native transaction feature for DOM changes, all changes applies incrementally.
+    // For a full render task there are a "dirty" intermediate state when moving one node.
+    // This state will resolve after running through the whole reconcile().
+    // Since we don't use an extra loop running upfront to calculate the diff,
+    // Mikado uses a smart algorithm which can find the shortest path in one loop.
+    // That also means, during reconcile there is no look-ahead to the data (just to the live pool).
+    // For this reason the keyed live pool needs to be in sync with the vdom array.
+    // The reconcile runs like a resizable "window function" on where unmatched things
+    // will move further to the end until the process cursor reach this index.
+
     /**
      * Reconcile based on "longest distance" strategy by Thomas Wilkerling
      * @param {Array=} b
@@ -1275,10 +1272,10 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(a_x_key === b_x_key){
 
-                        if(!_skip_render){
+                        //if(!_skip_render){
 
                             this.update(a_x, b_x, state, x, 1);
-                        }
+                        //}
 
                         continue;
                     }
@@ -1286,9 +1283,10 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                 if(ended || !live[b_x_key]){
 
-                    if(!_skip_render){
+                    //if(!_skip_render){
 
-                        // TODO make better decision weather to insert before or replace
+                        // without pool enabled .add() is better than .replace()
+
                         if(ended || !this.pool){
 
                             end_a++;
@@ -1300,7 +1298,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                             this.replace(a_x, b_x, state, x);
                         }
-                    }
+                    //}
 
                     continue;
                 }
@@ -1316,17 +1314,17 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                     if(idx_a && idx_b){
 
                         // shift up (move target => current)
-                        if(idx_a >= idx_b){
+                        if(idx_a >= idx_b + shift){
 
                             const tmp_a = a[idx_a - 1];
 
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(/** @type {Node} */ (tmp_a), /** @type {Node} */ (a_x));
 
-                            if(!_skip_render){
+                            //if(!_skip_render){
 
                                 this.update(tmp_a, b_x, state, x, 1);
-                            }
+                            //}
 
                             // fast path optimization when distance is equal (skips finding on next turn)
                             if(idx_a === idx_b){
@@ -1341,16 +1339,18 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                                 if(DEBUG){
 
-                                    if(!a_x){
-
-                                        console.error("Error");
-                                    }
+                                    if(!a_x) console.error("reconcile.error 1");
                                 }
 
                                 PROFILER && tick("view.reconcile.steps");
                                 //steps++;
                             }
                             else{
+
+                                if(DEBUG){
+
+                                    if((idx_a - 1) === x) console.error("reconcile.error 2");
+                                }
 
                                 splice(a, idx_a - 1, x);
                                 //a.splice(x, 0, a.splice(idx_a - 1, 1)[0]);
@@ -1368,6 +1368,12 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                             // distance is always greater than 1, no predecessor check necessary
                             this.root.insertBefore(/** @type {Node} */ (a_x), /** @type {Node} */ (a[index]) || null);
+
+                            if(DEBUG){
+
+                                if(((index > end_a ? end_a : index) - 1) === x) console.error("reconcile.error 3");
+                            }
+
                             splice(a, x, (index > end_a ? end_a : index) - 1);
                             //a.splice(/* one is removed: */ index - 1, 0, a.splice(x, 1)[0]);
 

@@ -75,3 +75,16 @@ export function escape(string){
 
     return string.replace(symbols, match => escape[match]);
 }
+
+export function shuffle(items){
+
+    for(let i = items.length - 1, j, x; i > 0; i--) {
+
+        j = (Math.random() * i) | 0;
+        x = items[i];
+        items[i] = items[j];
+        items[j] = x;
+    }
+
+    return items;
+}

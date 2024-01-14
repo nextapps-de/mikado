@@ -59,6 +59,70 @@ describe("Routing & Event Delegation", function(){
         });
     });
 
+    it("Should have been manually call routes properly", async function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template, { root: root_1 }).render(data[0]);
+        const node = root_1.firstElementChild.firstElementChild;
+
+        await new Promise(function(resolve){
+
+            let counter = 0;
+
+            view.route("attach", function(target, event){
+
+                if(++counter === 3){
+
+                    view.clear().destroy();
+                    resolve();
+                }
+            });
+
+            view.dispatch("attach");
+            view.dispatch("attach", node);
+            view.dispatch("attach", node, window.event = new Event("click", {
+                bubbles: true,
+                cancelable: true
+            }));
+        });
+    });
+
+    it("Should have stop bubbling when target was not found", async function(){
+
+        Mikado.eventCache = true;
+        Mikado.eventBubble = true;
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template, { root: root_1 }).render(data[0]);
+        const node = root_1.querySelector(".content");
+
+        await new Promise(function(resolve){
+
+            let counter = 0;
+
+            view.route("delegate", function(target, event){
+
+                expect(target).to.equal(node);
+                expect(event).to.equal(window.event);
+
+                ++counter;
+            });
+
+            node.click();
+            node.click();
+            node.click();
+
+            //setTimeout(function(){
+
+                if(counter === 0){
+
+                    view.clear().destroy();
+                    resolve();
+                }
+            //});
+        });
+    });
+
     it("Should have been bubble events properly", async function(){
 
         Mikado.eventCache = true;

@@ -425,7 +425,6 @@ function prepare_template(nodes, src, csr, svg){
 
                             while(pos_start > -1){
 
-
                                 const pos_end = text.indexOf("}}", pos_start);
                                 const js = text.substring(pos_start + 3, pos_end).replace(regex_js_comments, "").trim();
 

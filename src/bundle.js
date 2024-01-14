@@ -290,6 +290,8 @@ if(SUPPORT_REACTIVE){
     Observer.prototype.forEach;
     /** @export */
     Observer.prototype.swap;
+    /** @export */
+    Observer.prototype.transaction;
 }
 
 // Structural type definitions

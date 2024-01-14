@@ -224,6 +224,8 @@ Observer.prototype.includes;
 Observer.prototype.forEach;
 /** @export */
 Observer.prototype.swap;
+/** @export */
+Observer.prototype.transaction;
 
 // Structural type definitions
 // --------------------------------
