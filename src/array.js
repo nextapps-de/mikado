@@ -278,32 +278,47 @@ if(PROFILER){
 }
 
 /**
- * @param {number} a
- * @param {number} b
- */
-
-Observer.prototype.swap = function(a, b){
-
-    PROFILER && tick("observer.swap");
-
-    //const self = proxy ? this : this.proto;
-    const tmp = this[b];
-    this[b] = this[a];
-    this[a] = tmp;
-
-    return this;
-};
-
-/**
  * @param {Array} array
  */
 
 Observer.prototype.set = function(array){
 
     PROFILER && tick("observer.set");
-    
-    this.splice();
-    return this.concat(array);
+
+    const keyed = SUPPORT_KEYED && this.mikado.key;
+
+    if(keyed){
+
+        skip = true;
+    }
+
+    if(!keyed && this.mikado.recycle){
+
+        const length = this.length;
+
+        for(let i = 0; i < length; i++){
+
+            this[i] = array[i];
+        }
+
+        if(length > array.length){
+
+            this.splice(length);
+        }
+    }
+    else{
+
+        this.splice();
+        this.concat(array);
+    }
+
+    if(keyed){
+
+        this.mikado.render(this);
+        skip = false;
+    }
+
+    return this;
 };
 
 /**
@@ -329,9 +344,7 @@ Observer.prototype.splice = function(start, count, insert){
     }
 
     count && this.mikado.remove(/** @type {number} */ (start), count);
-
     const tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
-
     insert && this.mikado.add(insert, start/*, this.mikado.view*/);
 
     //this.length += (insert ? 1 : 0) - count;
@@ -349,8 +362,8 @@ Observer.prototype.push = function(data){
     DEBUG && debug(this.mikado);
 
     skip = true;
-    this.mikado.add(data/*, this.mikado.view*/);
-    /*if(!this.mikado.proxy)*/ this[this.length] = data;
+    this.mikado.add(data);
+    this[this.length] = data;
     if(proxy) this.length++;
     skip = false;
 };
@@ -365,7 +378,7 @@ Observer.prototype.unshift = function(data){
     DEBUG && debug(this.mikado);
 
     skip = true;
-    this.mikado.add(data, 0/*, this.mikado.view*/);
+    this.mikado.add(data, 0);
     this.proto.unshift(data);
     skip = false;
 };
@@ -566,6 +579,24 @@ Observer.prototype.forEach = function(fn){
 };
 
 /**
+ * @param {number} a
+ * @param {number} b
+ */
+
+Observer.prototype.swap = function(a, b){
+
+    PROFILER && tick("observer.swap");
+
+    //const self = proxy ? this : this.proto;
+    const tmp = this[b];
+    this[b] = this[a];
+    this[a] = tmp;
+
+    return this;
+};
+
+/**
+ * Transactions will apply reconciling
  * @param {Function} fn
  */
 
@@ -576,18 +607,24 @@ Observer.prototype.transaction = function(fn){
 
     skip = true;
     fn();
+    skip = false;
 
-    if(this.mikado.async){
+    const mikado = this.mikado;
+    const fullproxy = mikado.fullproxy;
 
-        this.mikado.render(this).then(function(){
-            skip = false;
-        });
+    // the fullproxy skip needs to be removed temporary,
+    // otherwise it won't commit collected properties
+    mikado.fullproxy = 0;
+
+    if(mikado.async){
+
+        mikado.render(this).then(function(){
+            mikado.fullproxy = fullproxy;
+        })
     }
     else{
 
-        this.mikado.render(this);
-        skip = false;
+        mikado.render(this);
+        mikado.fullproxy = fullproxy;
     }
-
-    return this;
 }

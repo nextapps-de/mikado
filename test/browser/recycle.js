@@ -184,6 +184,7 @@ describe("Recycle Template", function(){
 
             for(let x = 0; x < root_1.children.length; x++){
 
+                expect(view.length).to.equal(items.length);
                 expect(view.dom[x]).to.equal(root_1.children[x]);
                 expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
             }
@@ -200,6 +201,8 @@ describe("Recycle Template", function(){
 
             for(let x = 0; x < root_1.children.length; x++){
 
+                expect(view.length).to.equal(items.length);
+                expect(root_1.children.length).to.equal(items.length);
                 expect(view.dom[x]).to.equal(root_1.children[x]);
                 expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
             }
@@ -218,6 +221,7 @@ describe("Recycle Template", function(){
 
             for(let x = 0; x < root_1.children.length; x++){
 
+                expect(view.length).to.equal(items.length);
                 expect(view.dom[x]).to.equal(root_1.children[x]);
                 expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
             }
@@ -234,6 +238,8 @@ describe("Recycle Template", function(){
 
             for(let x = 0; x < root_1.children.length; x++){
 
+                expect(view.length).to.equal(items.length);
+                expect(root_1.children.length).to.equal(items.length);
                 expect(view.dom[x]).to.equal(root_1.children[x]);
                 expect(view.dom[x]["_mkk"]).to.equal(items[x].id);
             }

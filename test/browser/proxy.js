@@ -5,6 +5,7 @@ const { expect, assert } = intern.getPlugin("chai");
 import { checkDOM, copy } from "../common.js";
 import template from "../tpl/template.js";
 import template_proxy from "../tpl/proxy.js";
+import template_proxy_keyed from "../tpl/proxy-keyed.js";
 import data from "../data.js";
 
 describe("Reactive Proxy", function(){
@@ -110,17 +111,90 @@ describe("Reactive Proxy", function(){
         const store = Mikado.Array(items);
         const view = new Mikado(template_proxy, { root: root_1, observe: store });
 
-        // transaction is a replacement for render() supporting reconciling
-        //view.render(store);
+        view.render(store);
 
         store.transaction(function(){
 
-            store[0].id = "foo";
-            store[1].id = "bar";
+            const tmp = store[0];
+            store[0] = store[1];
+            store[1] = tmp;
         });
 
-        expect(root_1.children[0].dataset.id).to.equal("foo");
-        expect(root_1.children[1].dataset.id).to.equal("bar");
+        expect(root_1.children[0].dataset.id).to.equal(store[0].id);
+        expect(root_1.children[1].dataset.id).to.equal(store[1].id);
+
+        store.transaction(function(){
+
+            store[0].id = "bar";
+            store[1].id = "foo";
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal("bar");
+        expect(root_1.children[1].dataset.id).to.equal("foo");
+
+        view.clear().destroy();
+    });
+
+    it("Should have been execute transaction properly (recycle + cache + pool)", function(){
+
+        const items = copy(data.slice(0, 10));
+        const root_1 = document.getElementById("root-1");
+        const store = Mikado.Array(items);
+        const view = new Mikado(template_proxy, {
+            root: root_1,
+            observe: store,
+            recycle: true,
+            cache: true,
+            pool: true
+        });
+
+        view.render(store);
+
+        store.transaction(function(){
+
+            const tmp = store[0];
+            store[0] = store[1];
+            store[1] = tmp;
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal(store[0].id);
+        expect(root_1.children[1].dataset.id).to.equal(store[1].id);
+
+        store.transaction(function(){
+
+            store[0].id = "bar";
+            store[1].id = "foo";
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal("bar");
+        expect(root_1.children[1].dataset.id).to.equal("foo");
+
+        view.clear().destroy();
+    });
+
+    it("Should have been execute transaction properly (keyed + cache + pool)", function(){
+
+        const items = copy(data.slice(0, 10));
+        const root_1 = document.getElementById("root-1");
+        const store = Mikado.Array(items);
+        const view = new Mikado(template_proxy_keyed, {
+            root: root_1,
+            observe: store,
+            cache: true,
+            pool: true
+        });
+
+        view.render(store);
+
+        store.transaction(function(){
+
+            const tmp = store[0];
+            store[0] = store[1];
+            store[1] = tmp;
+        });
+
+        expect(root_1.children[0].dataset.id).to.equal(store[0].id);
+        expect(root_1.children[1].dataset.id).to.equal(store[1].id);
 
         store.transaction(function(){
 

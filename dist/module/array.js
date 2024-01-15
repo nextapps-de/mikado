@@ -233,28 +233,44 @@ const handler = /** @type {!ProxyHandler} */{
 };
 
 /**
- * @param {number} a
- * @param {number} b
- */
-
-Observer.prototype.swap = function (a, b) {
-
-    //const self = proxy ? this : this.proto;
-    const tmp = this[b];
-    this[b] = this[a];
-    this[a] = tmp;
-
-    return this;
-};
-
-/**
  * @param {Array} array
  */
 
 Observer.prototype.set = function (array) {
 
-    this.splice();
-    return this.concat(array);
+    const keyed = this.mikado.key;
+
+    if (keyed) {
+
+        skip = !0;
+    }
+
+    if (!keyed && this.mikado.recycle) {
+
+        const length = this.length;
+
+        for (let i = 0; i < length; i++) {
+
+            this[i] = array[i];
+        }
+
+        if (length > array.length) {
+
+            this.splice(length);
+        }
+    } else {
+
+        this.splice();
+        this.concat(array);
+    }
+
+    if (keyed) {
+
+        this.mikado.render(this);
+        skip = !1;
+    }
+
+    return this;
 };
 
 /**
@@ -277,9 +293,7 @@ Observer.prototype.splice = function (start, count, insert) {
     }
 
     count && this.mikado.remove( /** @type {number} */start, count);
-
     const tmp = insert ? this.proto.splice(start, count, insert) : this.proto.splice(start, count);
-
     insert && this.mikado.add(insert, start /*, this.mikado.view*/);
 
     //this.length += (insert ? 1 : 0) - count;
@@ -294,8 +308,8 @@ Observer.prototype.splice = function (start, count, insert) {
 Observer.prototype.push = function (data) {
 
     skip = !0;
-    this.mikado.add(data /*, this.mikado.view*/);
-    /*if(!this.mikado.proxy)*/this[this.length] = data;
+    this.mikado.add(data);
+    this[this.length] = data;
     if (proxy) this.length++;
     skip = !1;
 };
@@ -307,7 +321,7 @@ Observer.prototype.push = function (data) {
 Observer.prototype.unshift = function (data) {
 
     skip = !0;
-    this.mikado.add(data, 0 /*, this.mikado.view*/);
+    this.mikado.add(data, 0);
     this.proto.unshift(data);
     skip = !1;
 };
@@ -488,6 +502,22 @@ Observer.prototype.forEach = function (fn) {
 };
 
 /**
+ * @param {number} a
+ * @param {number} b
+ */
+
+Observer.prototype.swap = function (a, b) {
+
+    //const self = proxy ? this : this.proto;
+    const tmp = this[b];
+    this[b] = this[a];
+    this[a] = tmp;
+
+    return this;
+};
+
+/**
+ * Transactions will apply reconciling
  * @param {Function} fn
  */
 
@@ -495,17 +525,24 @@ Observer.prototype.transaction = function (fn) {
 
     skip = !0;
     fn();
+    skip = !1;
 
-    if (this.mikado.async) {
+    const mikado = this.mikado,
+          fullproxy = mikado.fullproxy;
 
-        this.mikado.render(this).then(function () {
-            skip = !1;
+
+    // the fullproxy skip needs to be removed temporary,
+    // otherwise it won't commit collected properties
+    mikado.fullproxy = 0;
+
+    if (mikado.async) {
+
+        mikado.render(this).then(function () {
+            mikado.fullproxy = fullproxy;
         });
     } else {
 
-        this.mikado.render(this);
-        skip = !1;
+        mikado.render(this);
+        mikado.fullproxy = fullproxy;
     }
-
-    return this;
 };

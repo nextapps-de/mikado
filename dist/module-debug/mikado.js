@@ -596,6 +596,8 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
 
     let length = this.length;
 
+    // a template could have just expressions without accessing data
+
     if (!data) {
 
         if (!this.apply) {
@@ -603,15 +605,6 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
             this.dom[0] || this.add();
             return this;
         }
-
-        // a template could have just expressions without accessing data
-
-        // else if(DEBUG){
-        //
-        //     console.warn("When calling .render() by passing no data nothing will happen!");
-        // }
-        //
-        // return this;
     }
 
     let count;
@@ -635,7 +628,9 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
         count = 1;
     }
 
-    const key = this.key;
+    const key = this.key,
+          proxy = this.proxy;
+
 
     if (length && !key && !this.recycle) {
 
@@ -663,7 +658,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
                 this.update(node, item, state, x, 1);
             }
 
-            if (this.proxy && /* !this.recycle || */!item._mkx) {
+            if (proxy && /* !this.recycle || */!item._mkx) {
 
                 data[x] = apply_proxy(this, node, item);
             }
@@ -678,7 +673,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
             const item = data[x];
             this.add(item, state /*, x*/);
 
-            if (this.proxy && (!this.recycle || !item._mkx)) {
+            if (proxy && (!this.recycle || !item._mkx)) {
 
                 data[x] = apply_proxy(this, this.dom[x], item);
             }
@@ -806,6 +801,7 @@ Mikado.prototype.replace = function (node, data, state, index) {
  */
 
 Mikado.prototype.update = function (node, data, state, index) {
+
     //profiler_start("update");
 
     if (!this.apply) {
@@ -1063,7 +1059,6 @@ export function apply_proxy(self, node, data) {
  * @param {Array=} b
  * @param {*=} state
  * @param {number=} x
- * @param {boolean|number=} _skip_render
  * @returns {Mikado}
  * @const
  */
@@ -1086,12 +1081,18 @@ Mikado.prototype.reconcile = function (b, state, x) {
         if (x < end_b) {
             const b_x = b[x],
                   ended = x >= end_a;
-            let a_x, b_x_key, a_x_key;
+            let a_x, b_x_key, a_x_key, proxy;
 
 
-            if (this.proxy && !b_x._mkx) {
+            if (this.proxy) {
 
-                b[x] = apply_proxy(this, a[x], b_x);
+                if (!b_x._mkx) {
+
+                    b[x] = apply_proxy(this, a[x], b_x);
+                } else {
+
+                    proxy = 1;
+                }
             }
 
             if (!ended) {
@@ -1103,8 +1104,7 @@ Mikado.prototype.reconcile = function (b, state, x) {
                 if (a_x_key === b_x_key) {
 
                     //if(!_skip_render){
-
-                    this.update(a_x, b_x, state, x, 1);
+                    proxy || this.update(a_x, b_x, state, x, 1);
                     //}
 
                     continue;
@@ -1151,8 +1151,7 @@ Mikado.prototype.reconcile = function (b, state, x) {
                         this.root.insertBefore( /** @type {Node} */tmp_a, /** @type {Node} */a_x);
 
                         //if(!_skip_render){
-
-                        this.update(tmp_a, b_x, state, x, 1);
+                        proxy || this.update(tmp_a, b_x, state, x, 1);
                         //}
 
                         // fast path optimization when distance is equal (skips finding on next turn)

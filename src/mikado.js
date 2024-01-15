@@ -692,6 +692,8 @@ if(!REACTIVE_ONLY){
 
         let length = this.length;
 
+        // a template could have just expressions without accessing data
+
         if(!data){
 
             if(!this.apply){
@@ -699,15 +701,6 @@ if(!REACTIVE_ONLY){
                 this.dom[0] || this.add();
                 return this;
             }
-
-            // a template could have just expressions without accessing data
-
-            // else if(DEBUG){
-            //
-            //     console.warn("When calling .render() by passing no data nothing will happen!");
-            // }
-            //
-            // return this;
         }
 
         let count;
@@ -736,6 +729,7 @@ if(!REACTIVE_ONLY){
         }
 
         const key = SUPPORT_KEYED && this.key;
+        const proxy = SUPPORT_REACTIVE && this.proxy;
 
         if(length && !key && !this.recycle){
 
@@ -763,7 +757,7 @@ if(!REACTIVE_ONLY){
                     this.update(node, item, state, x, 1);
                 }
 
-                if(SUPPORT_REACTIVE && this.proxy && (/* !this.recycle || */ !item[MIKADO_PROXY])){
+                if(proxy && (/* !this.recycle || */ !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, node, item);
                 }
@@ -778,7 +772,7 @@ if(!REACTIVE_ONLY){
                 const item = data[x];
                 this.add(item, state/*, x*/);
 
-                if(SUPPORT_REACTIVE && this.proxy && (!this.recycle || !item[MIKADO_PROXY])){
+                if(proxy && (!this.recycle || !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, this.dom[x], item);
                 }
@@ -920,7 +914,6 @@ Mikado.prototype.replace = function(node, data, state, index){
 
 Mikado.prototype.update = function(node, data, state, index, _skip_check){
 
-    PROFILER && tick("view.update");
     //profiler_start("update");
 
     if(!this.apply){
@@ -937,6 +930,8 @@ Mikado.prototype.update = function(node, data, state, index, _skip_check){
 
         return this;
     }
+
+    PROFILER && tick("view.update");
 
     if(typeof index === "undefined"){
 
@@ -1228,12 +1223,11 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
      * @param {Array=} b
      * @param {*=} state
      * @param {number=} x
-     * @param {boolean|number=} _skip_render
      * @returns {Mikado}
      * @const
      */
 
-    Mikado.prototype.reconcile = function(b, state, x, _skip_render){
+    Mikado.prototype.reconcile = function(b, state, x){
 
         PROFILER && tick("view.reconcile");
 
@@ -1258,10 +1252,18 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                 let a_x;
                 let b_x_key;
                 let a_x_key;
+                let proxy;
 
-                if(SUPPORT_REACTIVE && this.proxy && !b_x[MIKADO_PROXY]){
+                if(SUPPORT_REACTIVE && this.proxy){
 
-                    b[x] = apply_proxy(this, a[x], b_x);
+                    if(!b_x[MIKADO_PROXY]){
+
+                        b[x] = apply_proxy(this, a[x], b_x);
+                    }
+                    else{
+
+                        proxy = 1;
+                    }
                 }
 
                 if(!ended){
@@ -1273,8 +1275,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                     if(a_x_key === b_x_key){
 
                         //if(!_skip_render){
-
-                            this.update(a_x, b_x, state, x, 1);
+                        proxy || this.update(a_x, b_x, state, x, 1);
                         //}
 
                         continue;
@@ -1322,8 +1323,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             this.root.insertBefore(/** @type {Node} */ (tmp_a), /** @type {Node} */ (a_x));
 
                             //if(!_skip_render){
-
-                                this.update(tmp_a, b_x, state, x, 1);
+                            proxy || this.update(tmp_a, b_x, state, x, 1);
                             //}
 
                             // fast path optimization when distance is equal (skips finding on next turn)

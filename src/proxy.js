@@ -59,9 +59,13 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
             get: function(){
 
+                PROFILER && tick("proxy.read");
+
                 return val;
             },
             set: function(newVal){
+
+                PROFILER && tick("proxy.write");
 
                 // we can't use this scope as cache, although it would be nice.
                 // the dom cache needs to be exported stateful.

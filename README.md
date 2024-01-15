@@ -862,6 +862,7 @@ Observable array-like methods (optional, not included in mikado.light.js):
 - observable.<a href="#array.lastIndexOf">**lastIndexOf**(object)</a> : <small>_number_</small>
 - observable.<a href="#array.includes">**includes**(object)</a> : <small>_boolean_</small>
 - observable.<a href="#array.forEach">**forEach**(fn)</a>
+- observable.<a href="#array.transaction">**transaction**(fn)</a>
 
 <a name="options"></a>
 
@@ -1563,6 +1564,7 @@ Those features aren't supported by the runtime compiler:
 - detect and replace repeating inline includes
 - detect and solve/unroll non-dynamic expressions, e.g. ``<h1>{{ "foor" + "bar " }}</h1>`` will transform to a static content `<h1>foobar</h1>` and removes the expression completely
 - runtime-ready templates aren't available on page load (they need to compile)
+- the runtime compiler does not pass the <a href="https://github.com/nextapps-de/mikado/blob/master/test/tpl/crazy.html">"crazy template"</a> test
 
 #### Examples
 
@@ -3361,6 +3363,8 @@ var items = [ ... ];
 store.set(items);
 ```
 
+This is recommended instead of pushing each item one by one, `store.set` will also handle keyed reconciliation.
+
 <a name="array.concat"></a>
 <a name="array.indexOf"></a>
 <a name="array.lastIndexOf"></a>
@@ -3431,6 +3435,24 @@ console.log(store instanceof Mikado.Array); // -> true
 ```
 
 The proxy feature theoretically allows all those checks but could not be used to keep the polyfill working in addition to sharing most of the same codebase. Alternatively you can use an `instanceof` check for identification.
+
+<a name="array.transaction"></a>
+
+### Transactions
+
+Since the array observer apply all changes on the array index instantly to the DOM, reconciliation has no chance to run.
+For this purpose you can use the `observer.transaction()` feature, which let you apply all changes within a function and commit them by taking reconciling into account.
+
+```js
+store.transaction(function(){
+    // collect changes:
+    store[0].title = "John";
+    store[12].class = "active";
+    store[10] = store.pop();
+    store[11] = store.shift();
+});
+// changes applied
+```
 
 <a name="pools"></a>
 
