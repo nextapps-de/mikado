@@ -137,7 +137,7 @@
         const tmp = Object.assign({}, current[index]);
         tmp[test[1]] = "run...";
         mikado_table.update(mikado_table.node(index), tmp);
-        iframe.src = "test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration) + (reflow ? "&hidden=false" : "");
+        iframe.src = location.origin + "/test/" + lib[index].toLowerCase() + "/" + (keyed ? "keyed.html" : strict ? "strict.html" : internal ? "internal.html" : "") + ("?duration=" + duration) + (reflow ? "&hidden=false" : "");
     }
 
     function get_score(){
