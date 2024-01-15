@@ -5,7 +5,7 @@
 <body>
 <h1>Benchmark: mikado-0.8.x (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
-<div id="root"></div>>
+<div id="root"></div>
 <script type="module">
 
     "use strict";
@@ -14,14 +14,11 @@
     import template from "./template/keyed.js";
     import Mikado from "./dist/mikado.light.module.min.js";
 
-    // the pool is limited to 100, that is the amount
-    // of items to be rendered in a single test.
-    // it is not allowed to transfer a pool to the
-    // next round!
+    // each test gets new random data
 
     const mikado = new Mikado(template, {
         mount: root,
-        recycle: false,
+        recycle: true,
         cache: true,
         pool: 100
     });

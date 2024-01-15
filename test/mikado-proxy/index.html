@@ -14,10 +14,7 @@
     import template from "./template/template.js";
     import Mikado from "./dist/mikado.bundle.module.min.js";
 
-    // the pool is limited to 100, that is the amount
-    // of items to be rendered in a single test.
-    // it is not allowed to transfer a pool to the
-    // next round!
+    // each test gets new random data
 
     const mikado = new Mikado(template, {
         observe: store(new Mikado.Array()),
