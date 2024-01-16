@@ -142,10 +142,12 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
      */
     this.inc = [];
 
+    const cacheable = this.recycle || (SUPPORT_KEYED && !!this.key);
+
     if(SUPPORT_POOLS){
 
         /** @const {boolean|number} */
-        this.pool = /** @type {boolean|number} */ (((SUPPORT_KEYED && this.key) || this.recycle) && options.pool) || 0;
+        this.pool = (cacheable && options.pool) || 0;
         /** @private {Array<Element>} */
         this.pool_shared = [];
 
@@ -159,7 +161,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
     if(SUPPORT_CACHE){
 
         /** @const {boolean} */
-        this.cache = template.cache || !!options.cache;
+        this.cache = cacheable && (template.cache || !!options.cache);
     }
 
     if(SUPPORT_ASYNC){
@@ -185,7 +187,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
         /** @type {number} */
         this.fullproxy = 0;
         /** @type {Observer|undefined} */
-        let store = options.observe;
+        const store = options.observe;
 
         if(store){
 
@@ -441,8 +443,20 @@ Mikado.prototype.mount = function(target, hydrate){
 
                 for(let i = 0, node, key; i < this.length; i++){
 
+                    PROFILER && tick("hydrate.count");
+
                     node = this.dom[i];
+                    // server-side rendering needs to export the key as attribute
                     key = node.getAttribute("key");
+
+                    if(DEBUG){
+
+                        if(!key){
+
+                            console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported.");
+                        }
+                    }
+
                     node[MIKADO_TPL_KEY] = key;
                     live[key] = node;
                 }
@@ -463,6 +477,11 @@ Mikado.prototype.mount = function(target, hydrate){
             this.factory = this.dom[0].cloneNode(true);
             construct(this, /** @type {TemplateDOM} */ (this.tpl.tpl), [], "", this.factory)
             && finishFactory(this);
+        }
+
+        if(PROFILER){
+
+            hydrate && tick(this.tpl ? "hydrate.error" : "hydrate.success");
         }
 
         // also when falls back on hydration if structure was incompatible:
@@ -1031,28 +1050,32 @@ if(SUPPORT_ASYNC){
 Mikado.prototype.create = function(data, state, index, _update_pool){
 
     PROFILER && tick("view.create");
-    //profiler_start("create");
 
-    let keyed = SUPPORT_KEYED && this.key;
+    const keyed = SUPPORT_KEYED && this.key;
     const key = keyed && data[keyed];
     let node, pool, factory, found;
 
-    // 1. keyed pool (shared)
-    if(SUPPORT_POOLS && keyed && this.pool && (pool = this.pool_keyed) && (node = pool.get(key))){
+    if(SUPPORT_POOLS && this.pool){
 
-        PROFILER && tick("pool.out");
+        // 1. shared keyed pool
+        if(keyed){
 
-        found = 1;
-        pool.delete(key);
+            if((pool = this.pool_keyed) && (node = pool.get(key))){
+
+                PROFILER && tick("pool.out");
+                pool.delete(key);
+                found = 1;
+            }
+        }
+        // 2. shared non-keyed pool
+        else if((pool = this.pool_shared) && pool.length){
+
+            PROFILER && tick("pool.out");
+            node = pool.pop();
+        }
     }
-    // 2. non-keyed pool (shared)
-    else if(SUPPORT_POOLS && (!keyed || this.recycle) && this.pool && (pool = this.pool_shared) && pool.length){
 
-        PROFILER && tick("pool.out");
-
-        node = pool.pop();
-    }
-    else{
+    if(!node){
 
         node = factory = this.factory;
 
@@ -1064,21 +1087,17 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
         }
     }
 
-    //if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe){
-
-        this.apply && this.apply(
-            data,
-            state || this.state,
-            index,
-            node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache))
-        );
-   // }
+    this.apply && this.apply(
+        data,
+        state || this.state,
+        index,
+        node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache))
+    );
 
     if(factory){
 
         PROFILER && tick("factory.clone");
-
-        node = node.cloneNode(true);
+        node = factory.cloneNode(true);
     }
 
     if(keyed){
@@ -1089,8 +1108,6 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
 
     const callback = SUPPORT_CALLBACKS && this.on && this.on[factory ? "create" : "recycle"];
     callback && callback(node, this);
-
-    //profiler_end("create");
 
     return node;
 };

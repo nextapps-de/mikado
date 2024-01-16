@@ -92,8 +92,10 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
      */
     this.inc = [];
 
+    const cacheable = this.recycle || !!this.key;
+
     /** @const {boolean|number} */
-    this.pool = /** @type {boolean|number} */(this.key || this.recycle) && options.pool || 0;
+    this.pool = cacheable && options.pool || 0;
     /** @private {Array<Element>} */
     this.pool_shared = [];
 
@@ -102,7 +104,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
 
 
     /** @const {boolean} */
-    this.cache = template.cache || !!options.cache;
+    this.cache = cacheable && (template.cache || !!options.cache);
 
 
     /** @type {boolean} */
@@ -122,7 +124,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
         /** @type {number} */
         this.fullproxy = 0;
         /** @type {Observer|undefined} */
-        let store = options.observe;
+        const store = options.observe;
 
         if (store) {
 
@@ -328,7 +330,9 @@ Mikado.prototype.mount = function (target, hydrate) {
                 for (let i = 0, node, key; i < this.length; i++) {
 
                     node = this.dom[i];
+                    // server-side rendering needs to export the key as attribute
                     key = node.getAttribute("key");
+
                     node._mkk = key;
                     live[key] = node;
                 }
@@ -826,42 +830,43 @@ Mikado.prototype.cancel = function () {
  */
 
 Mikado.prototype.create = function (data, state, index, _update_pool) {
-    //profiler_start("create");
+    const keyed = this.key,
+          key = keyed && data[keyed];
 
-    let keyed = this.key;
-    const key = keyed && data[keyed];
     let node, pool, factory, found;
 
-    // 1. keyed pool (shared)
-    if (keyed && this.pool && (pool = this.pool_keyed) && (node = pool.get(key))) {
+    if (this.pool) {
 
-        found = 1;
-        pool.delete(key);
-    }
-    // 2. non-keyed pool (shared)
-    else if ((!keyed || this.recycle) && this.pool && (pool = this.pool_shared) && pool.length) {
+        // 1. shared keyed pool
+        if (keyed) {
 
-            node = pool.pop();
-        } else {
-
-            node = factory = this.factory;
-
-            if (!factory) {
-
-                /** @private */
-                this.factory = node = factory = construct(this, /** @type {TemplateDOM} */this.tpl.tpl, [], "");
-                finishFactory(this);
+            if ((pool = this.pool_keyed) && (node = pool.get(key))) {
+                pool.delete(key);
+                found = 1;
             }
         }
+        // 2. shared non-keyed pool
+        else if ((pool = this.pool_shared) && pool.length) {
+                node = pool.pop();
+            }
+    }
 
-    //if(!SUPPORT_STORAGE || !SUPPORT_REACTIVE || !found || !this.stealth || this.observe){
+    if (!node) {
+
+        node = factory = this.factory;
+
+        if (!factory) {
+
+            /** @private */
+            this.factory = node = factory = construct(this, /** @type {TemplateDOM} */this.tpl.tpl, [], "");
+            finishFactory(this);
+        }
+    }
 
     this.apply && this.apply(data, state || this.state, index, node._mkp || create_path(node, this.factory._mkp, !!factory || this.cache));
-    // }
 
     if (factory) {
-
-        node = node.cloneNode(!0);
+        node = factory.cloneNode(!0);
     }
 
     if (keyed) {
@@ -872,8 +877,6 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
 
     const callback = this.on && this.on[factory ? "create" : "recycle"];
     callback && callback(node, this);
-
-    //profiler_end("create");
 
     return node;
 };

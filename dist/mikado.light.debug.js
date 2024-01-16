@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.219 (Light/Debug)
+ * Mikado.js v0.8.222 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -99,7 +99,7 @@ function t(a, b, c) {
 }
 t.prototype._a = function(a, b) {
   if (this.c) {
-    if (this.c["_a" + a] === b) {
+    if (("undefined" === typeof this.c["_a" + a] ? !1 : this.c["_a" + a]) === b) {
       return;
     }
     this.c["_a" + a] = b;
@@ -108,7 +108,7 @@ t.prototype._a = function(a, b) {
 };
 t.prototype._t = function(a) {
   if (this.c) {
-    if (this.c._t === a) {
+    if (("undefined" === typeof this.c._t ? "" : this.c._t) === a) {
       return;
     }
     this.c._t = a;
@@ -117,7 +117,7 @@ t.prototype._t = function(a) {
 };
 t.prototype._c = function(a) {
   if (this.c) {
-    if (this.c._c === a) {
+    if ((this.c._c || "") === a) {
       return;
     }
     this.c._c = a;
@@ -126,7 +126,7 @@ t.prototype._c = function(a) {
 };
 t.prototype._s = function(a) {
   if (this.c) {
-    if (this.c._s === a) {
+    if ((this.c._s || "") === a) {
       return;
     }
     this.c._s = a;
@@ -135,7 +135,7 @@ t.prototype._s = function(a) {
 };
 t.prototype._h = function(a) {
   if (this.c) {
-    if (this.c._h === a) {
+    if ((this.c._h || "") === a) {
       return;
     }
     this.c._h = a;
@@ -178,10 +178,10 @@ function C(a, b = {}) {
   this.tpl = a;
   this.name = a.name;
   this.inc = [];
-  this.pool = (this.key || this.recycle) && b.pool || 0;
+  this.pool = (c = this.recycle || !!this.key) && b.pool || 0;
   this.pool_shared = [];
   this.pool_keyed = new Map();
-  this.cache = a.cache || !!b.cache;
+  this.cache = c && (a.cache || !!b.cache);
   this.root ? this.mount(this.root, b.hydrate) : this.factory = null;
 }
 C.prototype.mount = function(a, b) {
@@ -220,7 +220,7 @@ C.prototype.mount = function(a, b) {
       d = {};
       if (!c && b && this.length) {
         for (let k = 0, e, h; k < this.length; k++) {
-          e = this.dom[k], h = e.getAttribute("key"), e._mkk = h, d[h] = e;
+          e = this.dom[k], (h = e.getAttribute("key")) || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported."), e._mkk = h, d[h] = e;
         }
       }
       a._mkl = this.live = d;
@@ -309,12 +309,12 @@ C.prototype.update = function(a, b, c, d) {
   return this;
 };
 C.prototype.create = function(a, b, c, d) {
-  let f = this.key;
-  const k = f && a[f];
+  const f = this.key, k = f && a[f];
   let e, h, g, m;
-  f && this.pool && (h = this.pool_keyed) && (e = h.get(k)) ? (m = 1, h.delete(k)) : (!f || this.recycle) && this.pool && (h = this.pool_shared) && h.length ? e = h.pop() : (e = g = this.factory, g || (this.factory = e = g = v(this, this.tpl.tpl, [], ""), D(this)));
+  this.pool && (f ? (h = this.pool_keyed) && (e = h.get(k)) && (h.delete(k), m = 1) : (h = this.pool_shared) && h.length && (e = h.pop()));
+  e || (e = g = this.factory, g || (this.factory = e = g = v(this, this.tpl.tpl, [], ""), D(this)));
   this.apply && this.apply(a, b || this.state, c, e._mkp || l(e, this.factory._mkp, !!g || this.cache));
-  g && (e = e.cloneNode(!0));
+  g && (e = g.cloneNode(!0));
   f && (m || (e._mkk = k), d && (this.live[k] = e));
   return e;
 };

@@ -37,10 +37,10 @@ describe("Render Template", function(){
         const root_1 = document.getElementById("root-1");
 
         Mikado.once(root_1, template, data[0]);
-        expect(root_1.childNodes.length).to.equal(1);
-
+        expect(root_1.children.length).to.equal(1);
         // once does not support index keyword in templates
         checkDOM(root_1.firstElementChild, [data[0]], /* data index */ null);
+
         root_1.innerHTML = "";
     });
 

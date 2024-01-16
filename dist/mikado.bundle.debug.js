@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.219 (Bundle/Debug)
+ * Mikado.js v0.8.222 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -204,7 +204,7 @@ function J(a, b, c) {
 }
 J.prototype._a = function(a, b) {
   if (this.c) {
-    if (this.c["_a" + a] === b) {
+    if (("undefined" === typeof this.c["_a" + a] ? !1 : this.c["_a" + a]) === b) {
       return;
     }
     this.c["_a" + a] = b;
@@ -213,7 +213,7 @@ J.prototype._a = function(a, b) {
 };
 J.prototype._t = function(a) {
   if (this.c) {
-    if (this.c._t === a) {
+    if (("undefined" === typeof this.c._t ? "" : this.c._t) === a) {
       return;
     }
     this.c._t = a;
@@ -222,7 +222,7 @@ J.prototype._t = function(a) {
 };
 J.prototype._c = function(a) {
   if (this.c) {
-    if (this.c._c === a) {
+    if ((this.c._c || "") === a) {
       return;
     }
     this.c._c = a;
@@ -231,7 +231,7 @@ J.prototype._c = function(a) {
 };
 J.prototype._s = function(a) {
   if (this.c) {
-    if (this.c._s === a) {
+    if ((this.c._s || "") === a) {
       return;
     }
     this.c._s = a;
@@ -240,7 +240,7 @@ J.prototype._s = function(a) {
 };
 J.prototype._h = function(a) {
   if (this.c) {
-    if (this.c._h === a) {
+    if ((this.c._h || "") === a) {
       return;
     }
     this.c._h = a;
@@ -321,10 +321,10 @@ function D(a, b = {}) {
   this.tpl = a;
   this.name = a.name;
   this.inc = [];
-  this.pool = (this.key || this.recycle) && b.pool || 0;
+  this.pool = (c = this.recycle || !!this.key) && b.pool || 0;
   this.pool_shared = [];
   this.pool_keyed = new Map();
-  this.cache = a.cache || !!b.cache;
+  this.cache = c && (a.cache || !!b.cache);
   this.async = !!b.async;
   this.timer = 0;
   this.on = b.on || null;
@@ -389,7 +389,7 @@ D.prototype.mount = function(a, b) {
       d = {};
       if (!c && b && this.length) {
         for (let f = 0, g, h; f < this.length; f++) {
-          g = this.dom[f], h = g.getAttribute("key"), g._mkk = h, d[h] = g;
+          g = this.dom[f], (h = g.getAttribute("key")) || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported."), g._mkk = h, d[h] = g;
         }
       }
       a._mkl = this.live = d;
@@ -553,12 +553,12 @@ D.prototype.cancel = function() {
   return this;
 };
 D.prototype.create = function(a, b, c, d) {
-  let e = this.key;
-  const f = e && a[e];
+  const e = this.key, f = e && a[e];
   let g, h, k, m;
-  e && this.pool && (h = this.pool_keyed) && (g = h.get(f)) ? (m = 1, h.delete(f)) : (!e || this.recycle) && this.pool && (h = this.pool_shared) && h.length ? g = h.pop() : (g = k = this.factory, k || (this.factory = g = k = K(this, this.tpl.tpl, [], ""), O(this)));
+  this.pool && (e ? (h = this.pool_keyed) && (g = h.get(f)) && (h.delete(f), m = 1) : (h = this.pool_shared) && h.length && (g = h.pop()));
+  g || (g = k = this.factory, k || (this.factory = g = k = K(this, this.tpl.tpl, [], ""), O(this)));
   this.apply && this.apply(a, b || this.state, c, g._mkp || I(g, this.factory._mkp, !!k || this.cache));
-  k && (g = g.cloneNode(!0));
+  k && (g = k.cloneNode(!0));
   e && (m || (g._mkk = f), d && (this.live[f] = g));
   (a = this.on && this.on[k ? "create" : "recycle"]) && a(g, this);
   return g;
@@ -1099,7 +1099,8 @@ function qa(a, b, c, d, e, f, g, h) {
     "text" !== b && "style" !== b || !a.tag || f.count++;
     f.count !== f.last && (f.current++, f.last = f.count, h.push("_o=_p[" + f.current + "]"));
     h.push("_v=" + c);
-    d ? h.push('if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? h.push("if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? h.push("if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : "html" === b ? h.push("if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : "text" === b && h.push("if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
+    d ? h.push('if(!_o.c||(typeof _o.c["_a' + b + '"]==="undefined"?false:_o.c["_a' + b + '"])!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? h.push('if(!_o.c||(_o.c._c||"")!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}') : "style" === b ? h.push('if(!_o.c||(_o.c._s||"")!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}') : "html" === b ? h.push('if(!_o.c||(_o.c._h||"")!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}') : "text" === b && 
+    h.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}');
     a[b] = g ? [g] : [""];
   } else {
     a[b] = c;

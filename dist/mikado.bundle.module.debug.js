@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.219 (Bundle/Module/Debug)
+ * Mikado.js v0.8.222 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -254,7 +254,7 @@ function Cache$$module$tmp$factory(a, b, c) {
 }
 Cache$$module$tmp$factory.prototype._a = function(a, b) {
   if (this.c) {
-    if (this.c["_a" + a] === b) {
+    if (("undefined" === typeof this.c["_a" + a] ? !1 : this.c["_a" + a]) === b) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
       return;
     }
@@ -266,7 +266,7 @@ Cache$$module$tmp$factory.prototype._a = function(a, b) {
 };
 Cache$$module$tmp$factory.prototype._t = function(a) {
   if (this.c) {
-    if (this.c._t === a) {
+    if (("undefined" === typeof this.c._t ? "" : this.c._t) === a) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
       return;
     }
@@ -278,7 +278,7 @@ Cache$$module$tmp$factory.prototype._t = function(a) {
 };
 Cache$$module$tmp$factory.prototype._c = function(a) {
   if (this.c) {
-    if (this.c._c === a) {
+    if ((this.c._c || "") === a) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
       return;
     }
@@ -290,7 +290,7 @@ Cache$$module$tmp$factory.prototype._c = function(a) {
 };
 Cache$$module$tmp$factory.prototype._s = function(a) {
   if (this.c) {
-    if (this.c._s === a) {
+    if ((this.c._s || "") === a) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
       return;
     }
@@ -302,7 +302,7 @@ Cache$$module$tmp$factory.prototype._s = function(a) {
 };
 Cache$$module$tmp$factory.prototype._h = function(a) {
   if (this.c) {
-    if (this.c._h === a) {
+    if ((this.c._h || "") === a) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
       return;
     }
@@ -405,8 +405,9 @@ function Mikado$$module$tmp$mikado(a, b = {}) {
   this.tpl = a;
   this.name = a.name;
   this.inc = [];
-  SUPPORT_POOLS$$module$tmp$config && (this.pool = (SUPPORT_KEYED$$module$tmp$config && this.key || this.recycle) && b.pool || 0, this.pool_shared = [], SUPPORT_KEYED$$module$tmp$config && (this.pool_keyed = new Map()));
-  SUPPORT_CACHE$$module$tmp$config && (this.cache = a.cache || !!b.cache);
+  c = this.recycle || SUPPORT_KEYED$$module$tmp$config && !!this.key;
+  SUPPORT_POOLS$$module$tmp$config && (this.pool = c && b.pool || 0, this.pool_shared = [], SUPPORT_KEYED$$module$tmp$config && (this.pool_keyed = new Map()));
+  SUPPORT_CACHE$$module$tmp$config && (this.cache = c && (a.cache || !!b.cache));
   SUPPORT_ASYNC$$module$tmp$config && (this.async = !!b.async, this.timer = 0);
   SUPPORT_CALLBACKS$$module$tmp$config && (this.on = b.on || null);
   SUPPORT_REACTIVE$$module$tmp$config && (this.proxy = null, this.fullproxy = 0, (a = b.observe) && (new Observer$$module$tmp$array(a)).mount(this));
@@ -480,7 +481,7 @@ Mikado$$module$tmp$mikado.prototype.mount = function(a, b) {
       d = {};
       if (!c && b && this.length) {
         for (let e = 0, f, h; e < this.length; e++) {
-          f = this.dom[e], h = f.getAttribute("key"), f[MIKADO_TPL_KEY$$module$tmp$config] = h, d[h] = f;
+          PROFILER$$module$tmp$config && tick$$module$tmp$profiler("hydrate.count"), f = this.dom[e], h = f.getAttribute("key"), DEBUG$$module$tmp$config && (h || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported.")), f[MIKADO_TPL_KEY$$module$tmp$config] = h, d[h] = f;
         }
       }
       a[MIKADO_LIVE_POOL$$module$tmp$config] = this.live = d;
@@ -488,7 +489,7 @@ Mikado$$module$tmp$mikado.prototype.mount = function(a, b) {
   }
   a[MIKADO_CLASS$$module$tmp$config] = this;
   this.root = a;
-  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), construct$$module$tmp$factory(this, this.tpl.tpl, [], "", this.factory) && finishFactory$$module$tmp$mikado(this)), this.tpl && (this.factory = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
+  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), construct$$module$tmp$factory(this, this.tpl.tpl, [], "", this.factory) && finishFactory$$module$tmp$mikado(this)), PROFILER$$module$tmp$config && b && tick$$module$tmp$profiler(this.tpl ? "hydrate.error" : "hydrate.success"), this.tpl && (this.factory = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
   (b = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on.mount) && b(a, this);
   return this;
 };
@@ -664,12 +665,12 @@ SUPPORT_ASYNC$$module$tmp$config && (Mikado$$module$tmp$mikado.prototype.cancel 
 });
 Mikado$$module$tmp$mikado.prototype.create = function(a, b, c, d) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.create");
-  let e = SUPPORT_KEYED$$module$tmp$config && this.key;
-  const f = e && a[e];
+  const e = SUPPORT_KEYED$$module$tmp$config && this.key, f = e && a[e];
   let h, g, k, l;
-  SUPPORT_POOLS$$module$tmp$config && e && this.pool && (g = this.pool_keyed) && (h = g.get(f)) ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), l = 1, g.delete(f)) : SUPPORT_POOLS$$module$tmp$config && (!e || this.recycle) && this.pool && (g = this.pool_shared) && g.length ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), h = g.pop()) : (h = k = this.factory, k || (this.factory = h = k = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
+  SUPPORT_POOLS$$module$tmp$config && this.pool && (e ? (g = this.pool_keyed) && (h = g.get(f)) && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), g.delete(f), l = 1) : (g = this.pool_shared) && g.length && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), h = g.pop()));
+  h || (h = k = this.factory, k || (this.factory = h = k = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
   this.apply && this.apply(a, b || this.state, c, h[MIKADO_TPL_PATH$$module$tmp$config] || create_path$$module$tmp$factory(h, this.factory[MIKADO_TPL_PATH$$module$tmp$config], !!k || SUPPORT_CACHE$$module$tmp$config && this.cache));
-  k && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.clone"), h = h.cloneNode(!0));
+  k && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.clone"), h = k.cloneNode(!0));
   e && (l || (h[MIKADO_TPL_KEY$$module$tmp$config] = f), d && (this.live[f] = h));
   (a = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on[k ? "create" : "recycle"]) && a(h, this);
   return h;
@@ -1264,7 +1265,8 @@ function handle_value$$module$tmp$compile(a, b, c, d, e, f, h, g) {
     "text" !== b && "style" !== b || !a.tag || f.count++;
     f.count !== f.last && (f.current++, f.last = f.count, g.push("_o=_p[" + f.current + "]"));
     g.push("_v=" + c);
-    d ? g.push('if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? g.push("if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? g.push("if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : "html" === b ? g.push("if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : "text" === b && g.push("if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
+    d ? g.push('if(!_o.c||(typeof _o.c["_a' + b + '"]==="undefined"?false:_o.c["_a' + b + '"])!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? g.push('if(!_o.c||(_o.c._c||"")!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}') : "style" === b ? g.push('if(!_o.c||(_o.c._s||"")!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}') : "html" === b ? g.push('if(!_o.c||(_o.c._h||"")!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}') : "text" === b && 
+    g.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}');
     a[b] = SUPPORT_REACTIVE$$module$tmp$config && h ? [h] : [""];
   } else {
     a[b] = c;

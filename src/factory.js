@@ -561,7 +561,7 @@ Cache.prototype._a = function(key, value){
 
     if(this.c){
 
-        if(this.c["_a" + key] === value){
+        if((typeof this.c["_a" + key] === "undefined" ? false : this.c["_a" + key]) === value){
 
             PROFILER && tick("cache.match");
             return;
@@ -587,7 +587,7 @@ Cache.prototype._t = function(text){
 
     if(this.c){
 
-        if(this.c["_t"] === text){
+        if((typeof this.c["_t"] === "undefined" ? "" : this.c["_t"]) === text){
 
             PROFILER && tick("cache.match");
             return;
@@ -611,7 +611,7 @@ Cache.prototype._c = function(classname){
 
     if(this.c){
 
-        if(this.c["_c"] === classname){
+        if((this.c["_c"] || "") === classname){
 
             PROFILER && tick("cache.match");
             return;
@@ -635,7 +635,7 @@ Cache.prototype._s = function(css){
 
     if(this.c){
 
-        if(this.c["_s"] === css){
+        if((this.c["_s"] || "") === css){
 
             PROFILER && tick("cache.match");
             return;
@@ -659,7 +659,7 @@ Cache.prototype._h = function(html){
 
     if(this.c){
 
-        if(this.c["_h"] === html){
+        if((this.c["_h"] || "") === html){
 
             PROFILER && tick("cache.match");
             return;

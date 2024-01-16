@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.218 (Bundle/Debug)
+ * Mikado.js v0.8.220 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -223,7 +223,7 @@ function K(a, b, c) {
 }
 K.prototype._a = function(a, b) {
   if (this.c) {
-    if (this.c["_a" + a] === b) {
+    if (("undefined" === typeof this.c["_a" + a] ? !1 : this.c["_a" + a]) === b) {
       f("cache.match");
       return;
     }
@@ -235,7 +235,7 @@ K.prototype._a = function(a, b) {
 };
 K.prototype._t = function(a) {
   if (this.c) {
-    if (this.c._t === a) {
+    if (("undefined" === typeof this.c._t ? "" : this.c._t) === a) {
       f("cache.match");
       return;
     }
@@ -247,7 +247,7 @@ K.prototype._t = function(a) {
 };
 K.prototype._c = function(a) {
   if (this.c) {
-    if (this.c._c === a) {
+    if ((this.c._c || "") === a) {
       f("cache.match");
       return;
     }
@@ -259,7 +259,7 @@ K.prototype._c = function(a) {
 };
 K.prototype._s = function(a) {
   if (this.c) {
-    if (this.c._s === a) {
+    if ((this.c._s || "") === a) {
       f("cache.match");
       return;
     }
@@ -271,7 +271,7 @@ K.prototype._s = function(a) {
 };
 K.prototype._h = function(a) {
   if (this.c) {
-    if (this.c._h === a) {
+    if ((this.c._h || "") === a) {
       f("cache.match");
       return;
     }
@@ -348,21 +348,21 @@ function E(a, b = {}) {
   this.dom = [];
   this.length = 0;
   this.root = b.root || b.mount || null;
-  this.recycle = !!b.recycle;
   this.state = b.state || {};
   this.shadow = b.shadow || !!a.cmp;
   this.key = a.key || "";
   this.live = {};
+  this.recycle = !!this.key || !!b.recycle;
   c = a.fn;
   a.fc || c && (a.fc = c.slice());
   this.apply = c && c.pop();
   this.tpl = a;
   this.name = a.name;
   this.inc = [];
-  this.pool = (this.key || this.recycle) && b.pool || 0;
+  this.pool = this.recycle && b.pool || 0;
   this.pool_shared = [];
   this.pool_keyed = new Map();
-  this.cache = a.cache || !!b.cache;
+  this.cache = this.recycle && (a.cache || !!b.cache);
   this.async = !!b.async;
   this.timer = 0;
   this.on = b.on || null;
@@ -430,7 +430,7 @@ E.prototype.mount = function(a, b) {
       d = {};
       if (!c && b && this.length) {
         for (let k = 0, h, g; k < this.length; k++) {
-          h = this.dom[k], g = h.getAttribute("key"), h._mkk = g, d[g] = h;
+          f("hydrate.count"), h = this.dom[k], (g = h.getAttribute("key")) || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated components don't have an attribute 'key' exported."), h._mkk = g, d[g] = h;
         }
       }
       a._mkl = this.live = d;
@@ -438,7 +438,7 @@ E.prototype.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), L(this, this.tpl.tpl, [], "", this.factory) && P(this)), this.tpl && (this.factory = L(this, this.tpl.tpl, [], ""), P(this)));
+  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), L(this, this.tpl.tpl, [], "", this.factory) && P(this)), b && f(this.tpl ? "hydrate.error" : "hydrate.success"), this.tpl && (this.factory = L(this, this.tpl.tpl, [], ""), P(this)));
   (b = this.on && this.on.mount) && b(a, this);
   return this;
 };
@@ -600,12 +600,12 @@ E.prototype.cancel = function() {
 };
 E.prototype.create = function(a, b, c, d) {
   f("view.create");
-  let e = this.key;
-  const k = e && a[e];
+  const e = this.key, k = e && a[e];
   let h, g, l, n;
-  e && this.pool && (g = this.pool_keyed) && (h = g.get(k)) ? (f("pool.out"), n = 1, g.delete(k)) : (!e || this.recycle) && this.pool && (g = this.pool_shared) && g.length ? (f("pool.out"), h = g.pop()) : (h = l = this.factory, l || (this.factory = h = l = L(this, this.tpl.tpl, [], ""), P(this)));
+  e ? this.pool && (g = this.pool_keyed) && (h = g.get(k)) && (f("pool.out"), g.delete(k), n = 1) : this.recycle && this.pool && (g = this.pool_shared) && g.length && (f("pool.out"), h = g.pop());
+  h || (h = l = this.factory, l || (this.factory = h = l = L(this, this.tpl.tpl, [], ""), P(this)));
   this.apply && this.apply(a, b || this.state, c, h._mkp || J(h, this.factory._mkp, !!l || this.cache));
-  l && (f("factory.clone"), h = h.cloneNode(!0));
+  l && (f("factory.clone"), h = l.cloneNode(!0));
   e && (n || (h._mkk = k), d && (this.live[k] = h));
   (a = this.on && this.on[l ? "create" : "recycle"]) && a(h, this);
   return h;
@@ -1180,7 +1180,8 @@ function ra(a, b, c, d, e, k, h, g) {
     "text" !== b && "style" !== b || !a.tag || k.count++;
     k.count !== k.last && (k.current++, k.last = k.count, g.push("_o=_p[" + k.current + "]"));
     g.push("_v=" + c);
-    d ? g.push('if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? g.push("if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? g.push("if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : "html" === b ? g.push("if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : "text" === b && g.push("if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
+    d ? g.push('if(!_o.c||(typeof _o.c["_a' + b + '"]==="undefined"?false:_o.c["_a' + b + '"])!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? g.push('if(!_o.c||(_o.c._c||"")!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}') : "style" === b ? g.push('if(!_o.c||(_o.c._s||"")!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}') : "html" === b ? g.push('if(!_o.c||(_o.c._h||"")!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}') : "text" === b && 
+    g.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}');
     a[b] = h ? [h] : [""];
   } else {
     a[b] = c;

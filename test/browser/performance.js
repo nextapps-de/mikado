@@ -128,13 +128,14 @@ describe("Performance Tests", function(){
 
         // factory path + resolve => added cache
 
-        expect(Object.keys(window.profiler).length).to.equal(10);
+        expect(Object.keys(window.profiler).length).to.equal(11);
         expect(window.profiler["cache.create"]).to.equal(25);
         expect(window.profiler["cache.attr"]).to.equal(5 * 3);
-        expect(window.profiler["cache.class"]).to.equal(5 * 1);
+        expect(window.profiler["cache.class"]).to.equal(5 * 1 - 1); // one match
         expect(window.profiler["cache.html"]).to.equal(5 * 1);
-        expect(window.profiler["cache.miss"]).to.equal(5 * 7);
+        expect(window.profiler["cache.miss"]).to.equal(5 * 7 - 1); // one match
         expect(window.profiler["cache.text"]).to.equal(5 * 2);
+        expect(window.profiler["cache.match"]).to.equal(1); // matched unused class property
         expect(window.profiler["view.render"]).to.equal(1);
         expect(window.profiler["view.update"]).to.equal(5);
         expect(window.profiler["factory.path"]).to.equal(5);
@@ -291,13 +292,14 @@ describe("Performance Tests", function(){
 
         // factory path + resolve => added cache
 
-        expect(Object.keys(window.profiler).length).to.equal(12);
+        expect(Object.keys(window.profiler).length).to.equal(13);
         expect(window.profiler["cache.attr"]).to.equal(5 * 3);
-        expect(window.profiler["cache.class"]).to.equal(5 * 1);
+        expect(window.profiler["cache.class"]).to.equal(5 * 1 - 1); // one match
         expect(window.profiler["cache.create"]).to.equal(5 * 5);
         expect(window.profiler["cache.html"]).to.equal(5 * 1);
-        expect(window.profiler["cache.miss"]).to.equal(5 * 7);
+        expect(window.profiler["cache.miss"]).to.equal(5 * 7 - 1); // one match
         expect(window.profiler["cache.text"]).to.equal(5 * 2);
+        expect(window.profiler["cache.match"]).to.equal(1); // matched unused class property
         expect(window.profiler["factory.path"]).to.equal(5);
         expect(window.profiler["factory.resolve"]).to.equal(5 * 4);
         expect(window.profiler["view.render"]).to.equal(1);

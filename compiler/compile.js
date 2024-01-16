@@ -1024,35 +1024,35 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
+                                    fn.push('if(!_o.c||(typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v){' +
                                                 '_o.c&&(_o.c["_a' + key + '"]=_v);' +
                                                 '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                                             '}');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('if(!_o.c||_o.c._c!==_v){' +
+                                    fn.push('if(!_o.c||(_o.c._c||"")!==_v){' +
                                                 '_o.c&&(_o.c._c=_v);' +
                                                 '_o.n.className=_v' +
                                             '}');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('if(!_o.c||_o.c._s!==_v){' +
+                                    fn.push('if(!_o.c||(_o.c._s||"")!==_v){' +
                                                 '_o.c&&(_o.c._s=_v);' +
                                                 '_o.n.cssText=_v' +
                                             '}');
                                     }
                                 else if(key === "html"){
 
-                                    fn.push('if(!_o.c||_o.c._h!==_v){' +
+                                    fn.push('if(!_o.c||(_o.c._h||"")!==_v){' +
                                                 '_o.c&&(_o.c._h=_v);' +
                                                 '_o.n.innerHTML=_v' +
                                             '}');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('if(!_o.c||_o.c._t!==_v){' +
+                                    fn.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){' +
                                                 '_o.c&&(_o.c._t=_v);' +
                                                 '_o.n.nodeValue=_v' +
                                             '}');
@@ -1065,35 +1065,35 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('if(_o.c["_a' + key + '"]!==_v){' +
+                                    fn.push('if((typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v){' +
                                         '_o.c["_a' + key + '"]=_v;' +
                                         '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                                         '}');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('if(_o.c._c!==_v){' +
+                                    fn.push('if((_o.c._c||"")!==_v){' +
                                         '_o.c._c=_v;' +
                                         '_o.n.className=_v' +
                                         '}');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('if(_o.c._s!==_v){' +
+                                    fn.push('if((_o.c._s||"")!==_v){' +
                                         '_o.c._s=_v;' +
                                         '_o.n.cssText=_v' +
                                         '}');
                                 }
                                 else if(key === "html"){
 
-                                    fn.push('if(_o.c._h!==_v){' +
+                                    fn.push('if((_o.c._h||"")!==_v){' +
                                         '_o.c._h=_v;' +
                                         '_o.n.innerHTML=_v' +
                                         '}');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('if(_o.c._t!==_v){' +
+                                    fn.push('if((typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){' +
                                         '_o.c._t=_v;' +
                                         '_o.n.nodeValue=_v' +
                                         '}');
@@ -1133,23 +1133,23 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('(!_o.c||_o.c["_a' + key + '"]!==_v)&&_o._a("' + key + '",_v)');
+                                    fn.push('(!_o.c||(typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v)&&_o._a("' + key + '",_v)');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('(!_o.c||_o.c._c!==_v)&&_o._c(_v)');
+                                    fn.push('(!_o.c||(_o.c._c||"")!==_v)&&_o._c(_v)');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('(!_o.c||_o.c._s!==_v)&&_o._s(_v)');
+                                    fn.push('(!_o.c||(_o.c._s||"")!==_v)&&_o._s(_v)');
                                 }
                                 else if(key === "html"){
 
-                                    fn.push('(!_o.c||_o.c._h!==_v)&&_o._h(_v)');
+                                    fn.push('(!_o.c||(_o.c._h||"")!==_v)&&_o._h(_v)');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('(!_o.c||_o.c._t!==_v)&&_o._t(_v)');
+                                    fn.push('(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v)&&_o._t(_v)');
                                 }
                             }
 

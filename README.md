@@ -123,6 +123,7 @@ Packed with a smart routing feature for event delegation and full support for we
     - <a href="#observable">Reactive Array (Virtual NodeList)</a>
     - <a href="#limitations">Limitations</a>
     - <a href="#strict-proxy">Strict-Proxy Mode</a>
+    - <a href="#array.transaction">Transactions</a>
 22. <a href="#pools">Template Pools</a>
 23. <a href="#hydration">Hydration</a>
 24. <a href="#shadow">Web Components (Shadow DOM)</a>
@@ -3441,7 +3442,7 @@ The proxy feature theoretically allows all those checks but could not be used to
 ### Transactions
 
 Since the array observer apply all changes on the array index instantly to the DOM, reconciliation has no chance to run.
-For this purpose you can use the `observer.transaction()` feature, which let you apply all changes within a function and commit them by taking reconciling into account.
+For this purpose you can use the `store.transaction()` feature, which let you apply all changes within a function and commit them by taking reconciling into account.
 
 ```js
 store.transaction(function(){
@@ -3570,9 +3571,10 @@ Therefore, you will need 2 additional template tags:
   <script src="js/component.js"></script>
   <style>#user-list{ width: 100%; }</style>
   <script>window.username = "John";</script>
+  <!-- you can include anything here ... -->
   <!-- components requires the template tag -->
   <template>
-    <!-- single outer root element: -->
+    <!-- templates has single outer root element: -->
     <table id="user-list">
       <tr>
         <td>User:</td>
@@ -3712,7 +3714,7 @@ Each template part explained:
 - `id="{{ data.view }}"` simple expression for inserting dynamic content
 - `if="!data.entries.length"` the if-directive checks the condition and will render everything nested as a new template (inline definition or extern by using "include"), the nested template needs to have one outer element as the root
 - `foreach="data.entries"` the foreach-directive loops the rendering of array items by everything nested as a new template (inline definition or extern by using "include"), the nested template needs to have one outer element as the root
-- `{{@ ... }}` an expression to include pure javascript syntax (access limited by the scope of the template)
+- `{{@ ... }}` an expression to include pure javascript syntax (access limited by the scope of the template), wrapped into a `<script/>` tag just for runtime compiler support.
 - `key="data.id"` extract the key value from the data, a given key is limiting the recycling of already rendered components by a keyed strategy
 - `data-id="{{ data.id }}" root` exports "data.id" as an attribute, also define "root" as the event target for the listener "select-active", pretty useful when multiple routes on different elements needs the same data attributes
 - `{{ index + 1 }}` uses the builtin keyword "index" which refers to the current index of looped data

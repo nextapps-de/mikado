@@ -466,7 +466,7 @@ Cache.prototype._a = function (key, value) {
 
     if (this.c) {
 
-        if (this.c["_a" + key] === value) {
+        if (("undefined" == typeof this.c["_a" + key] ? !1 : this.c["_a" + key]) === value) {
             return;
         }
 
@@ -485,7 +485,7 @@ Cache.prototype._t = function (text) {
 
     if (this.c) {
 
-        if (this.c._t === text) {
+        if (("undefined" == typeof this.c._t ? "" : this.c._t) === text) {
             return;
         }
 
@@ -504,7 +504,7 @@ Cache.prototype._c = function (classname) {
 
     if (this.c) {
 
-        if (this.c._c === classname) {
+        if ((this.c._c || "") === classname) {
             return;
         }
 
@@ -523,7 +523,7 @@ Cache.prototype._s = function (css) {
 
     if (this.c) {
 
-        if (this.c._s === css) {
+        if ((this.c._s || "") === css) {
             return;
         }
 
@@ -542,7 +542,7 @@ Cache.prototype._h = function (html) {
 
     if (this.c) {
 
-        if (this.c._h === html) {
+        if ((this.c._h || "") === html) {
             return;
         }
 
