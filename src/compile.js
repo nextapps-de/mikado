@@ -492,7 +492,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 if(_inc[i].length){
 
-                    _inc[i] = Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") + ';return _x');
+                    _inc[i] = Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") /*+ ';return _x'*/);
                 }
                 else{
 

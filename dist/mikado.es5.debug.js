@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.225 (ES5/Debug)
+ * Mikado.js v0.8.226 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1220,8 +1220,10 @@ C.prototype.create = function(a, b, c, d) {
     }
   }
   g || (g = e = this.factory, e || (this.factory = g = e = K(this, this.tpl.tpl, [], ""), O(this)));
-  var l;
-  this.apply && (l = this.apply(a, b || this.state, c, g._mkp || I(g, this.factory._mkp, !!e || this.cache), e && this.cache && []));
+  if (this.apply) {
+    var l = e && this.cache && [];
+    this.apply(a, b || this.state, c, g._mkp || I(g, this.factory._mkp, !!e || this.cache), l);
+  }
   e && (g = e.cloneNode(!0), l && (g._mkc = l));
   f && (k || (g._mkk = m), d && (this.live[m] = g));
   (a = this.on && this.on[e ? "create" : "recycle"]) && a(g, this);
@@ -1752,7 +1754,7 @@ function sa(a, b, c, d, f, m) {
       g.fn = null;
     } else {
       for (d = 0; d < c.length; d++) {
-        c[d].root && (c[d].root.inc = c[d].inc[0], delete c[d].root.child), c[d] = c[d].length ? Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + c[d].join(";") + ";return _x") : null;
+        c[d].root && (c[d].root.inc = c[d].inc[0], delete c[d].root.child), c[d] = c[d].length ? Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + c[d].join(";")) : null;
       }
       g.fn = c.length ? c : null;
     }

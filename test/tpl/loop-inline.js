@@ -77,13 +77,10 @@ fn:[function(data,state,index,_p,_x){
   _p[2]._t(data.title,_x,2);
   _p[3]._h(data.content,_x,3);
   _p[4]._t(data.footer,_x,4);
-  return _x;
 },function(data,state,index,_p,_x){
   this.inc[0].mount(_p[0].n)[data?"render":"clear"](data,state);
   this.inc[0].mount(_p[1].n)[data?"render":"clear"](data,state);
-  return _x;
 },function(data,state,index,_p,_x){
   this.inc[0].mount(_p[0].n)[!data.hide?"render":"clear"](data.main,state);
-  return _x;
 }]
 }

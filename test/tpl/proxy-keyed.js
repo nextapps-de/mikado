@@ -66,6 +66,5 @@ fn:[function(data,state,index,_p,_x){
   _p[3]._t(data.title,_x,3);
   _p[4]._h(data.content,_x,4);
   _p[5]._t(data.footer,_x,5);
-  return _x;
 }]
 }

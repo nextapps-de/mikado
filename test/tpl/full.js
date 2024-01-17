@@ -160,12 +160,10 @@ fn:[null,function(data,state,index,_p,_x){
   _p[7]._s('opacity:'+(state.selected===data.id?'1':'0.5'),_x,7);
   _p[8]._a("selected",(data.mode === 'on'),_x,8);
   _p[9]._a("selected",(data.mode === 'off'),_x,9);
-  return _x;
 },function(data,state,index,_p,_x){
   _p[0]._a("id",data.view,_x,0);
   this.inc[0].mount(_p[1].n).render(data,state);
   this.inc[1].mount(_p[2].n).render(data.entries,state);
   this.inc[2].mount(_p[3].n)[!data.entries.length?"render":"clear"](data,state);
-  return _x;
 }]
 }

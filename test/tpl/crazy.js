@@ -68,6 +68,5 @@ fn:[function(data,state,index,_p,_x){
   _p[5]._a("data-id",val,_x,5);
   _p[5]._h(html,_x,5);
   _p[6]._s('display:'+(val),_x,6);
-  return _x;
 }]
 }

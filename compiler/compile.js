@@ -306,7 +306,7 @@ module.exports = function(src, dest, options, _recall){
 
         if(inc[i].length){
 
-            inc[i].push("return _x");
+            //inc[i].push("return _x");
 
             if((tpl_cache && tpl_cache !== "false") || mode !== "compact"){
 

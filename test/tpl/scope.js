@@ -34,6 +34,5 @@ fn:[function(data,state,index,_p,_x){
 
     }(data));
   _p[2]._t(value,_x,2);
-  return _x;
 }]
 }

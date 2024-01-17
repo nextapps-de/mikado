@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.224 (Bundle/Debug)
+ * Mikado.js v0.8.225 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -653,7 +653,7 @@ D.prototype.create = function(a, b, c, d) {
   this.pool && (e ? (g = this.pool_keyed) && (k = g.get(h)) && (f("pool.out"), g.delete(h), n = 1) : (g = this.pool_shared) && g.length && (f("pool.out"), k = g.pop()));
   k || (k = l = this.factory, l || (this.factory = k = l = L(this, this.tpl.tpl, [], ""), P(this)));
   let p;
-  this.apply && (p = this.apply(a, b || this.state, c, k._mkp || J(k, this.factory._mkp, !!l || this.cache), l && this.cache && []));
+  this.apply && (p = l && this.cache && [], this.apply(a, b || this.state, c, k._mkp || J(k, this.factory._mkp, !!l || this.cache), p));
   l && (f("factory.clone"), k = l.cloneNode(!0), p && (k._mkc = p));
   e && (n || (k._mkk = h), d && (this.live[h] = k));
   (a = this.on && this.on[l ? "create" : "recycle"]) && a(k, this);
@@ -1206,7 +1206,7 @@ function pa(a, b, c, d, e, h) {
       k.fn = null;
     } else {
       for (d = 0; d < c.length; d++) {
-        c[d].root && (c[d].root.inc = c[d].inc[0], delete c[d].root.child), c[d] = c[d].length ? Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + c[d].join(";") + ";return _x") : null;
+        c[d].root && (c[d].root.inc = c[d].inc[0], delete c[d].root.child), c[d] = c[d].length ? Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + c[d].join(";")) : null;
       }
       k.fn = c.length ? c : null;
     }

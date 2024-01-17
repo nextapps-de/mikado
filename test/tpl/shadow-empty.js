@@ -69,6 +69,5 @@ fn:[function(data,state,index,_p,_x){
   _p[3]._h(data.content,_x,3);
   _p[4]._a("data-footer",window.footer,_x,4);
   _p[5]._t(data.footer,_x,5);
-  return _x;
 }]
 }
