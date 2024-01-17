@@ -143,12 +143,13 @@ function proxy_loop(handler, value, prop) {
             // tmp = [ Function Name, DOM Cache, <Attribute Key> ]
             const tmp = exp[i],
                   fn = tmp[0],
-                  cache = /** @type {Cache} */handler.path[tmp[1]];
+                  cache = /** @type {Cache} */handler.path[tmp[1]],
+                  key = tmp[2] || "";
 
 
-            if (!cache.c || cache.c[fn + (tmp[2] || "")] !== value) {
+            if (!cache.c || cache.c[fn + key] !== value) {
 
-                cache[fn](tmp[2] || value, value);
+                key ? cache[fn](key, value) : cache[fn](value);
             } else {}
         }
     }

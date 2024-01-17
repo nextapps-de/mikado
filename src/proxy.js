@@ -160,12 +160,15 @@ function proxy_loop(handler, value, prop){
             const tmp = exp[i];
             const fn = tmp[0];
             const cache = /** @type {Cache} */ (handler.path[tmp[1]]);
+            const key = tmp[2] || "";
 
-            if(!cache.c || cache.c[fn + (tmp[2] || "")] !== value){
+            if(!cache.c || cache.c[fn + key] !== value){
 
                 PROFILER && tick("cache.miss");
 
-                cache[fn](tmp[2] || value, value);
+                key ? cache[fn](key, value)
+                    : cache[fn](value);
+
             }
             else{
 

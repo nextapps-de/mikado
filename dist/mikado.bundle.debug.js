@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.226 (Bundle/Debug)
+ * Mikado.js v0.8.227 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -325,11 +325,11 @@ function ia(a, b, c) {
 }
 function ea(a, b, c) {
   if (c = a.fn[c]) {
-    for (let d = 0; d < c.length; d++) {
-      const e = c[d], g = e[0], h = a.path[e[1]];
-      if (!h.c || h.c[g + (e[2] || "")] !== b) {
-        h[g](e[2] || b, b);
-      }
+    for (let e = 0; e < c.length; e++) {
+      var d = c[e];
+      const g = d[0], h = a.path[d[1]];
+      d = d[2] || "";
+      h.c && h.c[g + d] === b || (d ? h[g](d, b) : h[g](b));
     }
   }
 }

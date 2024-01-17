@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.226 (Bundle/Module/Debug)
+ * Mikado.js v0.8.227 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -403,9 +403,11 @@ function set$$module$tmp$proxy(a, b, c) {
 }
 function proxy_loop$$module$tmp$proxy(a, b, c) {
   if (c = a.fn[c]) {
-    for (let d = 0; d < c.length; d++) {
-      const e = c[d], f = e[0], h = a.path[e[1]];
-      h.c && h.c[f + (e[2] || "")] === b ? PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match") : (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), h[f](e[2] || b, b));
+    for (let e = 0; e < c.length; e++) {
+      var d = c[e];
+      const f = d[0], h = a.path[d[1]];
+      d = d[2] || "";
+      h.c && h.c[f + d] === b ? PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match") : (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), d ? h[f](d, b) : h[f](b));
     }
   }
 }
