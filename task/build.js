@@ -144,6 +144,19 @@ files.forEach(function(file){
 
             let src = String(fs.readFileSync("src/" + file));
 
+            if(custom){
+
+                let defaults = src.split(/export const /);
+                defaults.unshift();
+                defaults = defaults.filter(str => str.startsWith("SUPPORT_")).map(str => str.replace(/=[\s\S]+/, "").trim());
+
+                for(let i = 0, opt; i < defaults.length; i++){
+
+                    opt = defaults[i];
+                    options[opt] = typeof options[opt] === "undefined" ? false : options[opt];
+                }
+            }
+
             for(let opt in options){
 
                 src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
@@ -173,7 +186,15 @@ exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_fi
     const package_json = require("../package.json");
     //const postname = require('./postname.json');
 
-    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + " (" + (light_version ? "Light" + (options["RELEASE"] === "light.module" ? "/Module" : "") : es5_version ? "ES5" : "Bundle" + (options["RELEASE"] === "bundle.module" ? "/Module" : "")) + (options["DEBUG"] ? "/Debug" : "") + ")" );
+    let name = (
+        custom ? options["RELEASE"].replace("custom.", "Custom/") :
+        light_version ? "Light" + (options["RELEASE"] === "light.module" ? "/Module" : "") :
+        es5_version ? "ES5" : "Bundle" + (options["RELEASE"] === "bundle.module" ? "/Module" : "")
+    );
+
+    if(!custom && options["DEBUG"]) name += "/Debug";
+
+    preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + " (" + name + ")" );
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
 
     // for(let key in postname){

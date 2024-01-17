@@ -30,7 +30,7 @@ import {
     MIKADO_PROXY
 } from "./config.js";
 // <-- COMPILER BLOCK
-import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache } from "./type.js";
 import Observer from "./array.js";
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
@@ -107,7 +107,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
     /** @type {*} */
     this.state = options.state || {};
     /** @type {boolean} */
-    this.shadow = options.shadow || !!template.cmp;
+    this.shadow = options.shadow || (SUPPORT_WEB_COMPONENTS && !!template.cmp);
 
     if(SUPPORT_KEYED){
 
@@ -1087,17 +1087,28 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
         }
     }
 
-    this.apply && this.apply(
-        data,
-        state || this.state,
-        index,
-        node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache))
-    );
+    let cache;
+
+    if(this.apply){
+
+        cache = this.apply(
+            data,
+            state || this.state,
+            index,
+            node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache)),
+            SUPPORT_CACHE && factory && this.cache && /** @type {Array<NodeCache>} */ ([])
+        );
+    }
 
     if(factory){
 
         PROFILER && tick("factory.clone");
         node = factory.cloneNode(true);
+
+        if(SUPPORT_CACHE && cache){
+
+            node[MIKADO_NODE_CACHE] = cache;
+        }
     }
 
     if(keyed){

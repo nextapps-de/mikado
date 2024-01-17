@@ -13,15 +13,30 @@ import { tick } from "./profiler.js";
 
 export function create_path(root, path, _use_cache) {
     //profiler_start("create_path");
+    //console.time("create_path");
+
+    /** @type {Array<NodeCache>|undefined} */
+    let cache_clone;
+
+    if (_use_cache) {
+
+        // when path is created there don't exist a node cache,
+        // so it can be used temporary to pass the full vcache array
+
+        if (cache_clone = root._mkc) {
+
+            root._mkc = null;
+        }
+    }
 
     const length = path.length,
-          new_path = [],
+          new_path = Array(length),
           vcache = {};
     /** @type {Array<Cache>} */
 
     /** @dict */
 
-    for (let x = 0, item, vpath, node_parent, node, last, cache = null; x < length; x++) {
+    for (let x = 0, item, vpath, node_parent, node, cache = null /*, last, cache_index = 0*/; x < length; x++) {
 
         item = path[x];
         vpath = item.v;
@@ -41,11 +56,12 @@ export function create_path(root, path, _use_cache) {
             node = node_parent = root;
         }
 
-        if (_use_cache && last !== node_parent) {
+        if (_use_cache /*&& last !== node_parent*/) {
 
-            last = node_parent;
-            node_parent._mkc = cache = {};
-        }
+                //last = node_parent;
+                cache = cache_clone ? cache_clone[x] : {};
+                node_parent._mkc = cache;
+            }
 
         new_path[x] = new Cache(cache, node, "");
     }
@@ -53,6 +69,7 @@ export function create_path(root, path, _use_cache) {
     root._mkp = new_path;
 
     //profiler_end("create_path");
+    //console.timeEnd("create_path");
 
     return new_path;
 }
@@ -65,9 +82,6 @@ export function create_path(root, path, _use_cache) {
  */
 
 function resolve(root, path, cache) {
-
-    let node;
-
     //profiler_start("resolve");
 
     for (let i = 0, length = path.length, tmp = ""; i < length; i++) {
@@ -86,12 +100,10 @@ function resolve(root, path, cache) {
                 root = root.firstChild;
             } else if ("|" === current_path) {
 
-                node = root;
-                root = root.firstChild;
+                return [root.firstChild, root];
             } else if ("@" === current_path) {
 
-                node = root;
-                root = root.style;
+                return [root.style, root];
             } else /*if(current_path === "+")*/{
 
                     //root = root.nextElementSibling;
@@ -104,7 +116,7 @@ function resolve(root, path, cache) {
 
     //profiler_end("resolve");
 
-    return [root, node];
+    return [root, null];
 }
 
 /**
@@ -445,33 +457,57 @@ export function Cache(cache, node, vpath) {
 /**
  * @param {string} key
  * @param {string|boolean} value
+ * @param {NodeCache=} cache
+ * @param {number=} index
  * @const
  */
 
-Cache.prototype._a = function (key, value) {
+Cache.prototype._a = function (key, value, cache, index) {
 
     if (this.c) {
 
-        if (("undefined" == typeof this.c["_a" + key] ? !1 : this.c["_a" + key]) === value) {
+        if (cache) {
+
+            if (index || 0 === index) {
+
+                cache = cache[index] || (cache[index] = {});
+            }
+
+            cache["_a" + key] = value;
+        }
+
+        if (this.c["_a" + key] === value) {
             return;
         }
 
         this.c["_a" + key] = value;
     }
 
-    !1 !== value ? this.n.setAttribute(key, value) : this.n.removeAttribute(key);
+    !1 === value ? this.n.removeAttribute(key) : this.n.setAttribute(key, value);
 };
 
 /**
  * @param {string} text
+ * @param {NodeCache=} cache
+ * @param {number=} index
  * @const
  */
 
-Cache.prototype._t = function (text) {
+Cache.prototype._t = function (text, cache, index) {
 
     if (this.c) {
 
-        if (("undefined" == typeof this.c._t ? "" : this.c._t) === text) {
+        if (cache) {
+
+            if (index || 0 === index) {
+
+                cache = cache[index] || (cache[index] = {});
+            }
+
+            cache._t = text;
+        }
+
+        if (this.c._t === text) {
             return;
         }
 
@@ -483,14 +519,26 @@ Cache.prototype._t = function (text) {
 
 /**
  * @param {string} classname
+ * @param {NodeCache=} cache
+ * @param {number=} index
  * @const
  */
 
-Cache.prototype._c = function (classname) {
+Cache.prototype._c = function (classname, cache, index) {
 
     if (this.c) {
 
-        if ((this.c._c || "") === classname) {
+        if (cache) {
+
+            if (index || 0 === index) {
+
+                cache = cache[index] || (cache[index] = {});
+            }
+
+            cache._c = classname;
+        }
+
+        if (this.c._c === classname) {
             return;
         }
 
@@ -502,14 +550,26 @@ Cache.prototype._c = function (classname) {
 
 /**
  * @param {string} css
+ * @param {NodeCache=} cache
+ * @param {number=} index
  * @const
  */
 
-Cache.prototype._s = function (css) {
+Cache.prototype._s = function (css, cache, index) {
 
     if (this.c) {
 
-        if ((this.c._s || "") === css) {
+        if (cache) {
+
+            if (index || 0 === index) {
+
+                cache = cache[index] || (cache[index] = {});
+            }
+
+            cache._s = css;
+        }
+
+        if (this.c._s === css) {
             return;
         }
 
@@ -521,14 +581,26 @@ Cache.prototype._s = function (css) {
 
 /**
  * @param {string} html
+ * @param {NodeCache=} cache
+ * @param {number=} index
  * @const
  */
 
-Cache.prototype._h = function (html) {
+Cache.prototype._h = function (html, cache, index) {
 
     if (this.c) {
 
-        if ((this.c._h || "") === html) {
+        if (cache) {
+
+            if (index || 0 === index) {
+
+                cache = cache[index] || (cache[index] = {});
+            }
+
+            cache._h = html;
+        }
+
+        if (this.c._h === html) {
             return;
         }
 

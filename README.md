@@ -3753,28 +3753,33 @@ When you are focus on performance you should take those settings as a goal:
 
 ## Custom Builds
 
-Perform a full standard build (bundle.min.js):
+The `src` folder of this repository requires some compilation to resolve the build flags. Those are your options:
+
+- Closure Compiler (Simple or Advanced, used by this library)
+- Babel + Plugin `babel-plugin-conditional-compile` (used by this library)
+- Terser
+- Typescript
+
+As far as I know you can't resolve build flags with:
+
+- Webpack
+- esbuild
+- rollup
+
+Please let me know when you have some additions. As long as you will see flags like `if(DEBUG)` (could be minified) in your build you shouldn't use that.
+
+These are the standard builds located in the `dist` folder:
 
 ```bash
 npm run build:bundle
-```
-
-Perform a light build (light.min.js):
-
-```bash
 npm run build:light
-```
-
-Perform a module build (/modules/):
-
-```bash
 npm run build:module
 ```
 
 Perform a custom build by passing build flags:
 
 ```bash
-npm run build:custom ENABLE_CACHE=true SUPPORT_POOLS=true LANGUAGE_OUT=ECMASCRIPT5 USE_POLYFILL=true
+npm run build:custom SUPPORT_CACHE=true SUPPORT_POOLS=true LANGUAGE_OUT=ECMASCRIPT5 POLYFILL=true
 ```
 
 > On custom builds each build flag will be set to _**false**_ by default when not passed.
@@ -3794,7 +3799,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     </tr>
     <tr>
         <td>DEBUG</td>
-        <td>true, false</td>
+        <td>true, <b>false</td>
         <td>Output debug information to the console (default: false)</td>
     </tr>
     <tr></tr>
@@ -3854,7 +3859,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     <tr></tr>
     <tr>
         <td>REACTIVE_ONLY</td>
-        <td>true, false</td>
+        <td>true, <b>false</b></td>
         <td>Use a full reactive approach for all views, exclude <code>.render()</code> and dependencies from build (default: false)</td>
     </tr>
     <tr></tr>
@@ -3862,6 +3867,12 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
         <td>SUPPORT_CALLBACKS</td>
         <td>true, false</td>
         <td>Use callbacks for specific render tasks</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>SUPPORT_COMPACT_TEMPLATE</td>
+        <td>true, false</td>
+        <td>Turn on when templates are compiled with the <code>compact</code> or <code>default</code> strategy</td>
     </tr>
     <tr></tr>
     <tr>
@@ -3874,7 +3885,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     </tr>
     <tr>
         <td>POLYFILL</td>
-        <td>true, false</td>
+        <td>true, <b>false</td>
         <td>Include Polyfills (based on LANGUAGE_OUT)</td>
     </tr>
     <tr></tr>

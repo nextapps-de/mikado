@@ -305,9 +305,16 @@ module.exports = function(src, dest, options, _recall){
     for(let i = 0; i < inc.length; i++){
 
         if(inc[i].length){
-            ((tpl_cache && tpl_cache !== "false") || mode !== "compact") && inc[i].unshift("let _o,_v");
+
+            inc[i].push("return _x");
+
+            if((tpl_cache && tpl_cache !== "false") || mode !== "compact"){
+
+                inc[i].unshift("let _o,_v,_c");
+            }
+
             inc[i] =
-`function(data,state,index,_p){
+`function(data,state,index,_p,_x){
   ${ (inc[i].join(pretty ? ";\n  " : ";") + ";").replaceAll(",_v)};", ",_v)}").replaceAll("=_v};", "=_v}") }
 }`;
         }
@@ -985,9 +992,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 index.current++;
                                 index.last = index.count;
 
-                                if(mode === "inline" || (mode !== "compact" && mode !== "nocache")){
+                                if(mode !== "compact" && mode !== "nocache"){
 
                                     fn.push('_o=_p[' + index.current + ']');
+                                    fn.push('_x&&(_x[' + index.current + ']=_c={})');
                                 }
                             }
 
@@ -998,23 +1006,23 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push(_o + '._a("' + key + '",' + tmp + ')');
+                                    fn.push(_o + '._a("' + key + '",' + tmp + ',_x,' + index.current + ')');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push(_o + '._c(' + tmp + ')');
+                                    fn.push(_o + '._c(' + tmp + ',_x,' + index.current + ')');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push(_o + '._s(' + tmp + ')');
+                                    fn.push(_o + '._s(' + tmp + ',_x,' + index.current + ')');
                                 }
                                 else if(key === "html"){
 
-                                    fn.push(_o + '._h(' + tmp + ')');
+                                    fn.push(_o + '._h(' + tmp + ',_x,' + index.current + ')');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push(_o + '._t(' + tmp + ')');
+                                    fn.push(_o + '._t(' + tmp + ',_x,' + index.current + ')');
                                 }
                             }
                             // the fastest when Cache should be optionally supported
@@ -1024,38 +1032,48 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('if(!_o.c||(typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v){' +
-                                                '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                                                '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
-                                            '}');
+                                    fn.push(
+                                        '_c&&(_c["_a' + key + '"]=_v);' +
+                                        'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
+                                            '_o.c&&(_o.c["_a' + key + '"]=_v);' +
+                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                        '}');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('if(!_o.c||(_o.c._c||"")!==_v){' +
-                                                '_o.c&&(_o.c._c=_v);' +
-                                                '_o.n.className=_v' +
-                                            '}');
+                                    fn.push(
+                                        '_c&&(_c._c=_v);' +
+                                        'if(!_o.c||_o.c._c!==_v){' +
+                                            '_o.c&&(_o.c._c=_v);' +
+                                            '_o.n.className=_v' +
+                                        '}');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('if(!_o.c||(_o.c._s||"")!==_v){' +
-                                                '_o.c&&(_o.c._s=_v);' +
-                                                '_o.n.cssText=_v' +
-                                            '}');
+                                    fn.push(
+                                        '_c&&(_c._s=_v);' +
+                                        'if(!_o.c||_o.c._s!==_v){' +
+                                            '_o.c&&(_o.c._s=_v);' +
+                                            '_o.n.cssText=_v' +
+                                        '}');
                                     }
                                 else if(key === "html"){
 
-                                    fn.push('if(!_o.c||(_o.c._h||"")!==_v){' +
-                                                '_o.c&&(_o.c._h=_v);' +
-                                                '_o.n.innerHTML=_v' +
-                                            '}');
+                                    fn.push(
+                                        '_c&&(_c._h=_v);' +
+                                        'if(!_o.c||_o.c._h!==_v){' +
+                                            '_o.c&&(_o.c._h=_v);' +
+                                            '_o.n.innerHTML=_v' +
+                                        '}');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){' +
-                                                '_o.c&&(_o.c._t=_v);' +
-                                                '_o.n.nodeValue=_v' +
-                                            '}');
+                                    fn.push(
+                                        '_c&&(_c._t=_v);' +
+                                        'if(!_o.c||_o.c._t!==_v){' +
+                                            '_o.c&&(_o.c._t=_v);' +
+                                            '_o.n.nodeValue=_v' +
+                                        '}');
                                 }
                             }
                             // the fastest variant of all, Cache is fixed enabled
@@ -1065,37 +1083,47 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('if((typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v){' +
-                                        '_o.c["_a' + key + '"]=_v;' +
-                                        '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                    fn.push(
+                                        '_c&&(_c["_a' + key + '"]=_v);' +
+                                        'if(_o.c["_a' + key + '"]!==_v){' +
+                                            '_o.c["_a' + key + '"]=_v;' +
+                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                                         '}');
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('if((_o.c._c||"")!==_v){' +
-                                        '_o.c._c=_v;' +
-                                        '_o.n.className=_v' +
+                                    fn.push(
+                                        '_c&&(_c._c=_v);' +
+                                        'if(_o.c._c!==_v){' +
+                                            '_o.c._c=_v;' +
+                                            '_o.n.className=_v' +
                                         '}');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('if((_o.c._s||"")!==_v){' +
-                                        '_o.c._s=_v;' +
-                                        '_o.n.cssText=_v' +
+                                    fn.push(
+                                        '_c&&(_c._s=_v);' +
+                                        'if(_o.c._s!==_v){' +
+                                            '_o.c._s=_v;' +
+                                            '_o.n.cssText=_v' +
                                         '}');
                                 }
                                 else if(key === "html"){
 
-                                    fn.push('if((_o.c._h||"")!==_v){' +
-                                        '_o.c._h=_v;' +
-                                        '_o.n.innerHTML=_v' +
+                                    fn.push(
+                                        '_c&&(_c._h=_v);' +
+                                        'if(_o.c._h!==_v){' +
+                                            '_o.c._h=_v;' +
+                                            '_o.n.innerHTML=_v' +
                                         '}');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('if((typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){' +
-                                        '_o.c._t=_v;' +
-                                        '_o.n.nodeValue=_v' +
+                                    fn.push(
+                                        '_c&&(_c._t=_v);' +
+                                        'if(_o.c._t!==_v){' +
+                                            '_o.c._t=_v;' +
+                                            '_o.n.nodeValue=_v' +
                                         '}');
                                 }
                             }
@@ -1133,23 +1161,34 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('(!_o.c||(typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v)&&_o._a("' + key + '",_v)');
+                                    fn.push(
+                                        '_c&&(_c["_a' + key + '"]=_v);' +
+                                        '(_o.c&&_o.c["_a' + key + '"]===_v)||_o._a("' + key + '",_v)'
+                                    );
                                 }
                                 else if(key === "class"){
 
-                                    fn.push('(!_o.c||(_o.c._c||"")!==_v)&&_o._c(_v)');
+                                    fn.push(
+                                        '_c&&(_c._c=_v);' +
+                                        '(_o.c&&_o.c._c===_v)||_o._c(_v)');
                                 }
                                 else if(key === "style"){
 
-                                    fn.push('(!_o.c||(_o.c._s||"")!==_v)&&_o._s(_v)');
+                                    fn.push(
+                                        '_c&&(_c._s=_v);' +
+                                        '(_o.c&&_o.c._s===_v)||_o._s(_v)');
                                 }
                                 else if(key === "html"){
 
-                                    fn.push('(!_o.c||(_o.c._h||"")!==_v)&&_o._h(_v)');
+                                    fn.push(
+                                        '_c&&(_c._h=_v);' +
+                                        '(_o.c&&_o.c._h===_v)||_o._h(_v)');
                                 }
                                 else if(key === "text"){
 
-                                    fn.push('(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v)&&_o._t(_v)');
+                                    fn.push(
+                                        '_c&&(_c._t=_v);' +
+                                        '(_o.c&&_o.c._t===_v)||_o._t(_v)');
                                 }
                             }
 

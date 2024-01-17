@@ -9,6 +9,7 @@ import {
     SUPPORT_CALLBACKS,
     SUPPORT_ASYNC,
     SUPPORT_REACTIVE,
+    SUPPORT_COMPACT_TEMPLATE,
     SUPPORT_EVENTS,
 
     MIKADO_DOM,
@@ -35,14 +36,29 @@ export function create_path(root, path, _use_cache){
 
     PROFILER && tick("factory.path");
     //profiler_start("create_path");
+    //console.time("create_path");
+
+    /** @type {Array<NodeCache>|undefined} */
+    let cache_clone;
+
+    if(SUPPORT_CACHE && _use_cache){
+
+        // when path is created there don't exist a node cache,
+        // so it can be used temporary to pass the full vcache array
+
+        if((cache_clone = root[MIKADO_NODE_CACHE])){
+
+            root[MIKADO_NODE_CACHE] = null;
+        }
+    }
 
     const length = path.length;
     /** @type {Array<Cache>} */
-    const new_path = [];
+    const new_path = new Array(length);
     /** @dict */
     const vcache = {};
 
-    for(let x = 0, item, vpath, node_parent, node, last, cache = null; x < length; x++){
+    for(let x = 0, item, vpath, node_parent, node, cache = null/*, last, cache_index = 0*/; x < length; x++){
 
         item = path[x];
         vpath = item.v;
@@ -63,19 +79,24 @@ export function create_path(root, path, _use_cache){
             node = node_parent = root;
         }
 
-        if(_use_cache && last !== node_parent){
+        if(_use_cache /*&& last !== node_parent*/){
 
-            last = node_parent;
-            node_parent[MIKADO_NODE_CACHE] = cache = {};
+            PROFILER && tick("cache.transfer");
+
+            //last = node_parent;
+            cache = SUPPORT_CACHE && cache_clone ? cache_clone[x] : {};
+            node_parent[MIKADO_NODE_CACHE] = cache;
         }
 
         PROFILER && tick("cache.create");
+
         new_path[x] = new Cache(cache, node, "");
     }
 
     root[MIKADO_TPL_PATH] = new_path;
 
     //profiler_end("create_path");
+    //console.timeEnd("create_path");
 
     return new_path;
 }
@@ -88,8 +109,6 @@ export function create_path(root, path, _use_cache){
  */
 
 function resolve(root, path, cache){
-
-    let node;
 
     PROFILER && tick("factory.resolve");
     //profiler_start("resolve");
@@ -112,13 +131,11 @@ function resolve(root, path, cache){
             }
             else if(current_path === "|"){
 
-                node = root;
-                root = root.firstChild;
+                return [root.firstChild, root];
             }
             else if(current_path === "@"){
 
-                node = root;
-                root = root.style;
+                return [root.style, root];
             }
             else /*if(current_path === "+")*/{
 
@@ -132,7 +149,7 @@ function resolve(root, path, cache){
 
     //profiler_end("resolve");
 
-    return [root, node];
+    return [root, null];
 }
 
 /**
@@ -551,138 +568,202 @@ export function Cache(cache, node, vpath){
     this.v = vpath;
 }
 
-/**
- * @param {string} key
- * @param {string|boolean} value
- * @const
- */
+if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
 
-Cache.prototype._a = function(key, value){
+    /**
+     * @param {string} key
+     * @param {string|boolean} value
+     * @param {NodeCache=} cache
+     * @param {number=} index
+     * @const
+     */
 
-    if(this.c){
+    Cache.prototype._a = function(key, value, cache, index){
 
-        if((typeof this.c["_a" + key] === "undefined" ? false : this.c["_a" + key]) === value){
+        if(this.c){
 
-            PROFILER && tick("cache.match");
-            return;
+            if(cache){
+
+                if(index || index === 0){
+
+                    cache = cache[index] || (cache[index] = {});
+                }
+
+                cache["_a" + key] = value;
+            }
+
+            if(this.c["_a" + key] === value){
+
+                PROFILER && tick("cache.match");
+                return;
+            }
+
+            PROFILER && tick("cache.miss");
+            PROFILER && tick("cache.attr");
+
+            this.c["_a" + key] = value;
         }
 
-        PROFILER && tick("cache.miss");
-        PROFILER && tick("cache.attr");
-
-        this.c["_a" + key] = value;
+        value === false
+            ? this.n.removeAttribute(key)
+            : this.n.setAttribute(key, value);
     }
 
-    value !== false
-        ? this.n.setAttribute(key, value)
-        : this.n.removeAttribute(key);
-}
+    /**
+     * @param {string} text
+     * @param {NodeCache=} cache
+     * @param {number=} index
+     * @const
+     */
 
-/**
- * @param {string} text
- * @const
- */
+    Cache.prototype._t = function(text, cache, index){
 
-Cache.prototype._t = function(text){
+        if(this.c){
 
-    if(this.c){
+            if(cache){
 
-        if((typeof this.c["_t"] === "undefined" ? "" : this.c["_t"]) === text){
+                if(index || index === 0){
 
-            PROFILER && tick("cache.match");
-            return;
+                    cache = cache[index] || (cache[index] = {});
+                }
+
+                cache._t = text;
+            }
+
+            if(this.c._t === text){
+
+                PROFILER && tick("cache.match");
+                return;
+            }
+
+
+            PROFILER && tick("cache.miss");
+            PROFILER && tick("cache.text");
+
+            this.c._t = text;
         }
 
-        PROFILER && tick("cache.miss");
-        PROFILER && tick("cache.text");
-
-        this.c["_t"] = text;
+        this.n.nodeValue = text;
     }
 
-    this.n.nodeValue = text;
-}
+    /**
+     * @param {string} classname
+     * @param {NodeCache=} cache
+     * @param {number=} index
+     * @const
+     */
 
-/**
- * @param {string} classname
- * @const
- */
+    Cache.prototype._c = function(classname, cache, index){
 
-Cache.prototype._c = function(classname){
+        if(this.c){
 
-    if(this.c){
+            if(cache){
 
-        if((this.c["_c"] || "") === classname){
+                if(index || index === 0){
 
-            PROFILER && tick("cache.match");
-            return;
+                    cache = cache[index] || (cache[index] = {});
+                }
+
+                cache._c = classname;
+            }
+
+            if(this.c._c === classname){
+
+                PROFILER && tick("cache.match");
+                return;
+            }
+
+            PROFILER && tick("cache.miss");
+            PROFILER && tick("cache.class");
+
+            this.c._c = classname;
         }
 
-        PROFILER && tick("cache.miss");
-        PROFILER && tick("cache.class");
-
-        this.c["_c"] = classname;
+        this.n.className = classname;
     }
 
-    this.n.className = classname;
-}
+    /**
+     * @param {string} css
+     * @param {NodeCache=} cache
+     * @param {number=} index
+     * @const
+     */
 
-/**
- * @param {string} css
- * @const
- */
+    Cache.prototype._s = function(css, cache, index){
 
-Cache.prototype._s = function(css){
+        if(this.c){
 
-    if(this.c){
+            if(cache){
 
-        if((this.c["_s"] || "") === css){
+                if(index || index === 0){
 
-            PROFILER && tick("cache.match");
-            return;
+                    cache = cache[index] || (cache[index] = {});
+                }
+
+                cache._s = css;
+            }
+
+            if(this.c._s === css){
+
+                PROFILER && tick("cache.match");
+                return;
+            }
+
+            PROFILER && tick("cache.miss");
+            PROFILER && tick("cache.style");
+
+            this.c._s = css;
         }
 
-        PROFILER && tick("cache.miss");
-        PROFILER && tick("cache.style");
-
-        this.c["_s"] = css;
+        this.n.cssText = css;
     }
 
-    this.n.cssText = css;
-}
+    /**
+     * @param {string} html
+     * @param {NodeCache=} cache
+     * @param {number=} index
+     * @const
+     */
 
-/**
- * @param {string} html
- * @const
- */
+    Cache.prototype._h = function(html, cache, index){
 
-Cache.prototype._h = function(html){
+        if(this.c){
 
-    if(this.c){
+            if(cache){
 
-        if((this.c["_h"] || "") === html){
+                if(index || index === 0){
 
-            PROFILER && tick("cache.match");
-            return;
+                    cache = cache[index] || (cache[index] = {});
+                }
+
+                cache._h = html;
+            }
+
+            if(this.c._h === html){
+
+                PROFILER && tick("cache.match");
+                return;
+            }
+
+            PROFILER && tick("cache.miss");
+            PROFILER && tick("cache.html");
+
+            this.c._h = html;
         }
 
-        PROFILER && tick("cache.miss");
-        PROFILER && tick("cache.html");
-
-        this.c["_h"] = html;
+        this.n.innerHTML = html;
     }
 
-    this.n.innerHTML = html;
+    // It needs a default export here, because proxy handler methods are passed by string keys like "_t"
+
+    /** @export */
+    Cache.prototype._a;
+    /** @export */
+    Cache.prototype._t;
+    /** @export */
+    Cache.prototype._s;
+    /** @export */
+    Cache.prototype._c;
+    /** @export */
+    Cache.prototype._h;
 }
-
-// It needs a default export here, because proxy handler methods are passed by string keys like "_t"
-
-/** @export */
-Cache.prototype._a;
-/** @export */
-Cache.prototype._t;
-/** @export */
-Cache.prototype._s;
-/** @export */
-Cache.prototype._c;
-/** @export */
-Cache.prototype._h;

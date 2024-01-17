@@ -34,13 +34,19 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
-        view.render(data[0]);
-
         root_1.firstElementChild.dataset.id = "test";
-        expect(root_1.firstElementChild.dataset.id).to.equal("test");
         view.render(data[0]);
+        root_1.firstElementChild.dataset.id = "test";
+        view.render(data[0]);
+        expect(root_1.firstElementChild.dataset.id).to.equal("test");
 
+        // cache will assign during second run!
+        view.render(data[0]);
+        root_1.firstElementChild.dataset.id = "test";
+        view.render(data[0]);
+        expect(root_1.firstElementChild.dataset.id).to.equal("test");
+
+        view.render(data[0]);
         expect(root_1.firstElementChild.dataset.id).to.equal("test");
         checkDOM(root_1.firstElementChild, [Object.assign({}, data[0], { id: "test" })]);
 
@@ -228,4 +234,41 @@ describe("DOM State Cache", function(){
         expect(target.style.cssText).to.equal("top: 0px;");
     });
 
+    it("Should have been detect the default state of DOM attributes", function(){
+
+        const root_1 = document.getElementById("root-1");
+        let view = new Mikado(template, { root: root_1, recycle: true, cache: true });
+        let item = Object.assign({}, data[0]);
+
+        view.render(item);
+        expect(view.length).to.equal(1);
+        checkDOM(root_1.firstElementChild, [item]);
+
+        // was set before, test detection
+        item.class = "";
+
+        view.render(item);
+        expect(view.length).to.equal(1);
+        checkDOM(root_1.firstElementChild, [item]);
+
+        view.clear().destroy();
+
+        view = new Mikado(template, { root: root_1, recycle: true, cache: true });
+        item = Object.assign({}, data[0]);
+
+        // unset initial, test detection
+        item.class = "";
+
+        view.render(item);
+        expect(view.length).to.equal(1);
+        checkDOM(root_1.firstElementChild, [item]);
+
+        item.class = "test";
+
+        view.render(item);
+        expect(view.length).to.equal(1);
+        checkDOM(root_1.firstElementChild, [item]);
+
+        view.clear().destroy();
+    });
 });

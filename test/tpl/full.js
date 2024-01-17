@@ -147,23 +147,25 @@ tpl:{
     ]
   }
 },
-fn:[null,function(data,state,index,_p){
+fn:[null,function(data,state,index,_p,_x){
   const datestr = new Date(data.date).toLocaleString();
-  _p[0]._a("data-id",data.id);
+  _p[0]._a("data-id",data.id,_x,0);
   const datestr2 = datestr;
-  _p[1]._t((index + 1));
-  _p[2]._t(data.title);
-  _p[3]._h(data.media);
-  _p[4]._t((data.category||data.category===0?data.category:''));
-  _p[5]._t(data.comment);
-  _p[6]._t(datestr2);
-  _p[7]._s('opacity:'+(state.selected===data.id?'1':'0.5'));
-  _p[8]._a("selected",(data.mode === 'on'));
-  _p[9]._a("selected",(data.mode === 'off'));
-},function(data,state,index,_p){
-  _p[0]._a("id",data.view);
+  _p[1]._t((index + 1),_x,1);
+  _p[2]._t(data.title,_x,2);
+  _p[3]._h(data.media,_x,3);
+  _p[4]._t((data.category||data.category===0?data.category:''),_x,4);
+  _p[5]._t(data.comment,_x,5);
+  _p[6]._t(datestr2,_x,6);
+  _p[7]._s('opacity:'+(state.selected===data.id?'1':'0.5'),_x,7);
+  _p[8]._a("selected",(data.mode === 'on'),_x,8);
+  _p[9]._a("selected",(data.mode === 'off'),_x,9);
+  return _x;
+},function(data,state,index,_p,_x){
+  _p[0]._a("id",data.view,_x,0);
   this.inc[0].mount(_p[1].n).render(data,state);
   this.inc[1].mount(_p[2].n).render(data.entries,state);
   this.inc[2].mount(_p[3].n)[!data.entries.length?"render":"clear"](data,state);
+  return _x;
 }]
 }

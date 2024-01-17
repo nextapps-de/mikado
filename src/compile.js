@@ -492,8 +492,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 if(_inc[i].length){
 
-                    _inc[i].unshift("let _o,_v");
-                    _inc[i] = Function("data", "state", "index", "_p", '"use strict";' + _inc[i].join(";"));
+                    _inc[i] = Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") + ';return _x');
                 }
                 else{
 
@@ -579,6 +578,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
             index.last = index.count;
 
             fn.push('_o=_p[' + index.current + ']');
+            fn.push('_x&&(_x[' + index.current + ']=_c={})');
         }
 
         // mode: "inline", the fastest when Cache should be optionally supported
@@ -587,37 +587,47 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
 
         if(attr){
 
-            fn.push('if(!_o.c||(typeof _o.c["_a' + key + '"]==="undefined"?false:_o.c["_a' + key + '"])!==_v){' +
-                '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+            fn.push(
+                '_c&&(_c["_a' + key + '"]=_v);' +
+                'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
+                    '_o.c&&(_o.c["_a' + key + '"]=_v);' +
+                    '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                 '}');
         }
         else if(key === "class"){
 
-            fn.push('if(!_o.c||(_o.c._c||"")!==_v){' +
-                '_o.c&&(_o.c._c=_v);' +
-                '_o.n.className=_v' +
+            fn.push(
+                '_c&&(_c._c=_v);' +
+                'if(!_o.c||_o.c._c!==_v){' +
+                    '_o.c&&(_o.c._c=_v);' +
+                    '_o.n.className=_v' +
                 '}');
         }
         else if(key === "style"){
 
-            fn.push('if(!_o.c||(_o.c._s||"")!==_v){' +
-                '_o.c&&(_o.c._s=_v);' +
-                '_o.n.cssText=_v' +
+            fn.push(
+                '_c&&(_c._s=_v);' +
+                'if(!_o.c||_o.c._s!==_v){' +
+                    '_o.c&&(_o.c._s=_v);' +
+                    '_o.n.cssText=_v' +
                 '}');
         }
         else if(key === "html"){
 
-            fn.push('if(!_o.c||(_o.c._h||"")!==_v){' +
-                '_o.c&&(_o.c._h=_v);' +
-                '_o.n.innerHTML=_v' +
+            fn.push(
+                '_c&&(_c._h=_v);' +
+                'if(!_o.c||_o.c._h!==_v){' +
+                    '_o.c&&(_o.c._h=_v);' +
+                    '_o.n.innerHTML=_v' +
                 '}');
         }
         else if(key === "text"){
 
-            fn.push('if(!_o.c||(typeof _o.c._t==="undefined"?"":_o.c._t)!==_v){' +
-                '_o.c&&(_o.c._t=_v);' +
-                '_o.n.nodeValue=_v' +
+            fn.push(
+                '_c&&(_c._t=_v);' +
+                'if(!_o.c||_o.c._t!==_v){' +
+                    '_o.c&&(_o.c._t=_v);' +
+                    '_o.n.nodeValue=_v' +
                 '}');
         }
 

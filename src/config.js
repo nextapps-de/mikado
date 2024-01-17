@@ -28,6 +28,8 @@ export const SUPPORT_COMPILE = true;
 export const SUPPORT_EVENTS = true;
 /** @define {boolean} */
 export const SUPPORT_WEB_COMPONENTS = true;
+/** @define {boolean} */
+export const SUPPORT_COMPACT_TEMPLATE = true;
 
 /** @define {string} */
 export const MIKADO_NODE_CACHE = "_mkc";

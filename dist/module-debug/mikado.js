@@ -6,7 +6,7 @@
  * https://github.com/nextapps-de/mikado
  */
 
-import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache } from "./type.js";
 import Observer from "./array.js";
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
@@ -935,10 +935,20 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
         }
     }
 
-    this.apply && this.apply(data, state || this.state, index, node._mkp || create_path(node, this.factory._mkp, !!factory || this.cache));
+    let cache;
+
+    if (this.apply) {
+
+        cache = this.apply(data, state || this.state, index, node._mkp || create_path(node, this.factory._mkp, !!factory || this.cache), factory && this.cache && /** @type {Array<NodeCache>} */[]);
+    }
 
     if (factory) {
         node = factory.cloneNode(!0);
+
+        if (cache) {
+
+            node._mkc = cache;
+        }
     }
 
     if (keyed) {

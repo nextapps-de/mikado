@@ -11,7 +11,7 @@ const events = {};
 const event_options = {};
 /** @type {Object<string, Function>} */
 const routes = SUPPORT_EVENTS ? Object.create(null) : null;
-/** @type {Object<string, Boolean|EventOptions>} */
+/** @type {Object<string, EventOptions>} */
 const options = SUPPORT_EVENTS ? Object.create(null) : null;
 
 // The most outer element which is covered by Mikado event system is document.body

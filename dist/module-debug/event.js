@@ -15,7 +15,7 @@ const events = {},
 
 /** @type {Object<string, Function>} */
 
-/** @type {Object<string, Boolean|EventOptions>} */
+/** @type {Object<string, EventOptions>} */
 
 
 // The most outer element which is covered by Mikado event system is document.body

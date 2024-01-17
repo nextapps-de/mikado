@@ -23,16 +23,17 @@ tpl:{
     }
   ]
 },
-fn:[function(data,state,index,_p){
+fn:[function(data,state,index,_p,_x){
   let value = 'test';
-  _p[0]._t(value);
+  _p[0]._t(value,_x,0);
   value += '|test';
-  _p[1]._t(value);
+  _p[1]._t(value,_x,1);
   value += (function(d){
 
         return '|' + d.test;
 
     }(data));
-  _p[2]._t(value);
+  _p[2]._t(value,_x,2);
+  return _x;
 }]
 }
