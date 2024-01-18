@@ -20,7 +20,7 @@ var options = (function(argv){
 
         if(++count > 2){
 
-            index = val.split('=');
+            index = val.split("=");
             val = index[1];
             index = index[0].toUpperCase();
 
@@ -40,7 +40,7 @@ var options = (function(argv){
         }
     });
 
-    console.log('Bundle: ' + (arr['RELEASE'] || 'custom') + (arr['DEBUG'] ?  ":debug" : ""));
+    console.log("Bundle: " + (arr["RELEASE"] || "custom") + (arr["DEBUG"] ?  ":debug" : ""));
 
     return arr;
 
@@ -93,16 +93,17 @@ if(options["DEBUG"]){
     parameter += ' --formatting=PRETTY_PRINT';
 }
 
-if(options["RELEASE"] !== "bundle.module" && options["RELEASE"] !== "light.module"){
+if(!options["RELEASE"].endsWith(".module")){
     parameter += ' --isolation_mode=IIFE';
     parameter += ' --emit_use_strict=true';
 }
 
-const custom = (!options["RELEASE"] || (options["RELEASE"] === "custom"));
+const custom = (!options["RELEASE"] || options["RELEASE"].startsWith("custom"))
+    && hashCode(parameter + flag_str).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
 if(custom){
 
-    options["RELEASE"] = "custom." + hashCode(parameter + flag_str).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    options["RELEASE"] || (options["RELEASE"] = "custom");
 }
 
 const files = [
@@ -128,11 +129,8 @@ const files = [
 files.forEach(function(file){
 
     // if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
-    //
     //     for(let key in prename){
-    //
     //         if(prename.hasOwnProperty(key)){
-    //
     //             src = src.replace(new RegExp(key, "g"), prename[key]);
     //         }
     //     }
@@ -148,7 +146,7 @@ files.forEach(function(file){
 
                 let defaults = src.split(/export const /);
                 defaults.unshift();
-                defaults = defaults.filter(str => str.startsWith("SUPPORT_")).map(str => str.replace(/=[\s\S]+/, "").trim());
+                defaults = defaults.filter(str => /^(SUPPORT|RELEASE)/.test(str)).map(str => str.replace(/=[\s\S]+/, "").trim());
 
                 for(let i = 0, opt; i < defaults.length; i++){
 
@@ -171,9 +169,7 @@ files.forEach(function(file){
     });
 });
 
-//console.log("----------------------");
-
-const filename = "dist/mikado." + (options["RELEASE"] || "custom") + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
+const filename = "dist/mikado." + (options["RELEASE"] + (custom ? "." + custom : "")) + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
 const executable = process.platform === "win32" ?  "\"node_modules/google-closure-compiler-windows/compiler.exe\"" :
                    process.platform === "darwin" ? "\"node_modules/google-closure-compiler-osx/compiler\"" :
                                                    "java -jar node_modules/google-closure-compiler-java/compiler.jar";
@@ -192,38 +188,26 @@ exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_fi
         es5_version ? "ES5" : "Bundle" + (options["RELEASE"] === "bundle.module" ? "/Module" : "")
     );
 
-    if(!custom && options["DEBUG"]) name += "/Debug";
+    if(custom) name += "/" + custom;
+    if(options["DEBUG"]) name += "/Debug";
 
     preserve = preserve.replace("* Mikado.js", "* Mikado.js v" + package_json.version + " (" + name + ")" );
     build = preserve.substring(0, preserve.indexOf('*/') + 2) + "\n" + build;
 
     // for(let key in postname){
-    //
     //     if(postname.hasOwnProperty(key)){
-    //
     //         build = build.replace(new RegExp(key, "g"), postname[key]);
     //     }
     // }
 
-    // if(options["RELEASE"] === "pre"){
-    //
-    //     fs.existsSync("test/dist") || fs.mkdirSync("test/dist");
-    //     fs.writeFileSync("test/" + filename, build);
-    // }
-    // else{
+    if(options["RELEASE"] === "bundle.module" ||
+       options["RELEASE"] === "light.module" ||
+       options["RELEASE"] === "custom.module"){
 
-        if(options["RELEASE"] === "bundle.module" || options["RELEASE"] === "light.module"){
+        build = build.replace(/window\.Mikado(\s+)?=(\s+)?/, "export default ");
+    }
 
-            build = build.replace(/window\.Mikado(\s+)?=(\s+)?/, "export default ");
-        }
-
-        fs.writeFileSync(filename, build);
-
-        // if(options["RELEASE"] === "light"){
-        //
-        //     fs.writeFileSync("test/bench/mikado-new/mikado.light.js", build);
-        // }
-    //}
+    fs.writeFileSync(filename, build);
 
     console.log("Saved to " + filename);
     console.log("Build Complete.");

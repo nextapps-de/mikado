@@ -374,10 +374,11 @@ EventOptions.once;
 // Export as library (Bundle)
 // --------------------------------
 
-const root = window;
+if(RELEASE !== "bundle.module" &&
+   RELEASE !== "light.module" &&
+   RELEASE !== "custom.module"){
 
-if(RELEASE !== "bundle.module" && RELEASE !== "light.module"){
-
+    const root = window;
     let prop;
 
     // AMD (RequireJS)
@@ -403,5 +404,5 @@ if(RELEASE !== "bundle.module" && RELEASE !== "light.module"){
 else{
 
     /** @export */
-    root.Mikado = Mikado;
+    window.Mikado = Mikado;
 }

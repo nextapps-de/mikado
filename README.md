@@ -137,7 +137,7 @@ Packed with a smart routing feature for event delegation and full support for we
 
 ## Get Latest
 
-> Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a custom build, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need (including unminified modules).
+> Do not use the "src" folder of this repo. It isn't meant to be used directly, instead it needs compilation. You can easily perform a <a href="#builds">custom build</a>, but don't use the source folder for production. You will need at least any kind of compiler which resolve the compiler flags within the code. The "dist" folder is containing every version which you probably need including unminified modules.
 
 <table>
     <tr></tr>
@@ -3747,7 +3747,13 @@ When you are focus on performance you should take those settings as a goal:
 
 ## Concept of Shared Components
 
-<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
+Mikado heavily makes use of runtime optimization. Since it is not possible to predict the recycle state of the next render task, Mikado uses a technique called `progressive enhancement` on which optimizations will apply iteratively. Recycle enhancements growth as needed.
+
+The most benchmarks you will find ends at the point where Mikado starts to shine. Rendering a simple table isn't really a complex task. Real applications have bigger structures including partials, includes, conditionals, etc. The concept of shared components was the basic idea of this library. It is the "ultimate" upgrade of the recycle paradigm and when properly used, it is one of the biggest optimization improvement you can unlock.
+
+<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
+
+Mikado will take away every complexity you might expect of such a system. You just need to structure your HTML templates and use `.render(data)`, that's it!
 
 <a name="builds" id="builds"></a>
 
@@ -3755,36 +3761,48 @@ When you are focus on performance you should take those settings as a goal:
 
 The `src` folder of this repository requires some compilation to resolve the build flags. Those are your options:
 
-- Closure Compiler (Simple or Advanced, used by this library)
-- Babel + Plugin `babel-plugin-conditional-compile` (used by this library)
-- Terser
-- Typescript
+- Closure Compiler (Simple or Advanced, used by this library, <a href="https://github.com/krausest/js-framework-benchmark/blob/master/frameworks/keyed/mikado/task/build.js">example</a>)
+- Babel + Plugin `babel-plugin-conditional-compile` (used by this library <a href="task/babel.min.json">here</a>)
 
 As far as I know you can't resolve build flags with:
 
 - Webpack
 - esbuild
 - rollup
+- Terser
 
 Please let me know when you have some additions. As long as you will see flags like `if(DEBUG)` (could be minified) in your build you shouldn't use that.
 
-These are the standard builds located in the `dist` folder:
+These are some of the basic builds located in the `dist` folder:
 
 ```bash
 npm run build:bundle
 npm run build:light
 npm run build:module
+npm run build:es5
 ```
 
-Perform a custom build by passing build flags:
+Perform a custom build (UMD bundle) by passing build flags:
 
 ```bash
 npm run build:custom SUPPORT_CACHE=true SUPPORT_POOLS=true LANGUAGE_OUT=ECMASCRIPT5 POLYFILL=true
 ```
 
+Perform a custom build in ESM module format:
+
+```bash
+npm run build:custom RELEASE=custom.module SUPPORT_CACHE=true SUPPORT_POOLS=true 
+```
+
+Perform a debug build:
+
+```bash
+npm run build:custom DEBUG=true SUPPORT_CACHE=true SUPPORT_POOLS=true 
+```
+
 > On custom builds each build flag will be set to _**false**_ by default when not passed.
 
-The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a hash based on the used build flags).
+The custom build will be saved to `dist/mikado.custom.xxxx.min.js` or when format is module to `dist/mikado.custom.module.xxxx.min.js` (the "xxxx" is a hash based on the used build flags).
 
 <a name="build-flags" id="builds"></a>
 
@@ -3799,7 +3817,7 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
     </tr>
     <tr>
         <td>DEBUG</td>
-        <td>true, <b>false</td>
+        <td>true, <b>false</b></td>
         <td>Output debug information to the console (default: false)</td>
     </tr>
     <tr></tr>
@@ -3884,14 +3902,26 @@ The custom build will be saved to dist/mikado.custom.xxxxx.js (the "xxxxx" is a 
         <td colspan="3"><br><b>Compiler Flags</b></td>
     </tr>
     <tr>
+        <td>RELEASE<br><br><br><br><br></td>
+        <td><b>custom</b><br>custom.module<br>bundle<br>bundle.module<br>es5<br>light</td>
+        <td>Output debug information to the console (default: false)</td>
+    </tr>
+    <tr></tr>
+    <tr>
         <td>POLYFILL</td>
-        <td>true, <b>false</td>
+        <td>true, <b>false</b></td>
         <td>Include Polyfills (based on LANGUAGE_OUT)</td>
     </tr>
     <tr></tr>
     <tr>
-        <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br><br><br></td>
-        <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT_2015<br>ECMASCRIPT_2016<br>ECMASCRIPT_2017<br>ECMASCRIPT_2018<br>ECMASCRIPT_2019<br>ECMASCRIPT_2020<br>ECMASCRIPT_2021<br>ECMASCRIPT_NEXT<br>STABLE</td>
+        <td>PROFILER</td>
+        <td>true, <b>false</b></td>
+        <td>Just used for automatic performance tests</td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>LANGUAGE_OUT<br><br><br><br><br><br><br><br><br><br><br></td>
+        <td>ECMASCRIPT3<br>ECMASCRIPT5<br>ECMASCRIPT_2015<br>ECMASCRIPT_2016<br>ECMASCRIPT_2017<br>ECMASCRIPT_2018<br>ECMASCRIPT_2019<br>ECMASCRIPT_2020<br>ECMASCRIPT_2021<br>ECMASCRIPT_2022<br>ECMASCRIPT_NEXT<br>STABLE</td>
         <td>Target language</td>
     </tr>
 </table>
