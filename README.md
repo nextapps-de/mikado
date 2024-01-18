@@ -57,7 +57,7 @@ Rendering has great **impact** on application performance, especially **on mobil
 On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively within the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Packed with a smart routing feature for event delegation and full support for web components using the shadow dom, Mikado gives you everything you'll need to build realtime applications on a cutting edge performance level.
+Packed with a smart routing feature for event delegation and full support for web components by using the shadow dom, Mikado gives you everything you'll need to build <a href="#concept">realtime applications</a> on a cutting edge performance level.
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
@@ -3743,6 +3743,13 @@ When you are focus on performance you should take those settings as a goal:
 - Prefer named includes when structures will be reused by multiple views, also when assigning custom options gives you any advantage.
 - In larger applications, it might be better to destroy views when they are closed by the user to free memory instead of saving too much on the options.
 
+### Personal Recommendation
+
+Keyed recycling isn't the best pick, it just gives you (or other libs) the freedom to apply things to the DOM directly.
+Personally I prefer cache-enabled non-keyed recycling for all looped templates e.g. a table view and for "create" and "edit" views I also use non-keyed but without recycling enabled ("create" and "edit" views are the same template).
+I don't get any conflicts or side effects, since I apply every change by Mikado (also by using the library helpers).
+Long story short, keyed rendering is just for your laziness or when you can't control everything for some reason.
+
 <a name="concept"></a>
 
 ## Concept of Shared Components
@@ -3751,7 +3758,7 @@ Mikado heavily makes use of runtime optimization. Since it is not possible to pr
 
 The most benchmarks you will find ends at the point where Mikado starts to shine. Rendering a simple table isn't really a complex task. Real applications have bigger structures including partials, includes, conditionals, etc. The concept of shared components was the basic idea of this library. It is the "ultimate" upgrade of the recycle paradigm and when properly used, it is one of the biggest optimization improvement you can unlock.
 
-<img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
+<br><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/concept.svg" alt="Mikado Shared Components (Concept)"><br><br>
 
 Mikado will take away every complexity you might expect of such a system. You just need to structure your HTML templates and use `.render(data)`, that's it!
 
