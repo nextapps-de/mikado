@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "compile": "npx mikado-compile template/ --compact --force --module",
+    "server": "node task/server.js"
+  },
+  "dependencies": {
+    "mikado": "^0.8.227",
+    "todomvc-app-css": "^2.4.3",
+    "todomvc-common": "^1.0.5"
+  }
+}

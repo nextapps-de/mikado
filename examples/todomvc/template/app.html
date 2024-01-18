@@ -1,0 +1,45 @@
+<main>
+    <section class="todoapp">
+        <header class="header">
+            <h1>todos</h1>
+            <input class="new-todo" placeholder="What needs to be done?" keyup="new-todo" autofocus>
+        </header>
+        <section class="main" hidden="{{ !data.todos.length }}">
+            <input id="toggle-all" class="toggle-all" type="checkbox" change="toggle-all" checked="{{ !state.left }}">
+            <label for="toggle-all">Mark all as complete</label>
+            <ul class="todo-list" foreach="data.todos">
+                <li key="data.id" data-index="{{ index }}" class="{{ data.completed ? 'completed' : '' }}" hidden="{{ !state.is_visible(data) }}" root>
+                    <div class="view">
+                        <input class="{{ state.is_visible(data) ? 'toggle' : '' }}" type="checkbox" checked="{{ data.completed }}" change="update-state:root">
+                        <label for="item-{{ data.id }}" class="title" dblclick="enter-edit-mode:root">{{ data.title }}</label>
+                        <button class="destroy" click="delete:root"></button>
+                    </div>
+                    <input id="item-{{ data.id }}" class="edit" value="{{ data.title }}" keyup="edit:root" blur="edit:root">
+                </li>
+            </ul>
+        </section>
+        <footer class="footer" hidden="{{ !data.todos.length }}">
+            <span class="todo-count">
+                <strong>{{ state.left }}</strong>
+                <span> item{{ state.left !== 1 ? "s" : "" }} left</span>
+            </span>
+            <ul class="filters">
+                <li>
+                    <a class="{{ state.filter === 'all' ? 'selected' : '' }}" href="#/">All</a>
+                </li>
+                <li>
+                    <a class="{{ state.filter === 'active' ? 'selected' : '' }}" href="#/active">Active</a>
+                </li>
+                <li>
+                    <a class="{{ state.filter === 'completed' ? 'selected' : '' }}" href="#/completed">Completed</a>
+                </li>
+            </ul>
+            <button class="clear-completed" if="state.completed" click="clear-completed">Clear completed</button>
+        </footer>
+    </section>
+    <footer class="info">
+        <p>Double-click to edit a todo</p>
+        <p>Created by <a href="https://github.com/nextapps-de">Thomas Wilkerling</a></p>
+        <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+</main>
