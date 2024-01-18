@@ -33,7 +33,14 @@ const event_types = {
     load: 1,
     resize: 1,
     scroll: 1
+},
+      idl_attributes = {
+
+    checked: 1,
+    selected: 1,
+    hidden: 1
 };
+
 
 // function escape_single_quotes(str){
 //
@@ -515,7 +522,8 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
             proxy = tmp.replace(/{{#?=+(.*)?}}/ig, "$1").trim().replace(/^data\./, "").replace(/^data\[['"](.*)['"]]/, "$1");
         }
 
-        tmp = tmp.replace(/{{[!?#=]+/g, "{{").replace(/"(\s+)?{{(\s+)?/g, "(").replace(/(\s+)?}}(\s+)?"/g, ")").replace(/{{(\s+)?/g, "'+(").replace(/(\s+)?}}/g, ")+'").trim();
+        tmp = tmp.replace(/{{[!?#=]+/g, "{{").replace(/"(\s+)?{{(\s+)?/g, "(").replace(/(\s+)?}}(\s+)?"/g, ")").replace(/{{(\s+)?/g, "'+(").replace(/(\s+)?}}/g, ")+'").replace(/\s+/g, " ");
+        //.trim();
 
         tmp = ("'" + tmp + "'").replace(/^""\+/g, "").replace(/^''\+/g, "").replace(/\+''$/g, "").replace(/\+""$/g, "").replace(/"\)\+''\+\("/g, "") // ")+''+("
         .replace(/'\)\+''\+\('/g, "") // ')+''+('
@@ -552,7 +560,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
 
         if (attr) {
 
-            fn.push('_c&&(_c["_a' + key + "\"]=_v);if(!_o.c||_o.c[\"_a" + key + "\"]!==_v){_o.c&&(_o.c[\"_a" + key + "\"]=_v);_o.n[_v===false?\"removeAttribute\":\"setAttribute\"](\"" + key + "\",_v)}");
+            fn.push('_c&&(_c["_a' + key + "\"]=_v);if(!_o.c||_o.c[\"_a" + key + "\"]!==_v){_o.c&&(_o.c[\"_a" + key + '"]=_v);' + (idl_attributes[key] ? '_o.n.' + key + '=_v' : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)') + '}');
         } else if ("class" === key) {
 
             fn.push("_c&&(_c._c=_v);if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}");

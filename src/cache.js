@@ -1,25 +1,29 @@
 // COMPILER BLOCK -->
 import { MIKADO_NODE_CACHE, PROFILER } from "./config.js";
-import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
+import { NodeCache } from "./type.js";
+import { tick } from "./profiler.js";
+import { idl_attributes } from "./factory.js";
 
 const regex_css = /[^;:]+/g;
-const regex_class = /[ ]+/g;
+const regex_class = / +/;
 
 // -------------------------------------------------------------
 
 /**
  * @param {Element} node
- * @param {*} text
+ * @param {string|number} text
  */
 
 export function setText(node, text){
 
-    let cache = node[MIKADO_NODE_CACHE], child, tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let child, tmp;
 
     if(cache){
 
-        tmp = cache["_t"];
+        tmp = cache._t;
     }
     else{
 
@@ -31,15 +35,18 @@ export function setText(node, text){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.text");
 
-        cache["_t"] = text;
+        cache._t = text;
+        cache._h = null;
+        child = node.firstChild;
 
-        if((node.nodeType === 3 && (child = node)) || (child = node.firstChild)){
+        if(child /*(node.nodeType === 3 && (child = node)) || (child = node.firstChild)*/){
 
             child.nodeValue = /** @type {string} */ (text);
         }
         else{
 
-            node.textContent = text;
+            node.appendChild(document.createTextNode(text));
+            //node.textContent = text;
         }
     }
     else{
@@ -55,11 +62,13 @@ export function setText(node, text){
 
 export function getText(node){
 
-    let cache = node[MIKADO_NODE_CACHE], child, tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let child, tmp;
 
     if(cache){
 
-        tmp = cache["_t"];
+        tmp = cache._t;
     }
     else{
 
@@ -71,14 +80,17 @@ export function getText(node){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.text");
 
-        if((node.nodeType === 3 && (child = node)) || (child = node.firstChild)){
+        child = node.firstChild;
+        cache._t = tmp = child ? child.nodeValue : "";
 
-            cache["_t"] = tmp = child.nodeValue;
-        }
-        else{
-
-            cache["_t"] = tmp = node.textContent;
-        }
+        // if(child /*(node.nodeType === 3 && (child = node)) || (child = node.firstChild)*/){
+        //
+        //     cache._t = tmp = child.nodeValue;
+        // }
+        // else{
+        //
+        //     cache._t = tmp = ""; //node.textContent;
+        // }
     }
     else{
 
@@ -98,6 +110,7 @@ export function getText(node){
 
 export function setAttribute(node, attr, value){
 
+    /** @type {NodeCache} */
     let cache = node[MIKADO_NODE_CACHE];
 
     if(!cache){
@@ -122,7 +135,7 @@ export function setAttribute(node, attr, value){
  * @param {Element} node
  * @param {string} attr
  * @param {string|number|boolean} value
- * @param {Object=} cache
+ * @param {NodeCache=} cache
  */
 
 function _setAttribute(node, attr, value, cache){
@@ -134,9 +147,16 @@ function _setAttribute(node, attr, value, cache){
 
         cache["_a" + attr] = value;
 
-        value !== false
-            ? node.setAttribute(attr, value)
-            : node.removeAttribute(attr);
+        if(idl_attributes[attr]){
+
+            node[attr] = value;
+        }
+        else{
+
+            value === false
+                ? node.removeAttribute(attr)
+                : node.setAttribute(attr, value);
+        }
     }
     else{
 
@@ -151,6 +171,7 @@ function _setAttribute(node, attr, value, cache){
 
 export function removeAttribute(node, arr){
 
+    /** @type {NodeCache} */
     let cache = node[MIKADO_NODE_CACHE];
 
     if(!cache){
@@ -174,7 +195,7 @@ export function removeAttribute(node, arr){
 /**
  * @param {Element} node
  * @param {string} attr
- * @param {Object=} cache
+ * @param {NodeCache=} cache
  */
 
 function _removeAttribute(node, attr, cache){
@@ -185,7 +206,15 @@ function _removeAttribute(node, attr, cache){
         PROFILER && tick("cache.attr");
 
         cache["_a" + attr] = false;
-        node.removeAttribute(attr);
+
+        if(idl_attributes[attr]){
+
+            node[attr] = false;
+        }
+        else{
+
+            node.removeAttribute(attr);
+        }
     }
     else{
 
@@ -201,9 +230,11 @@ function _removeAttribute(node, attr, cache){
 
 export function getAttribute(node, attr){
 
-    let cache, tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
-    if((cache = node[MIKADO_NODE_CACHE])){
+    if(cache){
 
         tmp = cache["_a" + attr];
     }
@@ -217,7 +248,16 @@ export function getAttribute(node, attr){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.attr");
 
-        cache["_a" + attr] = tmp = node.getAttribute(attr);
+        if(idl_attributes[attr]){
+
+            tmp = node[attr];
+        }
+        else{
+
+            tmp = node.getAttribute(attr);
+        }
+
+        cache["_a" + attr] = tmp;
     }
     else{
 
@@ -236,7 +276,7 @@ export function getAttribute(node, attr){
 export function hasAttribute(node, attr){
 
     const tmp = getAttribute(node, attr);
-    return !(!tmp && tmp !== "");
+    return !!(tmp || tmp === "");
 }
 
 // -------------------------------------------------------------
@@ -248,11 +288,13 @@ export function hasAttribute(node, attr){
 
 export function setClass(node, classname){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_c"];
+        tmp = cache._c;
     }
     else{
 
@@ -269,7 +311,7 @@ export function setClass(node, classname){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.class");
 
-        cache["_c"] = classname;
+        cache._c = classname;
         node.className = classname;
     }
     else{
@@ -285,11 +327,13 @@ export function setClass(node, classname){
 
 export function getClass(node){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_c"];
+        tmp = cache._c;
     }
     else{
 
@@ -301,14 +345,16 @@ export function getClass(node){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.class");
 
-        cache["_c"] = tmp = node.className;
+        // TODO do not transform back
+        cache._c = tmp = node.className;
     }
     else{
 
         PROFILER && tick("cache.match");
     }
 
-    return tmp.split(regex_class);
+    tmp = tmp.split(regex_class);
+    return tmp[0] === "" ? [] : tmp;
 }
 
 /**
@@ -318,12 +364,13 @@ export function getClass(node){
 
 function transformClassCache(node){
 
+    /** @type {NodeCache} */
     let cache = node[MIKADO_NODE_CACHE];
     let tmp;
 
     if(cache){
 
-        tmp = cache["_c"];
+        tmp = cache._c;
     }
     else{
 
@@ -332,23 +379,24 @@ function transformClassCache(node){
 
     if(!tmp){
 
-        return cache["_c"] = {};
+        return cache._c = {};
     }
 
     if(typeof tmp === "string"){
 
         PROFILER && tick("cache.transform");
 
-        const matches = tmp.split(regex_class);
-        cache["_c"] = tmp = {};
+        const matches = tmp.trim().split(regex_class);
+        cache._c = tmp = {};
 
-        for(let i = 0; i < matches.length; i++){
+        for(let i = 0, match; i < matches.length; i++){
 
-            tmp[matches[i]] = 1;
+            match = matches[i];
+            match && (tmp[matches[i]] = 1);
         }
     }
 
-    return tmp;
+    return /** @type {Object} */ (tmp);
 }
 
 /**
@@ -358,6 +406,7 @@ function transformClassCache(node){
 
 export function addClass(node, classname){
 
+    /** @type {Object<string, string|number>} */
     const cache = transformClassCache(node);
 
     if(typeof classname === "object"){
@@ -539,11 +588,13 @@ function _toggleClass(node, classname, state, cache){
 
 export function setCss(node, css){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_s"];
+        tmp = cache._s;
     }
     else{
 
@@ -555,7 +606,7 @@ export function setCss(node, css){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.style");
 
-        cache["_s"] = css;
+        cache._s = css;
         node.style.cssText = css;
 
         // const arr = css.match(regex_css);
@@ -587,11 +638,13 @@ export function setCss(node, css){
 
 export function getCss(node){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_s"];
+        tmp = cache._s;
     }
     else{
 
@@ -603,7 +656,7 @@ export function getCss(node){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.css");
 
-        cache["_s"] = tmp = node.style.cssText;
+        cache._s = tmp = node.style.cssText;
     }
     else{
 
@@ -620,12 +673,13 @@ export function getCss(node){
 
 function transformStyleCache(node){
 
+    /** @type {NodeCache} */
     let cache = node[MIKADO_NODE_CACHE];
     let tmp;
 
     if(cache){
 
-        tmp = cache["_s"];
+        tmp = cache._s;
     }
     else{
 
@@ -634,7 +688,7 @@ function transformStyleCache(node){
 
     if(!tmp){
 
-        return cache["_s"] = {};
+        return cache._s = {};
     }
 
     if(typeof tmp === "string"){
@@ -642,15 +696,15 @@ function transformStyleCache(node){
         PROFILER && tick("cache.transform");
 
         const matches = tmp.match(regex_css);
-        cache["_s"] = tmp = {};
+        cache._s = tmp = {};
 
-        for(let i = 0; i < matches.length; i+=2){
+        for(let i = 0; i < matches.length; i += 2){
 
-            tmp[matches[i]] = matches[i + 1];
+            tmp[matches[i].trim()] = matches[i + 1].trim();
         }
     }
 
-    return tmp;
+    return /** @type {Object} */ (tmp);
 }
 
 /**
@@ -736,11 +790,13 @@ export function getStyle(node, property){
 
 export function setHtml(node, html){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_h"];
+        tmp = cache._h;
     }
     else{
 
@@ -753,8 +809,8 @@ export function setHtml(node, html){
         PROFILER && tick("cache.html");
 
         node.innerHTML = html;
-        cache["_h"] = html;
-        cache["_t"] = null;
+        cache._h = html;
+        cache._t = null;
     }
     else{
 
@@ -769,11 +825,13 @@ export function setHtml(node, html){
 
 export function getHtml(node){
 
-    let cache = node[MIKADO_NODE_CACHE], tmp;
+    /** @type {NodeCache} */
+    let cache = node[MIKADO_NODE_CACHE];
+    let tmp;
 
     if(cache){
 
-        tmp = cache["_h"];
+        tmp = cache._h || cache._t;
     }
     else{
 
@@ -785,7 +843,7 @@ export function getHtml(node){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.html");
 
-        cache["_h"] = tmp = node.innerHTML
+        cache._h = tmp = node.innerHTML;
     }
     else{
 

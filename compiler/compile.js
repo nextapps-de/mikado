@@ -60,6 +60,13 @@ const self_closing = {
     "frame": 1
 };
 
+const idl_attributes = {
+
+    "checked": 1,
+    "selected": 1,
+    "hidden": 1
+};
+
 class CompilerError extends Error {
     constructor(message) {
         super(message);
@@ -909,8 +916,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                            .replace(/^data\[['"](.*)['"]]/, "$1");
                             }
 
-                            tmp = tmp.replace(/{{[[!?#=]+/g, "{{")
-                                    //.replace(/{{!(!)?/g, "{{")
+                            tmp = tmp.replace(/{{[!?#=]+/g, "{{")
                                     .replace(/"(\s+)?{{(\s+)?/g, "(")
                                     .replace(/(\s+)?}}(\s+)?"/g, ")")
                                     .replace(/{{(\s+)?/g, "'+(")
@@ -918,7 +924,8 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     //.replace(/^'\+\(/, "")
                                     //.replace(/\)\+'$/, "")
                                     .replace(regex_js_comments, "")
-                                    .trim();
+                                    .replace(/\s+/g, " ");
+                                   // .trim();
 
                             //console.log(("'" + tmp + "'"))
 
@@ -1036,7 +1043,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                            (idl_attributes[key]
+                                                ? '_o.n.' + key + '=_v'
+                                                : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
+                                            ) +
                                         '}');
                                 }
                                 else if(key === "class"){
@@ -1087,7 +1097,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c["_a' + key + '"]=_v;' +
-                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                            (idl_attributes[key]
+                                                ? '_o.n.' + key + '=_v'
+                                                : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
+                                            ) +
                                         '}');
                                 }
                                 else if(key === "class"){
@@ -1134,8 +1147,15 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push('_v=' + tmp);
-                                    fn.push('_o[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)');
+                                    if(idl_attributes[key]){
+
+                                        fn.push('_o.n.' + key + '=' + tmp);
+                                    }
+                                    else{
+
+                                        fn.push('_v=' + tmp);
+                                        fn.push('_o[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)');
+                                    }
                                 }
                                 else if(key === "class"){
 

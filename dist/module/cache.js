@@ -1,19 +1,26 @@
+
+import { NodeCache } from "./type.js";
+import { tick } from "./profiler.js";
+import { idl_attributes } from "./factory.js";
+
 const regex_css = /[^;:]+/g,
-      regex_class = /[ ]+/g;
+      regex_class = / +/;
 
 
 // -------------------------------------------------------------
 
 /**
  * @param {Element} node
- * @param {*} text
+ * @param {string|number} text
  */
 
 export function setText(node, text) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         child,
         tmp;
+
 
     if (cache) {
 
@@ -26,13 +33,16 @@ export function setText(node, text) {
     if (tmp !== text) {
 
         cache._t = text;
+        cache._h = null;
+        child = node.firstChild;
 
-        if (3 === node.nodeType && (child = node) || (child = node.firstChild)) {
+        if (child /*(node.nodeType === 3 && (child = node)) || (child = node.firstChild)*/) {
 
-            child.nodeValue = /** @type {string} */text;
-        } else {
+                child.nodeValue = /** @type {string} */text;
+            } else {
 
-            node.textContent = text;
+            node.appendChild(document.createTextNode(text));
+            //node.textContent = text;
         }
     } else {}
 }
@@ -44,9 +54,11 @@ export function setText(node, text) {
 
 export function getText(node) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         child,
         tmp;
+
 
     if (cache) {
 
@@ -58,13 +70,17 @@ export function getText(node) {
 
     if ("string" != typeof tmp) {
 
-        if (3 === node.nodeType && (child = node) || (child = node.firstChild)) {
+        child = node.firstChild;
+        cache._t = tmp = child ? child.nodeValue : "";
 
-            cache._t = tmp = child.nodeValue;
-        } else {
-
-            cache._t = tmp = node.textContent;
-        }
+        // if(child /*(node.nodeType === 3 && (child = node)) || (child = node.firstChild)*/){
+        //
+        //     cache._t = tmp = child.nodeValue;
+        // }
+        // else{
+        //
+        //     cache._t = tmp = ""; //node.textContent;
+        // }
     } else {}
 
     return tmp;
@@ -80,6 +96,7 @@ export function getText(node) {
 
 export function setAttribute(node, attr, value) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc;
 
     if (!cache) {
@@ -103,7 +120,7 @@ export function setAttribute(node, attr, value) {
  * @param {Element} node
  * @param {string} attr
  * @param {string|number|boolean} value
- * @param {Object=} cache
+ * @param {NodeCache=} cache
  */
 
 function _setAttribute(node, attr, value, cache) {
@@ -112,7 +129,13 @@ function _setAttribute(node, attr, value, cache) {
 
         cache["_a" + attr] = value;
 
-        !1 !== value ? node.setAttribute(attr, value) : node.removeAttribute(attr);
+        if (idl_attributes[attr]) {
+
+            node[attr] = value;
+        } else {
+
+            !1 === value ? node.removeAttribute(attr) : node.setAttribute(attr, value);
+        }
     } else {}
 }
 
@@ -123,6 +146,7 @@ function _setAttribute(node, attr, value, cache) {
 
 export function removeAttribute(node, arr) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc;
 
     if (!cache) {
@@ -145,7 +169,7 @@ export function removeAttribute(node, arr) {
 /**
  * @param {Element} node
  * @param {string} attr
- * @param {Object=} cache
+ * @param {NodeCache=} cache
  */
 
 function _removeAttribute(node, attr, cache) {
@@ -153,7 +177,14 @@ function _removeAttribute(node, attr, cache) {
     if (!1 !== cache["_a" + attr]) {
 
         cache["_a" + attr] = !1;
-        node.removeAttribute(attr);
+
+        if (idl_attributes[attr]) {
+
+            node[attr] = !1;
+        } else {
+
+            node.removeAttribute(attr);
+        }
     } else {}
 }
 
@@ -165,9 +196,12 @@ function _removeAttribute(node, attr, cache) {
 
 export function getAttribute(node, attr) {
 
-    let cache, tmp;
+    /** @type {NodeCache} */
+    let cache = node._mkc,
+        tmp;
 
-    if (cache = node._mkc) {
+
+    if (cache) {
 
         tmp = cache["_a" + attr];
     } else {
@@ -177,7 +211,15 @@ export function getAttribute(node, attr) {
 
     if ("string" != typeof tmp) {
 
-        cache["_a" + attr] = tmp = node.getAttribute(attr);
+        if (idl_attributes[attr]) {
+
+            tmp = node[attr];
+        } else {
+
+            tmp = node.getAttribute(attr);
+        }
+
+        cache["_a" + attr] = tmp;
     } else {}
 
     return tmp;
@@ -192,7 +234,7 @@ export function getAttribute(node, attr) {
 export function hasAttribute(node, attr) {
 
     const tmp = getAttribute(node, attr);
-    return !(!tmp && "" !== tmp);
+    return !!(tmp || "" === tmp);
 }
 
 // -------------------------------------------------------------
@@ -204,8 +246,10 @@ export function hasAttribute(node, attr) {
 
 export function setClass(node, classname) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
+
 
     if (cache) {
 
@@ -234,8 +278,10 @@ export function setClass(node, classname) {
 
 export function getClass(node) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
+
 
     if (cache) {
 
@@ -247,10 +293,12 @@ export function getClass(node) {
 
     if ("string" != typeof tmp) {
 
+        // TODO do not transform back
         cache._c = tmp = node.className;
     } else {}
 
-    return tmp.split(regex_class);
+    tmp = tmp.split(regex_class);
+    return "" === tmp[0] ? [] : tmp;
 }
 
 /**
@@ -259,6 +307,8 @@ export function getClass(node) {
  */
 
 function transformClassCache(node) {
+
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
 
@@ -278,16 +328,18 @@ function transformClassCache(node) {
 
     if ("string" == typeof tmp) {
 
-        const matches = tmp.split(regex_class);
+        const matches = tmp.trim().split(regex_class);
         cache._c = tmp = {};
 
-        for (let i = 0; i < matches.length; i++) {
+        for (let i = 0, match; i < matches.length; i++) {
 
-            tmp[matches[i]] = 1;
+            match = matches[i];
+            match && (tmp[matches[i]] = 1);
         }
     }
 
-    return tmp;
+    return (/** @type {Object} */tmp
+    );
 }
 
 /**
@@ -297,6 +349,7 @@ function transformClassCache(node) {
 
 export function addClass(node, classname) {
 
+    /** @type {Object<string, string|number>} */
     const cache = transformClassCache(node);
 
     if ("object" == typeof classname) {
@@ -445,8 +498,10 @@ function _toggleClass(node, classname, state, cache) {
 
 export function setCss(node, css) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
+
 
     if (cache) {
 
@@ -486,8 +541,10 @@ export function setCss(node, css) {
 
 export function getCss(node) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
+
 
     if (cache) {
 
@@ -511,6 +568,8 @@ export function getCss(node) {
  */
 
 function transformStyleCache(node) {
+
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
 
@@ -535,11 +594,12 @@ function transformStyleCache(node) {
 
         for (let i = 0; i < matches.length; i += 2) {
 
-            tmp[matches[i]] = matches[i + 1];
+            tmp[matches[i].trim()] = matches[i + 1].trim();
         }
     }
 
-    return tmp;
+    return (/** @type {Object} */tmp
+    );
 }
 
 /**
@@ -610,8 +670,10 @@ export function getStyle(node, property) {
 
 export function setHtml(node, html) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
+
 
     if (cache) {
 
@@ -636,12 +698,14 @@ export function setHtml(node, html) {
 
 export function getHtml(node) {
 
+    /** @type {NodeCache} */
     let cache = node._mkc,
         tmp;
 
+
     if (cache) {
 
-        tmp = cache._h;
+        tmp = cache._h || cache._t;
     } else {
 
         node._mkc = cache = {};

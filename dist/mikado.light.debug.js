@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.227 (Light/Debug)
+ * Mikado.js v0.8.301 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -110,6 +110,7 @@ function w(a, b, c, d, g, k) {
   k || (e._mkp = c);
   return e;
 }
+const C = {checked:1, selected:1, hidden:1};
 function t(a, b, c) {
   this.c = a;
   this.n = b;
@@ -128,7 +129,7 @@ t.prototype._a = function(a, b, c, d) {
     }
     this.c["_a" + a] = b;
   }
-  !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
+  C[a] ? this.n[a] = b : !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
 };
 t.prototype._t = function(a, b, c) {
   if (this.c) {
@@ -276,10 +277,10 @@ B.prototype.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), w(this, this.tpl.tpl, [], "", this.factory) && C(this)), this.tpl && (this.factory = w(this, this.tpl.tpl, [], ""), C(this)));
+  this.factory || (b && this.length && (this.factory = this.dom[0].cloneNode(!0), w(this, this.tpl.tpl, [], "", this.factory) && D(this)), this.tpl && (this.factory = w(this, this.tpl.tpl, [], ""), D(this)));
   return this;
 };
-function C(a) {
+function D(a) {
   a.tpl.fc && (a.tpl.fn = a.tpl.fc, a.tpl.fc = null);
   a.tpl = null;
 }
@@ -360,7 +361,7 @@ B.prototype.create = function(a, b, c, d) {
   const g = this.key, k = g && a[g];
   let e, f, h, m;
   this.pool && (g ? (f = this.pool_keyed) && (e = f.get(k)) && (f.delete(k), m = 1) : (f = this.pool_shared) && f.length && (e = f.pop()));
-  e || (e = h = this.factory, h || (this.factory = e = h = w(this, this.tpl.tpl, [], ""), C(this)));
+  e || (e = h = this.factory, h || (this.factory = e = h = w(this, this.tpl.tpl, [], ""), D(this)));
   let p;
   this.apply && (p = h && this.cache && [], this.apply(a, b || this.state, c, e._mkp || l(e, this.factory._mkp, !!h || this.cache), p));
   h && (e = h.cloneNode(!0), p && (e._mkc = p));
@@ -371,7 +372,7 @@ B.prototype.add = function(a, b, c) {
   let d;
   "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, d = c < this.length) : "number" === typeof c ? (0 > c && (c += this.length), d = c < this.length) : c = this.length;
   a = this.create(a, b, c, 1);
-  d ? (this.root.insertBefore(a, this.dom[c]), D(this.dom, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.dom[this.length++] = a);
+  d ? (this.root.insertBefore(a, this.dom[c]), E(this.dom, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.dom[this.length++] = a);
   return this;
 };
 B.prototype.reconcile = function(a, b, c) {
@@ -393,7 +394,7 @@ B.prototype.reconcile = function(a, b, c) {
       let u, v;
       for (n = c + 1; n < h; n++) {
         if (!u && n < f && d[n]._mkk === x && (u = n + 1), !v && n < e && a[n][k] === y && (v = n + 1), u && v) {
-          u >= v + m ? (p = d[u - 1], this.root.insertBefore(p, r), this.update(p, q, b, c, 1), u === v ? (1 < n - c && this.root.insertBefore(r, d[u]), d[c] = d[n], (d[n] = r) || console.error("reconcile.error 1")) : (u - 1 === c && console.error("reconcile.error 2"), D(d, u - 1, c), m++)) : (q = v - 1 + m, this.root.insertBefore(r, d[q] || null), (q > f ? f : q) - 1 === c && console.error("reconcile.error 3"), D(d, c, (q > f ? f : q) - 1), m--, c--);
+          u >= v + m ? (p = d[u - 1], this.root.insertBefore(p, r), this.update(p, q, b, c, 1), u === v ? (1 < n - c && this.root.insertBefore(r, d[u]), d[c] = d[n], (d[n] = r) || console.error("reconcile.error 1")) : (u - 1 === c && console.error("reconcile.error 2"), E(d, u - 1, c), m++)) : (q = v - 1 + m, this.root.insertBefore(r, d[q] || null), (q > f ? f : q) - 1 === c && console.error("reconcile.error 3"), E(d, c, (q > f ? f : q) - 1), m--, c--);
           p = 1;
           break;
         }
@@ -403,7 +404,7 @@ B.prototype.reconcile = function(a, b, c) {
   }
   return this;
 };
-function D(a, b, c, d) {
+function E(a, b, c, d) {
   const g = d || a[b];
   d && b++;
   if (b < c) {
@@ -523,9 +524,9 @@ B.unregister = function(a) {
   b && (b instanceof B && b.destroy(), z[a] = null);
   return B;
 };
-const E = window;
-let F;
-(F = E.define) && F.amd ? F([], function() {
+const F = window;
+let G;
+(G = F.define) && G.amd ? G([], function() {
   return B;
-}) : "object" === typeof E.exports ? E.exports = B : E.Mikado = B;
+}) : "object" === typeof F.exports ? F.exports = B : F.Mikado = B;
 }).call(this);

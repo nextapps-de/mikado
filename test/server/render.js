@@ -263,10 +263,10 @@ describe("[SSR] Render Template", function(){
 
         expect(node.children.length).to.equal(4);
         expect(node.children[0].textContent).to.equal(`This is some crazy'"" template`);
-        expect(node.children[1].textContent).to.equal("This is some crazy template");
-        expect(node.children[2].textContent.trim()).to.equal("12true");
+        expect(node.children[1].textContent).to.equal(" This is some crazy template ");
+        expect(node.children[2].textContent.trim()).to.equal("12 true");
         expect(node.children[3].style.display).to.equal("block");
-        expect(node.children[3].innerHTML).to.equal("<b>bold</b>");
+        expect(node.children[3].innerHTML).to.equal(" <b>bold</b> ");
     });
 });
 

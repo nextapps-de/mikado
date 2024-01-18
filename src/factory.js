@@ -553,6 +553,13 @@ function init_proxy(self, key, payload){
     (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }
 
+export const idl_attributes = {
+
+    "checked": 1,
+    "selected": 1,
+    "hidden": 1
+};
+
 /**
  * @constructor
  * @const
@@ -604,9 +611,18 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
             this.c["_a" + key] = value;
         }
 
-        value === false
-            ? this.n.removeAttribute(key)
-            : this.n.setAttribute(key, value);
+        // IDL attributes are faster but some didn't reflect content attribute state
+
+        if(idl_attributes[key]){
+
+            this.n[key] = value;
+        }
+        else{
+
+            value === false
+                ? this.n.removeAttribute(key)
+                : this.n.setAttribute(key, value);
+        }
     }
 
     /**

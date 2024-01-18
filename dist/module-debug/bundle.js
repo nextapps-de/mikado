@@ -307,10 +307,9 @@ EventOptions.once;
 // Export as library (Bundle)
 // --------------------------------
 
-const root = window;
-
 {
 
+    const root = window;
     let prop;
 
     // AMD (RequireJS)
