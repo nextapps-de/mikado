@@ -301,7 +301,7 @@ You can also load modules via CDN:
 
 ```html
 <script type="module">
-    import Mikado from "https://unpkg.com/mikado@0.8.301/dist/module/mikado.js";
+    import Mikado from "https://unpkg.com/mikado@0.8.304/dist/module/mikado.js";
 </script>
 ```
 
