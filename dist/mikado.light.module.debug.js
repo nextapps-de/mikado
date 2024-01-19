@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.301 (Bundle/Debug)
+ * Mikado.js v0.8.303 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -21,52 +21,54 @@ const events$$module$tmp$event = {}, event_options$$module$tmp$event = {}, route
 SUPPORT_EVENTS$$module$tmp$config && (Mikado$$module$tmp$mikado.eventCache = !1, Mikado$$module$tmp$mikado.eventBubble = !1);
 let tap_fallback$$module$tmp$event;
 function handler$$module$tmp$event(a, b) {
-  PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.trigger");
-  b || (b = a.type);
-  const c = a.target, d = Mikado$$module$tmp$mikado.eventCache;
-  var e = Mikado$$module$tmp$mikado.eventBubble;
-  let f;
-  d && (f = c[MIKADO_EVENT_CACHE$$module$tmp$config + b]);
-  if ("undefined" === typeof f) {
-    for (var h = c; h && h !== doc$$module$tmp$event;) {
-      PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble");
-      var g = void 0;
-      "click" === b && tap_fallback$$module$tmp$event && (g = h.getAttribute("tap"));
-      g || (g = h.getAttribute(b));
-      if (g) {
-        var k = g.indexOf(":"), l = h;
-        if (-1 < k) {
-          const m = g.substring(0, k);
-          k = g.substring(k + 1);
-          for (g = ""; (l = l.parentElement) !== doc$$module$tmp$event;) {
-            if (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble"), l.hasAttribute(k)) {
-              g = m;
-              break;
+  const c = a.target;
+  if (c !== window && c !== doc$$module$tmp$event) {
+    PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.trigger");
+    var d = Mikado$$module$tmp$mikado.eventCache, e = Mikado$$module$tmp$mikado.eventBubble;
+    b || (b = a.type);
+    var f;
+    d && (f = c[MIKADO_EVENT_CACHE$$module$tmp$config + b]);
+    if ("undefined" === typeof f) {
+      for (var h = c; h && h !== doc$$module$tmp$event;) {
+        PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble");
+        var g = void 0;
+        "click" === b && tap_fallback$$module$tmp$event && (g = h.getAttribute("tap"));
+        g || (g = h.getAttribute(b));
+        if (g) {
+          var k = g.indexOf(":"), l = h;
+          if (-1 < k) {
+            const m = g.substring(0, k);
+            k = g.substring(k + 1);
+            for (g = ""; (l = l.parentElement) !== doc$$module$tmp$event;) {
+              if (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble"), l.hasAttribute(k)) {
+                g = m;
+                break;
+              }
             }
+            DEBUG$$module$tmp$config && (g || console.warn("Event root '" + k + "' was not found for the event: '" + m + "'."));
           }
-          DEBUG$$module$tmp$config && (g || console.warn("Event root '" + k + "' was not found for the event: '" + m + "'."));
+          if (g && (f || (f = [], d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = f)), f.push([g, l]), l = options$$module$tmp$event[g], !e || l && (l.stop || l.cancel))) {
+            break;
+          }
         }
-        if (g && (f || (f = [], d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = f)), f.push([g, l]), l = options$$module$tmp$event[g], !e || l && (l.stop || l.cancel))) {
-          break;
-        }
+        h = h.parentElement;
       }
-      h = h.parentElement;
+      d && (f || (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
+    } else {
+      PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.cache");
     }
-    d && (f || (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
-  } else {
-    PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.cache");
-  }
-  if (f) {
-    for (let m = 0, n; m < f.length; m++) {
-      if (n = f[m], e = n[0], h = routes$$module$tmp$event[e]) {
-        g = n[1];
-        if (l = options$$module$tmp$event[e]) {
-          l.prevent && a.preventDefault(), l.stop && a.stopImmediatePropagation(), l.once && (routes$$module$tmp$event[e] = null, d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
+    if (f) {
+      for (let m = 0, n; m < f.length; m++) {
+        if (n = f[m], e = n[0], h = routes$$module$tmp$event[e]) {
+          g = n[1];
+          if (l = options$$module$tmp$event[e]) {
+            l.prevent && a.preventDefault(), l.stop && a.stopImmediatePropagation(), l.once && (routes$$module$tmp$event[e] = null, d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
+          }
+          PROFILER$$module$tmp$config && tick$$module$tmp$profiler("route.call");
+          h(g, a);
+        } else {
+          DEBUG$$module$tmp$config && console.warn("The route '" + e + "' is not defined for the event '" + b + "'.");
         }
-        PROFILER$$module$tmp$config && tick$$module$tmp$profiler("route.call");
-        h(g, a);
-      } else {
-        DEBUG$$module$tmp$config && console.warn("The route '" + e + "' is not defined for the event '" + b + "'.");
       }
     }
   }

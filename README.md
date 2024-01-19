@@ -482,13 +482,9 @@ Run the benchmark (internal/data-driven):<br>
 <a href="https://raw.githack.com/nextapps-de/mikado/bench/#internal">https://raw.githack.com/nextapps-de/mikado/bench/#internal</a><br>
 
 <!--
-Sources and readme:<br>
-<a href="bench/">https://github.com/nextapps-de/mikado/tree/bench</a>
--->
-
 The values represent operations per second, each benchmark task has to process a data array of 100 items. Higher values are better, except for memory (the sum of allocated memory during the whole test).
 
-#### Keyed
+#### Non-Keyed
 
 <table>
     <tr></tr>
@@ -731,6 +727,7 @@ The values represent operations per second, each benchmark task has to process a
 </table>
 
 The **_index_** is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
+-->
 
 <a name="api"></a>
 

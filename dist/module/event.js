@@ -35,12 +35,14 @@ let tap_fallback;
 
 function handler(event, type) {
 
-    type || (type = event.type);
+    const event_target = event.target;
+    // we just dispatch events which are defined somewhere in the DOM
+    if (event_target === window || event_target === doc) return;
 
-    const event_target = event.target,
-          use_event_cache = Mikado.eventCache,
+    const use_event_cache = Mikado.eventCache,
           use_bubble = Mikado.eventBubble;
 
+    type || (type = event.type);
 
     let cache;
 

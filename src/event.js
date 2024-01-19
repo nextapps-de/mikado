@@ -36,13 +36,16 @@ let tap_fallback;
 
 function handler(event, type){
 
+    const event_target = event.target;
+    // we just handle events which are defined somewhere in the DOM
+    // do we need handle events on documentElement?
+    if(event_target === window || event_target === doc) return;
+
     PROFILER && tick("event.trigger");
 
-    type || (type = event.type);
-
-    const event_target = event.target;
     const use_event_cache = Mikado.eventCache;
     const use_bubble = Mikado.eventBubble;
+    type || (type = event.type);
 
     let cache;
 
