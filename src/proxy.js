@@ -1,10 +1,10 @@
 // COMPILER BLOCK -->
 import { SUPPORT_REACTIVE, MIKADO_PROXY, PROFILER } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 
 import { ProxyHandler } from "./type.js";
 import { Cache } from "./factory.js";
-import { tick } from "./profiler.js";
 
 const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 

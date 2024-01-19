@@ -1,6 +1,5 @@
 
 import Mikado, { apply_proxy } from "./mikado.js";
-import { tick } from "./profiler.js";
 
 const proto = Array.prototype,
       proxy = window.Proxy;

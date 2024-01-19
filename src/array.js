@@ -19,9 +19,9 @@ import {
     MIKADO_NODE_CACHE,
     MIKADO_PROXY
 } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import Mikado, { apply_proxy } from "./mikado.js";
-import { tick } from "./profiler.js";
 
 const proto = Array.prototype;
 /** @type {Proxy} */

@@ -2,7 +2,6 @@
 
 import { ProxyHandler } from "./type.js";
 import { Cache } from "./factory.js";
-import { tick } from "./profiler.js";
 
 const proxy = window.Proxy || function () {
 

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.303 (Bundle/Module/Debug)
+ * Mikado.js v0.8.304 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0

@@ -1,9 +1,9 @@
 // COMPILER BLOCK -->
 import { DEBUG, MIKADO_EVENT_CACHE, PROFILER, SUPPORT_EVENTS } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { EventOptions } from "./type.js";
 import Mikado from "./mikado.js";
-import { tick } from "./profiler.js";
 
 /** @type {Object<string, boolean|number>} */
 const events = {};

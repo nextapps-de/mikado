@@ -1,7 +1,6 @@
 
 import { EventOptions } from "./type.js";
 import Mikado from "./mikado.js";
-import { tick } from "./profiler.js";
 
 /** @type {Object<string, boolean|number>} */
 const events = {},
@@ -36,7 +35,8 @@ let tap_fallback;
 function handler(event, type) {
 
     const event_target = event.target;
-    // we just dispatch events which are defined somewhere in the DOM
+    // we just handle events which are defined somewhere in the DOM
+    // do we need handle events on documentElement?
     if (event_target === window || event_target === doc) return;
 
     const use_event_cache = Mikado.eventCache,

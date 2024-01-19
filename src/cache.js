@@ -1,8 +1,8 @@
 // COMPILER BLOCK -->
 import { MIKADO_NODE_CACHE, PROFILER } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { NodeCache } from "./type.js";
-import { tick } from "./profiler.js";
 import { idl_attributes } from "./factory.js";
 
 const regex_css = /[^;:]+/g;

@@ -29,12 +29,12 @@ import {
     MIKADO_NODE_CACHE,
     MIKADO_PROXY
 } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache } from "./type.js";
 import Observer from "./array.js";
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
-import { tick } from "./profiler.js";
 
 /** @const {Object<string, Mikado|Array<Template, MikadoOptions>>} */
 export const includes = Object.create(null);

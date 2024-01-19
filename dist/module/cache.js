@@ -1,6 +1,5 @@
 
 import { NodeCache } from "./type.js";
-import { tick } from "./profiler.js";
 import { idl_attributes } from "./factory.js";
 
 const regex_css = /[^;:]+/g,

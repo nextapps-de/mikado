@@ -19,11 +19,11 @@ import {
     MIKADO_TPL_PATH,
     MIKADO_NODE_CACHE
 } from "./config.js";
+import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
 import Mikado, { includes } from "./mikado.js";
 import { listen } from "./event.js";
-import { tick } from "./profiler.js";
 
 /**
  * @param {Element} root

@@ -281,7 +281,7 @@ The **_dist_** folder are located in `node_modules/mikado/dist/`.
 Use the bundled version exported as a module:
 
 ```html
-<script>
+<script type="module">
     import Mikado from "./dist/mikado.bundle.module.min.js";
     // bundled access by e.g. Mikado.register()
 </script>
@@ -290,7 +290,7 @@ Use the bundled version exported as a module:
 Also, pre-compiled non-bundled production-ready modules are located in `dist/module-min/`.
 
 ```html
-<script>
+<script type="module">
     import Mikado, { register } from "./dist/module-min/mikado.js";
     // bundled access by Mikado.register isn't available
     // requires direct access by e.g. register()
@@ -300,8 +300,8 @@ Also, pre-compiled non-bundled production-ready modules are located in `dist/mod
 You can also load modules via CDN:
 
 ```html
-<script>
-    import Mikado from "https://unpkg.com/mikado@0.8.3/dist/module/mikado.js";
+<script type="module">
+    import Mikado from "https://unpkg.com/mikado@0.8.301/dist/module/mikado.js";
 </script>
 ```
 
