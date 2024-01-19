@@ -1,5 +1,6 @@
 .idea
 node_modules
+!examples/todomvc/node_modules/
 public/*
 log/*
 tmp/
@@ -8,16 +9,4 @@ server/cache/
 _old_*
 uibench/
 
-demo/todomvc/task/
-demo/todomvc/template/app/*
-!demo/todomvc/template/app/app.html
-!demo/todomvc/template/app/app.es6.js
-demo/todomvc/template/footer/*
-!demo/todomvc/template/footer/footer.html
-!demo/todomvc/template/footer/footer.es6.js
-demo/todomvc/template/list/*
-!demo/todomvc/template/list/list.html
-!demo/todomvc/template/list/list.es6.js
-demo/todomvc/template/main/*
-!demo/todomvc/template/main/main.html
-!demo/todomvc/template/main/main.es6.js
+

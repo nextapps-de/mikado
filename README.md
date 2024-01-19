@@ -28,6 +28,20 @@ When you are coming from any previous version: <a href="doc/migrate-0.8.md">Migr
 - <a href="#benchmark">Stress Test Benchmark</a>
 - https://krausest.github.io/js-framework-benchmark/current.html
 
+**Demo:**
+
+- TodoMVC App: <a href="examples/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/examples/todomvc/index.html">Run Demo</a>
+
+<!--
+1. <a href="demo/basic/basic.html">Basic Example + Runtime Compiler (HTML5 Template)</a>
+2. <a href="demo/basic/compiler.html">Basic Example + Runtime Compiler (String Template)</a>
+3. <a href="demo/basic/demo.html">Basic Example + Events (ES5)</a>
+4. <a href="demo/basic/demo.es6.html">Basic Example + Events (ES6 Modules)</a>
+5. <a href="demo/basic/demo.dev.html">Basic Example + Events (Development Sources)</a>
+6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
+7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
+-->
+
 ## Support this Project
 
 Mikado was getting so much positive feedback and also feature requests. Help keeping Mikado active by a personal donation.
@@ -38,18 +52,6 @@ Mikado was getting so much positive feedback and also feature requests. Help kee
 <a href="https://www.patreon.com/user?u=96245532" target="_blank" style="margin-right: 10px"><img src="doc/patron.png" height="32" alt="Donate using Patreon"></a>
 <a href="https://salt.bountysource.com/teams/ts-thomas" target="_blank" style="margin-right: 10px"><img src="doc/bountysource.svg" height="32" alt="Donate using Bountysource"></a>
 <a href="https://www.paypal.com/donate/?hosted_button_id=GEVR88FC9BWRW" target="_blank"><img src="doc/paypal.png" height="32" alt="Donate using PayPal"></a>
-
-<!--
-**Demo:**
-
-1. <a href="demo/basic/basic.html">Basic Example + Runtime Compiler (HTML5 Template)</a>
-2. <a href="demo/basic/compiler.html">Basic Example + Runtime Compiler (String Template)</a>
-3. <a href="demo/basic/demo.html">Basic Example + Events (ES5)</a>
-4. <a href="demo/basic/demo.es6.html">Basic Example + Events (ES6 Modules)</a>
-5. <a href="demo/basic/demo.dev.html">Basic Example + Events (Development Sources)</a>
-6. TodoMVC App: <a href="demo/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/demo/todomvc/index.html">Run Demo</a>
-7. js-framework-benchmark: <a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado">keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/non-keyed/mikado">non-keyed</a>&ensp;/&ensp;<a href="https://github.com/krausest/js-framework-benchmark/tree/master/frameworks/keyed/mikado-proxy">keyed (proxy)</a>
--->
 
 ## Table of contents
 
@@ -3743,12 +3745,14 @@ When you are focus on performance you should take those settings as a goal:
 - Prefer named includes when structures will be reused by multiple views, also when assigning custom options gives you any advantage.
 - In larger applications, it might be better to destroy views when they are closed by the user to free memory instead of saving too much on the options.
 
+<!--
 ### Personal Recommendation
 
 Keyed recycling isn't the best pick, it just gives you (or other libs) the freedom to apply things to the DOM directly.
 Personally I prefer cache-enabled non-keyed recycling for all looped templates e.g. a table view and for "create" and "edit" views I also use non-keyed but without recycling enabled ("create" and "edit" views are the same template).
 I don't get any conflicts or side effects, since I apply every change by Mikado (also by using the library helpers).
 Long story short, keyed rendering is just for your laziness or when you can't control everything for some reason.
+-->
 
 <a name="concept"></a>
 

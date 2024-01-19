@@ -1,3 +1,9 @@
+## 0.8.3
+
+- Improve progressive enhancement for keyed/non-keyed recycle strategies
+- Use IDL attributes instead of content attributes on: checked, selected, hidden
+- Minor performance fixes solved, occurred in the "keyed shuffle test"
+
 ## 0.8.2
 
 - Web Components (Shadow DOM)
