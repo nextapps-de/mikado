@@ -39,8 +39,9 @@ Mikado.route("new-todo", function(target, event){
     const self = event.target;
 
     Mikado.setClass(target, "editing");
-    input.value = Mikado.getText(self);
     input.focus();
+    input.value = "";
+    input.value = Mikado.getText(self);
 })
 
 .route("edit", function(target, event){

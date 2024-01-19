@@ -18,7 +18,7 @@ const httpServer = http.createServer((request, response) => {
 
         if(error){
 
-            console.error(error);
+            //console.error(error);
             response.writeHead(404);
             response.end("404 - File Not Found");
         }
