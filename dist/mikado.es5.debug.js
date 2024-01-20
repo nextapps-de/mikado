@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.309 (ES5/Debug)
+ * Mikado.js v0.8.311 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -519,8 +519,8 @@ n.polyfill("Promise", function(a) {
       return "function" == typeof r ? function(w) {
         try {
           k(r(w));
-        } catch (x) {
-          m(x);
+        } catch (z) {
+          m(z);
         }
       } : t;
     }
@@ -568,8 +568,8 @@ n.polyfill("Promise", function(a) {
     var h = n.makeIterator(g), e = h.next();
     return e.done ? d([]) : new b(function(k, m) {
       function p(w) {
-        return function(x) {
-          r[w] = x;
+        return function(z) {
+          r[w] = z;
           t--;
           0 == t && k(r);
         };
@@ -638,7 +638,7 @@ n.polyfill("String.prototype.includes", function(a) {
     return -1 !== n.checkStringArgs(this, b, "includes").indexOf(b, c || 0);
   };
 }, "es6", "es3");
-var q = {}, u = {}, v = Object.create(null), y = Object.create(null), A = document.documentElement || document.body.parentNode, B = "ontouchstart" in window, C = !B && window.PointerEvent && navigator.maxTouchPoints;
+var q = {}, u = {}, v = Object.create(null), x = Object.create(null), A = document.documentElement || document.body.parentNode, B = "ontouchstart" in window, C = !B && window.PointerEvent && navigator.maxTouchPoints;
 D.eventCache = !1;
 D.eventBubble = !1;
 var aa;
@@ -667,7 +667,7 @@ function F(a, b) {
             }
             h || console.warn("Event root '" + e + "' was not found for the event: '" + m + "'.");
           }
-          if (h && (l || (l = [], d && (c["_mke" + b] = l)), l.push([h, k]), h = y[h], !f || h && (h.stop || h.cancel))) {
+          if (h && (l || (l = [], d && (c["_mke" + b] = l)), l.push([h, k]), h = x[h], !f || h && (h.stop || h.cancel))) {
             break;
           }
         }
@@ -679,7 +679,7 @@ function F(a, b) {
       for (f = 0; f < l.length; f++) {
         if (k = l[f], g = k[0], h = v[g]) {
           k = k[1];
-          if (m = y[g]) {
+          if (m = x[g]) {
             m.prevent && a.preventDefault(), m.stop && a.stopImmediatePropagation(), m.once && (v[g] = null, d && (c["_mke" + b] = null));
           }
           h(k, a);
@@ -727,37 +727,37 @@ function G(a, b, c, d) {
 ;function J(a, b, c) {
   var d;
   c && (d = a._mkc) && (a._mkc = null);
-  for (var f = b.length, l = Array(f), g = {}, h = 0, e, k, m, p = null; h < f; h++) {
+  for (var f = b.length, l = [], g = {}, h = 0, e, k, m, p = null; h < f; h++) {
     e = b[h];
     if (k = e.v) {
       if (m = e = g[k], !m) {
-        e = a;
-        m = null;
-        for (var r = 0, t = k.length, w = ""; r < t; r++) {
-          var x = k[r];
-          w += x;
-          if (g[w]) {
-            e = g[w];
-          } else {
-            if (">" === x) {
-              e = e.firstChild;
-            } else if ("|" === x) {
-              m = e;
-              e = e.firstChild;
-              break;
-            } else if ("@" === x) {
-              m = e;
-              e = e.style;
-              break;
+        a: {
+          e = a;
+          m = 0;
+          for (var r = k.length, t = ""; m < r; m++) {
+            var w = k[m];
+            t += w;
+            if (g[t]) {
+              e = g[t];
             } else {
-              e = e.nextSibling;
+              if (">" === w) {
+                e = e.firstChild;
+              } else if ("|" === w) {
+                e = [e.firstChild, e];
+                break a;
+              } else if ("@" === w) {
+                e = [e.style, e];
+                break a;
+              } else {
+                e = e.nextSibling;
+              }
+              g[t] = e;
             }
-            g[w] = e;
           }
+          e = [e];
         }
-        e = {node:e, parent:m};
-        m = e.node;
-        e = e.parent || m;
+        m = e[0];
+        e = e[1] || m;
       }
     } else {
       m = e = a;
@@ -1258,9 +1258,9 @@ D.prototype.reconcile = function(a, b, c) {
   for (c || (c = 0); c < e; c++) {
     var m = void 0;
     if (c < g) {
-      var p = a[c], r = c >= h, t = void 0, w = void 0, x = void 0, Z = void 0;
+      var p = a[c], r = c >= h, t = void 0, w = void 0, z = void 0, Z = void 0;
       this.proxy && (p._mkx ? Z = 1 : a[c] = Q(this, d[c], p));
-      if (!r && (t = d[c], w = p[l], x = t._mkk, x === w)) {
+      if (!r && (t = d[c], w = p[l], z = t._mkk, z === w)) {
         Z || this.update(t, p, b, c, 1);
         continue;
       }
@@ -1268,9 +1268,9 @@ D.prototype.reconcile = function(a, b, c) {
         r || !this.pool ? (h++, e = h > g ? h : g, this.add(p, b, c)) : this.replace(t, p, b, c);
         continue;
       }
-      for (var E = r = void 0, z = c + 1; z < e; z++) {
-        if (!r && z < h && d[z]._mkk === w && (r = z + 1), !E && z < g && a[z][l] === x && (E = z + 1), r && E) {
-          r >= E + k ? (m = d[r - 1], this.root.insertBefore(m, t), Z || this.update(m, p, b, c, 1), r === E ? (1 < z - c && this.root.insertBefore(t, d[r]), d[c] = d[z], (d[z] = t) || console.error("reconcile.error 1")) : (r - 1 === c && console.error("reconcile.error 2"), R(d, r - 1, c), k++)) : (p = E - 1 + k, this.root.insertBefore(t, d[p] || null), (p > h ? h : p) - 1 === c && console.error("reconcile.error 3"), R(d, c, (p > h ? h : p) - 1), k--, c--);
+      for (var E = r = void 0, y = c + 1; y < e; y++) {
+        if (!r && y < h && d[y]._mkk === w && (r = y + 1), !E && y < g && a[y][l] === z && (E = y + 1), r && E) {
+          r >= E + k ? (m = d[r - 1], this.root.insertBefore(m, t), Z || this.update(m, p, b, c, 1), r === E ? (1 < y - c && this.root.insertBefore(t, d[r]), d[c] = d[y], (d[y] = t) || console.error("reconcile.error 1")) : (r - 1 === c && console.error("reconcile.error 2"), R(d, r - 1, c), k++)) : (p = E - 1 + k, this.root.insertBefore(t, d[p] || null), (p > h ? h : p) - 1 === c && console.error("reconcile.error 3"), R(d, c, (p > h ? h : p) - 1), k--, c--);
           m = 1;
           break;
         }
@@ -1661,9 +1661,9 @@ function sa(a, b, c, d, f, l) {
   qa || (qa = 1, console.info("If this page has set a Content-Security-Policy (CSP) header field, using the inline compiler has disadvantage when not configure \"script-src 'unsafe-eval'\". It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful."));
   if (b) {
     return new Promise(function(w) {
-      var x = sa(a);
-      "function" === typeof b && b(x);
-      w(x);
+      var z = sa(a);
+      "function" === typeof b && b(z);
+      w(z);
     });
   }
   f || (d = [], c = [d], d.index = f = {current:-1, count:0, last:-1, inc:0, included:!1});
@@ -2010,7 +2010,7 @@ D.prototype.route = D.route = function(a, b, c) {
   }
   v[a] && console.info("A new handler was re-assigned to the route '" + a + "'.");
   v[a] = b;
-  c && (y[a] = c);
+  c && (x[a] = c);
   return this;
 };
 D.prototype.dispatch = D.dispatch = function(a, b, c) {

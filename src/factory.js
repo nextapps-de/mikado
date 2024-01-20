@@ -54,7 +54,7 @@ export function create_path(root, path, _use_cache){
 
     const length = path.length;
     /** @type {Array<Cache>} */
-    const new_path = new Array(length);
+    const new_path = []; // new Array(length); slows down
     /** @dict */
     const vcache = {};
 
@@ -70,8 +70,8 @@ export function create_path(root, path, _use_cache){
             if(!node){
 
                 node_parent = resolve(root, vpath, vcache);
-                node = node_parent.node;
-                node_parent = node_parent.parent || node;
+                node = node_parent[0];
+                node_parent = node_parent[1] || node;
             }
         }
         else{
@@ -104,15 +104,13 @@ export function create_path(root, path, _use_cache){
  * @param {Node} node
  * @param {string} path
  * @param {Object} cache
- * @return {Object<string, Element|Node|CSSStyleDeclaration>}
+ * @return {Array<Element|Node|CSSStyleDeclaration>}
  */
 
 function resolve(node, path, cache){
 
     PROFILER && tick("factory.resolve");
     //profiler_start("resolve");
-
-    let parent = null;
 
     for(let i = 0, length = path.length, tmp = ""; i < length; i++){
 
@@ -132,15 +130,11 @@ function resolve(node, path, cache){
             }
             else if(current_path === "|"){
 
-                parent = node;
-                node = node.firstChild;
-                break;
+                return [node.firstChild, node];
             }
             else if(current_path === "@"){
 
-                parent = node;
-                node = node.style;
-                break;
+                return [node.style, node];
             }
             else /*if(current_path === "+")*/{
 
@@ -154,7 +148,7 @@ function resolve(node, path, cache){
 
     //profiler_end("resolve");
 
-    return { node, parent };
+    return [node];
 }
 
 /**

@@ -29,10 +29,10 @@ export function create_path(root, path, _use_cache) {
     }
 
     const length = path.length,
-          new_path = Array(length),
+          new_path = [],
           vcache = {};
     /** @type {Array<Cache>} */
-
+    // new Array(length); slows down
     /** @dict */
 
     for (let x = 0, item, vpath, node_parent, node, cache = null /*, last, cache_index = 0*/; x < length; x++) {
@@ -47,8 +47,8 @@ export function create_path(root, path, _use_cache) {
             if (!node) {
 
                 node_parent = resolve(root, vpath, vcache);
-                node = node_parent.node;
-                node_parent = node_parent.parent || node;
+                node = node_parent[0];
+                node_parent = node_parent[1] || node;
             }
         } else {
 
@@ -77,13 +77,11 @@ export function create_path(root, path, _use_cache) {
  * @param {Node} node
  * @param {string} path
  * @param {Object} cache
- * @return {Object<string, Element|Node|CSSStyleDeclaration>}
+ * @return {Array<Element|Node|CSSStyleDeclaration>}
  */
 
 function resolve(node, path, cache) {
     //profiler_start("resolve");
-
-    let parent = null;
 
     for (let i = 0, length = path.length, tmp = ""; i < length; i++) {
 
@@ -101,14 +99,10 @@ function resolve(node, path, cache) {
                 node = node.firstChild;
             } else if ("|" === current_path) {
 
-                parent = node;
-                node = node.firstChild;
-                break;
+                return [node.firstChild, node];
             } else if ("@" === current_path) {
 
-                parent = node;
-                node = node.style;
-                break;
+                return [node.style, node];
             } else /*if(current_path === "+")*/{
 
                     //node = node.nextElementSibling;
@@ -121,7 +115,7 @@ function resolve(node, path, cache) {
 
     //profiler_end("resolve");
 
-    return { node, parent };
+    return [node];
 }
 
 /**
