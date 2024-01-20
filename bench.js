@@ -262,15 +262,15 @@ queue.push({
     start: function(){
         //start pre-filled, cache data
         this.fn(clone);
-        // prepare data to render by remove the 2nd half
-        tmp = clone.splice(DATA_SIZE_HALF);
     },
     prepare: function(){
+        // prepare data to render by remove the 2nd half
+        tmp = clone.splice(DATA_SIZE_HALF);
         clone = enforce(clone);
     },
     fn: null,
     end: function(){
-        clone = clone.concat(tmp);
+        clone = enforce(clone.concat(tmp));
     },
     complete: function(){
         // removes everything (teardown)

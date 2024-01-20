@@ -25,7 +25,7 @@
         "mode-array", "mode-array-proxy"
     ]:[
         "mikado", "mikado-proxy", "mikado-shadow",
-        //"mikado-0.8.2", "mikado-0.7.6", "mikado-proxy-0.7.6", "mikado-0.7.5", "mikado-0.7.4",
+        //"mikado-0.7.6", "mikado-proxy-0.7.6", "mikado-0.7.5", "mikado-0.7.4",
         "stage0", "solid", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",
