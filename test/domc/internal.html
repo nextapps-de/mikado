@@ -20,9 +20,8 @@
 
     import { suite, root, store } from "./../../bench.js";
 
-    import domc from './dist/index.js';
-    import './dist/vFor.js'
-    import './dist/vMap.js'
+    import domc from './node_modules/domc/index.js';
+    import './node_modules/domc/vFor.js';
 
     let app = domc(root);
     let scope = {items: []};
