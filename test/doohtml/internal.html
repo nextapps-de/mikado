@@ -28,11 +28,12 @@
         class Main extends Doo {
             constructor(){
 
-                super()
+                super(100);
                 this.defaultDataSet = "rows";
                 this.data = {
                     [this.defaultDataSet]: store([])
                 };
+
                 suite["doohtml"] = this.render.bind(this);
             }
 

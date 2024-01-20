@@ -373,16 +373,20 @@ window.onload = function(){
 
     if(queue.length){
 
-        const lib = Object.keys(suite)[0];
+        setTimeout(function(){
 
-        for(let i = 0, item; i < queue.length; i++){
+            const lib = Object.keys(suite)[0];
 
-            item = queue[i];
-            item.fn || (item.fn = suite[lib]);
-            item.test || (item.test = suite[lib]);
-        }
+            for(let i = 0, item; i < queue.length; i++){
 
-        setTimeout(perform, 200);
+                item = queue[i];
+                item.fn || (item.fn = suite[lib]);
+                item.test || (item.test = suite[lib]);
+            }
+
+            perform();
+
+        }, 200);
     }
 };
 

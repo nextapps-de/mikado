@@ -165,8 +165,7 @@ The test "innerHTML" just uses the browsers native feature <code>element.innerHT
 <ul>
     <li><u>Recycle</u>:<sup>*</sup> No restrictions. Everything is allowed, e.g. the re-usage of DOM elements.</li>
     <li><u>Keyed</u>:<sup>*</sup> The re-usage of DOM elements is just allowed on data entries sharing the same key.</li>
-    <li><u>Data-Driven</u>:<sup> </sup> No restrictions. Does not apply de-referencing to the test data.</li>
-    <!--<li><u>Strict</u>:<sup> </sup> Any kind of recycle (e.g. keyed recycling) is disallowed. Uses infinite random data.</li>-->
+    <li><u>Data-Driven</u>:<sup> </sup> NRestrictions like keyed, but does not apply de-referencing to the test data.</li>
 </ul>
 <sup>*</sup> The test applies de-referencing to mimic real incoming data from a server. No fake allowed.
 <br><br>
@@ -179,14 +178,6 @@ To bo honest, everything else would be a fake. The data-driven test covers the f
 <br><br>
 The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation (by forcing reflow at the end of each test cycle). Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test and will drastically reduce the potential of getting meaningful results.
 </p><br>
-<!--
-<b>Test Data:</b>
-<p>
-Before every test is running 5 slots each including 100 unique data items are created. Imagine a paginated table on which you move 5 steps forward, every page has 100 rows.
-The test data isn't infinite, because the benchmark has to cover the library optimizations capabilities. Some important capabilities are getting lost when using infinite random data. Let's take the "keyed" recycle strategy as an example. When a key will never match, the whole strategy will negate every improvement and becomes useless.
-Also, it doesn't match real world scenario when a test runs 5 seconds and is applying more than 2 million of unique data entries.
-</p><br>
--->
 <b>Results:</b>
 <p>
 The result values are based on average, not median. Using median is widely used, but the truth is median timing results effectively cuts out the garbage collector and leads into false results. The <b>index</b> is a stable statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The <b>score</b> value is based on median factorization (apply median on average results is fine), here a score of 100 represents the statistical midfield.
