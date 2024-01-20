@@ -8,6 +8,7 @@ import template_static from "../tpl/static.js";
 import template_svg from "../tpl/svg.js";
 import template_full from "../tpl/full.js";
 import template_crazy from "../tpl/crazy.js";
+import template_whitespace from "../tpl/whitespace.js";
 import data from "../data.js";
 
 describe("Render Template", function(){
@@ -300,6 +301,23 @@ describe("Render Template", function(){
         expect(node.children[2].textContent.trim()).to.equal("12 true");
         expect(node.children[3].style.display).to.equal("block");
         expect(node.children[3].innerHTML).to.equal(" <b>bold</b> ");
+
+        view.clear().destroy();
+    });
+
+    it("Should have been parse whitespaces in templates properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_whitespace, { root: root_1 });
+
+        view.render();
+        expect(view.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(2);
+        expect(node.children[0].textContent.trim()).to.equal("test");
+        expect(node.children[1].textContent.trim()).to.equal("test-test");
 
         view.clear().destroy();
     });

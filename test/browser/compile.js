@@ -215,6 +215,28 @@ const template_crazy = `
 </div>
 `;
 
+const template_whitespace = `
+<main>
+    <section
+        style="
+          display: block;
+          position: relative;
+        "
+    >
+
+        test
+
+    </section>
+    <section>
+        {{
+            'test' +
+            \`-\` +
+            "test"
+        }}
+    </section>
+</main>
+`;
+
 describe("Compile Template", function(){
 
     it("Should compile basic template properly", function(){
@@ -586,6 +608,23 @@ describe("Compile Template", function(){
         expect(view.root.querySelector("thead th:last-child").children.length).to.equal(1);
         expect(view.root.querySelector("tbody").children.length).to.equal(0);
         expect(view.root.querySelector("tfoot").children.length).to.equal(1);
+
+        view.clear().destroy();
+    });
+
+    it("Should have been parse whitespaces in templates properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const tpl = Mikado.compile(template_whitespace);
+        const view = new Mikado(tpl, { mount: root_1 }).render();
+
+        expect(view.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(2);
+        expect(node.children[0].textContent.trim()).to.equal("test");
+        expect(node.children[1].textContent.trim()).to.equal("test-test");
 
         view.clear().destroy();
     });

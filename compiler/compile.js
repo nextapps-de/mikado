@@ -1237,11 +1237,11 @@ function create_schema(root, inc, fn, index, attr, mode){
                             }
                             else if(key === "text"){
 
-                                index.ssr += (root.tag ? ">" : "") + escape_single_quotes(value.replace(/\\n/g, " "));
+                                index.ssr += (root.tag ? ">" : "") + escape_single_quotes(value.replace(/\s+/g, " "));
                             }
                             else if(key !== "tag" /*&& key !== "root"*/ && key !== "for" && key !== "if" && key !== "inc"){
 
-                                index.ssr += ' ' + key + (value ? '="' + escape_single_quotes(value) + '"' : "");
+                                index.ssr += ' ' + key + (value ? '="' + escape_single_quotes(value.replace(/\s+/g, " ")) + '"' : "");
                             }
                         }
 

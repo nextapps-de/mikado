@@ -9,6 +9,7 @@ import template_static from "../tpl/static.js";
 import template_svg from "../tpl/svg.js";
 import template_full from "../tpl/full.js";
 import template_crazy from "../tpl/crazy.js";
+import template_whitespace from "../tpl/whitespace.js";
 
 describe("[Express] Render Template", function(){
 
@@ -301,6 +302,21 @@ describe("[Express] Render Template", function(){
         expect(node.children[2].textContent.trim()).to.equal("12 true");
         expect(node.children[3].style.display).to.equal("block");
         expect(node.children[3].innerHTML).to.equal(" <b>bold</b> ");
+    });
+
+    it("Should have been parse whitespaces in templates properly", function(){
+
+        const template = fetch("/express/whitespace/");
+        const root_1 = document.getElementById("root-1");
+        root_1.innerHTML = template;
+
+        expect(root_1.children.length).to.equal(1);
+
+        let node = root_1.firstElementChild;
+
+        expect(node.children.length).to.equal(2);
+        expect(node.children[0].textContent.trim()).to.equal("test");
+        expect(node.children[1].textContent.trim()).to.equal("test-test");
     });
 });
 
