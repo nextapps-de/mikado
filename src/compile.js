@@ -37,12 +37,14 @@ const event_types = SUPPORT_EVENTS && {
     "scroll": 1
 };
 
+/*
 const idl_attributes = {
 
     "checked": 1,
     "selected": 1,
     "hidden": 1
 };
+*/
 
 // function escape_single_quotes(str){
 //
@@ -599,10 +601,11 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
                 '_c&&(_c["_a' + key + '"]=_v);' +
                 'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
                     '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                    (idl_attributes[key]
-                        ? '_o.n.' + key + '=_v'
-                        : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
-                    ) +
+                    '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                    // (idl_attributes[key]
+                    //     ? '_o.n.' + key + '=_v'
+                    //     : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
+                    // ) +
                 '}');
         }
         else if(key === "class"){

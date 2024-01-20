@@ -63,7 +63,6 @@ export let TemplateDOM;
  */
 export let EventOptions;
 
-
 /**
  * @typedef {{
  *   _s: (string|undefined),
@@ -77,13 +76,21 @@ export let NodeCache;
 /**
  * @typedef {{
  *   path: Array<Cache>,
- *   fn: Object<string, Array<string, number>>,
+ *   fn: Object<string, Array<ProxyCache>>,
  *   get: Function,
  *   set: Function
  * }}
  */
 export let ProxyHandler;
 
+/**
+ * @typedef {{
+ *   fn: string,
+ *   index: number,
+ *   key: (string|undefined)
+ * }}
+ */
+export let ProxyCache;
 
 /**
  * @typedef {{

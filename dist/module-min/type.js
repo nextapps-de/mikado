@@ -1,1 +1,1 @@
-import Observer from"./array.js";import{Cache}from"./factory.js";export let MikadoOptions;export let Template;export let TemplateDOM;export let EventOptions;export let NodeCache;export let ProxyHandler;export let MikadoCallbacks;
+import Observer from"./array.js";import{Cache}from"./factory.js";export let MikadoOptions;export let Template;export let TemplateDOM;export let EventOptions;export let NodeCache;export let ProxyHandler;export let ProxyCache;export let MikadoCallbacks;

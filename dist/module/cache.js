@@ -1,6 +1,6 @@
 
 import { NodeCache } from "./type.js";
-import { idl_attributes } from "./factory.js";
+//import { idl_attributes } from "./factory.js";
 
 const regex_css = /[^;:]+/g,
       regex_class = / +/;
@@ -128,13 +128,14 @@ function _setAttribute(node, attr, value, cache) {
 
         cache["_a" + attr] = value;
 
-        if (idl_attributes[attr]) {
+        // if(idl_attributes[attr]){
+        //
+        //     node[attr] = value;
+        // }
+        // else{
 
-            node[attr] = value;
-        } else {
-
-            !1 === value ? node.removeAttribute(attr) : node.setAttribute(attr, value);
-        }
+        !1 === value ? node.removeAttribute(attr) : node.setAttribute(attr, value);
+        // }
     } else {}
 }
 
@@ -177,13 +178,14 @@ function _removeAttribute(node, attr, cache) {
 
         cache["_a" + attr] = !1;
 
-        if (idl_attributes[attr]) {
+        // if(idl_attributes[attr]){
+        //
+        //     node[attr] = false;
+        // }
+        // else{
 
-            node[attr] = !1;
-        } else {
-
-            node.removeAttribute(attr);
-        }
+        node.removeAttribute(attr);
+        // }
     } else {}
 }
 
@@ -210,13 +212,14 @@ export function getAttribute(node, attr) {
 
     if ("string" != typeof tmp) {
 
-        if (idl_attributes[attr]) {
+        // if(idl_attributes[attr]){
+        //
+        //     tmp = node[attr];
+        // }
+        // else{
 
-            tmp = node[attr];
-        } else {
-
-            tmp = node.getAttribute(attr);
-        }
+        tmp = node.getAttribute(attr);
+        // }
 
         cache["_a" + attr] = tmp;
     } else {}

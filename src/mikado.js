@@ -31,7 +31,7 @@ import {
 } from "./config.js";
 import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
-import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache, ProxyCache } from "./type.js";
 import Observer from "./array.js";
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
@@ -181,7 +181,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
     if(SUPPORT_REACTIVE){
 
         /**
-         * @type {Object<string, Array<string, number>>}
+         * @type {Object<string, Array<ProxyCache>>}
          */
         this.proxy = null;
         /** @type {number} */
@@ -1091,15 +1091,14 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
 
     if(this.apply){
 
-        cache = SUPPORT_CACHE && factory && this.cache && /** @type {Array<NodeCache>} */ (
-            new Array(this.factory[MIKADO_TPL_PATH].length)
-        );
+        const vpath = node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache));
+        cache = SUPPORT_CACHE && factory && this.cache && /** @type {Array<NodeCache>} */ (new Array(vpath.length));
 
         this.apply(
             data,
             state || this.state,
             index,
-            node[MIKADO_TPL_PATH] || create_path(node, this.factory[MIKADO_TPL_PATH], !!factory || (SUPPORT_CACHE && this.cache)),
+            vpath,
             cache
         );
     }
@@ -1230,6 +1229,8 @@ Mikado.prototype.add = function(data, state, index){
 export function apply_proxy(self, node, data){
 
     PROFILER && tick("proxy.apply");
+
+    //TODO inject the full path on first recycle
 
     return proxy_create(
         data,
@@ -1640,6 +1641,7 @@ Mikado.prototype.remove = function(index, count){
 
         node = nodes[reverse ? count - x - 1 : x];
         length && node.remove(); //this.root.removeChild(node);
+        // TODO improve checkout
         checkout && this.checkout(node);
         callback && callback(node, this);
     }

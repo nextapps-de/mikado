@@ -1,6 +1,6 @@
 
 
-import { ProxyHandler } from "./type.js";
+import { ProxyHandler, ProxyCache } from "./type.js";
 import { Cache } from "./factory.js";
 
 const proxy = window.Proxy || function () {
@@ -21,7 +21,7 @@ const proxy = window.Proxy || function () {
 
         /**
          * @private
-         * @const {Object<string, Array<string, number>>}
+         * @const {Object<string, Array<ProxyCache>>}
          */
         this.fn = proxy.fn;
 
@@ -78,7 +78,7 @@ const proxy = window.Proxy || function () {
 /**
  * @param {Object} obj
  * @param {Array<Cache>} path
- * @param {Object<string, Array<string, number>>} fn
+ * @param {Object<string, Array<ProxyCache>>} fn
  * @return {Proxy}
  */
 
@@ -133,17 +133,18 @@ function set(target, prop, value) {
 
 function proxy_loop(handler, value, prop) {
 
+    /** @type {Array<ProxyCache>} */
     const exp = handler.fn[prop];
 
     if (exp) {
 
         for (let i = 0; i < exp.length; i++) {
 
-            // tmp = [ Function Name, DOM Cache, <Attribute Key> ]
+            /** @type {ProxyCache} */
             const tmp = exp[i],
-                  fn = tmp[0],
-                  cache = /** @type {Cache} */handler.path[tmp[1]],
-                  key = tmp[2] || "";
+                  fn = tmp.fn,
+                  cache = /** @type {Cache} */handler.path[tmp.index],
+                  key = tmp.key || "";
 
 
             if (!cache.c || cache.c[fn + key] !== value) {

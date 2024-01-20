@@ -21,7 +21,7 @@ import {
 } from "./config.js";
 import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
-import { TemplateDOM, Template, MikadoOptions, NodeCache } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, NodeCache, ProxyCache } from "./type.js";
 import Mikado, { includes } from "./mikado.js";
 import { listen } from "./event.js";
 
@@ -70,8 +70,8 @@ export function create_path(root, path, _use_cache){
             if(!node){
 
                 node_parent = resolve(root, vpath, vcache);
-                node = node_parent[0];
-                node_parent = node_parent[1] || node;
+                node = node_parent.node;
+                node_parent = node_parent.parent || node;
             }
         }
         else{
@@ -89,7 +89,6 @@ export function create_path(root, path, _use_cache){
         }
 
         PROFILER && tick("cache.create");
-
         new_path[x] = new Cache(cache, node, "");
     }
 
@@ -102,16 +101,18 @@ export function create_path(root, path, _use_cache){
 }
 
 /**
- * @param {Node} root
+ * @param {Node} node
  * @param {string} path
  * @param {Object} cache
- * @return {Array<Element|Node|CSSStyleDeclaration>}
+ * @return {Object<string, Element|Node|CSSStyleDeclaration>}
  */
 
-function resolve(root, path, cache){
+function resolve(node, path, cache){
 
     PROFILER && tick("factory.resolve");
     //profiler_start("resolve");
+
+    let parent = null;
 
     for(let i = 0, length = path.length, tmp = ""; i < length; i++){
 
@@ -120,36 +121,40 @@ function resolve(root, path, cache){
 
         if(cache[tmp]){
 
-            root = cache[tmp];
+            node = cache[tmp];
         }
         else{
 
             if(current_path === ">"){
 
-                //root = root.firstElementChild;
-                root = root.firstChild;
+                //node = node.firstElementChild;
+                node = node.firstChild;
             }
             else if(current_path === "|"){
 
-                return [root.firstChild, root];
+                parent = node;
+                node = node.firstChild;
+                break;
             }
             else if(current_path === "@"){
 
-                return [root.style, root];
+                parent = node;
+                node = node.style;
+                break;
             }
             else /*if(current_path === "+")*/{
 
-                //root = root.nextElementSibling;
-                root = root.nextSibling;
+                //node = node.nextElementSibling;
+                node = node.nextSibling;
             }
 
-            cache[tmp] = root;
+            cache[tmp] = node;
         }
     }
 
     //profiler_end("resolve");
 
-    return [root, null];
+    return { node, parent };
 }
 
 /**
@@ -196,7 +201,13 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
                 if((val = val[0])){
 
-                    init_proxy(self, val, ["_c", path.length - 1]);
+                    /** @type {ProxyCache} */
+                    const proxy = {
+                        fn: "_c",
+                        index:  path.length - 1
+                    };
+
+                    init_proxy(self, val, proxy);
                 }
                 else{
 
@@ -227,7 +238,14 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
                     if((item = item[0])){
 
-                        init_proxy(self, item, ["_a", path.length - 1, key]);
+                        /** @type {ProxyCache} */
+                        const proxy = {
+                            fn: "_a",
+                            index:  path.length - 1,
+                            key
+                        };
+
+                        init_proxy(self, item, proxy);
                     }
                     else{
 
@@ -268,7 +286,13 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
                 if((val = val[0])){
 
-                    init_proxy(self, val, ["_s", path.length - 1]);
+                    /** @type {ProxyCache} */
+                    const proxy = {
+                        fn: "_s",
+                        index:  path.length - 1
+                    };
+
+                    init_proxy(self, val, proxy);
                 }
                 else{
 
@@ -317,7 +341,13 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
                 if(val){
 
-                    init_proxy(self, val, ["_t", path.length - 1]);
+                    /** @type {ProxyCache} */
+                    const proxy = {
+                        fn: "_t",
+                        index:  path.length - 1
+                    };
+
+                    init_proxy(self, val, proxy);
                 }
                 else{
 
@@ -412,7 +442,13 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
                 if((val = val[0])){
 
-                    init_proxy(self, val, ["_h", path.length - 1]);
+                    /** @type {ProxyCache} */
+                    const proxy = {
+                        fn: "_h",
+                        index:  path.length - 1
+                    };
+
+                    init_proxy(self, val, proxy);
                 }
                 else{
 
@@ -542,7 +578,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 /**
  * @param {!Mikado} self
  * @param {string} key
- * @param {Array<string|number>} payload
+ * @param {ProxyCache} payload
  */
 
 function init_proxy(self, key, payload){
@@ -553,12 +589,15 @@ function init_proxy(self, key, payload){
     (self.proxy[key] || (self.proxy[key] = [])).push(payload);
 }
 
+/** @dict */
+/*
 export const idl_attributes = {
 
     "checked": 1,
     "selected": 1,
     "hidden": 1
 };
+*/
 
 /**
  * @constructor
@@ -612,17 +651,18 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
         }
 
         // IDL attributes are faster but some didn't reflect content attribute state
+        // also they don't get copied by cloneNode()
 
-        if(idl_attributes[key]){
-
-            this.n[key] = value;
-        }
-        else{
+        // if(SUPPORT_CACHE && !cache && idl_attributes[key]){
+        //
+        //     this.n[key] = value;
+        // }
+        // else{
 
             value === false
                 ? this.n.removeAttribute(key)
                 : this.n.setAttribute(key, value);
-        }
+        // }
     }
 
     /**

@@ -3,7 +3,7 @@ import { SUPPORT_REACTIVE, MIKADO_PROXY, PROFILER } from "./config.js";
 import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 
-import { ProxyHandler } from "./type.js";
+import { ProxyHandler, ProxyCache } from "./type.js";
 import { Cache } from "./factory.js";
 
 const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
@@ -24,7 +24,7 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
 
         /**
          * @private
-         * @const {Object<string, Array<string, number>>}
+         * @const {Object<string, Array<ProxyCache>>}
          */
         this.fn = proxy.fn;
 
@@ -81,13 +81,15 @@ const proxy = SUPPORT_REACTIVE && (window["Proxy"] || (function(){
     return Proxy;
 }()));
 
+
+
 // Handler holds multiple dynamic expressions which references to the same data field
 // {"title": [["text", node, value, attr], [...]]}
 
 /**
  * @param {Object} obj
  * @param {Array<Cache>} path
- * @param {Object<string, Array<string, number>>} fn
+ * @param {Object<string, Array<ProxyCache>>} fn
  * @return {Proxy}
  */
 
@@ -150,17 +152,18 @@ function set(target, prop, value){
 
 function proxy_loop(handler, value, prop){
 
+    /** @type {Array<ProxyCache>} */
     const exp = handler.fn[prop];
 
     if(exp){
 
         for(let i = 0; i < exp.length; i++){
 
-            // tmp = [ Function Name, DOM Cache, <Attribute Key> ]
+            /** @type {ProxyCache} */
             const tmp = exp[i];
-            const fn = tmp[0];
-            const cache = /** @type {Cache} */ (handler.path[tmp[1]]);
-            const key = tmp[2] || "";
+            const fn = tmp.fn;
+            const cache = /** @type {Cache} */ (handler.path[tmp.index]);
+            const key = tmp.key || "";
 
             if(!cache.c || cache.c[fn + key] !== value){
 

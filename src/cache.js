@@ -3,7 +3,7 @@ import { MIKADO_NODE_CACHE, PROFILER } from "./config.js";
 import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { NodeCache } from "./type.js";
-import { idl_attributes } from "./factory.js";
+//import { idl_attributes } from "./factory.js";
 
 const regex_css = /[^;:]+/g;
 const regex_class = / +/;
@@ -147,16 +147,16 @@ function _setAttribute(node, attr, value, cache){
 
         cache["_a" + attr] = value;
 
-        if(idl_attributes[attr]){
-
-            node[attr] = value;
-        }
-        else{
+        // if(idl_attributes[attr]){
+        //
+        //     node[attr] = value;
+        // }
+        // else{
 
             value === false
                 ? node.removeAttribute(attr)
                 : node.setAttribute(attr, value);
-        }
+        // }
     }
     else{
 
@@ -207,14 +207,14 @@ function _removeAttribute(node, attr, cache){
 
         cache["_a" + attr] = false;
 
-        if(idl_attributes[attr]){
-
-            node[attr] = false;
-        }
-        else{
+        // if(idl_attributes[attr]){
+        //
+        //     node[attr] = false;
+        // }
+        // else{
 
             node.removeAttribute(attr);
-        }
+        // }
     }
     else{
 
@@ -248,14 +248,14 @@ export function getAttribute(node, attr){
         PROFILER && tick("cache.miss");
         PROFILER && tick("cache.attr");
 
-        if(idl_attributes[attr]){
-
-            tmp = node[attr];
-        }
-        else{
+        // if(idl_attributes[attr]){
+        //
+        //     tmp = node[attr];
+        // }
+        // else{
 
             tmp = node.getAttribute(attr);
-        }
+        // }
 
         cache["_a" + attr] = tmp;
     }

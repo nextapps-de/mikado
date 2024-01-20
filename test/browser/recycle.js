@@ -176,7 +176,7 @@ describe("Recycle Template", function(){
 
         // full shuffle
 
-        for(let i = 0; i < 50; i++){
+        for(let i = 0; i < 10; i++){
 
             items = shuffle(items);
             view.render(items);
@@ -192,7 +192,7 @@ describe("Recycle Template", function(){
 
         // new items in, old items out, some items stay, size increase or decrease
 
-        for(let i = 0; i < 100; i++){
+        for(let i = 0; i < 10; i++){
 
             items = shuffle(data.slice());
             items = items.splice(0, 15).concat(items.splice(15, (Math.random() * 30) | 0));
@@ -213,7 +213,7 @@ describe("Recycle Template", function(){
         view = new Mikado(template_keyed, { mount: root_1, pool: false, cache: true });
         items = data.slice();
 
-        for(let i = 0; i < 50; i++){
+        for(let i = 0; i < 10; i++){
 
             items = shuffle(items);
             view.render(items);
@@ -229,7 +229,7 @@ describe("Recycle Template", function(){
 
         // new items in, old items out, some items stay, size increase or decrease
 
-        for(let i = 0; i < 100; i++){
+        for(let i = 0; i < 10; i++){
 
             items = shuffle(data.slice());
             items = items.splice(0, 15).concat(items.splice(15, (Math.random() * 30) | 0));

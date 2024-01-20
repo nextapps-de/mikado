@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.307 (Bundle/Debug)
+ * Mikado.js v0.8.309 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -26,46 +26,46 @@ function handler$$module$tmp$event(a, b) {
     PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.trigger");
     var d = Mikado$$module$tmp$mikado.eventCache, e = Mikado$$module$tmp$mikado.eventBubble;
     b || (b = a.type);
-    var f;
-    d && (f = c[MIKADO_EVENT_CACHE$$module$tmp$config + b]);
-    if ("undefined" === typeof f) {
+    var g;
+    d && (g = c[MIKADO_EVENT_CACHE$$module$tmp$config + b]);
+    if ("undefined" === typeof g) {
       for (var h = c; h && h !== doc$$module$tmp$event;) {
         PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble");
-        var g = void 0;
-        "click" === b && tap_fallback$$module$tmp$event && (g = h.getAttribute("tap"));
-        g || (g = h.getAttribute(b));
-        if (g) {
-          var k = g.indexOf(":"), l = h;
+        var f = void 0;
+        "click" === b && tap_fallback$$module$tmp$event && (f = h.getAttribute("tap"));
+        f || (f = h.getAttribute(b));
+        if (f) {
+          var k = f.indexOf(":"), l = h;
           if (-1 < k) {
-            const m = g.substring(0, k);
-            k = g.substring(k + 1);
-            for (g = ""; (l = l.parentElement) !== doc$$module$tmp$event;) {
+            const m = f.substring(0, k);
+            k = f.substring(k + 1);
+            for (f = ""; (l = l.parentElement) !== doc$$module$tmp$event;) {
               if (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.bubble"), l.hasAttribute(k)) {
-                g = m;
+                f = m;
                 break;
               }
             }
-            DEBUG$$module$tmp$config && (g || console.warn("Event root '" + k + "' was not found for the event: '" + m + "'."));
+            DEBUG$$module$tmp$config && (f || console.warn("Event root '" + k + "' was not found for the event: '" + m + "'."));
           }
-          if (g && (f || (f = [], d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = f)), f.push([g, l]), l = options$$module$tmp$event[g], !e || l && (l.stop || l.cancel))) {
+          if (f && (g || (g = [], d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = g)), g.push([f, l]), l = options$$module$tmp$event[f], !e || l && (l.stop || l.cancel))) {
             break;
           }
         }
         h = h.parentElement;
       }
-      d && (f || (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
+      d && (g || (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
     } else {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("event.cache");
     }
-    if (f) {
-      for (let m = 0, n; m < f.length; m++) {
-        if (n = f[m], e = n[0], h = routes$$module$tmp$event[e]) {
-          g = n[1];
+    if (g) {
+      for (let m = 0, n; m < g.length; m++) {
+        if (n = g[m], e = n[0], h = routes$$module$tmp$event[e]) {
+          f = n[1];
           if (l = options$$module$tmp$event[e]) {
             l.prevent && a.preventDefault(), l.stop && a.stopImmediatePropagation(), l.once && (routes$$module$tmp$event[e] = null, d && (c[MIKADO_EVENT_CACHE$$module$tmp$config + b] = null));
           }
           PROFILER$$module$tmp$config && tick$$module$tmp$profiler("route.call");
-          h(g, a);
+          h(f, a);
         } else {
           DEBUG$$module$tmp$config && console.warn("The route '" + e + "' is not defined for the event '" + b + "'.");
         }
@@ -115,12 +115,12 @@ if (has_touch$$module$tmp$event || has_pointer$$module$tmp$event) {
     c(e, e.touches);
   }
   function b(e) {
-    const f = touch_x$$module$tmp$event, h = touch_y$$module$tmp$event;
+    const g = touch_x$$module$tmp$event, h = touch_y$$module$tmp$event;
     c(e, e.changedTouches);
-    15 > Math.abs(touch_x$$module$tmp$event - f) && 15 > Math.abs(touch_y$$module$tmp$event - h) && handler$$module$tmp$event(e, "tap");
+    15 > Math.abs(touch_x$$module$tmp$event - g) && 15 > Math.abs(touch_y$$module$tmp$event - h) && handler$$module$tmp$event(e, "tap");
   }
-  function c(e, f) {
-    f && (e = f[0]);
+  function c(e, g) {
+    g && (e = g[0]);
     touch_x$$module$tmp$event = e.clientX;
     touch_y$$module$tmp$event = e.clientY;
   }
@@ -151,48 +151,51 @@ function create_path$$module$tmp$factory(a, b, c) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.path");
   let d;
   SUPPORT_CACHE$$module$tmp$config && c && (d = a[MIKADO_NODE_CACHE$$module$tmp$config]) && (a[MIKADO_NODE_CACHE$$module$tmp$config] = null);
-  const e = b.length, f = Array(e), h = {};
-  for (let g = 0, k, l, m, n, p = null; g < e; g++) {
-    k = b[g], (l = k.v) ? (n = m = h[l], n || (m = resolve$$module$tmp$factory(a, l, h), n = m[0], m = m[1] || n)) : n = m = a, c && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.transfer"), p = SUPPORT_CACHE$$module$tmp$config && d ? d[g] : {}, m[MIKADO_NODE_CACHE$$module$tmp$config] = p), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), f[g] = new Cache$$module$tmp$factory(p, n, "");
+  const e = b.length, g = Array(e), h = {};
+  for (let f = 0, k, l, m, n, p = null; f < e; f++) {
+    k = b[f], (l = k.v) ? (n = m = h[l], n || (m = resolve$$module$tmp$factory(a, l, h), n = m.node, m = m.parent || n)) : n = m = a, c && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.transfer"), p = SUPPORT_CACHE$$module$tmp$config && d ? d[f] : {}, m[MIKADO_NODE_CACHE$$module$tmp$config] = p), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), g[f] = new Cache$$module$tmp$factory(p, n, "");
   }
-  return a[MIKADO_TPL_PATH$$module$tmp$config] = f;
+  return a[MIKADO_TPL_PATH$$module$tmp$config] = g;
 }
 function resolve$$module$tmp$factory(a, b, c) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.resolve");
-  for (let d = 0, e = b.length, f = ""; d < e; d++) {
-    const h = b[d];
-    f += h;
-    if (c[f]) {
-      a = c[f];
+  let d = null;
+  for (let e = 0, g = b.length, h = ""; e < g; e++) {
+    const f = b[e];
+    h += f;
+    if (c[h]) {
+      a = c[h];
     } else {
-      if (">" === h) {
+      if (">" === f) {
         a = a.firstChild;
+      } else if ("|" === f) {
+        d = a;
+        a = a.firstChild;
+        break;
+      } else if ("@" === f) {
+        d = a;
+        a = a.style;
+        break;
       } else {
-        if ("|" === h) {
-          return [a.firstChild, a];
-        }
-        if ("@" === h) {
-          return [a.style, a];
-        }
         a = a.nextSibling;
       }
-      c[f] = a;
+      c[h] = a;
     }
   }
-  return [a, null];
+  return {node:a, parent:d};
 }
-function construct$$module$tmp$factory(a, b, c, d, e, f) {
+function construct$$module$tmp$factory(a, b, c, d, e, g) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.construct");
-  SUPPORT_REACTIVE$$module$tmp$config && !f && (a.fullproxy = 1);
+  SUPPORT_REACTIVE$$module$tmp$config && !g && (a.fullproxy = 1);
   const h = e || (b.tag ? b.svg ? document.createElementNS("http://www.w3.org/2000/svg", b.tag) : document.createElement(b.tag) : document.createTextNode(b.text));
-  let g, k;
+  let f, k;
   if (k = b.class) {
-    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), c.push(new Cache$$module$tmp$factory(g = {_c:""}, h, d)), SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, ["_c", c.length - 1]) : a.fullproxy = 0)) : e || (h.className = k);
+    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), c.push(new Cache$$module$tmp$factory(f = {_c:""}, h, d)), SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, {fn:"_c", index:c.length - 1}) : a.fullproxy = 0)) : e || (h.className = k);
   }
   if (k = b.attr) {
     for (const m in k) {
       let n = k[m];
-      "object" === typeof n ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), g || c.push(new Cache$$module$tmp$factory(g = {}, h, d)), g["_a" + m] = !1, SUPPORT_REACTIVE$$module$tmp$config && ((n = n[0]) ? init_proxy$$module$tmp$factory(a, n, ["_a", c.length - 1, m]) : a.fullproxy = 0)) : e || h.setAttribute(m, n);
+      "object" === typeof n ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), f || c.push(new Cache$$module$tmp$factory(f = {}, h, d)), f["_a" + m] = !1, SUPPORT_REACTIVE$$module$tmp$config && ((n = n[0]) ? init_proxy$$module$tmp$factory(a, n, {fn:"_a", index:c.length - 1, key:m}) : a.fullproxy = 0)) : e || h.setAttribute(m, n);
     }
   }
   if (SUPPORT_EVENTS$$module$tmp$config && (k = b.event)) {
@@ -201,17 +204,17 @@ function construct$$module$tmp$factory(a, b, c, d, e, f) {
     }
   }
   if (k = b.style) {
-    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), c.push(new Cache$$module$tmp$factory(g || (g = {}), h.style, d + "@")), g._s = "", SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, ["_s", c.length - 1]) : a.fullproxy = 0)) : e || (h.style.cssText = k);
+    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), c.push(new Cache$$module$tmp$factory(f || (f = {}), h.style, d + "@")), f._s = "", SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, {fn:"_s", index:c.length - 1}) : a.fullproxy = 0)) : e || (h.style.cssText = k);
   }
   if (k = b.text) {
     if ("object" === typeof k) {
       var l = h;
       k = k[0];
-      b.tag ? (d += "|", l = !e && h.firstChild, l || (l = document.createTextNode(k), h.appendChild(l))) : g = {};
-      (g || (g = {}))._t = k;
+      b.tag ? (d += "|", l = !e && h.firstChild, l || (l = document.createTextNode(k), h.appendChild(l))) : f = {};
+      (f || (f = {}))._t = k;
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create");
-      c.push(new Cache$$module$tmp$factory(g, l, d));
-      SUPPORT_REACTIVE$$module$tmp$config && (k ? init_proxy$$module$tmp$factory(a, k, ["_t", c.length - 1]) : a.fullproxy = 0);
+      c.push(new Cache$$module$tmp$factory(f, l, d));
+      SUPPORT_REACTIVE$$module$tmp$config && (k ? init_proxy$$module$tmp$factory(a, k, {fn:"_t", index:c.length - 1}) : a.fullproxy = 0);
     } else {
       e || (b.tag ? h.textContent = k : h.nodeValue = k);
     }
@@ -230,11 +233,11 @@ function construct$$module$tmp$factory(a, b, c, d, e, f) {
       }
     }
   } else if (k = b.html) {
-    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), g || c.push(new Cache$$module$tmp$factory(g = {}, h, d)), g._h = "", SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, ["_h", c.length - 1]) : a.fullproxy = 0)) : e || (h.innerHTML = k);
+    "object" === typeof k ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create"), f || c.push(new Cache$$module$tmp$factory(f = {}, h, d)), f._h = "", SUPPORT_REACTIVE$$module$tmp$config && ((k = k[0]) ? init_proxy$$module$tmp$factory(a, k, {fn:"_h", index:c.length - 1}) : a.fullproxy = 0)) : e || (h.innerHTML = k);
   } else if (k = b.inc) {
     PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.create");
     PROFILER$$module$tmp$config && tick$$module$tmp$profiler("template.include");
-    g || c.push(new Cache$$module$tmp$factory(null, h, d));
+    f || c.push(new Cache$$module$tmp$factory(null, h, d));
     if ("string" === typeof k) {
       l = includes$$module$tmp$mikado[k];
       if (DEBUG$$module$tmp$config && !l) {
@@ -256,8 +259,8 @@ function construct$$module$tmp$factory(a, b, c, d, e, f) {
     }
     1 !== k && a.inc.push(l);
   }
-  g && (h[MIKADO_NODE_CACHE$$module$tmp$config] = g);
-  f || (h[MIKADO_TPL_PATH$$module$tmp$config] = c);
+  f && (h[MIKADO_NODE_CACHE$$module$tmp$config] = f);
+  g || (h[MIKADO_TPL_PATH$$module$tmp$config] = c);
   return h;
 }
 function init_proxy$$module$tmp$factory(a, b, c) {
@@ -265,7 +268,6 @@ function init_proxy$$module$tmp$factory(a, b, c) {
   a.proxy || (a.proxy = {});
   (a.proxy[b] || (a.proxy[b] = [])).push(c);
 }
-const idl_attributes$$module$tmp$factory = {checked:1, selected:1, hidden:1};
 function Cache$$module$tmp$factory(a, b, c) {
   this.c = a;
   this.n = b;
@@ -288,7 +290,7 @@ if (SUPPORT_COMPACT_TEMPLATE$$module$tmp$config || SUPPORT_REACTIVE$$module$tmp$
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr");
       this.c["_a" + a] = b;
     }
-    idl_attributes$$module$tmp$factory[a] ? this.n[a] = b : !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
+    !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
   }, Cache$$module$tmp$factory.prototype._t = function(a, b, c) {
     if (this.c) {
       if (b) {
@@ -362,7 +364,6 @@ if (SUPPORT_COMPACT_TEMPLATE$$module$tmp$config || SUPPORT_REACTIVE$$module$tmp$
 var module$tmp$factory = {Cache:Cache$$module$tmp$factory};
 module$tmp$factory.construct = construct$$module$tmp$factory;
 module$tmp$factory.create_path = create_path$$module$tmp$factory;
-module$tmp$factory.idl_attributes = idl_attributes$$module$tmp$factory;
 const proxy$$module$tmp$proxy = SUPPORT_REACTIVE$$module$tmp$config && (window.Proxy || function() {
   function a(b, c) {
     this.path = c.path;
@@ -379,9 +380,9 @@ const proxy$$module$tmp$proxy = SUPPORT_REACTIVE$$module$tmp$config && (window.P
     Object.defineProperty(b, c, {get:function() {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("proxy.read");
       return d;
-    }, set:function(f) {
+    }, set:function(g) {
       PROFILER$$module$tmp$config && tick$$module$tmp$profiler("proxy.write");
-      proxy_loop$$module$tmp$proxy(e, d = f, c);
+      proxy_loop$$module$tmp$proxy(e, d = g, c);
     }});
   };
   return a;
@@ -409,9 +410,9 @@ function proxy_loop$$module$tmp$proxy(a, b, c) {
   if (c = a.fn[c]) {
     for (let e = 0; e < c.length; e++) {
       var d = c[e];
-      const f = d[0], h = a.path[d[1]];
-      d = d[2] || "";
-      h.c && h.c[f + d] === b ? PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match") : (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), d ? h[f](d, b) : h[f](b));
+      const g = d.fn, h = a.path[d.index];
+      d = d.key || "";
+      h.c && h.c[g + d] === b ? PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match") : (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), d ? h[g](d, b) : h[g](b));
     }
   }
 }
@@ -499,8 +500,8 @@ Mikado$$module$tmp$mikado.prototype.mount = function(a, b) {
         a = d;
       } else {
         c.push({tag:"root"});
-        for (let e = 0, f; e < c.length; e++) {
-          f = construct$$module$tmp$factory(this, c[e], [], ""), a.append(f), e === c.length - 1 && (a = f);
+        for (let e = 0, g; e < c.length; e++) {
+          g = construct$$module$tmp$factory(this, c[e], [], ""), a.append(g), e === c.length - 1 && (a = g);
         }
       }
     }
@@ -530,8 +531,8 @@ Mikado$$module$tmp$mikado.prototype.mount = function(a, b) {
     } else {
       d = {};
       if (!c && b && this.length) {
-        for (let e = 0, f, h; e < this.length; e++) {
-          PROFILER$$module$tmp$config && tick$$module$tmp$profiler("hydrate.count"), f = this.dom[e], h = f.getAttribute("key"), DEBUG$$module$tmp$config && (h || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported.")), f[MIKADO_TPL_KEY$$module$tmp$config] = h, d[h] = f;
+        for (let e = 0, g, h; e < this.length; e++) {
+          PROFILER$$module$tmp$config && tick$$module$tmp$profiler("hydrate.count"), g = this.dom[e], h = g.getAttribute("key"), DEBUG$$module$tmp$config && (h || console.warn("The template '" + this.name + "' runs in keyed mode, but the hydrated component don't have the attribute 'key' exported.")), g[MIKADO_TPL_KEY$$module$tmp$config] = h, d[h] = g;
         }
       }
       a[MIKADO_LIVE_POOL$$module$tmp$config] = this.live = d;
@@ -564,7 +565,7 @@ function once$$module$tmp$mikado(a, b, c, d, e) {
       throw Error("Template is not defined.");
     }
   }
-  var f;
+  var g;
   if (SUPPORT_ASYNC$$module$tmp$config) {
     if ("function" === typeof c || !0 === c) {
       e = c, c = null;
@@ -572,31 +573,31 @@ function once$$module$tmp$mikado(a, b, c, d, e) {
       e = d, d = null;
     }
     if (e) {
-      return new Promise(function(g) {
+      return new Promise(function(f) {
         requestAnimationFrame(function() {
           once$$module$tmp$mikado(a, b, c, d);
           "function" === typeof e && e();
-          g();
+          f();
         });
       });
     }
   }
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("mikado.once");
-  var h = (f = SUPPORT_WEB_COMPONENTS$$module$tmp$config && b.cmp) && f.length;
-  f && !h && (a = a.shadowRoot || a.attachShadow({mode:"open"}));
+  var h = (g = SUPPORT_WEB_COMPONENTS$$module$tmp$config && b.cmp) && g.length;
+  g && !h && (a = a.shadowRoot || a.attachShadow({mode:"open"}));
   if (c || h || b.fn) {
-    f = new Mikado$$module$tmp$mikado(b);
-    h && (a = f.mount(a).root);
+    g = new Mikado$$module$tmp$mikado(b);
+    h && (a = g.mount(a).root);
     if (c && Array.isArray(c)) {
       for (h = 0; h < c.length; h++) {
-        a.append(f.create(c[h], d, h));
+        a.append(g.create(c[h], d, h));
       }
     } else {
-      a.append(f.create(c, d));
+      a.append(g.create(c, d));
     }
-    f.destroy();
+    g.destroy();
   } else {
-    f = construct$$module$tmp$factory({}, b.tpl, [], "", null, 1), a.append(f);
+    g = construct$$module$tmp$factory({}, b.tpl, [], "", null, 1), a.append(g);
   }
   return Mikado$$module$tmp$mikado;
 }
@@ -629,13 +630,13 @@ REACTIVE_ONLY$$module$tmp$config || (Mikado$$module$tmp$mikado.prototype.render 
     }
   }
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.render");
-  var f = this.length;
+  var g = this.length;
   if (!a && !this.apply) {
     return this.dom[0] || this.add(), this;
   }
   if (Array.isArray(a) || SUPPORT_REACTIVE$$module$tmp$config && a instanceof Observer$$module$tmp$array) {
     if (d = a.length, !d) {
-      return this.remove(0, f);
+      return this.remove(0, g);
     }
   } else {
     if (DEBUG$$module$tmp$config && SUPPORT_REACTIVE$$module$tmp$config && this.proxy) {
@@ -646,10 +647,10 @@ REACTIVE_ONLY$$module$tmp$config || (Mikado$$module$tmp$mikado.prototype.render 
   }
   const h = SUPPORT_KEYED$$module$tmp$config && this.key;
   e = SUPPORT_REACTIVE$$module$tmp$config && this.proxy;
-  !f || h || this.recycle || (this.remove(0, f), f = 0);
-  let g = f < d ? f : d, k = 0;
-  if (k < g) {
-    for (let l, m; k < g; k++) {
+  !g || h || this.recycle || (this.remove(0, g), g = 0);
+  let f = g < d ? g : d, k = 0;
+  if (k < f) {
+    for (let l, m; k < f; k++) {
       l = this.dom[k];
       m = a[k];
       if (h && l[MIKADO_TPL_KEY$$module$tmp$config] !== m[h]) {
@@ -661,10 +662,10 @@ REACTIVE_ONLY$$module$tmp$config || (Mikado$$module$tmp$mikado.prototype.render 
   }
   if (k < d) {
     for (; k < d; k++) {
-      f = a[k], this.add(f, b), !e || this.recycle && f[MIKADO_PROXY$$module$tmp$config] || (a[k] = apply_proxy$$module$tmp$mikado(this, this.dom[k], f));
+      g = a[k], this.add(g, b), !e || this.recycle && g[MIKADO_PROXY$$module$tmp$config] || (a[k] = apply_proxy$$module$tmp$mikado(this, this.dom[k], g));
     }
   } else {
-    d < f && this.remove(d, f - d);
+    d < g && this.remove(d, g - d);
   }
   return this;
 });
@@ -673,19 +674,19 @@ Mikado$$module$tmp$mikado.prototype.replace = function(a, b, c, d) {
   "undefined" === typeof d && ("number" === typeof a ? (d = 0 > a ? this.length + a : a, a = this.dom[d]) : d = this.index(a));
   var e;
   if (SUPPORT_KEYED$$module$tmp$config && this.key) {
-    var f = b[this.key];
-    if (e = this.live[f]) {
+    var g = b[this.key];
+    if (e = this.live[g]) {
       if (e !== a) {
-        f = this.index(e);
-        const h = f < d ? e : a, g = f < d ? a : e;
-        let k = this.dom[f < d ? f + 1 : d + 1];
+        g = this.index(e);
+        const h = g < d ? e : a, f = g < d ? a : e;
+        let k = this.dom[g < d ? g + 1 : d + 1];
         this.dom[d] = e;
-        this.dom[f] = a;
-        k !== g ? this.root.insertBefore(h, g) : k = h;
-        this.root.insertBefore(g, k);
+        this.dom[g] = a;
+        k !== f ? this.root.insertBefore(h, f) : k = h;
+        this.root.insertBefore(f, k);
       }
     } else {
-      SUPPORT_POOLS$$module$tmp$config && this.pool && (e = this.pool_keyed.get(f)) && (this.pool_keyed.delete(f), this.checkout(a), this.dom[d] = e, a.replaceWith(e));
+      SUPPORT_POOLS$$module$tmp$config && this.pool && (e = this.pool_keyed.get(g)) && (this.pool_keyed.delete(g), this.checkout(a), this.dom[d] = e, a.replaceWith(e));
     }
   } else {
     this.recycle && (e = a);
@@ -715,14 +716,16 @@ SUPPORT_ASYNC$$module$tmp$config && (Mikado$$module$tmp$mikado.prototype.cancel 
 });
 Mikado$$module$tmp$mikado.prototype.create = function(a, b, c, d) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.create");
-  const e = SUPPORT_KEYED$$module$tmp$config && this.key, f = e && a[e];
-  let h, g, k, l;
-  SUPPORT_POOLS$$module$tmp$config && this.pool && (e ? (g = this.pool_keyed) && (h = g.get(f)) && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), g.delete(f), l = 1) : (g = this.pool_shared) && g.length && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), h = g.pop()));
+  const e = SUPPORT_KEYED$$module$tmp$config && this.key, g = e && a[e];
+  let h;
+  var f;
+  let k, l;
+  SUPPORT_POOLS$$module$tmp$config && this.pool && (e ? (f = this.pool_keyed) && (h = f.get(g)) && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), f.delete(g), l = 1) : (f = this.pool_shared) && f.length && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), h = f.pop()));
   h || (h = k = this.factory, k || (this.factory = h = k = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
   let m;
-  this.apply && (m = SUPPORT_CACHE$$module$tmp$config && k && this.cache && Array(this.factory[MIKADO_TPL_PATH$$module$tmp$config].length), this.apply(a, b || this.state, c, h[MIKADO_TPL_PATH$$module$tmp$config] || create_path$$module$tmp$factory(h, this.factory[MIKADO_TPL_PATH$$module$tmp$config], !!k || SUPPORT_CACHE$$module$tmp$config && this.cache), m));
+  this.apply && (f = h[MIKADO_TPL_PATH$$module$tmp$config] || create_path$$module$tmp$factory(h, this.factory[MIKADO_TPL_PATH$$module$tmp$config], !!k || SUPPORT_CACHE$$module$tmp$config && this.cache), m = SUPPORT_CACHE$$module$tmp$config && k && this.cache && Array(f.length), this.apply(a, b || this.state, c, f, m));
   k && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.clone"), h = k.cloneNode(!0), SUPPORT_CACHE$$module$tmp$config && m && (h[MIKADO_NODE_CACHE$$module$tmp$config] = m));
-  e && (l || (h[MIKADO_TPL_KEY$$module$tmp$config] = f), d && (this.live[f] = h));
+  e && (l || (h[MIKADO_TPL_KEY$$module$tmp$config] = g), d && (this.live[g] = h));
   (a = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on[k ? "create" : "recycle"]) && a(h, this);
   return h;
 };
@@ -741,34 +744,34 @@ function apply_proxy$$module$tmp$mikado(a, b, c) {
 }
 SUPPORT_KEYED$$module$tmp$config && !REACTIVE_ONLY$$module$tmp$config && (Mikado$$module$tmp$mikado.prototype.reconcile = function(a, b, c) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.reconcile");
-  const d = this.dom, e = this.live, f = this.key;
-  let h = a.length, g = d.length, k = g > h ? g : h, l = 0;
+  const d = this.dom, e = this.live, g = this.key;
+  let h = a.length, f = d.length, k = f > h ? f : h, l = 0;
   for (c || (c = 0); c < k; c++) {
     var m = void 0;
     if (c < h) {
-      var n = a[c], p = c >= g;
+      var n = a[c], p = c >= f;
       let r, t, q, w;
       SUPPORT_REACTIVE$$module$tmp$config && this.proxy && (n[MIKADO_PROXY$$module$tmp$config] ? w = 1 : a[c] = apply_proxy$$module$tmp$mikado(this, d[c], n));
-      if (!p && (r = d[c], t = n[f], q = r[MIKADO_TPL_KEY$$module$tmp$config], q === t)) {
+      if (!p && (r = d[c], t = n[g], q = r[MIKADO_TPL_KEY$$module$tmp$config], q === t)) {
         w || this.update(r, n, b, c, 1);
         continue;
       }
       if (p || !e[t]) {
-        p || !this.pool ? (g++, k = g > h ? g : h, this.add(n, b, c)) : this.replace(r, n, b, c);
+        p || !this.pool ? (f++, k = f > h ? f : h, this.add(n, b, c)) : this.replace(r, n, b, c);
         continue;
       }
       let u, v;
       for (p = c + 1; p < k; p++) {
-        if (!u && p < g && d[p][MIKADO_TPL_KEY$$module$tmp$config] === t && (u = p + 1), !v && p < h && a[p][f] === q && (v = p + 1), u && v) {
+        if (!u && p < f && d[p][MIKADO_TPL_KEY$$module$tmp$config] === t && (u = p + 1), !v && p < h && a[p][g] === q && (v = p + 1), u && v) {
           u >= v + l ? (m = d[u - 1], this.root.insertBefore(m, r), w || this.update(m, n, b, c, 1), u === v ? (1 < p - c && this.root.insertBefore(r, d[u]), d[c] = d[p], d[p] = r, DEBUG$$module$tmp$config && (r || console.error("reconcile.error 1")), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.reconcile.steps")) : (DEBUG$$module$tmp$config && u - 1 === c && console.error("reconcile.error 2"), splice$$module$tmp$mikado(d, u - 1, c), l++)) : (n = v - 1 + l, this.root.insertBefore(r, 
-          d[n] || null), DEBUG$$module$tmp$config && (n > g ? g : n) - 1 === c && console.error("reconcile.error 3"), splice$$module$tmp$mikado(d, c, (n > g ? g : n) - 1), l--, c--);
+          d[n] || null), DEBUG$$module$tmp$config && (n > f ? f : n) - 1 === c && console.error("reconcile.error 3"), splice$$module$tmp$mikado(d, c, (n > f ? f : n) - 1), l--, c--);
           PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.reconcile.steps");
           m = 1;
           break;
         }
       }
     }
-    m || (this.remove(c), g--, k = g > h ? g : h, c--);
+    m || (this.remove(c), f--, k = f > h ? f : h, c--);
   }
   return this;
 });
@@ -792,8 +795,8 @@ REACTIVE_ONLY$$module$tmp$config || (Mikado$$module$tmp$mikado.prototype.append 
   let d;
   "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, d = 1) : "number" === typeof c && (0 > c && (c += this.length), d = 1);
   const e = a.length;
-  for (let f = 0; f < e; f++) {
-    this.add(a[f], b, d ? c++ : null);
+  for (let g = 0; g < e; g++) {
+    this.add(a[g], b, d ? c++ : null);
   }
   return this;
 }, Mikado$$module$tmp$mikado.prototype.clear = function() {
@@ -809,10 +812,10 @@ Mikado$$module$tmp$mikado.prototype.remove = function(a, b) {
   }
   b ? 0 > b && (a -= b + 1, 0 > a && (a = 0), b *= -1) : b = 1;
   !a && b >= c ? (a = this.dom, b = a.length, this.root.textContent = "", this.root[MIKADO_DOM$$module$tmp$config] = this.dom = [], c = 0) : (a = this.dom.splice(a, b), c -= b);
-  const d = SUPPORT_POOLS$$module$tmp$config && this.pool && (!SUPPORT_KEYED$$module$tmp$config || !this.key), e = (SUPPORT_KEYED$$module$tmp$config || SUPPORT_POOLS$$module$tmp$config) && (this.key || this.pool), f = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on.remove;
+  const d = SUPPORT_POOLS$$module$tmp$config && this.pool && (!SUPPORT_KEYED$$module$tmp$config || !this.key), e = (SUPPORT_KEYED$$module$tmp$config || SUPPORT_POOLS$$module$tmp$config) && (this.key || this.pool), g = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on.remove;
   SUPPORT_POOLS$$module$tmp$config && SUPPORT_KEYED$$module$tmp$config && this.pool && !0 !== this.pool && b >= this.pool && this.key && this.pool_keyed.clear();
-  for (let h = 0, g; h < b; h++) {
-    PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.remove"), g = a[d ? b - h - 1 : h], c && g.remove(), e && this.checkout(g), f && f(g, this);
+  for (let h = 0, f; h < b; h++) {
+    PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.remove"), f = a[d ? b - h - 1 : h], c && f.remove(), e && this.checkout(f), g && g(f, this);
   }
   this.length = c;
   return this;
@@ -928,14 +931,14 @@ const handler$$module$tmp$array = {set:function(a, b, c) {
   if (!skip$$module$tmp$array) {
     skip$$module$tmp$array = !0;
     if (e) {
-      var f = a.length;
+      var g = a.length;
       if (d) {
         DEBUG$$module$tmp$config && debug$$module$tmp$array(e);
         const h = e.length;
-        f !== h && (a.length = h);
-        b >= h ? (e.add(c), a.length++) : b < h && (f = e.dom[b], e.recycle || SUPPORT_KEYED$$module$tmp$config && e.key && f[MIKADO_TPL_KEY$$module$tmp$config] === c[e.key] ? e.update(f, c, null, b) : e.replace(f, c, null, b));
+        g !== h && (a.length = h);
+        b >= h ? (e.add(c), a.length++) : b < h && (g = e.dom[b], e.recycle || SUPPORT_KEYED$$module$tmp$config && e.key && g[MIKADO_TPL_KEY$$module$tmp$config] === c[e.key] ? e.update(g, c, null, b) : e.replace(g, c, null, b));
       } else {
-        "length" === b && c < f && e.remove(c, f - c);
+        "length" === b && c < g && e.remove(c, g - c);
       }
     }
     skip$$module$tmp$array = !1;
@@ -1034,8 +1037,8 @@ Observer$$module$tmp$array.prototype.filter = function(a, b) {
   PROFILER$$module$tmp$config && tick$$module$tmp$profiler("observer.filter");
   b && (a = a.bind(this));
   let c, d;
-  for (let e = 0, f = this.length; e < f; e++) {
-    a(this[e]) ? d && (this.splice(c, d), f -= d, e -= d, d = 0) : d ? d++ : (c = e, d = 1);
+  for (let e = 0, g = this.length; e < g; e++) {
+    a(this[e]) ? d && (this.splice(c, d), g -= d, e -= d, d = 0) : d ? d++ : (c = e, d = 1);
   }
   d && this.splice(c, d);
   return this;
@@ -1087,7 +1090,7 @@ Observer$$module$tmp$array.prototype.transaction = function(a) {
 };
 var module$tmp$array = {};
 module$tmp$array.default = Observer$$module$tmp$array;
-let MikadoOptions$$module$tmp$type, Template$$module$tmp$type, TemplateDOM$$module$tmp$type, EventOptions$$module$tmp$type, NodeCache$$module$tmp$type, ProxyHandler$$module$tmp$type, MikadoCallbacks$$module$tmp$type;
+let MikadoOptions$$module$tmp$type, Template$$module$tmp$type, TemplateDOM$$module$tmp$type, EventOptions$$module$tmp$type, NodeCache$$module$tmp$type, ProxyHandler$$module$tmp$type, ProxyCache$$module$tmp$type, MikadoCallbacks$$module$tmp$type;
 var module$tmp$type = {};
 const escape_div$$module$tmp$sanitize = document.createElement("div"), escape_text$$module$tmp$sanitize = document.createTextNode(""), sanitizer_div$$module$tmp$sanitize = document.createElement("div");
 "light" !== RELEASE$$module$tmp$config && "light.module" !== RELEASE$$module$tmp$config && escape_div$$module$tmp$sanitize.appendChild(escape_text$$module$tmp$sanitize);
@@ -1121,9 +1124,9 @@ SUPPORT_DOM_HELPERS$$module$tmp$config && (Mikado$$module$tmp$mikado.prototype.m
   const d = 0 > b;
   if (d && c || !d && c < this.length - 1) {
     b = d ? Math.max(c + b, 0) : Math.min(c + b, this.length - 1);
-    const e = this.dom[b], f = d && 1 < c - b || !d && 1 < b - c;
+    const e = this.dom[b], g = d && 1 < c - b || !d && 1 < b - c;
     this.root.insertBefore(a, d ? e : this.dom[b + 1] || null);
-    if (f) {
+    if (g) {
       a = this.dom[c];
       if (d) {
         for (; c > b; c--) {
@@ -1174,7 +1177,7 @@ SUPPORT_DOM_HELPERS$$module$tmp$config && (Mikado$$module$tmp$mikado.prototype.m
   return this;
 });
 var module$tmp$helper = {};
-const event_types$$module$tmp$compile = SUPPORT_EVENTS$$module$tmp$config && {tap:1, change:1, click:1, dblclick:1, input:1, keydown:1, keypress:1, keyup:1, mousedown:1, mouseenter:1, mouseleave:1, mousemove:1, mouseout:1, mouseover:1, mouseup:1, mousewheel:1, touchstart:1, touchmove:1, touchend:1, touchcancel:1, reset:1, select:1, submit:1, toggle:1, blur:1, error:1, focus:1, load:1, resize:1, scroll:1}, idl_attributes$$module$tmp$compile = {checked:1, selected:1, hidden:1};
+const event_types$$module$tmp$compile = SUPPORT_EVENTS$$module$tmp$config && {tap:1, change:1, click:1, dblclick:1, input:1, keydown:1, keypress:1, keyup:1, mousedown:1, mouseenter:1, mouseleave:1, mousemove:1, mouseout:1, mouseover:1, mouseup:1, mousewheel:1, touchstart:1, touchmove:1, touchend:1, touchcancel:1, reset:1, select:1, submit:1, toggle:1, blur:1, error:1, focus:1, load:1, resize:1, scroll:1};
 function replaceComments$$module$tmp$compile(a) {
   return a.replace(/\x3c!--(.*?)--\x3e/g, "");
 }
@@ -1182,7 +1185,7 @@ function strip$$module$tmp$compile(a) {
   return a.replace(/({{|}})/g, "").trim();
 }
 let message$$module$tmp$compile = 0, counter$$module$tmp$compile = 0;
-function compile$$module$tmp$compile(a, b, c, d, e, f) {
+function compile$$module$tmp$compile(a, b, c, d, e, g) {
   DEBUG$$module$tmp$config && !message$$module$tmp$compile && (message$$module$tmp$compile = 1, console.info("If this page has set a Content-Security-Policy (CSP) header field, using the inline compiler has disadvantage when not configure \"script-src 'unsafe-eval'\". It is recommended to use the Mikado native compiler, which is CSP-friendly and also can optimize your templates more powerful."));
   if (b) {
     return new Promise(function(t) {
@@ -1192,8 +1195,8 @@ function compile$$module$tmp$compile(a, b, c, d, e, f) {
     });
   }
   e || (d = [], c = [d], d.index = e = {current:-1, count:0, last:-1, inc:0, included:!1});
-  const h = f ? {} : {tpl:{}}, g = f ? h : h.tpl;
-  if (!f) {
+  const h = g ? {} : {tpl:{}}, f = g ? h : h.tpl;
+  if (!g) {
     if ("string" === typeof a) {
       if (/<.*>/.test(a)) {
         var k = document.createElement("div");
@@ -1218,16 +1221,16 @@ function compile$$module$tmp$compile(a, b, c, d, e, f) {
         m && (m = m.replace(/{{([\s\S]+)}}/g, ""));
         m && d.push(m);
         if ("SCRIPT" === k) {
-          return l.trim() && (g.text = l, g.tag = k), g;
+          return l.trim() && (f.text = l, f.tag = k), f;
         }
       }
-      l && l.trim() && (l.includes("{{#") ? handle_value$$module$tmp$compile(g, "html", l, !1, null, e, c, d) : (e.count++, handle_value$$module$tmp$compile(g, "text", l, !1, null, e, c, d)));
+      l && l.trim() && (l.includes("{{#") ? handle_value$$module$tmp$compile(f, "html", l, !1, null, e, c, d) : (e.count++, handle_value$$module$tmp$compile(f, "text", l, !1, null, e, c, d)));
     }
     if (!k) {
-      return l && l.trim() ? g : null;
+      return l && l.trim() ? f : null;
     }
   }
-  k && (g.tag = k);
+  k && (f.tag = k);
   if ((l = a.attributes) && l.length) {
     k = {};
     for (m = 0; m < l.length; m++) {
@@ -1263,29 +1266,29 @@ function compile$$module$tmp$compile(a, b, c, d, e, f) {
         case "cache":
           break;
         default:
-          SUPPORT_EVENTS$$module$tmp$config && event_types$$module$tmp$compile[n] ? r = g.event || (g.event = {}) : (f || "id" !== n && "name" !== n || h.name || /{{[\s\S]+}}/.test(k) || (h.name = k), r = g.attr || (g.attr = {})), p = n;
+          SUPPORT_EVENTS$$module$tmp$config && event_types$$module$tmp$compile[n] ? r = f.event || (f.event = {}) : (g || "id" !== n && "name" !== n || h.name || /{{[\s\S]+}}/.test(k) || (h.name = k), r = f.attr || (f.attr = {})), p = n;
       }
-      p && handle_value$$module$tmp$compile(r || g, p, k, !!r, l, e, c, d);
+      p && handle_value$$module$tmp$compile(r || f, p, k, !!r, l, e, c, d);
     }
   }
   n = (a.content || a).childNodes;
   p = n.length;
-  e.included && (e.included = !1, e.inc++, d = [], (g.for || g.if) && c.unshift(d), g.child || (g.child = g.text ? {text:g.text} : g.html ? {html:g.html} : null), p ? (d.root = g, d.inc = g.child || (g.child = []), d.index = e = {current:-1, count:0, last:-1, inc:0, included:!1}) : d.inc = g.inc, delete g.for, delete g.if, delete g.text, delete g.html);
+  e.included && (e.included = !1, e.inc++, d = [], (f.for || f.if) && c.unshift(d), f.child || (f.child = f.text ? {text:f.text} : f.html ? {html:f.html} : null), p ? (d.root = f, d.inc = f.child || (f.child = []), d.index = e = {current:-1, count:0, last:-1, inc:0, included:!1}) : d.inc = f.inc, delete f.for, delete f.if, delete f.text, delete f.html);
   if (p) {
     for (let t = 0, q; t < p; t++) {
       if (q = n[t], 8 !== q.nodeType && (e.count++, r = compile$$module$tmp$compile(q, null, c, d, e, 1))) {
-        1 !== p || 3 !== q.nodeType && r.text || g.js && r.js ? (r.text || r.tag) && (g.child || (g.child = [])).push(r) : (r.js && (g.js = r.js), r.html && (g.html = r.html), r.text && (g.text = r.text));
+        1 !== p || 3 !== q.nodeType && r.text || f.js && r.js ? (r.text || r.tag) && (f.child || (f.child = [])).push(r) : (r.js && (f.js = r.js), r.html && (f.html = r.html), r.text && (f.text = r.text));
       }
     }
-    g.child && 1 === g.child.length && (g.child = g.child[0]);
+    f.child && 1 === f.child.length && (f.child = f.child[0]);
   }
-  if (!f) {
+  if (!g) {
     h.name || (h.name = "tpl-" + counter$$module$tmp$compile++);
-    if (SUPPORT_WEB_COMPONENTS$$module$tmp$config && "COMPONENT" === g.tag) {
-      d = g.child;
+    if (SUPPORT_WEB_COMPONENTS$$module$tmp$config && "COMPONENT" === f.tag) {
+      d = f.child;
       e = [];
       for (let t = 0, q; t < d.length; t++) {
-        q = d[t], "TEMPLATE" === q.tag ? (d = f = q.child.length ? q.child[0] : q.child, q.name && (f.name = q.name), q.id && (f.id = q.id), q.key && (f.key = q.key), q.cache && (f.cache = q.cache)) : e.push(q);
+        q = d[t], "TEMPLATE" === q.tag ? (d = g = q.child.length ? q.child[0] : q.child, q.name && (g.name = q.name), q.id && (g.id = q.id), q.key && (g.key = q.key), q.cache && (g.cache = q.cache)) : e.push(q);
       }
       h.tpl = d;
       h.cmp = e;
@@ -1301,7 +1304,7 @@ function compile$$module$tmp$compile(a, b, c, d, e, f) {
   }
   return h;
 }
-function handle_value$$module$tmp$compile(a, b, c, d, e, f, h, g) {
+function handle_value$$module$tmp$compile(a, b, c, d, e, g, h, f) {
   if (/{{[\s\S]+}}/.test(c)) {
     h = SUPPORT_REACTIVE$$module$tmp$config && /{{([!?#]+)?=/.test(c);
     let k = /{{!?\?/.test(c), l = /{{\??!/.test(c);
@@ -1314,16 +1317,16 @@ function handle_value$$module$tmp$compile(a, b, c, d, e, f, h, g) {
     c = c.replace(/{{[!?#=]+/g, "{{").replace(/"(\s+)?{{(\s+)?/g, "(").replace(/(\s+)?}}(\s+)?"/g, ")").replace(/{{(\s+)?/g, "'+(").replace(/(\s+)?}}/g, ")+'").replace(/\s+/g, " ");
     c = ("'" + c + "'").replace(/^""\+/g, "").replace(/^''\+/g, "").replace(/\+''$/g, "").replace(/\+""$/g, "").replace(/"\)\+''\+\("/g, "").replace(/'\)\+''\+\('/g, "").replace(/\+''\+/g, "+").replace(/'(\s+)?\+(\s+)?'/g, "").replace(/"(\s+)?\+(\s+)?"/g, "").replace(/^\(([^ ]+)\)$/g, "$1").trim();
     k && (c = "(" + (c + "||" + c + "===0?" + c + ":'')"));
-    "text" !== b && "style" !== b || !a.tag || f.count++;
-    f.count !== f.last && (f.current++, f.last = f.count, g.push("_o=_p[" + f.current + "]"), g.push("_x&&(_x[" + f.current + "]=_c={})"));
-    g.push("_v=" + c);
-    d ? g.push('_c&&(_c["_a' + b + '"]=_v);if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);' + (idl_attributes$$module$tmp$compile[b] ? "_o.n." + b + "=_v" : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)') + "}") : "class" === b ? g.push("_c&&(_c._c=_v);if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? g.push("_c&&(_c._s=_v);if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : "html" === b ? g.push("_c&&(_c._h=_v);if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : 
-    "text" === b && g.push("_c&&(_c._t=_v);if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
+    "text" !== b && "style" !== b || !a.tag || g.count++;
+    g.count !== g.last && (g.current++, g.last = g.count, f.push("_o=_p[" + g.current + "]"), f.push("_x&&(_x[" + g.current + "]=_c={})"));
+    f.push("_v=" + c);
+    d ? f.push('_c&&(_c["_a' + b + '"]=_v);if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)}') : "class" === b ? f.push("_c&&(_c._c=_v);if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? f.push("_c&&(_c._s=_v);if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : "html" === b ? f.push("_c&&(_c._h=_v);if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : "text" === 
+    b && f.push("_c&&(_c._t=_v);if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
     a[b] = SUPPORT_REACTIVE$$module$tmp$config && h ? [h] : [""];
   } else {
     a[b] = c;
   }
-  "for" !== b && "if" !== b && "inc" !== b || d || f.included || (f.count !== f.last && (f.current++, f.last = f.count, g.push("_o=_p[" + f.current + "]")), a = e.foreach ? e.foreach.trim() : "data", b = f.inc, e.if ? g.push("this.inc[" + b + "].mount(_o.n)[" + e.if.trim() + '?"render":"clear"](' + a + ",state)") : e.foreach ? g.push("this.inc[" + b + "].mount(_o.n).render(" + a + ",state)") : g.push("this.inc[" + b + "].mount(_o.n).render(data,state)"), f.included = !0);
+  "for" !== b && "if" !== b && "inc" !== b || d || g.included || (g.count !== g.last && (g.current++, g.last = g.count, f.push("_o=_p[" + g.current + "]")), a = e.foreach ? e.foreach.trim() : "data", b = g.inc, e.if ? f.push("this.inc[" + b + "].mount(_o.n)[" + e.if.trim() + '?"render":"clear"](' + a + ",state)") : e.foreach ? f.push("this.inc[" + b + "].mount(_o.n).render(" + a + ",state)") : f.push("this.inc[" + b + "].mount(_o.n).render(data,state)"), g.included = !0);
 }
 var module$tmp$compile = {};
 module$tmp$compile.default = compile$$module$tmp$compile;
@@ -1352,7 +1355,7 @@ function setAttribute$$module$tmp$cache(a, b, c) {
   }
 }
 function _setAttribute$$module$tmp$cache(a, b, c, d) {
-  d["_a" + b] !== c ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), d["_a" + b] = c, idl_attributes$$module$tmp$factory[b] ? a[b] = c : !1 === c ? a.removeAttribute(b) : a.setAttribute(b, c)) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
+  d["_a" + b] !== c ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), d["_a" + b] = c, !1 === c ? a.removeAttribute(b) : a.setAttribute(b, c)) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
 }
 function removeAttribute$$module$tmp$cache(a, b) {
   let c = a[MIKADO_NODE_CACHE$$module$tmp$config];
@@ -1366,12 +1369,12 @@ function removeAttribute$$module$tmp$cache(a, b) {
   }
 }
 function _removeAttribute$$module$tmp$cache(a, b, c) {
-  !1 !== c["_a" + b] ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), c["_a" + b] = !1, idl_attributes$$module$tmp$factory[b] ? a[b] = !1 : a.removeAttribute(b)) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
+  !1 !== c["_a" + b] ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), c["_a" + b] = !1, a.removeAttribute(b)) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
 }
 function getAttribute$$module$tmp$cache(a, b) {
   let c = a[MIKADO_NODE_CACHE$$module$tmp$config], d;
   c ? d = c["_a" + b] : a[MIKADO_NODE_CACHE$$module$tmp$config] = c = {};
-  "string" !== typeof d ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), d = idl_attributes$$module$tmp$factory[b] ? a[b] : a.getAttribute(b), c["_a" + b] = d) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
+  "string" !== typeof d ? (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.miss"), PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.attr"), d = a.getAttribute(b), c["_a" + b] = d) : PROFILER$$module$tmp$config && tick$$module$tmp$profiler("cache.match");
   return d;
 }
 function hasAttribute$$module$tmp$cache(a, b) {
@@ -1488,8 +1491,8 @@ function transformStyleCache$$module$tmp$cache(a) {
 function setStyle$$module$tmp$cache(a, b, c) {
   const d = transformStyleCache$$module$tmp$cache(a), e = a.style;
   if ("object" === typeof b) {
-    for (const f in b) {
-      _setStyle$$module$tmp$cache(a, f, b[f], e, d);
+    for (const g in b) {
+      _setStyle$$module$tmp$cache(a, g, b[g], e, d);
     }
   } else {
     _setStyle$$module$tmp$cache(a, b, c, e, d);

@@ -6,7 +6,7 @@
  * https://github.com/nextapps-de/mikado
  */
 
-import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache } from "./type.js";
+import { TemplateDOM, Template, MikadoOptions, MikadoCallbacks, NodeCache, ProxyCache } from "./type.js";
 import Observer from "./array.js";
 import { create_path, construct } from "./factory.js";
 import proxy_create from "./proxy.js";
@@ -117,7 +117,7 @@ export default function Mikado(template, options = /** @type MikadoOptions */{})
     {
 
         /**
-         * @type {Object<string, Array<string, number>>}
+         * @type {Object<string, Array<ProxyCache>>}
          */
         this.proxy = null;
         /** @type {number} */
@@ -866,9 +866,10 @@ Mikado.prototype.create = function (data, state, index, _update_pool) {
 
     if (this.apply) {
 
-        cache = factory && this.cache && /** @type {Array<NodeCache>} */Array(this.factory._mkp.length);
+        const vpath = node._mkp || create_path(node, this.factory._mkp, !!factory || this.cache);
+        cache = factory && this.cache && /** @type {Array<NodeCache>} */Array(vpath.length);
 
-        this.apply(data, state || this.state, index, node._mkp || create_path(node, this.factory._mkp, !!factory || this.cache), cache);
+        this.apply(data, state || this.state, index, vpath, cache);
     }
 
     if (factory) {
@@ -988,6 +989,8 @@ Mikado.prototype.add = function (data, state, index) {
  */
 
 export function apply_proxy(self, node, data) {
+
+    //TODO inject the full path on first recycle
 
     return proxy_create(data, node._mkp || create_path(node, self.factory._mkp, self.cache), self.proxy);
 }
@@ -1349,6 +1352,7 @@ Mikado.prototype.remove = function (index, count) {
 
         node = nodes[reverse ? count - x - 1 : x];
         length && node.remove(); //this.root.removeChild(node);
+        // TODO improve checkout
         checkout && this.checkout(node);
         callback && callback(node, this);
     }
