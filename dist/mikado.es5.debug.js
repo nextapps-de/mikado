@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.304 (ES5/Debug)
+ * Mikado.js v0.8.306 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1225,7 +1225,7 @@ D.prototype.create = function(a, b, c, d) {
   }
   g || (g = e = this.factory, e || (this.factory = g = e = L(this, this.tpl.tpl, [], ""), Q(this)));
   if (this.apply) {
-    var l = e && this.cache && [];
+    var l = e && this.cache && Array(this.factory._mkp.length);
     this.apply(a, b || this.state, c, g._mkp || J(g, this.factory._mkp, !!e || this.cache), l);
   }
   e && (g = e.cloneNode(!0), l && (g._mkc = l));

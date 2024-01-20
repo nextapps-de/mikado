@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.304 (Bundle/Debug)
+ * Mikado.js v0.8.306 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -720,7 +720,7 @@ Mikado$$module$tmp$mikado.prototype.create = function(a, b, c, d) {
   SUPPORT_POOLS$$module$tmp$config && this.pool && (e ? (g = this.pool_keyed) && (h = g.get(f)) && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), g.delete(f), l = 1) : (g = this.pool_shared) && g.length && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("pool.out"), h = g.pop()));
   h || (h = k = this.factory, k || (this.factory = h = k = construct$$module$tmp$factory(this, this.tpl.tpl, [], ""), finishFactory$$module$tmp$mikado(this)));
   let m;
-  this.apply && (m = SUPPORT_CACHE$$module$tmp$config && k && this.cache && [], this.apply(a, b || this.state, c, h[MIKADO_TPL_PATH$$module$tmp$config] || create_path$$module$tmp$factory(h, this.factory[MIKADO_TPL_PATH$$module$tmp$config], !!k || SUPPORT_CACHE$$module$tmp$config && this.cache), m));
+  this.apply && (m = SUPPORT_CACHE$$module$tmp$config && k && this.cache && Array(this.factory[MIKADO_TPL_PATH$$module$tmp$config].length), this.apply(a, b || this.state, c, h[MIKADO_TPL_PATH$$module$tmp$config] || create_path$$module$tmp$factory(h, this.factory[MIKADO_TPL_PATH$$module$tmp$config], !!k || SUPPORT_CACHE$$module$tmp$config && this.cache), m));
   k && (PROFILER$$module$tmp$config && tick$$module$tmp$profiler("factory.clone"), h = k.cloneNode(!0), SUPPORT_CACHE$$module$tmp$config && m && (h[MIKADO_NODE_CACHE$$module$tmp$config] = m));
   e && (l || (h[MIKADO_TPL_KEY$$module$tmp$config] = f), d && (this.live[f] = h));
   (a = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on[k ? "create" : "recycle"]) && a(h, this);

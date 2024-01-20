@@ -1091,7 +1091,9 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
 
     if(this.apply){
 
-        cache = SUPPORT_CACHE && factory && this.cache && /** @type {Array<NodeCache>} */ ([]);
+        cache = SUPPORT_CACHE && factory && this.cache && /** @type {Array<NodeCache>} */ (
+            new Array(this.factory[MIKADO_TPL_PATH].length)
+        );
 
         this.apply(
             data,

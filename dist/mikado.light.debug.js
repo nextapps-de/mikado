@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.304 (Light/Debug)
+ * Mikado.js v0.8.306 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -363,7 +363,7 @@ B.prototype.create = function(a, b, c, d) {
   this.pool && (g ? (f = this.pool_keyed) && (e = f.get(k)) && (f.delete(k), m = 1) : (f = this.pool_shared) && f.length && (e = f.pop()));
   e || (e = h = this.factory, h || (this.factory = e = h = w(this, this.tpl.tpl, [], ""), D(this)));
   let p;
-  this.apply && (p = h && this.cache && [], this.apply(a, b || this.state, c, e._mkp || l(e, this.factory._mkp, !!h || this.cache), p));
+  this.apply && (p = h && this.cache && Array(this.factory._mkp.length), this.apply(a, b || this.state, c, e._mkp || l(e, this.factory._mkp, !!h || this.cache), p));
   h && (e = h.cloneNode(!0), p && (e._mkc = p));
   g && (m || (e._mkk = k), d && (this.live[k] = e));
   return e;
