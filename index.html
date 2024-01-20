@@ -189,7 +189,7 @@ Also, it doesn't match real world scenario when a test runs 5 seconds and is app
 -->
 <b>Results:</b>
 <p>
-The <b>index</b> is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The <b>score</b> value is based on median factorization, here a score of 100 represents the statistical midfield.
+The result values are based on average, not median. Using median is widely used, but the truth is median timing results effectively cuts out the garbage collector and leads into false results. The <b>index</b> is a stable statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The <b>score</b> value is based on median factorization (apply median on average results is fine), here a score of 100 represents the statistical midfield.
 </p>
 <iframe id="iframe"></iframe>
 <script src="test/mikado/dist/mikado.bundle.min.js"></script>

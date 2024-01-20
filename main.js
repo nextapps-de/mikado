@@ -193,14 +193,18 @@
 
                     length[x]++;
 
-                    if(/*(test[y] === "size") ||*/ (test[y] === "memory")){
+                    if(test[y] === "memory"){
 
+                        // median on timing results will cut out garbage collector and will lead into false results!
+                        // here median is applied on average results, that's fine
                         score[x] += Math.sqrt(median(val[y]) / current[x][test[y]]);
                         index[x] += Math.sqrt(max[y] / current[x][test[y]]);
                         current[x]["color_" + test[y]] = color(Math.sqrt(max[y]), Math.sqrt(current[x][test[y]]));
                     }
                     else{
 
+                        // median on timing results will cut out garbage collector and will lead into false results!
+                        // here median is applied on average results, that's fine
                         score[x] += (current[x][test[y]] / median(val[y]));
                         index[x] += (current[x][test[y]] / max[y]);
                         current[x]["color_" + test[y]] = color(current[x][test[y]], max[y]);
@@ -359,8 +363,7 @@
         );
     }
 
-    /*
-    function average(arr){
+    function sum(arr){
 
         const length = arr.length;
         let sum = 0;
@@ -370,8 +373,12 @@
             sum += arr[i];
         }
 
-        return sum / length;
+        return sum;
     }
-    */
+
+    function average(arr){
+
+        return sum(arr) / arr.length;
+    }
 
 }());
