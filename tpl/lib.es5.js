@@ -1,1 +1,1 @@
-Mikado.register({name:"lib",tpl:{tag:"li",child:{tag:"a",attr:{"href":[""]},text:[""]}},fn:[function(data,state,index,_p){let _o,_v;_o=_p[0];_v='test/'+(data + '/' + state.mode);(!_o.c||_o.c["_ahref"]!==_v)&&_o._a("href",_v);_o=_p[1];_v=data;(!_o.c||_o.c._t!==_v)&&_o._t(_v);}]});
+Mikado.register({name:"lib",tpl:{tag:"li",child:{tag:"a",attr:{"href":[""]},text:[""]}},fn:[function(data,state,index,_p,_x){_p[0]._a("href",'test/'+(data + '/' + state.mode),_x,0);_p[1]._t(data,_x,1);}]});

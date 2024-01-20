@@ -4,7 +4,7 @@
 
     const Mikado = window.Mikado;
     const iframe = document.getElementById("iframe");
-    const mikado_table = Mikado("row").mount(document.getElementById("result"));
+    const mikado_table = Mikado("row", { recycle: true, cache: true }).mount(document.getElementById("result"));
     const mikado_list = Mikado("lib").mount(document.getElementById("lib"));
 
     Mikado.eventCache = true;
@@ -24,7 +24,8 @@
         "mode-keyed-shared", "mode-non-keyed", "mode-proxy",
         "mode-array", "mode-array-proxy"
     ]:[
-        "mikado", "mikado-proxy", "mikado-shadow", //"mikado-0.7.6", "mikado-proxy-0.7.6", "mikado-0.7.5", "mikado-0.7.4",
+        "mikado", "mikado-proxy", "mikado-shadow",
+        //"mikado-0.8.2", "mikado-0.7.6", "mikado-proxy-0.7.6", "mikado-0.7.5", "mikado-0.7.4",
         "stage0", "solid", "domc", "inferno",
         "redom", "sinuous", "surplus",
         "innerHTML", "jquery", "mithril",

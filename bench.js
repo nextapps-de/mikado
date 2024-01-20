@@ -68,19 +68,10 @@ function next(){
 
         copy(generate(DATA_SIZE), items);
     }
-    // else if(keyed){
-    //
-    //     items = enforce(factory[pos]);
-    // }
-    else /*if(strict || recycle)*/{
+    else{
 
         items = generate(DATA_SIZE);
     }
-
-    // if(++pos === factory.length){
-    //
-    //     pos = 0;
-    // }
 
     return items;
 }
@@ -112,9 +103,7 @@ function enforce(data){
 
 queue.push({
     name: "create",
-    init: function(){
-        //start empty
-    },
+    init: null,
     test: null,
     start: null,
     prepare: function(){
@@ -217,15 +206,15 @@ queue.push({
 queue.push({
     name: "repaint",
     init: function(){
-        //start pre-filled, cache data
+        //start pre-filled
         this.fn(clone = next());
     },
     test: null,
-    start: function(){
+    start: null,
+    prepare: function(){
         // prepare unchanged data to render
         clone = enforce(clone);
     },
-    prepare: null,
     fn: null,
     end: null,
     complete: function(){
@@ -239,11 +228,12 @@ let tmp;
 
 queue.push({
     name: "append",
-    init: null,
+    init: function(){
+        //create data
+        clone = next();
+    },
     test: null,
     start: function(){
-        //create full data
-        clone = next();
         //divide data into 2 parts
         tmp = clone.splice(DATA_SIZE_HALF);
         //start pre-filled of first half data
@@ -264,19 +254,24 @@ queue.push({
 
 queue.push({
     name: "remove",
-    init: null,
+    init: function(){
+        //create data
+        clone = next();
+    },
     test: null,
     start: function(){
         //start pre-filled, cache data
-        this.fn(clone = next());
+        this.fn(clone);
+        // prepare data to render by remove the 2nd half
+        tmp = clone.splice(DATA_SIZE_HALF);
     },
     prepare: function(){
-        // prepare data to render by remove the 2nd half
-        clone.splice(DATA_SIZE_HALF);
         clone = enforce(clone);
     },
     fn: null,
-    end: null,
+    end: function(){
+        clone = clone.concat(tmp);
+    },
     complete: function(){
         // removes everything (teardown)
         clone.splice(0);
@@ -286,7 +281,7 @@ queue.push({
 
 queue.push({
     name: "toggle",
-    init: function(){
+    init: function(index){
         //start pre-filled, cache data
         this.fn(clone = next());
     },
