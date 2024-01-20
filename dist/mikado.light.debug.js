@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.306 (Light/Debug)
+ * Mikado.js v0.8.307 (Light/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -440,6 +440,7 @@ B.prototype.remove = function(a, b) {
   b ? 0 > b && (a -= b + 1, 0 > a && (a = 0), b *= -1) : b = 1;
   !a && b >= c ? (a = this.dom, b = a.length, this.root.textContent = "", this.root._mkd = this.dom = [], c = 0) : (a = this.dom.splice(a, b), c -= b);
   const d = this.pool && !this.key, g = this.key || this.pool;
+  this.pool && !0 !== this.pool && b >= this.pool && this.key && this.pool_keyed.clear();
   for (let k = 0, e; k < b; k++) {
     e = a[d ? b - k - 1 : k], c && e.remove(), g && this.checkout(e);
   }

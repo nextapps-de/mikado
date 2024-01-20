@@ -1629,6 +1629,11 @@ Mikado.prototype.remove = function(index, count){
     //     }
     // }
 
+    if(SUPPORT_POOLS && SUPPORT_KEYED && this.pool && this.pool !== true && count >= this.pool && this.key){
+
+        this.pool_keyed.clear();
+    }
+
     for(let x = 0, node; x < count; x++){
 
         PROFILER && tick("view.remove");
@@ -1694,12 +1699,8 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
         if(SUPPORT_KEYED && this.key){
 
             key = node[MIKADO_TPL_KEY];
-
-            //if(key || key === 0){
-
-                // remove from live-pool
-                this.live[key] = null;
-            //}
+            // remove from live-pool
+            this.live[key] = null;
         }
 
         if(SUPPORT_POOLS && this.pool){

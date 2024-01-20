@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.306 (Bundle/Debug)
+ * Mikado.js v0.8.307 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -810,6 +810,7 @@ Mikado$$module$tmp$mikado.prototype.remove = function(a, b) {
   b ? 0 > b && (a -= b + 1, 0 > a && (a = 0), b *= -1) : b = 1;
   !a && b >= c ? (a = this.dom, b = a.length, this.root.textContent = "", this.root[MIKADO_DOM$$module$tmp$config] = this.dom = [], c = 0) : (a = this.dom.splice(a, b), c -= b);
   const d = SUPPORT_POOLS$$module$tmp$config && this.pool && (!SUPPORT_KEYED$$module$tmp$config || !this.key), e = (SUPPORT_KEYED$$module$tmp$config || SUPPORT_POOLS$$module$tmp$config) && (this.key || this.pool), f = SUPPORT_CALLBACKS$$module$tmp$config && this.on && this.on.remove;
+  SUPPORT_POOLS$$module$tmp$config && SUPPORT_KEYED$$module$tmp$config && this.pool && !0 !== this.pool && b >= this.pool && this.key && this.pool_keyed.clear();
   for (let h = 0, g; h < b; h++) {
     PROFILER$$module$tmp$config && tick$$module$tmp$profiler("view.remove"), g = a[d ? b - h - 1 : h], c && g.remove(), e && this.checkout(g), f && f(g, this);
   }

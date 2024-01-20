@@ -1419,6 +1419,11 @@ Mikado.prototype.remove = function (index, count) {
     //     }
     // }
 
+    if (this.pool && !0 !== this.pool && count >= this.pool && this.key) {
+
+        this.pool_keyed.clear();
+    }
+
     for (let x = 0, node; x < count; x++) {
 
         node = nodes[reverse ? count - x - 1 : x];
@@ -1474,12 +1479,8 @@ Mikado.prototype.checkout = function (node) {
     if (this.key) {
 
         key = node._mkk;
-
-        //if(key || key === 0){
-
         // remove from live-pool
         this.live[key] = null;
-        //}
     }
 
     if (this.pool) {
