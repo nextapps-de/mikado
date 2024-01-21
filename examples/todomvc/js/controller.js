@@ -19,7 +19,13 @@ export default function(route, target){
     updateApp();
 }
 
+// define helper function on "state", so you can
+// use this inside template expressions
+
 app.state.is_visible = function(data){
+
+    // when no pagination is used for the table view
+    // hiding by filtering is better than filtering the data
 
     const filter = app.state.filter;
 
@@ -36,6 +42,9 @@ export function updateApp(){
 
     localStorage.setItem("todos", JSON.stringify(todos));
 }
+
+// instead of hiding elements, this could also be used to filter data
+// e.g. app.render({ todos: filterBy(app.state.filter) })
 
 function filterBy(filter){
 
