@@ -61,7 +61,6 @@ const self_closing = {
 };
 
 // IDL attributes are faster but some didn't reflect content attribute state
-// also they don't get copied by cloneNode()
 
 const idl_attributes = {
 
@@ -1046,11 +1045,11 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
-                                            // (idl_attributes[key]
-                                            //     ? '_o.n.' + key + '=_v'
-                                            //     : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
-                                            // ) +
+                                            //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                            (idl_attributes[key]
+                                                ? '_o.n.' + key + '=_v'
+                                                : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
+                                            ) +
                                         '}');
                                 }
                                 else if(key === "class"){
@@ -1101,11 +1100,11 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c["_a' + key + '"]=_v;' +
-                                            '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
-                                            // (idl_attributes[key]
-                                            //     ? '_o.n.' + key + '=_v'
-                                            //     : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
-                                            // ) +
+                                            //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
+                                            (idl_attributes[key]
+                                                ? '_o.n.' + key + '=_v'
+                                                : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
+                                            ) +
                                         '}');
                                 }
                                 else if(key === "class"){
@@ -1152,15 +1151,15 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    // if(idl_attributes[key]){
-                                    //
-                                    //     fn.push('_o.n.' + key + '=' + tmp);
-                                    // }
-                                    // else{
+                                    if(idl_attributes[key]){
+
+                                        fn.push('_o.n.' + key + '=' + tmp);
+                                    }
+                                    else{
 
                                         fn.push('_v=' + tmp);
                                         fn.push('_o[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)');
-                                    // }
+                                    }
                                 }
                                 else if(key === "class"){
 

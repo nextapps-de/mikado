@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.312 (Bundle/Debug)
+ * Mikado.js v0.8.313 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -112,6 +112,7 @@ function z(a, b, c, e, h, k) {
   k || (d._mkp = c);
   return d;
 }
+const E = {checked:1, selected:1, hidden:1};
 function x(a, b, c) {
   this.c = a;
   this.n = b;
@@ -131,7 +132,7 @@ n._a = function(a, b, c, e) {
     }
     this.c["_a" + a] = b;
   }
-  !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
+  !c && E[a] ? this.n[a] = b : !1 === b ? this.n.removeAttribute(a) : this.n.setAttribute(a, b);
 };
 n._t = function(a, b, c) {
   if (this.c) {
@@ -280,10 +281,10 @@ n.mount = function(a, b) {
   }
   a._mki = this;
   this.root = a;
-  this.h || (b && this.length && (this.h = this.g[0].cloneNode(!0), z(this, this.tpl.tpl, [], "", this.h) && E(this)), this.tpl && (this.h = z(this, this.tpl.tpl, [], ""), E(this)));
+  this.h || (b && this.length && (this.h = this.g[0].cloneNode(!0), z(this, this.tpl.tpl, [], "", this.h) && F(this)), this.tpl && (this.h = z(this, this.tpl.tpl, [], ""), F(this)));
   return this;
 };
-function E(a) {
+function F(a) {
   a.tpl.m && (a.tpl.fn = a.tpl.m, a.tpl.m = null);
   a.tpl = null;
 }
@@ -336,7 +337,7 @@ n.render = function(a, b) {
             let t, B;
             for (f = d + 1; f < r; f++) {
               if (!t && f < m && c[f]._mkk === A && (t = f + 1), !B && f < k && a[f][h] === y && (B = f + 1), t && B) {
-                t >= B + v ? (g = c[t - 1], this.root.insertBefore(g, u), this.update(g, w, b, d, 1), t === B ? (1 < f - d && this.root.insertBefore(u, c[t]), c[d] = c[f], (c[f] = u) || console.error("reconcile.error 1")) : (t - 1 === d && console.error("reconcile.error 2"), F(c, t - 1, d), v++)) : (g = B - 1 + v, this.root.insertBefore(u, c[g] || null), (g > m ? m : g) - 1 === d && console.error("reconcile.error 3"), F(c, d, (g > m ? m : g) - 1), v--, d--);
+                t >= B + v ? (g = c[t - 1], this.root.insertBefore(g, u), this.update(g, w, b, d, 1), t === B ? (1 < f - d && this.root.insertBefore(u, c[t]), c[d] = c[f], (c[f] = u) || console.error("reconcile.error 1")) : (t - 1 === d && console.error("reconcile.error 2"), G(c, t - 1, d), v++)) : (g = B - 1 + v, this.root.insertBefore(u, c[g] || null), (g > m ? m : g) - 1 === d && console.error("reconcile.error 3"), G(c, d, (g > m ? m : g) - 1), v--, d--);
                 g = 1;
                 break;
               }
@@ -374,12 +375,12 @@ n.replace = function(a, b, c, e) {
         this.root.insertBefore(g, f);
       }
     } else {
-      this.pool && (h = this.i.get(k)) && (this.i.delete(k), G(this, a), this.g[e] = h, a.replaceWith(h));
+      this.pool && (h = this.i.get(k)) && (this.i.delete(k), H(this, a), this.g[e] = h, a.replaceWith(h));
     }
   } else {
     this.recycle && (h = a);
   }
-  h ? !this.apply || this.apply(b, c || this.state, e, h._mkp || q(h, this.h._mkp, this.cache)) : (b = this.create(b, c, e, 1), (this.key || this.pool) && G(this, a), this.g[e] = b, a.replaceWith(b));
+  h ? !this.apply || this.apply(b, c || this.state, e, h._mkp || q(h, this.h._mkp, this.cache)) : (b = this.create(b, c, e, 1), (this.key || this.pool) && H(this, a), this.g[e] = b, a.replaceWith(b));
   return this;
 };
 n.update = function(a, b, c, e) {
@@ -396,7 +397,7 @@ n.create = function(a, b, c, e) {
   var g;
   let f, l;
   this.pool && (h ? (g = this.i) && (d = g.get(k)) && (g.delete(k), l = 1) : (g = this.l) && g.length && (d = g.pop()));
-  d || (d = f = this.h, f || (this.h = d = f = z(this, this.tpl.tpl, [], ""), E(this)));
+  d || (d = f = this.h, f || (this.h = d = f = z(this, this.tpl.tpl, [], ""), F(this)));
   let p;
   this.apply && (g = d._mkp || q(d, this.h._mkp, !!f || this.cache), p = f && this.cache && Array(g.length), this.apply(a, b || this.state, c, g, p));
   f && (d = f.cloneNode(!0), p && (d._mkc = p));
@@ -407,10 +408,10 @@ n.add = function(a, b, c) {
   let e;
   "number" === typeof b ? (c = 0 > b ? this.length + b : b, b = null, e = c < this.length) : "number" === typeof c ? (0 > c && (c += this.length), e = c < this.length) : c = this.length;
   a = this.create(a, b, c, 1);
-  e ? (this.root.insertBefore(a, this.g[c]), F(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
+  e ? (this.root.insertBefore(a, this.g[c]), G(this.g, this.length - 1, c, a), this.length++) : (this.root.appendChild(a), this.g[this.length++] = a);
   return this;
 };
-function F(a, b, c, e) {
+function G(a, b, c, e) {
   const h = e || a[b];
   e && b++;
   if (b < c) {
@@ -448,7 +449,7 @@ n.remove = function(a, b) {
   const e = this.pool && !this.key, h = this.key || this.pool;
   this.pool && !0 !== this.pool && b >= this.pool && this.key && this.i.clear();
   for (let k = 0, d; k < b; k++) {
-    d = a[e ? b - k - 1 : k], c && d.remove(), h && G(this, d);
+    d = a[e ? b - k - 1 : k], c && d.remove(), h && H(this, d);
   }
   this.length = c;
   return this;
@@ -459,7 +460,7 @@ n.index = function(a) {
 n.node = function(a) {
   return this.g[a];
 };
-function G(a, b) {
+function H(a, b) {
   if (a.key) {
     var c = b._mkk;
     a.j[c] = null;

@@ -484,14 +484,12 @@ function init_proxy(self, key, payload) {
 }
 
 /** @dict */
-/*
 export const idl_attributes = {
 
-    "checked": 1,
-    "selected": 1,
-    "hidden": 1
+    checked: 1,
+    selected: 1,
+    hidden: 1
 };
-*/
 
 /**
  * @constructor
@@ -538,16 +536,14 @@ Cache.prototype._a = function (key, value, cache, index) {
     }
 
     // IDL attributes are faster but some didn't reflect content attribute state
-    // also they don't get copied by cloneNode()
 
-    // if(SUPPORT_CACHE && !cache && idl_attributes[key]){
-    //
-    //     this.n[key] = value;
-    // }
-    // else{
+    if (!cache && idl_attributes[key]) {
 
-    !1 === value ? this.n.removeAttribute(key) : this.n.setAttribute(key, value);
-    // }
+        this.n[key] = value;
+    } else {
+
+        !1 === value ? this.n.removeAttribute(key) : this.n.setAttribute(key, value);
+    }
 };
 
 /**
