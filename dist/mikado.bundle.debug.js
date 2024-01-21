@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.317 (Bundle/Debug)
+ * Mikado.js v0.8.319 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -542,24 +542,24 @@ m.render = function(a, b, c, d) {
     a = [a];
     d = 1;
   }
-  const h = this.key;
-  e = this.proxy;
-  !f || h || this.recycle || (this.remove(0, f), f = 0);
+  e = this.key;
+  const h = this.proxy;
+  !f || e || this.recycle || (this.remove(0, f), f = 0);
   let g = f < d ? f : d, k = 0;
   if (k < g) {
     for (let l, n; k < g; k++) {
       l = this.g[k];
       n = a[k];
-      if (h && l._mkk !== n[h]) {
+      if (e && l._mkk !== n[e]) {
         return ka(this, a, b, k);
       }
       this.update(l, n, b, k, 1);
-      e && !n._mkx && (a[k] = S(this, l, n));
+      h && !n._mkx && (a[k] = S(this, l, n));
     }
   }
   if (k < d) {
     for (; k < d; k++) {
-      f = a[k], this.add(f, b), !e || this.recycle && f._mkx || (a[k] = S(this, this.g[k], f));
+      f = a[k], this.add(f, b), !h || (e || this.recycle) && f._mkx || (a[k] = S(this, this.g[k], f));
     }
   } else {
     d < f && this.remove(d, f - d);
@@ -808,24 +808,14 @@ const oa = {set:function(a, b, c) {
     }
     U = !1;
   }
-  !d || !e.proxy || e.recycle && c._mkx || (c = S(e, e.g[b], c));
+  e && (f = e.recycle || e.key, !d || !e.proxy || f && c._mkx || (c = S(e, e.g[b], c)));
   (na ? a : a.j)[b] = c;
   return !0;
 }};
 m = R.prototype;
 m.set = function(a) {
-  var b = this.h;
-  if (b.key) {
-    U = !0, b.render(a), U = !1;
-  } else if (b.recycle) {
-    b = a.length;
-    for (let c = 0; c < b; c++) {
-      this[c] = a[c];
-    }
-    this.length > b && this.splice(b);
-  } else {
-    this.splice(), this.concat(a);
-  }
+  const b = this.h;
+  b.recycle || b.key ? (U = !0, b.render(a), U = !1, this.length > a.length && this.splice(a.length)) : (this.splice(), this.concat(a));
   return this;
 };
 m.splice = function(a, b, c) {

@@ -189,9 +189,6 @@ const handler = /** @type {!ProxyHandler} */{
 
                         node = mikado.dom[prop];
 
-                        // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
-                        // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
-
                         if (mikado.recycle || mikado.key && node._mkk === value[mikado.key]) {
 
                             mikado.update(node, value, null, prop);
@@ -217,11 +214,17 @@ const handler = /** @type {!ProxyHandler} */{
             skip = !1;
         }
 
-        if (index_by_number && mikado.proxy && (!mikado.recycle || !value._mkx)) {
+        if (mikado) {
 
-            prop = /** @type {number} */prop;
-            value = /** @type {Object} */value;
-            value = apply_proxy(mikado, mikado.dom[prop], value);
+            // when recycle is disabled, the existing proxy needs to by updated
+            const recycle = mikado.recycle || mikado.key;
+
+            if (index_by_number && mikado.proxy && (!recycle || !value._mkx)) {
+
+                prop = /** @type {number} */prop;
+                value = /** @type {Object} */value;
+                value = apply_proxy(mikado, mikado.dom[prop], value);
+            }
         }
 
         (proxy ? target : target.proto)[prop] = value;
@@ -236,33 +239,39 @@ const handler = /** @type {!ProxyHandler} */{
  */
 
 Observer.prototype.set = function (array) {
-    const mikado = this.mikado,
-          keyed = mikado.key;
 
+    const mikado = this.mikado;
 
-    if (keyed) {
+    if (mikado.recycle || mikado.key) {
 
         skip = !0;
         mikado.render(array);
         skip = !1;
-    } else if (mikado.recycle) {
 
-        const length = array.length;
+        if (this.length > array.length) {
 
-        for (let i = 0; i < length; i++) {
-
-            this[i] = array[i];
+            this.splice(array.length);
         }
-
-        if (this.length > length) {
-
-            this.splice(length);
-        }
-    } else {
-
-        this.splice();
-        this.concat(array);
     }
+    // else if(mikado.recycle){
+    //
+    //     const length = array.length;
+    //
+    //     for(let i = 0; i < length; i++){
+    //
+    //         this[i] = array[i];
+    //     }
+    //
+    //     if(this.length > length){
+    //
+    //         this.splice(length);
+    //     }
+    // }
+    else {
+
+            this.splice();
+            this.concat(array);
+        }
 
     return this;
 };

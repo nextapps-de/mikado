@@ -223,10 +223,7 @@ const handler = /** @type {!ProxyHandler} */ ({
 
                         node = mikado.dom[prop];
 
-                        // NOTE: node from the live pool could not be used as the replacement here, also no arrangement
-                        // TODO: .replace() could be replaced by .update() (move live pool handler from replace to update)
-
-                        if(mikado.recycle || (SUPPORT_KEYED && mikado.key && (node[MIKADO_TPL_KEY] === value[mikado.key]))){
+                        if(mikado.recycle || (SUPPORT_KEYED && mikado.key && node[MIKADO_TPL_KEY] === value[mikado.key])){
 
                             mikado.update(node, value, null, prop);
                         }
@@ -253,11 +250,17 @@ const handler = /** @type {!ProxyHandler} */ ({
             skip = false;
         }
 
-        if(index_by_number && mikado.proxy && (!mikado.recycle || !value[MIKADO_PROXY])){
+        if(mikado){
 
-            prop = /** @type {number} */ (prop);
-            value = /** @type {Object} */ (value);
-            value = apply_proxy(mikado, mikado.dom[prop], value);
+            // when recycle is disabled, the existing proxy needs to by updated
+            const recycle = mikado.recycle || ((SUPPORT_KEYED && mikado.key));
+
+            if(index_by_number && mikado.proxy && (!recycle || !value[MIKADO_PROXY])){
+
+                prop = /** @type {number} */ (prop);
+                value = /** @type {Object} */ (value);
+                value = apply_proxy(mikado, mikado.dom[prop], value);
+            }
         }
 
         (proxy ? target : target.proto)[prop] = value;
@@ -286,28 +289,32 @@ Observer.prototype.set = function(array){
     PROFILER && tick("observer.set");
 
     const mikado = this.mikado;
-    const keyed = SUPPORT_KEYED && mikado.key;
 
-    if(keyed){
+    if(mikado.recycle || (SUPPORT_KEYED && mikado.key)){
 
         skip = true;
         mikado.render(array);
         skip = false;
-    }
-    else if(mikado.recycle){
 
-        const length = array.length;
+        if(this.length > array.length){
 
-        for(let i = 0; i < length; i++){
-
-            this[i] = array[i];
-        }
-
-        if(this.length > length){
-
-            this.splice(length);
+            this.splice(array.length);
         }
     }
+    // else if(mikado.recycle){
+    //
+    //     const length = array.length;
+    //
+    //     for(let i = 0; i < length; i++){
+    //
+    //         this[i] = array[i];
+    //     }
+    //
+    //     if(this.length > length){
+    //
+    //         this.splice(length);
+    //     }
+    // }
     else{
 
         this.splice();

@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.317 (ES5/Debug)
+ * Mikado.js v0.8.319 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1085,24 +1085,24 @@ n.render = function(a, b, c, d) {
     a = [a];
     d = 1;
   }
-  var f = this.key;
-  h = this.proxy;
-  !g || f || this.recycle || (this.remove(0, g), g = 0);
+  h = this.key;
+  var f = this.proxy;
+  !g || h || this.recycle || (this.remove(0, g), g = 0);
   var e = g < d ? g : d, k = 0;
   if (k < e) {
     for (var m = void 0, p = void 0; k < e; k++) {
       m = this.h[k];
       p = a[k];
-      if (f && m._mkk !== p[f]) {
+      if (h && m._mkk !== p[h]) {
         return wa(this, a, b, k);
       }
       this.update(m, p, b, k, 1);
-      h && !p._mkx && (a[k] = S(this, m, p));
+      f && !p._mkx && (a[k] = S(this, m, p));
     }
   }
   if (k < d) {
     for (; k < d; k++) {
-      g = a[k], this.add(g, b), !h || this.recycle && g._mkx || (a[k] = S(this, this.h[k], g));
+      g = a[k], this.add(g, b), !f || (h || this.recycle) && g._mkx || (a[k] = S(this, this.h[k], g));
     }
   } else {
     d < g && this.remove(d, g - d);
@@ -1362,24 +1362,14 @@ var Aa = {set:function(a, b, c) {
     }
     U = !1;
   }
-  !d || !h.proxy || h.recycle && c._mkx || (c = S(h, h.h[b], c));
+  h && (l = h.recycle || h.key, !d || !h.proxy || l && c._mkx || (c = S(h, h.h[b], c)));
   (za ? a : a.i)[b] = c;
   return !0;
 }};
 n = R.prototype;
 n.set = function(a) {
   var b = this.g;
-  if (b.key) {
-    U = !0, b.render(a), U = !1;
-  } else if (b.recycle) {
-    b = a.length;
-    for (var c = 0; c < b; c++) {
-      this[c] = a[c];
-    }
-    this.length > b && this.splice(b);
-  } else {
-    this.splice(), this.concat(a);
-  }
+  b.recycle || b.key ? (U = !0, b.render(a), U = !1, this.length > a.length && this.splice(a.length)) : (this.splice(), this.concat(a));
   return this;
 };
 n.splice = function(a, b, c) {

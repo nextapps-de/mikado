@@ -791,7 +791,7 @@ if(!REACTIVE_ONLY){
                 const item = data[x];
                 this.add(item, state/*, x*/);
 
-                if(proxy && (!this.recycle || !item[MIKADO_PROXY])){
+                if(proxy && ((!key && !this.recycle) || !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, this.dom[x], item);
                 }
