@@ -7,11 +7,10 @@ export default function(route, target){
 
     if(route){
 
-        if(target){
+        // when target is set the location has to change
+        // when no target is set it just init/refresh the current app state
 
-            window.location.hash = route;
-        }
-
+        target && (window.location.hash = route);
         route = route.substring(2);
     }
 
@@ -24,8 +23,8 @@ export default function(route, target){
 
 app.state.is_visible = function(data){
 
-    // when no pagination is used for the table view
-    // hiding by filtering is better than filtering the data
+    // when no pagination is used for the table view,
+    // hiding elements by filter state is better than filtering the data
 
     const filter = app.state.filter;
 
