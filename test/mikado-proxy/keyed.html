@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-proxy-0.8.117 (keyed)</h1><hr>
+<h1>Benchmark: mikado-proxy-0.8.x (keyed)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script type="module">
@@ -14,18 +14,23 @@
     import template from "./template/keyed.js";
     import Mikado from "./dist/mikado.bundle.module.min.js";
 
+    const data = new Mikado.Array();
+
     // each test gets new random data
 
     const mikado = new Mikado(template, {
-        observe: store(new Mikado.Array()),
+        observe: data,
         mount: root,
         cache: true,
         pool: 100
     });
 
+    // it uses data.set(arr) to assign data to the store, because
+    // the data is coming from an extern authority like a server.
+
     suite["mikado"] = function(items){
 
-        mikado.render(items);
+        data.set(items);
     };
 
 </script>

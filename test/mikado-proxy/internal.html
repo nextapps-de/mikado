@@ -3,7 +3,7 @@
     <title>Mikado</title>
 </head>
 <body>
-<h1>Benchmark: mikado-proxy-0.8.117 (internal data)</h1><hr>
+<h1>Benchmark: mikado-proxy-0.8.x (data-driven)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root"></div>
 <script type="module">
@@ -17,13 +17,23 @@
     // each test gets new random data
 
     const mikado = new Mikado(template, {
+
+        // the internal mode don't apply de-referencing to the data
+        // push a reference of the array to the benchmark via: store(arr)
+        // or you can also get the array reference by: arr = store()
+
         observe: store(new Mikado.Array()),
         mount: root,
         cache: true,
         pool: 100
     });
 
-    suite["mikado"] = function(items){};
+    // nothing required, since all changes are already applied by
+    // reactive approach during the "start" phase (which is also covered by the benchmark).
+    // an internal data state is only supported in the "internal" test. it doesn't
+    // reflect data coming from an extern authority like a server.
+
+    suite["mikado"] = function(){};
 
 </script>
 </body>
