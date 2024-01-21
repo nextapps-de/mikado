@@ -544,34 +544,35 @@ describe("Compile Template", function(){
         const root_1 = document.getElementById("root-1");
         const tpl = Mikado.compile(template_full);
         const view = new Mikado(tpl, { mount: root_1 });
+        const entries = [{
+            id: 1,
+            date: "2023-12-01T14:00:00",
+            title: "A simple title 1",
+            media: "<img src='img1.jpg'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "off"
+        },{
+            id: 2,
+            date: "2023-12-02T15:00:00",
+            title: "A simple title 2",
+            media: "<video src='mov2.mp4'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "on"
+        },{
+            id: 3,
+            date: "2023-12-03T16:00:00",
+            title: "A simple title 3",
+            media: "<img src='img3.jpg'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "off"
+        }];
 
         view.render({
             view: "video",
-            entries: [{
-                id: 1,
-                date: "2023-12-01T14:00:00",
-                title: "A simple title 1",
-                media: "<img src='img1.jpg'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "off"
-            },{
-                id: 2,
-                date: "2023-12-02T15:00:00",
-                title: "A simple title 2",
-                media: "<video src='mov2.mp4'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "on"
-            },{
-                id: 3,
-                date: "2023-12-03T16:00:00",
-                title: "A simple title 3",
-                media: "<img src='img3.jpg'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "off"
-            }]
+            entries: entries
         });
 
         expect(view.length).to.equal(1);
@@ -595,9 +596,43 @@ describe("Compile Template", function(){
         expect(tmp.textContent).to.equal(new Date("2023-12-01T14:00:00").toLocaleString());
         tmp = tmp.nextElementSibling;
         expect(tmp.style.opacity).to.equal("0.5");
+
         tmp = tmp.firstElementChild.firstElementChild;
         expect(tmp.selected).to.equal(false);
         expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        tmp = view.root.querySelector("tr:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(true);
+        expect(tmp.nextElementSibling.selected).to.equal(false);
+
+        tmp = view.root.querySelector("tr:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(false);
+        expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        // check update IDL attributes
+
+        entries[0].mode = "on";
+        entries[1].mode = "off";
+        entries[2].mode = "on";
+
+        view.render({
+            view: "video",
+            entries: entries
+        });
+
+        tmp = view.root.querySelector("tr:nth-of-type(1) option");
+        expect(tmp.selected).to.equal(true);
+        expect(tmp.nextElementSibling.selected).to.equal(false);
+
+        tmp = view.root.querySelector("tr:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(false);
+        expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        tmp = view.root.querySelector("tr:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(true);
+        expect(tmp.nextElementSibling.selected).to.equal(false);
+
+        // check conditional structure
 
         view.render({
             view: "video",

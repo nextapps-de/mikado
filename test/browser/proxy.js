@@ -517,6 +517,8 @@ describe("Reactive Proxy", function(){
 
         expect(store.lastIndexOf(store[2])).to.equal(4);
         expect(store.lastIndexOf(store[5])).to.equal(-1);
+
+        view.clear().destroy();
     });
 
     it("Should have been used forEach properly", function(){
@@ -528,9 +530,33 @@ describe("Reactive Proxy", function(){
 
         view.render(store);
 
-        let count = 0;
-        store.forEach(() => count++);
+        expect(view.length).to.equal(5);
+        expect(store.length).to.equal(5);
+        checkDOM(root_1.firstElementChild, items);
 
-        expect(count).to.equal(5);
+        view.clear().destroy();
+    });
+
+    it("Should have been used set properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const store = Mikado.Array();
+        const view = new Mikado(template_proxy, { root: root_1, observe: store });
+
+        let items = copy(data.slice(0, 5));
+        store.set(items);
+
+        expect(view.length).to.equal(5);
+        expect(store.length).to.equal(5);
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+        items = copy(data.slice(5, 10));
+        store.set(items);
+
+        expect(view.length).to.equal(5);
+        expect(store.length).to.equal(5);
+        checkDOM(root_1.firstElementChild, items, /* data index */ true);
+
+        view.clear().destroy();
     });
 });
