@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.313 (ES5/Debug)
+ * Mikado.js v0.8.317 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1368,17 +1368,18 @@ var Aa = {set:function(a, b, c) {
 }};
 n = R.prototype;
 n.set = function(a) {
-  var b = this.g.key;
-  b && (U = !0);
-  if (!b && this.g.recycle) {
-    for (var c = this.length, d = 0; d < c; d++) {
-      this[d] = a[d];
+  var b = this.g;
+  if (b.key) {
+    U = !0, b.render(a), U = !1;
+  } else if (b.recycle) {
+    b = a.length;
+    for (var c = 0; c < b; c++) {
+      this[c] = a[c];
     }
-    c > a.length && this.splice(c);
+    this.length > b && this.splice(b);
   } else {
     this.splice(), this.concat(a);
   }
-  b && (this.g.render(this), U = !1);
   return this;
 };
 n.splice = function(a, b, c) {

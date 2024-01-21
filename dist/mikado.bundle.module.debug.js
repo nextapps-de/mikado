@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.313 (Bundle/Module/Debug)
+ * Mikado.js v0.8.317 (Bundle/Module/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -813,18 +813,18 @@ const na = {set:function(a, b, c) {
 }};
 n = R.prototype;
 n.set = function(a) {
-  const b = this.h.key;
-  b && (V = !0);
-  if (!b && this.h.recycle) {
-    const c = this.length;
-    for (let d = 0; d < c; d++) {
-      this[d] = a[d];
+  var b = this.h;
+  if (b.key) {
+    V = !0, b.render(a), V = !1;
+  } else if (b.recycle) {
+    b = a.length;
+    for (let c = 0; c < b; c++) {
+      this[c] = a[c];
     }
-    c > a.length && this.splice(c);
+    this.length > b && this.splice(b);
   } else {
     this.splice(), this.concat(a);
   }
-  b && (this.h.render(this), V = !1);
   return this;
 };
 n.splice = function(a, b, c) {

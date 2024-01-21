@@ -285,23 +285,25 @@ Observer.prototype.set = function(array){
 
     PROFILER && tick("observer.set");
 
-    const keyed = SUPPORT_KEYED && this.mikado.key;
+    const mikado = this.mikado;
+    const keyed = SUPPORT_KEYED && mikado.key;
 
     if(keyed){
 
         skip = true;
+        mikado.render(array);
+        skip = false;
     }
+    else if(mikado.recycle){
 
-    if(!keyed && this.mikado.recycle){
-
-        const length = this.length;
+        const length = array.length;
 
         for(let i = 0; i < length; i++){
 
             this[i] = array[i];
         }
 
-        if(length > array.length){
+        if(this.length > length){
 
             this.splice(length);
         }
@@ -310,12 +312,6 @@ Observer.prototype.set = function(array){
 
         this.splice();
         this.concat(array);
-    }
-
-    if(keyed){
-
-        this.mikado.render(this);
-        skip = false;
     }
 
     return this;

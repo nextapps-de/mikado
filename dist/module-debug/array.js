@@ -238,24 +238,25 @@ const handler = /** @type {!ProxyHandler} */{
  */
 
 Observer.prototype.set = function (array) {
+    const mikado = this.mikado,
+          keyed = mikado.key;
 
-    const keyed = this.mikado.key;
 
     if (keyed) {
 
         skip = !0;
-    }
+        mikado.render(array);
+        skip = !1;
+    } else if (mikado.recycle) {
 
-    if (!keyed && this.mikado.recycle) {
-
-        const length = this.length;
+        const length = array.length;
 
         for (let i = 0; i < length; i++) {
 
             this[i] = array[i];
         }
 
-        if (length > array.length) {
+        if (this.length > length) {
 
             this.splice(length);
         }
@@ -263,12 +264,6 @@ Observer.prototype.set = function (array) {
 
         this.splice();
         this.concat(array);
-    }
-
-    if (keyed) {
-
-        this.mikado.render(this);
-        skip = !1;
     }
 
     return this;
