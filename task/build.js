@@ -65,7 +65,7 @@ let parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: options["DEBUG"] ? "SIMPLE" : "ADVANCED_OPTIMIZATIONS", //"WHITESPACE"
+    compilation_level: options["RELEASE"] === "bundle.profiler" ? "SIMPLE" : "ADVANCED", //"WHITESPACE"
     use_types_for_optimization: true,
     generate_exports: true,
     export_local_property_definitions: true,
