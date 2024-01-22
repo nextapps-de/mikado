@@ -168,20 +168,22 @@ The test "innerHTML" just uses the browsers native feature <code>element.innerHT
     <li><u>Keyed</u>:<sup>*</sup> The re-usage of DOM elements is just allowed on data entries sharing the same key.</li>
     <li><u>Data-Driven</u>:<sup> </sup> NRestrictions like keyed, but does not apply de-referencing to the test data.</li>
 </ul>
-<sup>*</sup> The test applies de-referencing to mimic real incoming data from a server. No fake allowed.
+<sup>*</sup> The test applies de-referencing to mimic real incoming data from a server.
 <br><br>
 <b>Test Environment:</b>
 <p>
 Every test will run in its own isolated/dedicated browser instance (iframe) and post back results via message channel.
 The benchmark is using fixed randomness (srand) which will apply for every test. So every test has to solve exactly the same task.
 This is a real world benchmark running in your browser, no synthetics. It applies de-referencing on "recycle" und "keyed" tests to mimic realistic data coming from an extern authority like a server.
-To bo honest, everything else would be a fake. The data-driven test covers the feature of internal data processing explicitly. You will find a lot of synthetic benchmarks out there which didn't cover this specific real world behavior. Keep this in mind.
+The data-driven test covers the feature of internal data processing explicitly. You will find a lot of synthetic benchmarks out there which didn't cover this specific real world behavior. Keep this in mind.
 <br><br>
 The test by default just measure the time it takes to construct and transfer the whole render task to the browser. A library is able to optimize just this specific part. When enabling the option "Force reflow" the benchmark will also measure the time taken by the recalculation (by forcing reflow at the end of each test cycle). Since this part couldn't be optimized by a library it adds way too much unrelated workload to the test and will drastically reduce the potential of getting meaningful results.
 </p><br>
 <b>Results:</b>
 <p>
-The result values are based on average, not median. Using median is widely used, but the truth is median timing results effectively cuts out the garbage collector and leads into false results. The <b>index</b> is a stable statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The <b>score</b> value is based on median factorization (apply median on average results is fine), here a score of 100 represents the statistical midfield.
+The result values are based on full timings, no median was applied here. Using median is widely used, but the truth is median timeseries results effectively cuts out the garbage collector and leads into false results.
+The <b>index</b> is a stable statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better).
+The <b>score</b> value is based on median factorization (apply median on average results is fine), here a score of 100 represents the statistical midfield.
 </p>
 <iframe id="iframe"></iframe>
 <script src="test/mikado/dist/mikado.bundle.min.js"></script>
