@@ -5,25 +5,19 @@ tpl:{
   child: [
     {
       tag: "div",
-      text: [
-        ""
-      ]
+      text: []
     },
     {
       tag: "div",
-      text: [
-        ""
-      ]
+      text: []
     },
     {
       tag: "div",
-      text: [
-        ""
-      ]
+      text: []
     }
   ]
 },
-fn:[function(data,state,index,_p,_x){
+fn:[function(data,state,index,_p,_f,_x){
   let value = 'test';
   _p[0]._t(value,_x,0);
   value += '|test';

@@ -151,7 +151,7 @@ type MikadoOptions = {
     recycle?: boolean;
     hydrate?: boolean;
     async?: boolean;
-    pool?: boolean|number;
+    pool?: boolean;
     state?: Object;
     observe?: Mikado.array;
     shadow?: boolean;

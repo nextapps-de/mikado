@@ -315,15 +315,23 @@ module.exports = function(src, dest, options, _recall){
 
         if(inc[i].length){
 
-            //inc[i].push("return _x");
+            if(mode !== "compact"){
 
-            if((tpl_cache && tpl_cache !== "false") || mode !== "compact"){
+                if((tpl_cache && tpl_cache !== "false")){
 
-                inc[i].unshift("let _o,_v,_c");
+                    //inc[i].push("return _x");
+                    //inc[i].unshift("_x&&(_x=[])");
+
+                    inc[i].unshift("let _o,_v,_c");
+                }
+                else{
+
+                    inc[i].unshift("let _o,_v");
+                }
             }
 
             inc[i] =
-`function(data,state,index,_p,_x){
+`function(data,state,index,_p,_f,_x){
   ${ (inc[i].join(pretty ? ";\n  " : ";") + ";").replaceAll(",_v)};", ",_v)}").replaceAll("=_v};", "=_v}") }
 }`;
         }
@@ -791,7 +799,6 @@ function escape_single_quotes(str){
 function escape_single_quotes_expression(str){
 
     //console.log(str.replace(/{{(.*)?(\\)?([\s\S])|(')([^}]+)?/ig, "{{$1$2$3$4$5"))
-
     return str.replace(/{{(.*)?(\\)?([\s\S])|(')(.*)?(}})/ig, "{{$1$2$3$4$5$6");
 }
 
@@ -893,9 +900,6 @@ function create_schema(root, inc, fn, index, attr, mode){
                     let value = root[key];
 
                     if(typeof value === "string"){
-
-                        //const sanitize = value.includes("{{!!");
-                        //const escape = !sanitize && value.includes("{{!");
 
                         if(/{{[\s\S]+}}/.test(value)){
 
@@ -1015,7 +1019,7 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                 if(attr){
 
-                                    fn.push(_o + '._a("' + key + '",' + tmp + ',_x,' + index.current + ')');
+                                    fn.push(_o + '._a("' + key + '",' + tmp + ',_f,_x,' + index.current + ')');
                                 }
                                 else if(key === "class"){
 
@@ -1034,6 +1038,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     fn.push(_o + '._t(' + tmp + ',_x,' + index.current + ')');
                                 }
                             }
+
                             // the fastest when Cache should be optionally supported
                             else if(mode === "inline"){
 
@@ -1045,9 +1050,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                                            //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                                             (idl_attributes[key]
-                                                ? '_o.n.' + key + '=_v'
+                                                ? (key === "selected"
+                                                    ? '_f?_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v):_o.n.' + key + '=_v'
+                                                    : '_o.n.' + key + '=_v')
                                                 : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
                                             ) +
                                         '}');
@@ -1089,6 +1095,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '}');
                                 }
                             }
+
                             // the fastest variant of all, Cache is fixed enabled
                             else if(mode === "cache"){
 
@@ -1100,9 +1107,10 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '_c&&(_c["_a' + key + '"]=_v);' +
                                         'if(_o.c["_a' + key + '"]!==_v){' +
                                             '_o.c["_a' + key + '"]=_v;' +
-                                            //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                                             (idl_attributes[key]
-                                                ? '_o.n.' + key + '=_v'
+                                                ? (key === "selected"
+                                                    ? '_f?_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v):_o.n.' + key + '=_v'
+                                                    : '_o.n.' + key + '=_v')
                                                 : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
                                             ) +
                                         '}');
@@ -1144,7 +1152,8 @@ function create_schema(root, inc, fn, index, attr, mode){
                                         '}');
                                 }
                             }
-                            // the fastest when Cache isn't used
+
+                            // the fastest when Cache is fixed disabled
                             else if(mode === "nocache"){
 
                                 fn.push('_o=_p[' + index.current + '].n');
@@ -1153,7 +1162,15 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                     if(idl_attributes[key]){
 
-                                        fn.push('_o.n.' + key + '=' + tmp);
+                                        if(key === "selected"){
+
+                                            fn.push('_v=' + tmp);
+                                            fn.push('_f?_o[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v):_o.n.' + key + '=_v');
+                                        }
+                                        else{
+
+                                            fn.push('_o.n.' + key + '=' + tmp);
+                                        }
                                     }
                                     else{
 
@@ -1178,6 +1195,7 @@ function create_schema(root, inc, fn, index, attr, mode){
                                     fn.push('_o.nodeValue=' + tmp);
                                 }
                             }
+
                             // default strategy "moderate" (not the fastest, not the most compact, optional Cache supported)
                             else{
 
@@ -1187,7 +1205,7 @@ function create_schema(root, inc, fn, index, attr, mode){
 
                                     fn.push(
                                         '_c&&(_c["_a' + key + '"]=_v);' +
-                                        '(_o.c&&_o.c["_a' + key + '"]===_v)||_o._a("' + key + '",_v)'
+                                        '(_o.c&&_o.c["_a' + key + '"]===_v)||_o._a("' + key + '",_v,_f)'
                                     );
                                 }
                                 else if(key === "class"){
@@ -1216,15 +1234,13 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 }
                             }
 
-                            //values.push();
-
                             if(proxy){
 
                                 root[key] = [proxy];
                             }
                             else{
 
-                                root[key] = [""];
+                                root[key] = [];
                             }
                         }
                         else{
@@ -1361,9 +1377,8 @@ function create_schema(root, inc, fn, index, attr, mode){
                                 root.inc = 1;
                             }
 
-                            // for, range and if are fully contained inside render function
+                            // for and if are fully contained inside render function
                             delete root.for;
-                            //delete root.range;
                             delete root.if;
 
                             delete root.child;

@@ -420,7 +420,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive) {
                       options = {
                     recycle: self.recycle,
                     cache: self.cache,
-                    pool: self.pool,
+                    pool: !!self.pool,
                     state: self.state,
                     mount: /** @type {Element} */node,
                     hydrate: !!vnode
@@ -495,12 +495,13 @@ export function Cache(cache, node, vpath) {
 /**
  * @param {string} key
  * @param {string|boolean} value
- * @param {NodeCache=} cache
+ * @param {boolean} factory
+ * @param {NodeCache|boolean=} cache
  * @param {number=} index
  * @const
  */
 
-Cache.prototype._a = function (key, value, cache, index) {
+Cache.prototype._a = function (key, value, factory, cache, index) {
 
     if (this.c) {
 
@@ -521,9 +522,9 @@ Cache.prototype._a = function (key, value, cache, index) {
         this.c["_a" + key] = value;
     }
 
-    // IDL attributes are faster but some didn't reflect content attribute state
+    // IDL attributes are faster but "selected" didn't reflect content attribute state
 
-    if (!cache && idl_attributes[key]) {
+    if (idl_attributes[key] && (!factory || "selected" !== key)) {
 
         this.n[key] = value;
     } else {
@@ -534,7 +535,7 @@ Cache.prototype._a = function (key, value, cache, index) {
 
 /**
  * @param {string} text
- * @param {NodeCache=} cache
+ * @param {NodeCache|boolean=} cache
  * @param {number=} index
  * @const
  */
@@ -565,7 +566,7 @@ Cache.prototype._t = function (text, cache, index) {
 
 /**
  * @param {string} classname
- * @param {NodeCache=} cache
+ * @param {NodeCache|boolean=} cache
  * @param {number=} index
  * @const
  */
@@ -596,7 +597,7 @@ Cache.prototype._c = function (classname, cache, index) {
 
 /**
  * @param {string} css
- * @param {NodeCache=} cache
+ * @param {NodeCache|boolean=} cache
  * @param {number=} index
  * @const
  */
@@ -627,7 +628,7 @@ Cache.prototype._s = function (css, cache, index) {
 
 /**
  * @param {string} html
- * @param {NodeCache=} cache
+ * @param {NodeCache|boolean=} cache
  * @param {number=} index
  * @const
  */

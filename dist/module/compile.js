@@ -458,7 +458,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive) {
 
                 if (_inc[i].length) {
 
-                    _inc[i] = Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") /*+ ';return _x'*/);
+                    _inc[i] = Function("data", "state", "index", "_p", "_f", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") /*+ ';return _x'*/);
                 } else {
 
                     _inc[i] = null;
@@ -542,9 +542,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
 
         if (attr) {
 
-            fn.push('_c&&(_c["_a' + key + "\"]=_v);if(!_o.c||_o.c[\"_a" + key + "\"]!==_v){_o.c&&(_o.c[\"_a" + key + '"]=_v);' + (
-            //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
-            idl_attributes[key] ? '_o.n.' + key + '=_v' : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)') + '}');
+            fn.push('_c&&(_c["_a' + key + "\"]=_v);if(!_o.c||_o.c[\"_a" + key + "\"]!==_v){_o.c&&(_o.c[\"_a" + key + '"]=_v);' + (idl_attributes[key] ? "selected" === key ? '_f?_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v):_o.n.' + key + '=_v' : '_o.n.' + key + '=_v' : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)') + '}');
         } else if ("class" === key) {
 
             fn.push("_c&&(_c._c=_v);if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}");

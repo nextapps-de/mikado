@@ -493,7 +493,7 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 if(_inc[i].length){
 
-                    _inc[i] = Function("data", "state", "index", "_p", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") /*+ ';return _x'*/);
+                    _inc[i] = Function("data", "state", "index", "_p", "_f", "_x", '"use strict";let _o,_v,_c;' + _inc[i].join(";") /*+ ';return _x'*/);
                 }
                 else{
 
@@ -593,9 +593,10 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
                 '_c&&(_c["_a' + key + '"]=_v);' +
                 'if(!_o.c||_o.c["_a' + key + '"]!==_v){' +
                     '_o.c&&(_o.c["_a' + key + '"]=_v);' +
-                    //'_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)' +
                     (idl_attributes[key]
-                        ? '_o.n.' + key + '=_v'
+                        ? (key === "selected"
+                            ? '_f?_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v):_o.n.' + key + '=_v'
+                            : '_o.n.' + key + '=_v')
                         : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + key + '",_v)'
                     ) +
                 '}');
@@ -643,7 +644,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn){
         }
         else{
 
-            root[key] = [""];
+            root[key] = [];
         }
     }
     else{

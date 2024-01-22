@@ -9,7 +9,7 @@ import { Cache } from "./factory.js";
  *   root: (Element|undefined),
  *   mount: (Element|undefined),
  *   recycle: (boolean|undefined),
- *   pool: (boolean|number|undefined),
+ *   pool: (boolean|undefined),
  *   cache: (boolean|undefined),
  *   async: (boolean|undefined),
  *   on: (MikadoCallbacks|undefined),

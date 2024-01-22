@@ -470,7 +470,6 @@ Observer.prototype.map = function(fn, self){
     for(let i = 0, length = this.length; i < length; i++){
 
         this[i] = fn(this[i]);
-        //this.apply(this.dom[i], data, this.view, i);
     }
 
     return this;

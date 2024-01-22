@@ -15,7 +15,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const tmp = root_1.firstElementChild.dataset.id;
@@ -35,17 +35,9 @@ describe("DOM State Cache", function(){
 
         view.render(data[0]);
         root_1.firstElementChild.dataset.id = "test";
-        view.render(data[0]);
-        root_1.firstElementChild.dataset.id = "test";
-        view.render(data[0]);
-        expect(root_1.firstElementChild.dataset.id).to.equal("test");
-
-        // cache will assign during second run!
-        view.render(data[0]);
-        root_1.firstElementChild.dataset.id = "test";
+        // cache fully applies during second run!
         view.render(data[0]);
         expect(root_1.firstElementChild.dataset.id).to.equal("test");
-
         view.render(data[0]);
         expect(root_1.firstElementChild.dataset.id).to.equal("test");
         checkDOM(root_1.firstElementChild, [Object.assign({}, data[0], { id: "test" })]);
@@ -59,7 +51,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         Mikado.setAttribute(root_1.firstElementChild, "data-id", "test");
@@ -87,7 +79,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const node = root_1.firstElementChild.firstElementChild.firstElementChild;
@@ -109,7 +101,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const node = root_1.firstElementChild.firstElementChild.firstElementChild.nextElementSibling;
@@ -131,7 +123,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const tmp = root_1.firstElementChild.dataset.id;
@@ -163,7 +155,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const target = root_1.firstElementChild.firstElementChild;
@@ -206,7 +198,7 @@ describe("DOM State Cache", function(){
         const view = new Mikado(template, { root: root_1, recycle: true, cache: true })
 
         view.render(data[0]);
-        // cache will create during second run!
+        // cache fully applies during second run!
         view.render(data[0]);
 
         const target = root_1.firstElementChild.firstElementChild;

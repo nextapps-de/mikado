@@ -5,7 +5,7 @@
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
 <img src="https://img.shields.io/badge/build-passing-brightgreen">
 <img src="https://img.shields.io/badge/coverage-90%25-brightgreen">
-<img src="https://img.shields.io/badge/typed-92%25-brightgreen">
+<img src="https://img.shields.io/badge/typed-93%25-brightgreen">
 <a target="_blank" href="https://github.com/nextapps-de/mikado/issues"><img src="https://img.shields.io/github/issues/nextapps-de/mikado.svg"></a>
 <a target="_blank" href="https://github.com/nextapps-de/mikado/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/mikado.svg"></a>
 
@@ -921,7 +921,7 @@ Observable array-like methods (optional, not included in mikado.light.js):
     <tr></tr>
     <tr>
         <td><b>pool</b></td>
-        <td>Set it to true (unbounded) or specify the pool size by a numeric value (the latter is recommended when using pools). Pooling can greatly enhance both the keyed and non-keyed recycle strategy.</td>
+        <td>Pooling can greatly enhance both the keyed and non-keyed recycle strategy.</td>
         <td>false</td>
     </tr>
     <tr></tr>
@@ -1122,7 +1122,7 @@ Within a template there are several **reserved keywords** you can use as an iden
         <td>Gives access to the global namespace.</td>
     </tr>
     <tr>
-        <td>_p<br>_v<br>_o<br>_inc</td>
+        <td>_p<br>_v<br>_x<br>_o<br>_f<br>_inc</td>
         <td>private identifiers, used by internal processing</td>
     </tr>
 </table>
@@ -3454,35 +3454,32 @@ store.transaction(function(){
 // changes applied
 ```
 
+A transaction is used when editing an **existing** state in a bulk. Whenever you want to initialize a new state, e.g. when data was coming from a server, you should use `store.set(data)` instead.
+
 <a name="pools"></a>
 
-## Template Pools
+## Component Pools
 
 Using pools greatly enhance the strategy of keyed and non-keyed recycling. Mikado detects automatically if it needs to use keyed or non-keyed pooling and will apply different strategies optimized for each of them.
 
-> Pools just enables (regardless of the passed options) when one of the recycle strategy was used: keyed or non-keyed.
+> Pools just enables when a keyed or non-keyed recycle strategy was used in combination.
 
-Enable pool and limit pool size (keyed and non-keyed:
-
-```js
-const view = new Mikado(tpl, { pool: 200, recycle: true });
-```
-
-> A proper value of pool size should be set at least to the max amount of items which is rendered in one loop (e.g. a page of 30 items). Using twice of this length is recommended, when your components aren't oversized or when page has less than 100 items to render.
-
-Enable pool with unbounded pool size (non-keyed only):
+Enable pool (keyed or non-keyed):
 
 ```js
-const view = new Mikado(tpl, { pool: true, recycle: true });
+const view = new Mikado(tpl, {
+    recycle: true,
+    pool: true
+});
 ```
 
-> In keyed mode you should only use an unbounded pool size, when the total amount of data is very limited (e.g. less than 300 items). To be safe you should always limit the pool when using keyed recycling.
+Mikado will auto-balance pools automatically.
 
 <a name="mikado.flush"></a>
 
 #### Flush Pools
 
-You can delete pool contents at any time:
+You can delete pool contents at any time by:
 
 ```js
 view.flush();
@@ -3726,13 +3723,14 @@ Each template part explained:
 - `change="select-active:root"` assign the route named "select-active" and forward the event to the element which has the attribute "root" assigned to it (so the target inside the root functions becomes the forwarded element)
 - `selected="data.active === 'yes'"` when dynamic attribute values results to boolean "false" (not string) it will be removed from the element, because some attributes enables just by their existence (consider an option element having selected="false" will end up also as a truthy selection state)
 
+<!--
 <a name="best-practices"></a>
 
 ## Best Practices
 
 When you are focus on performance you should take those settings as a goal:
 
-1. For keyed recycling use: `{ pool: 200 }` by adding `cache="true"` on the template root element in addition to a key like `key="data.id"` accordingly to your data.
+1. For keyed recycling use: `{ pool: true }` by adding `cache="true"` on the template root element in addition to a key like `key="data.id"` accordingly to your data.
 2. For non-keyed recycling use: `{ recycle: true, pool: true }` by adding `cache="true"` on the template root element.
 3. Also enable `Mikado.eventCache = true`.
 
@@ -3741,6 +3739,7 @@ When you are focus on performance you should take those settings as a goal:
 - Remember, looped inline partials can also have a property `key` on their inline root element to switch them also in keyed recycling mode.
 - Prefer named includes when structures will be reused by multiple views, also when assigning custom options gives you any advantage.
 - In larger applications, it might be better to destroy views when they are closed by the user to free memory instead of saving too much on the options.
+-->
 
 <!--
 ### Personal Recommendation

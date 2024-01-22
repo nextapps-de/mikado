@@ -146,8 +146,12 @@ export default function Mikado(template, options = /** @type MikadoOptions */ ({
 
     if(SUPPORT_POOLS){
 
-        /** @const {boolean|number} */
-        this.pool = (cacheable && options.pool) || 0;
+        // Pool sizes are automatically being handled,
+        // non-keyed pools does not need boundary,
+        // keyed pools start at size 1 and increase to max items per view
+
+        /** @type {number} */
+        this.pool = cacheable && options.pool ? 1 : 0;
         /** @private {Array<Element>} */
         this.pool_shared = [];
 
@@ -776,7 +780,7 @@ if(!REACTIVE_ONLY){
                     this.update(node, item, state, x, 1);
                 }
 
-                if(proxy && (/* !this.recycle || */ !item[MIKADO_PROXY])){
+                if(proxy && (/* (!key && !this.recycle) || */ !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, node, item);
                 }
@@ -786,12 +790,15 @@ if(!REACTIVE_ONLY){
         // add
         if(x < count){
 
+            // when recycle is disabled the proxy needs to be updated
+            const recycle = key || this.recycle;
+
             for(; x < count; x++){
 
                 const item = data[x];
                 this.add(item, state/*, x*/);
 
-                if(proxy && ((!key && !this.recycle) || !item[MIKADO_PROXY])){
+                if(proxy && (!recycle || !item[MIKADO_PROXY])){
 
                     data[x] = apply_proxy(this, this.dom[x], item);
                 }
@@ -803,7 +810,6 @@ if(!REACTIVE_ONLY){
 
             this.remove(count, length - count);
         }
-        //}
 
         //profiler_end("render");
 
@@ -812,10 +818,10 @@ if(!REACTIVE_ONLY){
 }
 
 /**
- * param {!Element|number} node
- * param {*=} data
- * param {*=} state
- * param {number=} index
+ * @param {!Element|number} node
+ * @param {*=} data
+ * @param {*=} state
+ * @param {number=} index
  * @const
  */
 
@@ -838,9 +844,11 @@ Mikado.prototype.replace = function(node, data, state, index){
         }
     }
 
+    node = /** @type {!Element} */ (node);
+
     let tmp, update;
 
-    // The main difference of replace() to update() is that replace() will properly handle the keyed live pool.
+    // The main difference of replace() and update() is that replace() will also handle the keyed live pool.
 
     if(SUPPORT_KEYED && this.key){
 
@@ -853,7 +861,7 @@ Mikado.prototype.replace = function(node, data, state, index){
                 const index_old = this.index(tmp);
                 const node_a = index_old < index ? tmp : node;
                 const node_b = index_old < index ? node : tmp;
-                let next = this.dom[index_old < index ? index_old + 1 : index + 1]; // node_a.nextSibling;
+                let next = this.dom[index_old < index ? index_old + 1 : index + 1];
 
                 this.dom[index] = tmp;
                 this.dom[index_old] = node;
@@ -894,12 +902,12 @@ Mikado.prototype.replace = function(node, data, state, index){
 
     if(update){
 
-        (SUPPORT_REACTIVE && this.fullproxy && data[MIKADO_PROXY]) || !this.apply || this.apply(
+        this.apply && ((SUPPORT_REACTIVE && this.fullproxy && data[MIKADO_PROXY]) || this.apply(
             data,
             state || this.state,
             index,
             update[MIKADO_TPL_PATH] || create_path(update, this.factory[MIKADO_TPL_PATH], SUPPORT_CACHE && this.cache)
-        );
+        ));
     }
     else{
 
@@ -1099,6 +1107,7 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
             state || this.state,
             index,
             vpath,
+            !!factory,
             cache
         );
     }
@@ -1108,7 +1117,7 @@ Mikado.prototype.create = function(data, state, index, _update_pool){
         PROFILER && tick("factory.clone");
         node = factory.cloneNode(true);
 
-        if(SUPPORT_CACHE && cache){
+        if(SUPPORT_CACHE && cache && cache !== true){
 
             node[MIKADO_NODE_CACHE] = cache;
         }
@@ -1211,6 +1220,12 @@ Mikado.prototype.add = function(data, state, index){
         this.dom[this.length++] = node;
     }
 
+    if(SUPPORT_KEYED && this.key && SUPPORT_POOLS && this.pool){
+
+        // adjust keyed pool size
+        if(this.pool < this.length) this.pool = this.length;
+    }
+
     const callback = SUPPORT_CALLBACKS && this.on && this.on["insert"];
     callback && callback(node, this);
 
@@ -1272,7 +1287,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
         let end_a = a.length;
         let max_end = end_a > end_b ? end_a : end_b;
         let shift = 0;
-        //let steps = 0;
 
         for(x || (x = 0); x < max_end; x++){
 
@@ -1289,13 +1303,13 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                 if(SUPPORT_REACTIVE && this.proxy){
 
-                    if(!b_x[MIKADO_PROXY]){
+                    if(b_x[MIKADO_PROXY]){
 
-                        b[x] = apply_proxy(this, a[x], b_x);
+                        proxy = this.fullproxy;
                     }
                     else{
 
-                        proxy = 1;
+                        b[x] = apply_proxy(this, a[x], b_x);
                     }
                 }
 
@@ -1307,32 +1321,27 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(a_x_key === b_x_key){
 
-                        //if(!_skip_render){
                         proxy || this.update(a_x, b_x, state, x, 1);
-                        //}
-
                         continue;
                     }
                 }
 
                 if(ended || !live[b_x_key]){
 
-                    //if(!_skip_render){
+                    // without pool enabled .add() is better than .replace()
 
-                        // without pool enabled .add() is better than .replace()
+                    if(ended || !this.pool){
 
-                        if(ended || !this.pool){
+                        end_a++;
+                        max_end = end_a > end_b ? end_a : end_b;
 
-                            end_a++;
-                            max_end = end_a > end_b ? end_a : end_b;
+                        this.add(b_x, state, x);
+                    }
+                    else{
 
-                            this.add(b_x, state, x);
-                        }
-                        else{
-
-                            this.replace(a_x, b_x, state, x);
-                        }
-                    //}
+                        // TODO replace iteratively performs pool size adjustment
+                        this.replace(/** @type {!Element} */ (a_x), b_x, state, x);
+                    }
 
                     continue;
                 }
@@ -1355,9 +1364,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(/** @type {Node} */ (tmp_a), /** @type {Node} */ (a_x));
 
-                            //if(!_skip_render){
                             proxy || this.update(tmp_a, b_x, state, x, 1);
-                            //}
 
                             // fast path optimization when distance is equal (skips finding on next turn)
                             if(idx_a === idx_b){
@@ -1372,16 +1379,17 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                                 if(DEBUG){
 
+                                    // internal state validation
                                     if(!a_x) console.error("reconcile.error 1");
                                 }
 
                                 PROFILER && tick("view.reconcile.steps");
-                                //steps++;
                             }
                             else{
 
                                 if(DEBUG){
 
+                                    // internal cursor validation
                                     if((idx_a - 1) === x) console.error("reconcile.error 2");
                                 }
 
@@ -1392,7 +1400,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             }
 
                             PROFILER && tick("view.reconcile.steps");
-                            //steps++;
                         }
                         // shift down (move current => target)
                         else{
@@ -1414,7 +1421,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             x--;
 
                             PROFILER && tick("view.reconcile.steps");
-                            //steps++;
                         }
 
                         found = 1;
@@ -1432,8 +1438,6 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                 x--;
             }
         }
-
-        //if(steps) console.log(steps);
 
         return this;
     };
@@ -1601,38 +1605,24 @@ Mikado.prototype.remove = function(index, count){
         length -= count;
     }
 
-    // reverse is applied in order to use push/pop rather than shift/unshift
-    // when no keyed pool is used a proper order of items will:
+    // Reverse is applied in order to use push/pop rather than shift/unshift.
+    // When no keyed pool is used a proper order of items will:
     // 1. optimize the pagination of content (forward, backward)
     // 2. optimize toggling the count of items per page (list resizing)
     // 3. optimize folding of content (show more, show less)
+    // 4. optimize filtering state of content (filter on, filter off)
+    // 5. optimize initializing with the last view state (close view, open view)
 
     const reverse = SUPPORT_POOLS && this.pool && (!SUPPORT_KEYED || !this.key);
     const checkout = (SUPPORT_KEYED || SUPPORT_POOLS) && (this.key || this.pool);
     const callback = SUPPORT_CALLBACKS && this.on && this.on["remove"];
+    let adjust_pool = SUPPORT_POOLS && SUPPORT_KEYED && this.key && this.pool;
 
-    // TODO
-    // 1. checkout multiple keyed nodes
-    // 2. when count > this.pool it should assign new Map() instead
-    // 3. handle oversize checkouts (count > this.pool) to add items later
+    if(adjust_pool && count >= adjust_pool){
 
-    // const resize = SUPPORT_KEYED && SUPPORT_POOLS && count > 1 && this.key && this.pool && this.pool !== true && ((this.pool_keyed.size + count) - this.pool);
-    //
-    // if(resize){
-    //
-    //     if(count >= this.pool){
-    //
-    //         this.pool_keyed = new Map();
-    //     }
-    //     else{
-    //
-    //         this.pool_keyed._keys = this.pool_keyed.keys();
-    //     }
-    // }
-
-    if(SUPPORT_POOLS && SUPPORT_KEYED && this.pool && this.pool !== true && count >= this.pool && this.key){
-
-        this.pool_keyed.clear();
+        this.pool_keyed = new Map();
+        //this.pool_keyed.clear();
+        adjust_pool = 0;
     }
 
     for(let x = 0, node; x < count; x++){
@@ -1640,16 +1630,20 @@ Mikado.prototype.remove = function(index, count){
         PROFILER && tick("view.remove");
 
         node = nodes[reverse ? count - x - 1 : x];
-        length && node.remove(); //this.root.removeChild(node);
-        // TODO improve checkout
-        checkout && this.checkout(node);
+        length && node.remove();
+        checkout && this.checkout(node, /* skip pool resize */ 1);
         callback && callback(node, this);
     }
 
-    // if(resize){
-    //
-    //     this.pool_keyed._keys = null;
-    // }
+    if(adjust_pool && (adjust_pool = this.pool_keyed.size - adjust_pool) > 0){
+
+        const keys = this.pool_keyed.keys();
+
+        while(adjust_pool--){
+
+            this.pool_keyed.delete(keys.next().value);
+        }
+    }
 
     this.length = length;
 
@@ -1659,7 +1653,7 @@ Mikado.prototype.remove = function(index, count){
 };
 
 /**
- * param {Element} node
+ * @param {Element} node
  * @return {number}
  * @const
  */
@@ -1667,12 +1661,11 @@ Mikado.prototype.remove = function(index, count){
 Mikado.prototype.index = function(node){
 
     PROFILER && tick("view.index");
-
-    return this.dom.indexOf(node);
+    return node ? this.dom.indexOf(node) : -1;
 };
 
 /**
- * param {number} index
+ * @param {number} index
  * @return {Element}
  * @const
  */
@@ -1680,19 +1673,19 @@ Mikado.prototype.index = function(node){
 Mikado.prototype.node = function(index){
 
     PROFILER && tick("view.node");
-
     return this.dom[index];
 };
 
 if(SUPPORT_KEYED || SUPPORT_POOLS){
 
     /**
-     * param {Element} node
+     * @param {Element} node
+     * @param {?number=} _skip_resize
      * @private
      * @const
      */
 
-    Mikado.prototype.checkout = function(node){
+    Mikado.prototype.checkout = function(node, _skip_resize){
 
         PROFILER && tick("view.checkout");
 
@@ -1715,7 +1708,7 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
                 // but requires resizing of limited pools
                 this.pool_keyed.set(key, node);
 
-                if(this.pool !== true && (this.pool_keyed.size > this.pool)){
+                if(!_skip_resize && /*this.pool !== true &&*/ (this.pool_keyed.size > this.pool)){
 
                     PROFILER && tick("pool.resize");
 
@@ -1728,13 +1721,13 @@ if(SUPPORT_KEYED || SUPPORT_POOLS){
 
                 const length = this.pool_shared.length;
 
-                if(this.pool === true || (length < this.pool)){
+                //if(this.pool === true || (length < this.pool)){
 
                     PROFILER && tick("pool.in");
 
                     // add to non-keyed shared-pool
                     this.pool_shared[length] = node;
-                }
+                //}
             }
         }
     };

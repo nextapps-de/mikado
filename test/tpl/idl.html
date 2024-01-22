@@ -1,0 +1,22 @@
+<form>
+    <select>
+        <option value="1" selected="{{ data.selected === 1 }}">0</option>
+        <option value="2" selected="{{ data.selected === 2 }}">1</option>
+        <option value="3" selected="{{ data.selected === 3 }}">1</option>
+    </select>
+    <fieldset>
+        <input type="checkbox" checked="{{ data.checked === 1 }}">
+        <input type="checkbox" checked="{{ data.checked === 2 }}">
+        <input type="checkbox" checked="{{ data.checked === 3 }}">
+    </fieldset>
+    <fieldset>
+        <input type="radio" name="radio" checked="{{ data.checked === 1 }}">
+        <input type="radio" name="radio" checked="{{ data.checked === 2 }}">
+        <input type="radio" name="radio" checked="{{ data.checked === 3 }}">
+    </fieldset>
+    <fieldset>
+        <input type="text" hidden="{{ data.hidden === 1 }}">
+        <input type="text" hidden="{{ data.hidden === 2 }}">
+        <input type="text" hidden="{{ data.hidden === 3 }}">
+    </fieldset>
+</form>

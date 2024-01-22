@@ -56,10 +56,10 @@ tpl:{
     ]
   }
 },
-fn:[function(data,state,index,_p,_x){
-  _p[0]._a("data-id",data.id,_x,0);
-  _p[0]._a("data-date",data.date,_x,0);
-  _p[0]._a("data-index",data.index,_x,0);
+fn:[function(data,state,index,_p,_f,_x){
+  _p[0]._a("data-id",data.id,_f,_x,0);
+  _p[0]._a("data-date",data.date,_f,_x,0);
+  _p[0]._a("data-index",data.index,_f,_x,0);
   _p[1]._c(data.class,_x,1);
   _p[2]._s(data.style,_x,2);
   _p[3]._t(data.title,_x,3);

@@ -9,6 +9,7 @@ import template_svg from "../tpl/svg.js";
 import template_full from "../tpl/full.js";
 import template_crazy from "../tpl/crazy.js";
 import template_whitespace from "../tpl/whitespace.js";
+import template_idl from "../tpl/idl.js";
 import data from "../data.js";
 
 describe("Render Template", function(){
@@ -209,6 +210,456 @@ describe("Render Template", function(){
         view.clear().destroy();
     });
 
+    it("Should render IDL properties properly", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_idl, { mount: root_1 });
+        let tmp;
+
+        // test creation
+
+        view.render([{
+            selected: 1,
+            checked: 1,
+            hidden: 1
+        },{
+            selected: 2,
+            checked: 2,
+            hidden: 2
+        },{
+            selected: 3,
+            checked: 3,
+            hidden: 3
+        }]);
+
+        // <select>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) option");
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+
+        // <checkbox>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=checkbox]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        // <radio>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=radio]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        // hidden
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=text]");
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+
+        // test factory cycle
+
+        view.render([{
+            selected: 2,
+            checked: 2,
+            hidden: 2
+        },{
+            selected: 3,
+            checked: 3,
+            hidden: 3
+        },{
+            selected: 1,
+            checked: 1,
+            hidden: 1
+        }]);
+
+        // <select>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        // <checkbox>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=checkbox]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        // <radio>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=radio]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        // hidden
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=text]");
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        view.clear().destroy();
+    });
+
+    it("Should render IDL properties properly (recycle + cache)", function(){
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template_idl, { mount: root_1, recycle: true, cache: true });
+        let tmp;
+
+        // test creation
+
+        view.render([{
+            selected: 1,
+            checked: 1,
+            hidden: 1
+        },{
+            selected: 2,
+            checked: 2,
+            hidden: 2
+        },{
+            selected: 3,
+            checked: 3,
+            hidden: 3
+        }]);
+
+        // <select>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) option");
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+
+        // <checkbox>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=checkbox]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        // <radio>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=radio]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        // hidden
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=text]");
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+
+        // test factory cycle
+
+        view.render([{
+            selected: 2,
+            checked: 2,
+            hidden: 2
+        },{
+            selected: 3,
+            checked: 3,
+            hidden: 3
+        },{
+            selected: 1,
+            checked: 1,
+            hidden: 1
+        }]);
+
+        // <select>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.selected).to.equal(false);
+
+        // <checkbox>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=checkbox]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=checkbox]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        // <radio>
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=radio]");
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=radio]");
+        expect(tmp.checked).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.checked).to.equal(false);
+
+        // hidden
+
+        tmp = view.root.querySelector("form:nth-of-type(1) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        tmp = view.root.querySelector("form:nth-of-type(2) input[type=text]");
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(true);
+
+        tmp = view.root.querySelector("form:nth-of-type(3) input[type=text]");
+        expect(tmp.hidden).to.equal(true);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+        tmp = tmp.nextElementSibling;
+        expect(tmp.hidden).to.equal(false);
+
+        view.clear().destroy();
+    });
+
     it("Should render a complex template properly", function(){
 
         // the named include "pager" needs to be registered before use
@@ -217,34 +668,35 @@ describe("Render Template", function(){
 
         const root_1 = document.getElementById("root-1");
         const view = new Mikado(template_full, { mount: root_1 });
+        const entries = [{
+            id: 1,
+            date: "2023-12-01T14:00:00",
+            title: "A simple title 1",
+            media: "<img src='img1.jpg'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "off"
+        },{
+            id: 2,
+            date: "2023-12-02T15:00:00",
+            title: "A simple title 2",
+            media: "<video src='mov2.mp4'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "on"
+        },{
+            id: 3,
+            date: "2023-12-03T16:00:00",
+            title: "A simple title 3",
+            media: "<img src='img3.jpg'>",
+            category: null,
+            comment: "Some <script>untrusted</script> content",
+            mode: "off"
+        }];
 
         view.render({
             view: "video",
-            entries: [{
-                id: 1,
-                date: "2023-12-01T14:00:00",
-                title: "A simple title 1",
-                media: "<img src='img1.jpg'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "off"
-            },{
-                id: 2,
-                date: "2023-12-02T15:00:00",
-                title: "A simple title 2",
-                media: "<video src='mov2.mp4'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "on"
-            },{
-                id: 3,
-                date: "2023-12-03T16:00:00",
-                title: "A simple title 3",
-                media: "<img src='img3.jpg'>",
-                category: null,
-                comment: "Some <script>untrusted</script> content",
-                mode: "off"
-            }]
+            entries: entries
         });
 
         expect(view.length).to.equal(1);
@@ -268,9 +720,20 @@ describe("Render Template", function(){
         expect(tmp.textContent).to.equal(new Date("2023-12-01T14:00:00").toLocaleString());
         tmp = tmp.nextElementSibling;
         expect(tmp.style.opacity).to.equal("0.5");
-        tmp = tmp.firstElementChild.firstElementChild;
+
+        tmp = view.root.querySelector("tbody tr:nth-of-type(1) option");
         expect(tmp.selected).to.equal(false);
         expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        tmp = view.root.querySelector("tbody tr:nth-of-type(2) option");
+        expect(tmp.selected).to.equal(true);
+        expect(tmp.nextElementSibling.selected).to.equal(false);
+
+        tmp = view.root.querySelector("tbody tr:nth-of-type(3) option");
+        expect(tmp.selected).to.equal(false);
+        expect(tmp.nextElementSibling.selected).to.equal(true);
+
+        // check conditional structure
 
         view.render({
             view: "video",

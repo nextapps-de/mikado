@@ -128,6 +128,7 @@ function _setAttribute(node, attr, value, cache) {
 
         cache["_a" + attr] = value;
 
+        // does never apply on factory
         if (idl_attributes[attr]) {
 
             node[attr] = value;

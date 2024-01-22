@@ -536,7 +536,7 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
             const options = {
                 recycle: self.recycle,
                 cache: self.cache,
-                pool: self.pool,
+                pool: !!self.pool,
                 state: self.state,
                 mount: /** @type {Element} */ (node),
                 hydrate: !!vnode,
@@ -611,12 +611,13 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
     /**
      * @param {string} key
      * @param {string|boolean} value
-     * @param {NodeCache=} cache
+     * @param {boolean} factory
+     * @param {NodeCache|boolean=} cache
      * @param {number=} index
      * @const
      */
 
-    Cache.prototype._a = function(key, value, cache, index){
+    Cache.prototype._a = function(key, value, factory, cache, index){
 
         if(this.c){
 
@@ -642,9 +643,9 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
             this.c["_a" + key] = value;
         }
 
-        // IDL attributes are faster but some didn't reflect content attribute state
+        // IDL attributes are faster but "selected" didn't reflect content attribute state
 
-        if(SUPPORT_CACHE && !cache && idl_attributes[key]){
+        if(idl_attributes[key] && (!factory || key !== "selected")){
 
             this.n[key] = value;
         }
@@ -658,7 +659,7 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
 
     /**
      * @param {string} text
-     * @param {NodeCache=} cache
+     * @param {NodeCache|boolean=} cache
      * @param {number=} index
      * @const
      */
@@ -695,7 +696,7 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
 
     /**
      * @param {string} classname
-     * @param {NodeCache=} cache
+     * @param {NodeCache|boolean=} cache
      * @param {number=} index
      * @const
      */
@@ -731,7 +732,7 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
 
     /**
      * @param {string} css
-     * @param {NodeCache=} cache
+     * @param {NodeCache|boolean=} cache
      * @param {number=} index
      * @const
      */
@@ -767,7 +768,7 @@ if(SUPPORT_COMPACT_TEMPLATE || SUPPORT_REACTIVE){
 
     /**
      * @param {string} html
-     * @param {NodeCache=} cache
+     * @param {NodeCache|boolean=} cache
      * @param {number=} index
      * @const
      */

@@ -10,13 +10,11 @@ tpl:{
     },
     {
       tag: "section",
-      text: [
-        ""
-      ]
+      text: []
     }
   ]
 },
-fn:[function(data,state,index,_p,_x){
+fn:[function(data,state,index,_p,_f,_x){
   _p[0]._t(' '+('test' + `-` + "test")+' ',_x,0);
 }]
 }
