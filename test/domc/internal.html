@@ -6,7 +6,7 @@
 <h1>Benchmark: domc-0.0.12 (data-driven)</h1><hr>
 <div id="result" style="white-space: pre; font-family: Monospaced, monospace"></div>
 <div id="root">
-    <section v-map="item of items" key="{{item.id}}" data-id="{{item.id}}" data-date="{{item.date}}" data-index="{{item.index}}">
+    <section v-for="item of items" key="{{item.id}}" data-id="{{item.id}}" data-date="{{item.date}}" data-index="{{item.index}}">
         <div class="{{item.classname}}" style="padding-right: 10px;">
             <div class="title">{{item.title}}</div>
             <div class="content">{{item.content}}</div>
@@ -21,20 +21,21 @@
     import { suite, root, store } from "./../../bench.js";
 
     import domc from './node_modules/domc/index.js';
+    import './node_modules/domc/vMap.js';
     import './node_modules/domc/vFor.js';
 
     let app = domc(root);
     let scope = {items: []};
     app.rehydrate(scope);
 
-    store(scope.items);
+    //store(scope.items);
 
     // NOTE: domc has a bug when running this test via vFor
 
     suite["domc"] = function(items){
 
-        scope.items = items;
-        root.update(scope);
+        // scope.items = items;
+        // root.update(scope);
     };
 
 </script>

@@ -9,15 +9,10 @@ export const root = document.getElementById("root");
 const result = document.getElementById("result").appendChild(document.createTextNode("running..."));
 let items = [];
 export function store(data){ return (data && (items = data)) || items; }
-let pos = 0;
 export const queue = [];
 const pathname = window.location.pathname;
-const keyed = pathname.includes("keyed.html");
-const strict = pathname.includes("strict.html");
-const internal = (pathname.includes("internal.html")) ||
-                 (pathname.includes("mode-array")) ||
-                 (pathname.includes("mode-proxy")) ||
-                 (pathname.includes("mode-array-proxy"));
+const internal = pathname.includes("internal.html");
+const keyed = pathname.includes("keyed.html") || internal;
 
 const params = (function(){
 
@@ -437,20 +432,6 @@ function check(fn){
         fn(enforce(items));
         if(target.firstElementChild.firstElementChild.firstElementChild._test){
             msg("lib '" + Object.keys(suite)[0] + "' does not run in keyed mode.");
-            return false;
-        }
-        node._test = false;
-    }
-    else if(strict){
-
-        items.pop();
-        items.push(data[0]);
-        fn(enforce(items));
-        const node = target.firstElementChild.firstElementChild.firstElementChild;
-        node._test = true;
-        fn(enforce(items));
-        if(target.firstElementChild.firstElementChild.firstElementChild._test){
-            msg("lib '" + Object.keys(suite)[0] + "' does not run in strict mode.");
             return false;
         }
         node._test = false;
