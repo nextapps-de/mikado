@@ -546,8 +546,6 @@ let update_failed;
 function perform(){
 
     const test = queue[current];
-    let elapsed = 0, memory = 0;
-
     if(current === 0 && test.test) check(test.test) || msg("Main test failed: " + Object.keys(suite)[0]);
     let status = check_test(test) || msg("Test failed: " + test.name + ", " + Object.keys(suite)[0]);
 
@@ -556,65 +554,92 @@ function perform(){
         status = false;
     }
 
-    let loops = 0, now = 0;
+    const bench = {
+        elapsed: 0,
+        memory: 0,
+        loops: 0,
+        duration
+    };
 
     if(status){
 
-        if(test.init) test.init();
+        run(test, bench, duration > 2000 ? duration / (duration / 2000) : duration);
+    }
+    else{
 
-        // if(test.defer){
-        //     defer_test = test;
-        //     if(test.start) test.start();
-        //     test.defer();
-        //     return;
-        // }
+        if(test.name === "update"){
 
-        const end = perf.now() + duration;
-
-        for(let start, mem_start, mem, tmp; now < end; loops++){
-
-            if(test.start) test.start(loops);
-            if(!internal && test.prepare) test.prepare(loops);
-            if(!hidden) tmp = root.clientHeight;
-
-            mem_start = perf.memory.usedJSHeapSize;
-            start = perf.now();
-            if(internal && test.prepare) test.prepare(loops);
-            test.fn(clone);
-            if(!hidden) tmp = root.clientHeight;
-            now = perf.now();
-            mem = perf.memory.usedJSHeapSize - mem_start;
-            elapsed += (now - start);
-            if(mem > 0) memory += mem;
-
-            if(test.end) test.end(loops);
+            update_failed = true;
         }
 
-        if(test.complete) test.complete();
+        cycle(bench, test, status);
     }
-    else if(test.name === "update"){
+}
 
-        update_failed = true;
+function run(test, bench, duration){
+
+    let elapsed = 0, memory = 0;
+    let loops = 0, now = 0;
+    let start, mem_start, mem;
+
+    if(test.init) test.init();
+    const end = perf.now() + duration;
+
+    while(now < end){
+
+        if(test.start) test.start(loops);
+        if(!internal && test.prepare) test.prepare(loops);
+        hidden || root.clientHeight;
+
+        // -- START ------------------
+        mem_start = perf.memory.usedJSHeapSize;
+        start = perf.now();
+        internal && test.prepare && test.prepare(loops);
+        test.fn(clone);
+        hidden || root.clientHeight;
+        now = perf.now();
+        mem = perf.memory.usedJSHeapSize - mem_start;
+        // -- END -------------------
+
+        elapsed += (now - start);
+        if(mem > 0) memory += mem;
+        if(test.end) test.end(loops);
+        loops++;
     }
+
+    if(test.complete) test.complete();
+
+    bench.elapsed += elapsed;
+    bench.memory += memory;
+    bench.loops += loops;
+    bench.duration -= duration;
+
+    if(bench.duration > 0){
+
+        setTimeout(run, 100, test, bench, Math.min(bench.duration, duration));
+    }
+    else{
+
+        cycle(bench, test, true);
+    }
+}
+
+function cycle(bench, test, status){
 
     current++;
 
     if(window === window.top){
 
-        result.nodeValue = (str_results += (status ? test.name.padEnd(12) + String(Math.floor(1000 / elapsed * loops)).padStart(8) + " op/s, Memory:\t" + (memory ? Math.ceil(memory / loops) : "-") : "- failed -") + "\n") + (current < queue.length ? "running..." : "");
+        result.nodeValue = (str_results += (status ? test.name.padEnd(12) + String(Math.floor(1000 / bench.elapsed * bench.loops)).padStart(8) + " op/s, Memory:\t" + (bench.memory ? Math.ceil(bench.memory / bench.loops) : "-") : "- failed -") + "\n") + (current < queue.length ? "running..." : "");
     }
     else{
 
-        window.top.postMessage(test.name + "," + (status ? Math.floor(1000 / elapsed * loops) : 0) + "," + (status ? Math.ceil(memory / loops) : 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
+        window.top.postMessage(test.name + "," + (status ? Math.floor(1000 / bench.elapsed * bench.loops) : 0) + "," + (status ? Math.ceil(bench.memory / bench.loops) : 0), location.protocol + "//" + location.hostname) //"https://nextapps-de.github.io" "https://raw.githack.com"
     }
 
     if(current < queue.length){
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                setTimeout(perform, 100);
-            });
-        });
+        setTimeout(perform, 100);
     }
     else{
 
