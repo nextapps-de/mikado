@@ -131,7 +131,7 @@ function parse_argv(argv, flags){
     return payload;
 }
 
-function compiler(name, _force){
+async function compiler(name, _force){
 
     const srcPath = path.join(src, name);
     const regex = /\..*$/;
@@ -149,16 +149,29 @@ function compiler(name, _force){
             destPath = path.join(destPath, name.substring(0, name.lastIndexOf("/")));
         }
 
-        if(!fs.existsSync(destPath)){
-
-            fs.mkdirSync(destPath, { recursive: true });
-        }
+        await fs.promises.stat(destPath).catch(
+            e => fs.promises.mkdir(destPath, { recursive: true })
+        );
 
         destPath = path.join(dest, name.replace(regex, "") + ".js");
     }
-    else if(dest && !regex_js.test(dest)){
+    else if(dest){
 
-        destPath += ".js";
+        if(dest.includes("/")){
+
+            destPath = dest.substring(0, dest.lastIndexOf("/"));
+        }
+
+        await fs.promises.stat(destPath).catch(
+            e => fs.promises.mkdir(destPath, { recursive: true })
+        );
+
+        destPath = dest;
+
+        if(!regex_js.test(dest)){
+
+            destPath += ".js";
+        }
     }
 
     return compile(srcPath, destPath, {
@@ -188,12 +201,12 @@ function watcher(src) {
 
                 if(extension_regex.test(name)){
 
-                    compiler(name, true);
+                    await compiler(name, true);
                     repeat[name] = false;
 
-                    setTimeout(function(){
+                    setTimeout(async function(){
 
-                        repeat[name] && compiler(name, true);
+                        repeat[name] && await compiler(name, true);
                         repeat[name] = false;
                         skip[name] = false;
 
@@ -309,11 +322,11 @@ async function check(name, type){
 
         if(is_dir){
 
-            await loopFiles(src, function(name){
+            await loopFiles(src, async function(name){
 
                 if(extension_regex.test(name)){
 
-                    compiler(name);
+                    await compiler(name);
                 }
             });
         }
@@ -321,7 +334,7 @@ async function check(name, type){
 
             if(extension_regex.test(src)){
 
-                compiler("");
+                await compiler("");
             }
         }
 
