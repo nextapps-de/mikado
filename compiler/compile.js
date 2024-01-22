@@ -332,7 +332,7 @@ module.exports = function(src, dest, options, _recall){
 
             inc[i] =
 `function(data,state,index,_p,_f,_x){
-  ${ (inc[i].join(pretty ? ";\n  " : ";") + ";").replaceAll(",_v)};", ",_v)}").replaceAll("=_v};", "=_v}") }
+  ${ (inc[i].join(pretty ? ";\n  " : ";") + ";").replace(/,_v\)};/g, ",_v)}").replace(/=_v};/g, "=_v}") }
 }`;
         }
         else{
