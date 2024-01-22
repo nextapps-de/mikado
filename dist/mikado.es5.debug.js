@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.323 (ES5/Debug)
+ * Mikado.js v0.8.324 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -1096,7 +1096,7 @@ n.render = function(a, b, c, d) {
       if (f && m._mkk !== p[f]) {
         return wa(this, a, b, k);
       }
-      this.update(m, p, b, k, 1);
+      this.update(m, p, b, k);
       g && !p._mkx && (a[k] = S(this, m, p));
     }
   }
@@ -1135,7 +1135,7 @@ n.replace = function(a, b, c, d) {
 };
 n.update = function(a, b, c, d) {
   if (!this.apply) {
-    return console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
+    return "number" !== typeof d && console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
   }
   if (this.l && b._mkx) {
     return this;
@@ -1202,7 +1202,7 @@ function wa(a, b, c, d) {
       var r = b[d], t = d >= e, u = void 0, w = void 0, ha = void 0, ia = void 0;
       a.proxy && (r._mkx ? ia = a.l : b[d] = S(a, g[d], r));
       if (!t && (u = g[d], w = r[h], ha = u._mkk, ha === w)) {
-        ia || a.update(u, r, c, d, 1);
+        ia || a.update(u, r, c, d);
         continue;
       }
       if (t || !l[w]) {
@@ -1211,7 +1211,7 @@ function wa(a, b, c, d) {
       }
       for (var H = t = void 0, x = d + 1; x < k; x++) {
         if (!t && x < e && g[x]._mkk === w && (t = x + 1), !H && x < f && b[x][h] === ha && (H = x + 1), t && H) {
-          t >= H + m ? (p = g[t - 1], a.root.insertBefore(p, u), ia || a.update(p, r, c, d, 1), t === H ? (1 < x - d && a.root.insertBefore(u, g[t]), g[d] = g[x], (g[x] = u) || console.error("reconcile.error 1")) : (t - 1 === d && console.error("reconcile.error 2"), ya(g, t - 1, d), m++)) : (r = H - 1 + m, a.root.insertBefore(u, g[r] || null), (r > e ? e : r) - 1 === d && console.error("reconcile.error 3"), ya(g, d, (r > e ? e : r) - 1), m--, d--);
+          t >= H + m ? (p = g[t - 1], a.root.insertBefore(p, u), ia || a.update(p, r, c, d), t === H ? (1 < x - d && a.root.insertBefore(u, g[t]), g[d] = g[x], (g[x] = u) || console.error("reconcile.error 1")) : (t - 1 === d && console.error("reconcile.error 2"), ya(g, t - 1, d), m++)) : (r = H - 1 + m, a.root.insertBefore(u, g[r] || null), (r > e ? e : r) - 1 === d && console.error("reconcile.error 3"), ya(g, d, (r > e ? e : r) - 1), m--, d--);
           p = 1;
           break;
         }
@@ -1718,7 +1718,7 @@ function Ha(a, b, c, d, g, l, h) {
     h.push("_v=" + c);
     d ? h.push('_c&&(_c["_a' + b + '"]=_v);if(!_o.c||_o.c["_a' + b + '"]!==_v){_o.c&&(_o.c["_a' + b + '"]=_v);' + (Q[b] ? "selected" === b ? '_f?_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v):_o.n.' + b + "=_v" : "_o.n." + b + "=_v" : '_o.n[_v===false?"removeAttribute":"setAttribute"]("' + b + '",_v)') + "}") : "class" === b ? h.push("_c&&(_c._c=_v);if(!_o.c||_o.c._c!==_v){_o.c&&(_o.c._c=_v);_o.n.className=_v}") : "style" === b ? h.push("_c&&(_c._s=_v);if(!_o.c||_o.c._s!==_v){_o.c&&(_o.c._s=_v);_o.n.cssText=_v}") : 
     "html" === b ? h.push("_c&&(_c._h=_v);if(!_o.c||_o.c._h!==_v){_o.c&&(_o.c._h=_v);_o.n.innerHTML=_v}") : "text" === b && h.push("_c&&(_c._t=_v);if(!_o.c||_o.c._t!==_v){_o.c&&(_o.c._t=_v);_o.n.nodeValue=_v}");
-    a[b] = f ? [f] : [""];
+    a[b] = f ? [f] : [];
   } else {
     a[b] = c;
   }

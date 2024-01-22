@@ -574,7 +574,7 @@ function handle_value(root, key, value, attr, attributes, index, inc, fn) {
             root[key] = [proxy];
         } else {
 
-            root[key] = [""];
+            root[key] = [];
         }
     } else {
 

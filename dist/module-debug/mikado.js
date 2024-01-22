@@ -668,7 +668,7 @@ Mikado.prototype.render = function (data, state, callback, _skip_async) {
                 return this.reconcile( /** @type {Array} */data, state, x);
             } else {
 
-                this.update(node, item, state, x, 1);
+                this.update(node, item, state, x);
             }
 
             if (proxy && /* (!key && !this.recycle) || */!item._mkx) {
@@ -813,7 +813,6 @@ Mikado.prototype.replace = function (node, data, state, index) {
  * @param {*=} data
  * @param {*=} state
  * @param {number=} index
- * @param {boolean|number=} _skip_check
  * @const
  */
 
@@ -823,8 +822,10 @@ Mikado.prototype.update = function (node, data, state, index) {
 
     if (!this.apply) {
 
-        console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents.");
+        if ("number" != typeof index) {
 
+            console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents.");
+        }
 
         return this;
     }
@@ -1139,7 +1140,7 @@ Mikado.prototype.reconcile = function (b, state, x) {
 
                 if (a_x_key === b_x_key) {
 
-                    proxy || this.update(a_x, b_x, state, x, 1);
+                    proxy || this.update(a_x, b_x, state, x);
                     continue;
                 }
             }
@@ -1181,7 +1182,7 @@ Mikado.prototype.reconcile = function (b, state, x) {
                         // when distance is 1 it will always move before, no predecessor check necessary
                         this.root.insertBefore( /** @type {Node} */tmp_a, /** @type {Node} */a_x);
 
-                        proxy || this.update(tmp_a, b_x, state, x, 1);
+                        proxy || this.update(tmp_a, b_x, state, x);
 
                         // fast path optimization when distance is equal (skips finding on next turn)
                         if (idx_a === idx_b) {

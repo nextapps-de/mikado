@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.323 (Bundle/Debug)
+ * Mikado.js v0.8.324 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -327,7 +327,7 @@ n.render = function(a, b) {
             var g = e >= m;
             let u, A, y;
             if (!g && (u = c[e], A = w[h], y = u._mkk, y === A)) {
-              this.update(u, w, b, e, 1);
+              this.update(u, w, b, e);
               continue;
             }
             if (g || !d[A]) {
@@ -337,7 +337,7 @@ n.render = function(a, b) {
             let t, B;
             for (g = e + 1; g < r; g++) {
               if (!t && g < m && c[g]._mkk === A && (t = g + 1), !B && g < k && a[g][h] === y && (B = g + 1), t && B) {
-                t >= B + v ? (f = c[t - 1], this.root.insertBefore(f, u), this.update(f, w, b, e, 1), t === B ? (1 < g - e && this.root.insertBefore(u, c[t]), c[e] = c[g], (c[g] = u) || console.error("reconcile.error 1")) : (t - 1 === e && console.error("reconcile.error 2"), G(c, t - 1, e), v++)) : (f = B - 1 + v, this.root.insertBefore(u, c[f] || null), (f > m ? m : f) - 1 === e && console.error("reconcile.error 3"), G(c, e, (f > m ? m : f) - 1), v--, e--);
+                t >= B + v ? (f = c[t - 1], this.root.insertBefore(f, u), this.update(f, w, b, e), t === B ? (1 < g - e && this.root.insertBefore(u, c[t]), c[e] = c[g], (c[g] = u) || console.error("reconcile.error 1")) : (t - 1 === e && console.error("reconcile.error 2"), G(c, t - 1, e), v++)) : (f = B - 1 + v, this.root.insertBefore(u, c[f] || null), (f > m ? m : f) - 1 === e && console.error("reconcile.error 3"), G(c, e, (f > m ? m : f) - 1), v--, e--);
                 f = 1;
                 break;
               }
@@ -347,7 +347,7 @@ n.render = function(a, b) {
         }
         return this;
       }
-      this.update(l, p, b, e, 1);
+      this.update(l, p, b, e);
     }
   }
   if (e < d) {
@@ -385,7 +385,7 @@ n.replace = function(a, b, c, d) {
 };
 n.update = function(a, b, c, d) {
   if (!this.apply) {
-    return console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
+    return "number" !== typeof d && console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
   }
   "undefined" === typeof d && ("number" === typeof a ? (d = 0 > a ? this.length + a - 1 : a, a = this.g[d]) : d = this.index(a));
   this.apply(b, c || this.state, d, a._mkp || q(a, this.i._mkp, this.cache));
