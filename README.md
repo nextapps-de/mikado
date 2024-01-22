@@ -518,22 +518,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr></tr>
     <tr>
-        <td><sub>mikado-proxy</sub></td>
-        <td align="right"><sub>50</sub></td>
-        <td align="right"><sub>3568</sub></td>
-        <td align="right"><sub>2798</sub></td>
-        <td align="right"><sub>193514</sub></td>
-        <td align="right"><sub>130287</sub></td>
-        <td align="right"><sub>493198</sub></td>
-        <td align="right"><sub>92700</sub></td>
-        <td align="right"><sub>92555</sub></td>
-        <td align="right"><sub>91968</sub></td>
-        <td align="right"><sub>50792</sub></td>
-        <td align="right"><b><sub>3048</sub></b></td>
-        <td align="right"><b><sub>91</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
         <td><sub>mikado-shadow</sub></td>
         <td align="right"><sub>52</sub></td>
         <td align="right"><sub>3385</sub></td>
@@ -550,19 +534,19 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr></tr>
     <tr>
-        <td><sub>domc</sub></td>
-        <td align="right"><sub>124</sub></td>
-        <td align="right"><sub>3600</sub></td>
-        <td align="right"><sub>3424</sub></td>
-        <td align="right"><sub>3437</sub></td>
-        <td align="right"><sub>3472</sub></td>
-        <td align="right"><sub>3512</sub></td>
-        <td align="right"><sub>3592</sub></td>
-        <td align="right"><sub>6670</sub></td>
-        <td align="right"><sub>4540</sub></td>
-        <td align="right"><sub>100302</sub></td>
-        <td align="right"><b><sub>120</sub></b></td>
-        <td align="right"><b><sub>38</sub></b></td>
+        <td><sub>mikado-proxy</sub></td>
+        <td align="right"><sub>50</sub></td>
+        <td align="right"><sub>3568</sub></td>
+        <td align="right"><sub>2798</sub></td>
+        <td align="right"><sub>193514</sub></td>
+        <td align="right"><sub>130287</sub></td>
+        <td align="right"><sub>493198</sub></td>
+        <td align="right"><sub>92700</sub></td>
+        <td align="right"><sub>92555</sub></td>
+        <td align="right"><sub>91968</sub></td>
+        <td align="right"><sub>50792</sub></td>
+        <td align="right"><b><sub>3048</sub></b></td>
+        <td align="right"><b><sub>91</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -579,36 +563,6 @@ The values represent operations per second, each benchmark task has to process a
         <td align="right"><sub>70825</sub></td>
         <td align="right"><b><sub>312</sub></b></td>
         <td align="right"><b><sub>37</sub></b></td>
-    </tr>
-    <tr>
-        <td><sub>innerhtml</sub></td>
-        <td align="right"><sub>67</sub></td>
-        <td align="right"><sub>2791</sub></td>
-        <td align="right"><sub>2676</sub></td>
-        <td align="right"><sub>2471</sub></td>
-        <td align="right"><sub>2823</sub></td>
-        <td align="right"><sub>2799</sub></td>
-        <td align="right"><sub>2943</sub></td>
-        <td align="right"><sub>5752</sub></td>
-        <td align="right"><sub>3901</sub></td>
-        <td align="right"><sub>103405</sub></td>
-        <td align="right"><b><sub>105</sub></b></td>
-        <td align="right"><b><sub>35</sub></b></td>
-    </tr>
-    <tr>
-        <td><sub>stage0</sub></td>
-        <td align="right"><sub>56</sub></td>
-        <td align="right"><sub>2030</sub></td>
-        <td align="right"><sub>2446</sub></td>
-        <td align="right"><sub>11213</sub></td>
-        <td align="right"><sub>9749</sub></td>
-        <td align="right"><sub>11033</sub></td>
-        <td align="right"><sub>4427</sub></td>
-        <td align="right"><sub>18083</sub></td>
-        <td align="right"><sub>7209</sub></td>
-        <td align="right"><sub>90434</sub></td>
-        <td align="right"><b><sub>199</sub></b></td>
-        <td align="right"><b><sub>35</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -627,6 +581,84 @@ The values represent operations per second, each benchmark task has to process a
         <td align="right"><b><sub>34</sub></b></td>
     </tr>
     <tr></tr>
+    <tr>
+        <td><sub>mithril</sub></td>
+        <td align="right"><sub>45</sub></td>
+        <td align="right"><sub>1672</sub></td>
+        <td align="right"><sub>1505</sub></td>
+        <td align="right"><sub>15406</sub></td>
+        <td align="right"><sub>13868</sub></td>
+        <td align="right"><sub>16638</sub></td>
+        <td align="right"><sub>3599</sub></td>
+        <td align="right"><sub>21109</sub></td>
+        <td align="right"><sub>5653</sub></td>
+        <td align="right"><sub>41525</sub></td>
+        <td align="right"><b><sub>223</sub></b></td>
+        <td align="right"><b><sub>28</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>stage0</sub></td>
+        <td align="right"><sub>56</sub></td>
+        <td align="right"><sub>2030</sub></td>
+        <td align="right"><sub>2446</sub></td>
+        <td align="right"><sub>11213</sub></td>
+        <td align="right"><sub>9749</sub></td>
+        <td align="right"><sub>11033</sub></td>
+        <td align="right"><sub>4427</sub></td>
+        <td align="right"><sub>18083</sub></td>
+        <td align="right"><sub>7209</sub></td>
+        <td align="right"><sub>90434</sub></td>
+        <td align="right"><b><sub>199</sub></b></td>
+        <td align="right"><b><sub>35</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>redom</sub></td>
+        <td align="right"><sub>81</sub></td>
+        <td align="right"><sub>1517</sub></td>
+        <td align="right"><sub>1421</sub></td>
+        <td align="right"><sub>10242</sub></td>
+        <td align="right"><sub>9614</sub></td>
+        <td align="right"><sub>10870</sub></td>
+        <td align="right"><sub>2857</sub></td>
+        <td align="right"><sub>16062</sub></td>
+        <td align="right"><sub>4875</sub></td>
+        <td align="right"><sub>28075</sub></td>
+        <td align="right"><b><sub>160</sub></b></td>
+        <td align="right"><b><sub>22</sub></b></td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td><sub>domc</sub></td>
+        <td align="right"><sub>124</sub></td>
+        <td align="right"><sub>3600</sub></td>
+        <td align="right"><sub>3424</sub></td>
+        <td align="right"><sub>3437</sub></td>
+        <td align="right"><sub>3472</sub></td>
+        <td align="right"><sub>3512</sub></td>
+        <td align="right"><sub>3592</sub></td>
+        <td align="right"><sub>6670</sub></td>
+        <td align="right"><sub>4540</sub></td>
+        <td align="right"><sub>100302</sub></td>
+        <td align="right"><b><sub>120</sub></b></td>
+        <td align="right"><b><sub>38</sub></b></td>
+    </tr>
+    <tr>
+        <td><sub>innerhtml</sub></td>
+        <td align="right"><sub>67</sub></td>
+        <td align="right"><sub>2791</sub></td>
+        <td align="right"><sub>2676</sub></td>
+        <td align="right"><sub>2471</sub></td>
+        <td align="right"><sub>2823</sub></td>
+        <td align="right"><sub>2799</sub></td>
+        <td align="right"><sub>2943</sub></td>
+        <td align="right"><sub>5752</sub></td>
+        <td align="right"><sub>3901</sub></td>
+        <td align="right"><sub>103405</sub></td>
+        <td align="right"><b><sub>105</sub></b></td>
+        <td align="right"><b><sub>35</sub></b></td>
+    </tr>
     <tr>
         <td><sub>surplus</sub></td>
         <td align="right"><sub>92</sub></td>
@@ -660,22 +692,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr></tr>
     <tr>
-        <td><sub>mithril</sub></td>
-        <td align="right"><sub>45</sub></td>
-        <td align="right"><sub>1672</sub></td>
-        <td align="right"><sub>1505</sub></td>
-        <td align="right"><sub>15406</sub></td>
-        <td align="right"><sub>13868</sub></td>
-        <td align="right"><sub>16638</sub></td>
-        <td align="right"><sub>3599</sub></td>
-        <td align="right"><sub>21109</sub></td>
-        <td align="right"><sub>5653</sub></td>
-        <td align="right"><sub>41525</sub></td>
-        <td align="right"><b><sub>223</sub></b></td>
-        <td align="right"><b><sub>28</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
         <td><sub>sinuous</sub></td>
         <td align="right"><sub>151</sub></td>
         <td align="right"><sub>2038</sub></td>
@@ -689,22 +705,6 @@ The values represent operations per second, each benchmark task has to process a
         <td align="right"><sub>59556</sub></td>
         <td align="right"><b><sub>81</sub></b></td>
         <td align="right"><b><sub>25</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>redom</sub></td>
-        <td align="right"><sub>81</sub></td>
-        <td align="right"><sub>1517</sub></td>
-        <td align="right"><sub>1421</sub></td>
-        <td align="right"><sub>10242</sub></td>
-        <td align="right"><sub>9614</sub></td>
-        <td align="right"><sub>10870</sub></td>
-        <td align="right"><sub>2857</sub></td>
-        <td align="right"><sub>16062</sub></td>
-        <td align="right"><sub>4875</sub></td>
-        <td align="right"><sub>28075</sub></td>
-        <td align="right"><b><sub>160</sub></b></td>
-        <td align="right"><b><sub>22</sub></b></td>
     </tr>
     <tr></tr>
     <tr>
@@ -772,7 +772,8 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
 </table>
 
-The **_index_** is a statistic rank with a maximum possible value of 100, that requires a library to be the best in each test category (regardless how much better). The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
+The **_index_** is a statistic rank having a maximum possible value of 100, this requires a library to be the best in each test category (regardless how much better).
+The **_score_** value is based on median factorization, here a score of 100 represents the statistical midfield.
 
 <a name="api"></a>
 
