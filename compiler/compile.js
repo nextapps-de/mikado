@@ -317,7 +317,7 @@ module.exports = function(src, dest, options, _recall){
 
             if(mode !== "compact"){
 
-                if((tpl_cache && tpl_cache !== "false")){
+                if((!tpl_cache || tpl_cache !== "false")){
 
                     //inc[i].push("return _x");
                     //inc[i].unshift("_x&&(_x=[])");
@@ -382,10 +382,17 @@ function prepare_template(nodes, src, csr, svg){
 
                 child = nodes.child[i];
 
+                if(child.tag === "script"){
+
+                    child.text = child.child[0].text;
+                    child.node = "text";
+                    delete child.child;
+                    //delete child.tag;
+                }
+
                 if(child.node === "text"){
 
                     delete child.node;
-
                     let text = child.text;
 
                     if(text.trim()){
@@ -463,8 +470,8 @@ function prepare_template(nodes, src, csr, svg){
                                     child.js = js;
                                 }
 
-                                text = text.substring(0, pos_start) + text.substring(pos_end + 2);
-                                pos_start = text && text.indexOf("{{@");
+                                child.text = text = text.substring(0, pos_start) + text.substring(pos_end + 2);
+                                pos_start = text.indexOf("{{@");
 
                                 if(text){
 
@@ -480,9 +487,14 @@ function prepare_template(nodes, src, csr, svg){
                                     }
                                 }
 
-                                if(!child.text){
+                                if(!child.text.trim()){
 
                                     delete child.text;
+
+                                    if(child.tag === "script"){
+
+                                        delete child.tag;
+                                    }
                                 }
                             }
                         }

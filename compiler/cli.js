@@ -135,6 +135,7 @@ function compiler(name, _force){
 
     const srcPath = path.join(src, name);
     const regex = /\..*$/;
+    const regex_js = /\.js$/;
     let destPath = dest;
 
     if(dest && !regex.test(dest)){
@@ -154,6 +155,10 @@ function compiler(name, _force){
         }
 
         destPath = path.join(dest, name.replace(regex, "") + ".js");
+    }
+    else if(dest && !regex_js.test(dest)){
+
+        destPath += ".js";
     }
 
     return compile(srcPath, destPath, {
