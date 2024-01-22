@@ -777,7 +777,7 @@ if(!REACTIVE_ONLY){
                 }
                 else{
 
-                    this.update(node, item, state, x, 1);
+                    this.update(node, item, state, x);
                 }
 
                 if(proxy && (/* (!key && !this.recycle) || */ !item[MIKADO_PROXY])){
@@ -935,17 +935,16 @@ Mikado.prototype.replace = function(node, data, state, index){
  * @param {*=} data
  * @param {*=} state
  * @param {number=} index
- * @param {boolean|number=} _skip_check
  * @const
  */
 
-Mikado.prototype.update = function(node, data, state, index, _skip_check){
+Mikado.prototype.update = function(node, data, state, index){
 
     //profiler_start("update");
 
     if(!this.apply){
 
-        if(DEBUG){
+        if(DEBUG && typeof index !== "number"){
 
             console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents.");
         }
@@ -1321,7 +1320,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
 
                     if(a_x_key === b_x_key){
 
-                        proxy || this.update(a_x, b_x, state, x, 1);
+                        proxy || this.update(a_x, b_x, state, x);
                         continue;
                     }
                 }
@@ -1364,7 +1363,7 @@ if(SUPPORT_KEYED && !REACTIVE_ONLY){
                             // when distance is 1 it will always move before, no predecessor check necessary
                             this.root.insertBefore(/** @type {Node} */ (tmp_a), /** @type {Node} */ (a_x));
 
-                            proxy || this.update(tmp_a, b_x, state, x, 1);
+                            proxy || this.update(tmp_a, b_x, state, x);
 
                             // fast path optimization when distance is equal (skips finding on next turn)
                             if(idx_a === idx_b){
