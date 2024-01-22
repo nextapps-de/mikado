@@ -133,9 +133,30 @@ function parse_argv(argv, flags){
 
 function compiler(name, _force){
 
-    const relPath = path.join(src, name);
+    const srcPath = path.join(src, name);
+    const regex = /\..*$/;
+    let destPath = dest;
 
-    return compile(relPath, dest, {
+    if(dest && !regex.test(dest)){
+
+        if(!name){
+
+            name = src.substring(src.lastIndexOf("/") + 1);
+        }
+        else if(name.includes("/")){
+
+            destPath = path.join(destPath, name.substring(0, name.lastIndexOf("/")));
+        }
+
+        if(!fs.existsSync(destPath)){
+
+            fs.mkdirSync(destPath, { recursive: true });
+        }
+
+        destPath = path.join(dest, name.replace(regex, "") + ".js");
+    }
+
+    return compile(srcPath, destPath, {
         force: _force || force,
         root: src,
         extension,
