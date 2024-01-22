@@ -518,38 +518,6 @@ The values represent operations per second, each benchmark task has to process a
     </tr>
     <tr></tr>
     <tr>
-        <td><sub>mikado-shadow</sub></td>
-        <td align="right"><sub>52</sub></td>
-        <td align="right"><sub>3385</sub></td>
-        <td align="right"><sub>2784</sub></td>
-        <td align="right"><sub>195123</sub></td>
-        <td align="right"><sub>128503</sub></td>
-        <td align="right"><sub>528433</sub></td>
-        <td align="right"><sub>86099</sub></td>
-        <td align="right"><sub>86245</sub></td>
-        <td align="right"><sub>87774</sub></td>
-        <td align="right"><sub>45260</sub></td>
-        <td align="right"><b><sub>3105</sub></b></td>
-        <td align="right"><b><sub>88</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
-        <td><sub>mikado-proxy</sub></td>
-        <td align="right"><sub>50</sub></td>
-        <td align="right"><sub>3568</sub></td>
-        <td align="right"><sub>2798</sub></td>
-        <td align="right"><sub>193514</sub></td>
-        <td align="right"><sub>130287</sub></td>
-        <td align="right"><sub>493198</sub></td>
-        <td align="right"><sub>92700</sub></td>
-        <td align="right"><sub>92555</sub></td>
-        <td align="right"><sub>91968</sub></td>
-        <td align="right"><sub>50792</sub></td>
-        <td align="right"><b><sub>3048</sub></b></td>
-        <td align="right"><b><sub>91</sub></b></td>
-    </tr>
-    <tr></tr>
-    <tr>
         <td><sub>solid</sub></td>
         <td align="right"><sub>44</sub></td>
         <td align="right"><sub>2438</sub></td>
