@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
     mode: "production",
-    entry: ["./src/js/main.js", "./src/index.html", "./src/css/index.css"],
+    entry: ["./src/js/main.js", "./src/index.html", "/node_modules/todomvc-app-css/index.css"],
     output: {
         path: path.resolve("./dist/"),
         filename: "js/main.js"
