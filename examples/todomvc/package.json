@@ -1,12 +1,19 @@
 {
   "private": true,
   "scripts": {
-    "compile": "npx mikado-compile template/ --compact --force --module",
+    "build": "npm run compile && npx webpack --config task/webpack.config.js",
+    "compile": "npx mikado-compile src/template/ --compact --force --module",
+    "dev": "npx mikado-compile src/template/ --compact --force --module --watch",
     "server": "node task/server.js"
   },
   "dependencies": {
     "mikado": "^0.8.326",
     "todomvc-app-css": "^2.4.3",
     "todomvc-common": "^1.0.5"
+  },
+  "devDependencies": {
+    "file-loader": "^6.2.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }

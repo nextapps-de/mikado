@@ -1,4 +1,4 @@
-import Mikado from "../node_modules/mikado/dist/mikado.bundle.module.min.js";
+import Mikado from "/node_modules/mikado/dist/mikado.bundle.module.min.js";
 import tpl_app from "../template/app.js";
 
 // optionally enable event cache when complex event delegation was used

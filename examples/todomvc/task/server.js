@@ -61,7 +61,7 @@ function init(port, host){
 
     httpServer.listen(port, function(){
 
-        console.log(`\x1b[32m%s\x1b[0m`, `Server is running at http://${host}:${port}`);
+        console.log(`\x1b[32m%s\x1b[0m`, `Server is running at http://${host}:${port}/src/`);
     });
 }
 

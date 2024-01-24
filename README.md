@@ -29,7 +29,7 @@ When you are coming from any previous version: <a href="doc/migrate-0.8.md">Migr
 
 **Demo:**
 
-- TodoMVC App: <a href="examples/todomvc/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/examples/todomvc/index.html">Run Demo</a>
+- TodoMVC App: <a href="examples/todomvc/src/">Source Code</a>&ensp;/&ensp;<a href="https://raw.githack.com/nextapps-de/mikado/master/examples/todomvc/dist/index.html">Run Demo</a>
 
 <!--
 1. <a href="demo/basic/basic.html">Basic Example + Runtime Compiler (HTML5 Template)</a>

@@ -1,4 +1,4 @@
-import Mikado from "../node_modules/mikado/dist/mikado.bundle.module.min.js";
+import Mikado from "/node_modules/mikado/dist/mikado.bundle.module.min.js";
 import { todos } from "./app.js";
 import { updateApp } from "./controller.js";
 import { $ } from "./helper.js";
