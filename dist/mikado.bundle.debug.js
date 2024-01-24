@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.324 (Bundle/Debug)
+ * Mikado.js v0.8.327 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -29,7 +29,7 @@ function F(a, b) {
             const n = h.substring(0, k);
             k = h.substring(k + 1);
             for (h = ""; (l = l.parentElement) !== B;) {
-              if (l.hasAttribute(k)) {
+              if ("root" === k ? l._mkr : l.hasAttribute(k)) {
                 h = n;
                 break;
               }
@@ -617,7 +617,7 @@ m.create = function(a, b, c, d) {
   g || (g = k = this.m, k || (this.m = g = k = N(this, this.tpl.tpl, [], ""), ia(this)));
   let n;
   this.apply && (h = g._mkp || L(g, this.m._mkp, !!k || this.cache), n = k && this.cache && Array(h.length), this.apply(a, b || this.state, c, h, !!k, n));
-  k && (g = k.cloneNode(!0), n && !0 !== n && (g._mkc = n));
+  k && (g = k.cloneNode(!0), n && !0 !== n && (g._mkc = n), g._mkr = 1);
   e && (l || (g._mkk = f), d && (this.o[f] = g));
   (a = this.on && this.on[k ? "create" : "recycle"]) && a(g, this);
   return g;
@@ -1370,7 +1370,7 @@ E.prototype.route = E.route = function(a, b, c) {
   }
   y[a] && console.info("A new handler was re-assigned to the route '" + a + "'.");
   y[a] = b;
-  c && (z[a] = c);
+  z[a] = c || null;
   return this;
 };
 E.prototype.dispatch = E.dispatch = function(a, b, c) {

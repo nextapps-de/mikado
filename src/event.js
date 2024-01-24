@@ -1,5 +1,5 @@
 // COMPILER BLOCK -->
-import { DEBUG, MIKADO_EVENT_CACHE, PROFILER, SUPPORT_EVENTS } from "./config.js";
+import { DEBUG, MIKADO_EVENT_CACHE, MIKADO_TPL_ROOT, PROFILER, SUPPORT_EVENTS } from "./config.js";
 import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { EventOptions } from "./type.js";
@@ -11,7 +11,7 @@ const events = {};
 const event_options = {};
 /** @type {Object<string, Function>} */
 const routes = SUPPORT_EVENTS ? Object.create(null) : null;
-/** @type {Object<string, EventOptions>} */
+/** @type {Object<string, EventOptions|null>} */
 const options = SUPPORT_EVENTS ? Object.create(null) : null;
 
 // The most outer element which is covered by Mikado event system is document.body
@@ -49,11 +49,10 @@ function handler(event, type){
 
     let cache;
 
-    // When "eventCache" options is enabled, all the assigned event route names and all the event targets exposed by bubbling are being cached,
-    // and therefore they can't be changed dynamically after its creation.
-    // Instead of: <div click="{{ true ? 'route-a' : 'route-b' }}"> just apply logic inside the handler.
-    // Also, this will only work when the route doesn't change for the same element: <div click="{{ data.route }}">.
-    // Alternatively a route can re-defined dynamically by register a new function to by calling Mikado.route(name, fn, options) again.
+    // When the "eventCache" option is enabled, all the assigned event route names and all the event targets exposed by bubbling
+    // are being cached, and therefore they can't be changed dynamically after its creation.
+    // Instead of: <div click="{{ true ? 'route-a' : 'route-b' }}"> you will need then just apply logic inside the handler.
+    // Alternatively a route can re-defined dynamically by register a new function to it by calling Mikado.route(name, fn, options) again.
     // Delete a route by Mikado.route(name, null, null)
 
     if(use_event_cache){
@@ -104,7 +103,7 @@ function handler(event, type){
 
                         PROFILER && tick("event.bubble");
 
-                        if(root.hasAttribute(attr)){
+                        if(attr === "root" ? root[MIKADO_TPL_ROOT] : root.hasAttribute(attr)){
 
                             route = handler;
                             break;
@@ -227,7 +226,7 @@ export function route(route, fn, option){
     }
 
     routes[route] = fn;
-    option && (options[route] = option);
+    options[route] = option || null;
     return this;
 }
 

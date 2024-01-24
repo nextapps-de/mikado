@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.324 (ES5/Debug)
+ * Mikado.js v0.8.327 (ES5/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -595,7 +595,7 @@ function ka(a, b) {
             var m = f.substring(0, e);
             e = f.substring(e + 1);
             for (f = ""; (k = k.parentElement) !== ea;) {
-              if (k.hasAttribute(e)) {
+              if ("root" === e ? k._mkr : k.hasAttribute(e)) {
                 f = m;
                 break;
               }
@@ -1168,7 +1168,7 @@ n.create = function(a, b, c, d) {
     var m = e && this.cache && Array(f.length);
     this.apply(a, b || this.state, c, f, !!e, m);
   }
-  e && (h = e.cloneNode(!0), m && !0 !== m && (h._mkc = m));
+  e && (h = e.cloneNode(!0), m && !0 !== m && (h._mkc = m), h._mkr = 1);
   g && (k || (h._mkk = l), d && (this.A[l] = h));
   (a = this.on && this.on[e ? "create" : "recycle"]) && a(h, this);
   return h;
@@ -1945,7 +1945,7 @@ G.prototype.route = G.route = function(a, b, c) {
   }
   D[a] && console.info("A new handler was re-assigned to the route '" + a + "'.");
   D[a] = b;
-  c && (E[a] = c);
+  E[a] = c || null;
   return this;
 };
 G.prototype.dispatch = G.dispatch = function(a, b, c) {

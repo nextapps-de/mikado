@@ -1717,16 +1717,23 @@ Or you can use the `<script>` tag in combination with the js-expression. The lat
 Let's take this example:
 
 ```html
-<table data-id="{{ data.id }}" root>
-  <tr>
-    <td>User:</td>
-    <td click="show-user">{{ data.user }}</td>
-    <td><a click="delete-user:root">Delete</a></td>
+<table foreach="data" data-user="{{ data.user }}">
+  <tr data-id="{{ data.id }}" entry>
+    <td>Item:</td>
+    <td click="item-show">{{ data.name }}</td>
+    <td><a click="item-edit:entry">Edit</a></td>
+    <td><a click="item-delete:entry">Delete</a></td>
+    <td><a click="item-sort:root">Sort</a></td>
   </tr>
 </table>
 ```
 
-There are 2 click listeners. The attribute value represents the name of the route. The second listener has a route separated by ":", this will delegate the event from the route "delete-user" to the closest element which contains the attribute "root".
+There are 4 click listeners. The attribute value represents the name of the route.
+Some of the listener has a route separated by colon ":", this will delegate the event from the route e.g. "item-delete" to the closest element which contains the attribute "entry".
+You can freely choose attribute names, but it shouldn't collide with native attributes.
+The last listener contains the keyword `root` which is a shortcut to automatically forward the components root (the &lt;table> in this example) as `target` to the assigned route.
+
+> Forwarding events to a parent element by using the colon notation is also helpful when you have corresponding data-attributes assigned to an outer context and each of the nested listener needs to access those values.
 
 Define routes:
 
@@ -1775,6 +1782,7 @@ Routes are stored globally, so they share through all Mikado instances.
 </table>
 
 <a name="bubbling"></a>
+
 ### Event Bubbling
 
 When multiple listeners of the same type are nested, the event will bubble up to the HTML root element when enabling the global flag `Mikado.eventBubble = true`, otherwise bubbling will stop on the most inner definition which gets matched.
@@ -1815,6 +1823,7 @@ Supported Options (mixable):
 - `once: boolean` just catch the event once and remove the route then
 
 <a name="event-cache"></a>
+
 #### Event Cache
 
 You can cache more complex event delegations by setting the global flag `Mikado.eventCache = true`.
@@ -1825,7 +1834,7 @@ A candidate for a complex delegation is forwarding a different target to the han
 This is okay, because all partials are inline:
 
 ```html
-<table foreach="data.result" root>
+<table foreach="data.result">
     <!-- a new template scope -->
     <tr foreach="data.user" click="route-tr:root">
         <!-- a new template scope -->
@@ -1838,7 +1847,7 @@ When using extern includes it might produce unexpected behavior:
 
 tpl.html:
 ```html
-<table foreach="data.result" root>
+<table foreach="data.result" entry>
     <!-- a new template scope -->
     <tr foreach="data.user" include="tpl-td">
         <!-- a new template scope -->
@@ -1848,15 +1857,16 @@ tpl.html:
 
 tpl-td.html:
 ```html
-<td click="route-td:root">{{ data.username }}</td>
+<td click="route-td:entry">{{ data.username }}</td>
 ```
 
 This will have no side effects when the partial "tpl-td.html" is just use for the template "tpl.html".
 But imagine you have another template which includes "tpl-td.html" and **also** one of the recycle strategies (keyed, non-keyed) was enabled on both.
-In this specific situation the cache might point to a false element `<table root>` used to forward to the handler.
+In this specific situation the cache might point to a false element `<table entry>` used to forward to the handler.
 Then you need to choose between: 1. limiting the scope of used event notation to the template scope, 2. do not enable `Mikado.eventCache = true`. 
 
 <a name="view.listen"></a><a name="view.unlisten"></a>
+
 #### Explicit Register/Unregister Event Delegation
 
 You can use Mikado routing and event delegation feature everywhere, also outside a template. Just apply the event attribute as you would do in a template.
@@ -1882,6 +1892,7 @@ Mikado.listen("click");
 Because events automatically register when creating the template factory under the hood. When no template was created which includes the same type of event, a global listener does not exist. For that reason, you have to explicitly register the listener once.
 
 <a name="event-control"></a>
+
 #### Control the Native Event Flow
 
 The default "EventListenerOptions" are set to `true` by default and is using the capturing phase, this is preferred since the event is required on a global listener.
@@ -1904,6 +1915,7 @@ Mikado.unlisten("click");
 > Mikado will store the original `EventListenerOptions` when calling `.listen(event)` under the hood, to make sure the listener will be removed properly.
 
 <a name="view.dispatch"></a>
+
 #### Dispatch Routes
 
 Manually dispatch a route:
@@ -1919,6 +1931,7 @@ view.dispatch("handler", target, event);
 ```
 
 <a name="recycle"></a>
+
 ## Keyed & Non-Keyed Recycling
 
 > Each template instance can run in its own mode independently.
@@ -1929,6 +1942,7 @@ https://raw.githack.com/nextapps-de/mikado/bench/#modes
 -->
 
 <a name="non-keyed"></a>
+
 #### 1. Non-Keyed Recycle
 
 A non-keyed recycle strategy will re-use all existing components without any limitations and is faster than keyed but also has some side effects when not used properly. That's why limitation by keyed data is a more common strategy for recycling. But when an unlimited recycle strategy was used carefully you won't get any disadvantages.
@@ -1951,6 +1965,7 @@ var view = new Mikado(template, { recycle: true });
 This will switch Mikado into a recycle strategy to enable re-use of already rendered components.
 
 <a name="keyed"></a>
+
 #### 2. Keyed Recycle
 
 A keyed strategy limits the recycle strategy on components matching the given data key. It just requires a **unique identifier** on each rendered item (e.g. the ID).
@@ -1973,6 +1988,7 @@ var view = Mikado(template);
 This will switch Mikado into a recycle strategy which is limited by its corresponding data keys.
 
 <a name="usage"></a>
+
 ## Create, Mount, Destroy Views
 
 <a name="mikado.new"></a>
@@ -1993,6 +2009,7 @@ var view = Mikado(template, {
 > Whenever `.mount()` is called for the first time, the template factory will be created once. Also, within this routine the hydration will apply when enabled. You can "prebuild" views by mounting early. Bigger sized applications does not hold all views in memory, so here it is recommended to mount the view right before render `view.mount(node).render(data)`.
 
 <a name="view.mount"></a>
+
 Mount or re-mount a view to an HTML element:
 
 ```js
@@ -2000,6 +2017,7 @@ view.mount(element);
 ```
 
 <a name="view.destroy"></a>
+
 Destroy a view:
 
 ```js
@@ -2007,6 +2025,7 @@ view.destroy();
 ```
 
 <a name="view.render"></a>
+
 ## Render Templates
 
 Render just a single data object:
@@ -3652,7 +3671,7 @@ Use this almost complete template example to check if you know everything about 
       </thead>
       <tbody foreach="data.entries">
         <script>{{@ const datestr = new Date(data.date).toLocaleString() }}</script>
-        <tr key="data.id" data-id="{{ data.id }}" root>
+        <tr key="data.id" data-id="{{ data.id }}">
           <td>{{ index + 1 }}</td>
           <td>{{= data.title }}</td>
           <td>{{# data.media }}</td>
@@ -3734,7 +3753,7 @@ Each template part explained:
 - `{{! data.comment }}` escape the value before print out (SSR only)
 - `{{ datestr }}` access the variable which was created by inline syntax before
 - `style="opacity: {{ state.selected === data.id '1' ? '0.5' }}"` example of dynamic attribute value
-- `change="select-active:root"` assign the route named "select-active" and forward the event to the element which has the attribute "root" assigned to it (so the target inside the root functions becomes the forwarded element)
+- `change="select-active:root"` assign the route named "select-active" and forward the event to the element which has the given attribute name assigned to it or in this case "root" points to the components root <tr> (so the target inside the root function becomes the forwarded element)
 - `selected="data.active === 'yes'"` when dynamic attribute values results to boolean "false" (not string) it will be removed from the element, because some attributes enables just by their existence (consider an option element having selected="false" will end up also as a truthy selection state)
 
 <!--

@@ -38,11 +38,13 @@ export const MIKADO_DOM = "_mkd";
 /** @define {string} */
 export const MIKADO_CLASS = "_mki";
 /** @define {string} */
-export const MIKADO_TPL_KEY = "_mkk";
-/** @define {string} */
 export const MIKADO_LIVE_POOL = "_mkl";
 /** @define {string} */
+export const MIKADO_TPL_KEY = "_mkk";
+/** @define {string} */
 export const MIKADO_TPL_PATH = "_mkp";
+/** @define {string} */
+export const MIKADO_TPL_ROOT = "_mkr";
 /** @define {string} */
 export const MIKADO_PROXY = "_mkx";
 /** @define {string} */

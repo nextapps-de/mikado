@@ -1,5 +1,5 @@
 /**!
- * Mikado.js v0.8.323 (Bundle/Debug)
+ * Mikado.js v0.8.326 (Bundle/Debug)
  * Copyright 2019-2024 Nextapps GmbH
  * Author: Thomas Wilkerling
  * Licence: Apache-2.0
@@ -35,7 +35,7 @@ function F(a, b) {
             const p = g.substring(0, l);
             l = g.substring(l + 1);
             for (g = ""; (n = n.parentElement) !== B;) {
-              if (f("event.bubble"), n.hasAttribute(l)) {
+              if (f("event.bubble"), "root" === l ? n._mkr : n.hasAttribute(l)) {
                 g = p;
                 break;
               }
@@ -593,7 +593,7 @@ E.prototype.render = function(a, b, c, d) {
       if (h && n._mkk !== p[h]) {
         return this.reconcile(a, b, l);
       }
-      this.update(n, p, b, l, 1);
+      this.update(n, p, b, l);
       e && !p._mkx && (a[l] = S(this, n, p));
     }
   }
@@ -634,7 +634,7 @@ E.prototype.replace = function(a, b, c, d) {
 };
 E.prototype.update = function(a, b, c, d) {
   if (!this.apply) {
-    return console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
+    return "number" !== typeof d && console.warn("The template '" + this.name + "' is a static template and should not be updated. Alternatively you can use .replace() to switch contents."), this;
   }
   if (this.fullproxy && b._mkx) {
     return this;
@@ -661,7 +661,7 @@ E.prototype.create = function(a, b, c, d) {
   h || (h = l = this.factory, l || (this.factory = h = l = M(this, this.tpl.tpl, [], ""), R(this)));
   let p;
   this.apply && (g = h._mkp || K(h, this.factory._mkp, !!l || this.cache), p = l && this.cache && Array(g.length), this.apply(a, b || this.state, c, g, !!l, p));
-  l && (f("factory.clone"), h = l.cloneNode(!0), p && !0 !== p && (h._mkc = p));
+  l && (f("factory.clone"), h = l.cloneNode(!0), p && !0 !== p && (h._mkc = p), h._mkr = 1);
   e && (n || (h._mkk = k), d && (this.live[k] = h));
   (a = this.on && this.on[l ? "create" : "recycle"]) && a(h, this);
   return h;
@@ -698,7 +698,7 @@ E.prototype.reconcile = function(a, b, c) {
       let t, w, u, I;
       this.proxy && (q._mkx ? I = this.fullproxy : a[c] = S(this, d[c], q));
       if (!r && (t = d[c], w = q[k], u = t._mkk, u === w)) {
-        I || this.update(t, q, b, c, 1);
+        I || this.update(t, q, b, c);
         continue;
       }
       if (r || !e[w]) {
@@ -708,7 +708,7 @@ E.prototype.reconcile = function(a, b, c) {
       let y, A;
       for (r = c + 1; r < l; r++) {
         if (!y && r < g && d[r]._mkk === w && (y = r + 1), !A && r < h && a[r][k] === u && (A = r + 1), y && A) {
-          y >= A + n ? (p = d[y - 1], this.root.insertBefore(p, t), I || this.update(p, q, b, c, 1), y === A ? (1 < r - c && this.root.insertBefore(t, d[y]), d[c] = d[r], (d[r] = t) || console.error("reconcile.error 1"), f("view.reconcile.steps")) : (y - 1 === c && console.error("reconcile.error 2"), ja(d, y - 1, c), n++)) : (q = A - 1 + n, this.root.insertBefore(t, d[q] || null), (q > g ? g : q) - 1 === c && console.error("reconcile.error 3"), ja(d, c, (q > g ? g : q) - 1), n--, c--);
+          y >= A + n ? (p = d[y - 1], this.root.insertBefore(p, t), I || this.update(p, q, b, c), y === A ? (1 < r - c && this.root.insertBefore(t, d[y]), d[c] = d[r], (d[r] = t) || console.error("reconcile.error 1"), f("view.reconcile.steps")) : (y - 1 === c && console.error("reconcile.error 2"), ja(d, y - 1, c), n++)) : (q = A - 1 + n, this.root.insertBefore(t, d[q] || null), (q > g ? g : q) - 1 === c && console.error("reconcile.error 3"), ja(d, c, (q > g ? g : q) - 1), n--, c--);
           f("view.reconcile.steps");
           p = 1;
           break;
@@ -1462,7 +1462,7 @@ E.prototype.route = E.route = function(a, b, c) {
   }
   x[a] && console.info("A new handler was re-assigned to the route '" + a + "'.");
   x[a] = b;
-  c && (z[a] = c);
+  z[a] = c || null;
   return this;
 };
 E.prototype.dispatch = E.dispatch = function(a, b, c) {

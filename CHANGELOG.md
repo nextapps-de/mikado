@@ -3,6 +3,7 @@
 - Improve progressive enhancement for keyed/non-keyed recycle strategies
 - Use IDL attributes instead of content attributes on: checked, selected, hidden
 - Minor performance fixes solved, occurred in the "keyed shuffle test"
+- Use `root` as the default target forwarding on event delegation by using the colon syntax `click="user-create:root"` will always point to the component root by default.
 
 ## 0.8.2
 

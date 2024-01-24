@@ -59,6 +59,77 @@ describe("Routing & Event Delegation", function(){
         });
     });
 
+    it("Should have been forwarded events properly (root)", async function(){
+
+        Mikado.eventCache = true;
+        Mikado.eventBubble = true;
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template, { root: root_1 }).render(data[0]);
+        const node = root_1.firstElementChild.querySelector(".title");
+
+        root_1.firstElementChild.removeAttribute("root");
+
+        await new Promise(function(resolve){
+
+            let counter = 0;
+
+            view.route("delegate", function(target, event){
+
+                expect(target).to.equal(root_1.firstElementChild);
+                expect(event.target).to.equal(node);
+                expect(event).to.equal(window.event);
+
+                if(++counter === 3){
+
+                    view.clear().destroy();
+                    resolve();
+                }
+
+            },{ cancel: true });
+
+            node.click();
+            node.click();
+            node.click();
+        });
+    });
+
+    it("Should have been forwarded events properly (custom)", async function(){
+
+        Mikado.eventCache = true;
+        Mikado.eventBubble = true;
+
+        const root_1 = document.getElementById("root-1");
+        const view = new Mikado(template, { root: root_1 }).render(data[0]);
+        const node = root_1.firstElementChild.querySelector(".content");
+
+        root_1.firstElementChild.removeAttribute("root");
+        root_1.firstElementChild.setAttribute("foo", "");
+
+        await new Promise(function(resolve){
+
+            let counter = 0;
+
+            view.route("delegate", function(target, event){
+
+                expect(target).to.equal(root_1.firstElementChild);
+                expect(event.target).to.equal(node);
+                expect(event).to.equal(window.event);
+
+                if(++counter === 3){
+
+                    view.clear().destroy();
+                    resolve();
+                }
+
+            },{ cancel: true });
+
+            node.click();
+            node.click();
+            node.click();
+        });
+    });
+
     it("Should have been manually call routes properly", async function(){
 
         const root_1 = document.getElementById("root-1");
