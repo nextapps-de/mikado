@@ -32,7 +32,7 @@ let tap_fallback;
  * @param {string=} type
  */
 
-function handler(event, type) {
+export function handler(event, type) {
 
     const event_target = event.target;
     // we just handle events which are defined somewhere in the DOM

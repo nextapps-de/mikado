@@ -16,11 +16,11 @@ const event_types = {
     "keypress": 1,
     "keyup": 1,
     "mousedown": 1,
-    "mouseenter": 1,
-    "mouseleave": 1, // TODO: mouseleave event does not bubble
-    "mousemove": 1,
-    "mouseout": 1,
+    //"mouseenter": 1, // non-bubbling
     "mouseover": 1,
+    //"mouseleave": 1, // non-bubbling
+    "mouseout": 1,
+    "mousemove": 1,
     "mouseup": 1,
     "mousewheel": 1,
     "touchstart": 1,
@@ -31,12 +31,23 @@ const event_types = {
     "select": 1,
     "submit": 1,
     "toggle": 1,
-    "blur": 1,
-    "error": 1,
-    "focus": 1,
-    "load": 1,
+    //"focus": 1, // non-bubbling
+    "focusin": 1,
+    //"blur": 1, // non-bubbling
+    "focusout": 1,
     "resize": 1,
-    "scroll": 1
+    "scroll": 1,
+
+    // non-bubbling events
+    "error": 1,
+    "load": 1
+};
+
+const event_bubble = {
+    "blur": "focusout",
+    "focus": "focusin",
+    "mouseleave": "mouseout",
+    "mouseenter": "mouseover"
 };
 
 const self_closing = {
@@ -738,6 +749,15 @@ function prepare_template(nodes, src, csr, svg){
                                 //     event_types[keys[x]] = event_types[keys[x]];
                                 //     delete event_types[keys[x]];
                                 // }
+
+                                if(event_bubble[keys[x]]){
+
+                                    console.info("The assigned event '" + keys[x] + "' was replaced by the event '" + event_bubble[keys[x]] + "'.");
+                                    const tmp = child.attr[keys[x]];
+                                    delete child.attr[keys[x]];
+                                    keys[x] = event_bubble[keys[x]];
+                                    child.attr[keys[x]] = tmp;
+                                }
 
                                 if(event_types[keys[x]]){
 

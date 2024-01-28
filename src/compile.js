@@ -15,11 +15,11 @@ const event_types = SUPPORT_EVENTS && {
     "keypress": 1,
     "keyup": 1,
     "mousedown": 1,
-    "mouseenter": 1,
-    "mouseleave": 1,
-    "mousemove": 1,
-    "mouseout": 1,
+    //"mouseenter": 1, // non-bubbling
     "mouseover": 1,
+    //"mouseleave": 1, // non-bubbling
+    "mouseout": 1,
+    "mousemove": 1,
     "mouseup": 1,
     "mousewheel": 1,
     "touchstart": 1,
@@ -30,12 +30,24 @@ const event_types = SUPPORT_EVENTS && {
     "select": 1,
     "submit": 1,
     "toggle": 1,
-    "blur": 1,
-    "error": 1,
-    "focus": 1,
-    "load": 1,
+    //"focus": 1, // non-bubbling
+    "focusin": 1,
+    //"blur": 1, // non-bubbling
+    "focusout": 1,
     "resize": 1,
-    "scroll": 1
+    "scroll": 1,
+
+    // non-bubbling events
+    "error": 1,
+    "load": 1,
+};
+
+const event_bubble = {
+
+    "blur": "focusout",
+    "focus": "focusin",
+    "mouseleave": "mouseout",
+    "mouseenter": "mouseover"
 };
 
 // function escape_single_quotes(str){
@@ -308,7 +320,18 @@ export default function compile(node, callback, _inc, _fn, _index, _recursive){
 
                 default:
 
-                    if(SUPPORT_EVENTS && event_types[attr_name]){
+                    if(SUPPORT_EVENTS && event_bubble[attr_name]){
+
+                        attr = tpl.event || (tpl.event = {});
+
+                        if(DEBUG){
+
+                            console.info("The assigned event '" + attr_name + "' was replaced by the event '" + event_bubble[attr_name] + "'.");
+                        }
+
+                        attr_name = event_bubble[attr_name];
+                    }
+                    else if(SUPPORT_EVENTS && event_types[attr_name]){
 
                         attr = tpl.event || (tpl.event = {});
                     }

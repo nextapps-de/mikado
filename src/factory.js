@@ -23,7 +23,7 @@ import { tick } from "./profiler.js";
 // <-- COMPILER BLOCK
 import { TemplateDOM, Template, MikadoOptions, NodeCache, ProxyCache } from "./type.js";
 import Mikado, { includes } from "./mikado.js";
-import { listen } from "./event.js";
+import { dispatch, listen } from "./event.js";
 
 /**
  * @param {Element} root
@@ -256,14 +256,25 @@ export function construct(self, tpl, path, vpath, vnode, _recursive){
 
     if(SUPPORT_EVENTS && (val = tpl.event)){
 
-        for(const key in val){
+        for(let key in val){
+
+            let skip;
 
             if(!vnode){
+
+                // handle common non-bubbling events
+                if(key === "load" || key === "error"){
+
+                    window["dispatch"] = dispatch;
+                    val["on" + key] = "dispatch('" + val[key] + "', this)";
+                    key = "on" + key
+                    skip = 1;
+                }
 
                 node.setAttribute(key, val[key]);
             }
 
-            listen(key);
+            skip || listen(key);
         }
     }
 
