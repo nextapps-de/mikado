@@ -1,4 +1,4 @@
-<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado-animated.svg" alt="Mikado - Webs fastest templating engine" width="600px"><p></p></h1>
+<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado-animated.svg?v=1" alt="Mikado - Webs fastest templating engine" width="550px"><p></p></h1>
 <h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also providing the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
