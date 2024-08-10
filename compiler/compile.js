@@ -605,7 +605,7 @@ function prepare_template(nodes, src, csr, svg){
 
                             if(typeof child.style === "object"){
 
-                                child.style = child.style.join("");
+                                child.style = child.style.join(" ").replace(/;\s+/g, ";");
                             }
 
                             child.style = child.style.replace(/\/\*(.*?)\*\//, "").trim();

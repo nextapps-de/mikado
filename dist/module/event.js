@@ -19,11 +19,16 @@ const events = {},
 
 // The most outer element which is covered by Mikado event system is document.body
 
-/** @type {boolean} */
-Mikado.eventCache = !1;
-/** @type {boolean} */
-Mikado.eventBubble = !1;
-
+// if(SUPPORT_EVENTS){
+//
+//     // TODO replace by "$route:*"
+//     /** @type {boolean} */
+//     Mikado.eventCache = false;
+//
+//     // TODO replace by using wildcard within colon notation "route:*" or "route:target:*"
+//     /** @type {boolean} */
+//     Mikado.eventBubble = false;
+// }
 
 let tap_fallback;
 
@@ -39,23 +44,21 @@ export function handler(event, type) {
     // do we need handle events on documentElement?
     if (event_target === window || event_target === doc) return;
 
-    const use_event_cache = Mikado.eventCache,
-          use_bubble = Mikado.eventBubble;
-
+    let use_event_cache; // = Mikado.eventCache;
+    //let use_bubble = Mikado.eventBubble;
     type || (type = event.type);
 
-    let cache;
+    let cache = event_target["_mke" + type];
 
-    // When the "eventCache" option is enabled, all the assigned event route names and all the event targets exposed by bubbling
+    // When the Event-Cache is used, all the assigned event route names and all the event targets exposed by bubbling
     // are being cached, and therefore they can't be changed dynamically after its creation.
     // Instead of: <div click="{{ true ? 'route-a' : 'route-b' }}"> you will need then just apply logic inside the handler.
     // Alternatively a route can re-defined dynamically by register a new function to it by calling Mikado.route(name, fn, options) again.
     // Delete a route by Mikado.route(name, null, null)
 
-    if (use_event_cache) {
+    //if(use_event_cache){
 
-        cache = event_target["_mke" + type];
-    }
+    //}
 
     if ("undefined" == typeof cache) {
 
@@ -79,15 +82,26 @@ export function handler(event, type) {
 
             if (route) {
 
+                if ("$" === route[0]) {
+
+                    // just enable cache when the most inner handler has set it
+                    use_event_cache = target === event_target;
+                    route = route.substring(1);
+                }
+
                 const delimiter = route.indexOf(":");
                 // when continue bubble it needs the original target
-                let root = target;
+                let root = target,
+                    use_bubble;
+
 
                 // it has a custom target, bubbling needs to continue
 
                 if (-1 < delimiter) {
+
+                    use_bubble = route.endsWith(":*");
                     const handler = route.substring(0, delimiter),
-                          attr = route.substring(delimiter + 1);
+                          attr = route.substring(delimiter + 1, route.length - (use_bubble ? 2 : 0));
 
 
                     route = "";

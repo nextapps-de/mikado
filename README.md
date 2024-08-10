@@ -1,4 +1,4 @@
-<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado-animated.svg?v=1" alt="Mikado - Webs fastest templating engine" width="550px"><p></p></h1>
+<h1><img src="https://cdn.jsdelivr.net/gh/nextapps-de/mikado@master/doc/mikado-animated.svg?v=2" alt="Mikado - Webs fastest templating engine" width="550px"><p></p></h1>
 <h3>Mikado is the webs fastest template engine for building user interfaces. Carefully crafted to get the most out of the browser. Also providing the fastest Express Render Engine of today. Super-lightweight, outstanding performance, no dependencies.</h3>
 
 <a target="_blank" href="https://www.npmjs.com/package/mikado"><img src="https://img.shields.io/npm/v/mikado.svg"></a>
@@ -55,10 +55,10 @@ Mikado was getting so much positive feedback and also feature requests. Help kee
 ## Table of contents
 
 Rendering has great **impact** on application performance, especially **on mobile devices**. Mikado takes <a href="#benchmark">templating performance</a> to a new level and provides you **keyed**, **non-keyed** recycling and also **reactive paradigm** switchable out of the box.
-On top, it also provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively within the client's runtime.
+Additionally, Mikado provides a **server-side-rendering** approach on a top-notch performance level along full support for **hydration** to inject templates progressively within the client's runtime.
 Server and client are sharing the same template definitions simply written in **HTML-like markup**.
 The server side approach will also come with the **fastest middleware render engine for Express** you can get today.
-Packed with a smart routing feature for event delegation and full support for web components by using the shadow dom, Mikado gives you everything you'll need to build <a href="#concept">realtime applications</a> on a cutting edge performance level.
+Packed with a smart routing feature for event delegation and full support for web components by using the Shadow DOM, Mikado gives you everything you'll need to build <a href="#concept">realtime applications</a> on a cutting edge performance level.
 
 1. <a href="#get-latest">Get Latest</a>
 2. <a href="#feature-comparison">Feature Comparison: Mikado Light</a>
@@ -149,80 +149,80 @@ Packed with a smart routing feature for event delegation and full support for we
     </tr>
     <tr>
         <td>mikado.bundle.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.bundle.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.debug.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.bundle.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.bundle.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.bundle.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.min.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.bundle.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.bundle.module.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.bundle.module.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.module.debug.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.bundle.module.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.module.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.bundle.module.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.bundle.module.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.bundle.module.min.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.bundle.module.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.bundle.module.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.es5.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.es5.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.es5.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.es5.debug.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.es5.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.es5.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.es5.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.es5.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.es5.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.es5.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.es5.min.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.es5.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.es5.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.es5.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.light.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.light.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.debug.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.light.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.light.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.light.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.min.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.light.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.light.module.debug.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.light.module.debug.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.module.debug.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.light.module.debug.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.module.debug.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.module.debug.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>mikado.light.module.min.js</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/mikado.light.module.min.js" target="_blank">Download</a></td>
-        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.3/dist/mikado.light.module.min.js</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/mikado.light.module.min.js" target="_blank">Download</a></td>
+        <td><a href="https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.module.min.js" target="_blank">https://rawcdn.githack.com/nextapps-de/mikado/0.8.4/dist/mikado.light.module.min.js</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>Javascript Modules</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/module/" target="_blank">Download</a></td>
-        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/module/" target="_blank">Download</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>Javascript Modules (Minified)</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/module-min/" target="_blank">Download</a></td>
-        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module-min" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module-min</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/module-min/" target="_blank">Download</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module-min" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module-min</a></td>
     </tr>
     <tr></tr>
     <tr>
         <td>Javascript Modules (Debug)</td>
-        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.3/dist/module-debug/" target="_blank">Download</a></td>
-        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module-debug" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.3/dist/module-debug</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/raw/0.8.4/dist/module-debug/" target="_blank">Download</a></td>
+        <td><a href="https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module-debug" target="_blank">https://github.com/nextapps-de/mikado/tree/0.8.4/dist/module-debug</a></td>
     </tr>
     <tr></tr>
     <tr>
@@ -300,7 +300,7 @@ You can also load modules via CDN:
 
 ```html
 <script type="module">
-    import Mikado from "https://unpkg.com/mikado@0.8.304/dist/module/mikado.js";
+    import Mikado from "https://unpkg.com/mikado@0.8.404/dist/module/mikado.js";
 </script>
 ```
 

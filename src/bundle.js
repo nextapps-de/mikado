@@ -76,19 +76,19 @@ if(SUPPORT_COMPILE){
 // Mikado global properties
 // --------------------------------
 
-if(SUPPORT_EVENTS){
-
-    /**
-     * @export
-     * @nocollapse
-     */
-    Mikado.eventCache;
-    /**
-     * @export
-     * @nocollapse
-     */
-    Mikado.eventBubble;
-}
+// if(SUPPORT_EVENTS){
+//
+//     /**
+//      * @export
+//      * @nocollapse
+//      */
+//     Mikado.eventCache;
+//     /**
+//      * @export
+//      * @nocollapse
+//      */
+//     Mikado.eventBubble;
+// }
 
 // Mikado public instance properties
 // --------------------------------
