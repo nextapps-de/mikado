@@ -46,9 +46,10 @@ var options = (function(argv){
 
 })(process.argv);
 
-const light_version = (options["RELEASE"] === "light") || (process.argv[2] === "--light");
-const es5_version = (options["RELEASE"] === "es5") || (process.argv[2] === "--es5");
-const module_version = (options["RELEASE"] === "module") || (process.argv[2] === "--module");
+let release = options["RELEASE"].toLowerCase();
+const light_version = (release === "light") || (process.argv[2] === "--light");
+const es5_version = (release === "es5") || (process.argv[2] === "--es5");
+const module_version = (release === "module") || (process.argv[2] === "--module");
 
 let parameter = (function(opt){
 
@@ -65,7 +66,7 @@ let parameter = (function(opt){
     return parameter;
 })({
 
-    compilation_level: options["RELEASE"] === "bundle.profiler" ? "SIMPLE" : "ADVANCED", //"WHITESPACE"
+    compilation_level: release === "bundle.profiler" ? "SIMPLE" : "ADVANCED", //"WHITESPACE"
     use_types_for_optimization: true,
     generate_exports: true,
     export_local_property_definitions: true,
@@ -93,17 +94,17 @@ if(options["DEBUG"]){
     parameter += ' --formatting=PRETTY_PRINT';
 }
 
-if(!options["RELEASE"].endsWith(".module")){
+if(!release.endsWith(".module")){
     parameter += ' --isolation_mode=IIFE';
     parameter += ' --emit_use_strict=true';
 }
 
-const custom = (!options["RELEASE"] || options["RELEASE"].startsWith("custom"))
-    && hashCode(parameter + flag_str).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+const custom = (!release || release.startsWith("custom"))
+    && hashCode(parameter + flag_str + JSON.stringify(options)).replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
 if(custom){
 
-    options["RELEASE"] || (options["RELEASE"] = "custom");
+    release || (options["RELEASE"] = release = "custom");
 }
 
 const files = [
@@ -128,7 +129,7 @@ const files = [
 
 files.forEach(function(file){
 
-    // if(options["RELEASE"] !== "pre" && options["RELEASE"] !== "debug"){
+    // if(release !== "pre" && release !== "debug"){
     //     for(let key in prename){
     //         if(prename.hasOwnProperty(key)){
     //             src = src.replace(new RegExp(key, "g"), prename[key]);
@@ -136,40 +137,37 @@ files.forEach(function(file){
     //     }
     // }
 
-    files.forEach(function(file){
+    if(file === "config.js"){
 
-        if(file === "config.js"){
+        let src = String(fs.readFileSync("src/" + file));
 
-            let src = String(fs.readFileSync("src/" + file));
+        if(custom){
 
-            if(custom){
+            let defaults = src.split(/export const /);
+            defaults.unshift();
+            defaults = defaults.filter(str => /^(SUPPORT|RELEASE)/.test(str)).map(str => str.replace(/=[\s\S]+/, "").trim());
 
-                let defaults = src.split(/export const /);
-                defaults.unshift();
-                defaults = defaults.filter(str => /^(SUPPORT|RELEASE)/.test(str)).map(str => str.replace(/=[\s\S]+/, "").trim());
+            for(let i = 0, opt; i < defaults.length; i++){
 
-                for(let i = 0, opt; i < defaults.length; i++){
-
-                    opt = defaults[i];
-                    options[opt] = typeof options[opt] === "undefined" ? false : options[opt];
-                }
+                opt = defaults[i];
+                options[opt] = typeof options[opt] === "undefined" ? false : options[opt];
             }
-
-            for(let opt in options){
-
-                src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
-            }
-
-            fs.writeFileSync("tmp/" + file, src);
         }
-        else{
 
-            fs.copyFileSync("src/" + file, "tmp/" + file);
+        for(let opt in options){
+
+            src = src.replace(new RegExp('(export const ' + opt + ' = )(")?[^";]+(")?;'), "$1$2" + options[opt] + "$3;");
         }
-    });
+
+        fs.writeFileSync("tmp/" + file, src);
+    }
+    else{
+
+        fs.copyFileSync("src/" + file, "tmp/" + file);
+    }
 });
 
-const filename = "dist/mikado." + (options["RELEASE"] + (custom ? "." + custom : "")) + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
+const filename = "dist/mikado." + (release + (custom ? "." + custom : "")) + (options["DEBUG"] ?  ".debug" : ".min") + ".js";
 const executable = process.platform === "win32" ?  "\"node_modules/google-closure-compiler-windows/compiler.exe\"" :
                    process.platform === "darwin" ? "\"node_modules/google-closure-compiler-osx/compiler\"" :
                                                    "java -jar node_modules/google-closure-compiler-java/compiler.jar";
@@ -183,9 +181,9 @@ exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_fi
     //const postname = require('./postname.json');
 
     let name = (
-        custom ? options["RELEASE"].replace("custom.", "Custom/") :
-        light_version ? "Light" + (options["RELEASE"] === "light.module" ? "/Module" : "") :
-        es5_version ? "ES5" : "Bundle" + (options["RELEASE"] === "bundle.module" ? "/Module" : "")
+        custom ? release.replace("custom.", "Custom/") :
+        light_version ? "Light" + (release === "light.module" ? "/Module" : "") :
+        es5_version ? "ES5" : "Bundle" + (release === "bundle.module" ? "/Module" : "")
     );
 
     if(custom) name += "/" + custom;
@@ -200,9 +198,9 @@ exec(executable + parameter + " --js='tmp/**.js' " + flag_str + " --js_output_fi
     //     }
     // }
 
-    if(options["RELEASE"] === "bundle.module" ||
-       options["RELEASE"] === "light.module" ||
-       options["RELEASE"] === "custom.module"){
+    if(release === "bundle.module" ||
+       release === "light.module" ||
+       release === "custom.module"){
 
         build = build.replace(/window\.Mikado(\s+)?=(\s+)?/, "export default ");
     }

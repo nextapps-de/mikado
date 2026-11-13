@@ -5,20 +5,32 @@ const { resolve } = require("path");
 
 const test_text = /[&<]/;
 const match_text = /[&<]/g;
-const map_text = {
-    '&': '&amp;',
-    '<': '&lt;'
-    //'>': '&gt;'
-};
+// const map_text = {
+//     '&': '&amp;',
+//     '<': '&lt;'
+//     //'>': '&gt;'
+// };
+const map_text = new Map([
+    ["&", "&amp;"],
+    ["<", "&lt;"]
+    //[">", "&gt;"]
+]);
 const test_attr = /[&"]/;
 const match_attr = /[&"]/g;
-const map_attr = {
-    '&': '&amp;',
-    '"': '&quot;'
-    //"'": '&#39;'
-};
-const matcher_text = match => map_text[match];
-const matcher_attr = match => map_attr[match];
+// const map_attr = {
+//     '&': '&amp;',
+//     '"': '&quot;'
+//     //"'": '&#39;'
+// };
+const map_attr = new Map([
+    ['&', "&amp;"],
+    ['"', "&quot;"]
+    //["'", "&#39;"]
+]);
+//const matcher_text = match => map_text[match];
+//const matcher_attr = match => map_attr[match];
+function matcher_text(match){ return map_text.get(match) }
+function matcher_attr(match){ return map_attr.get(match) }
 const includes = Object.create(null);
 
 module.exports = class MikadoSSR{
