@@ -5,20 +5,32 @@ const { resolve } = require("path");
 
 const test_text = /[&<]/;
 const match_text = /[&<]/g;
-const map_text = {
-    '&': '&amp;',
-    '<': '&lt;'
-    //'>': '&gt;'
-};
+// const map_text = {
+//     '&': '&amp;',
+//     '<': '&lt;'
+//     //'>': '&gt;'
+// };
+const map_text = new Map([
+    ["&", "&amp;"],
+    ["<", "&lt;"]
+    //[">", "&gt;"]
+]);
 const test_attr = /[&"]/;
 const match_attr = /[&"]/g;
-const map_attr = {
-    '&': '&amp;',
-    '"': '&quot;'
-    //"'": '&#39;'
-};
-const matcher_text = match => map_text[match];
-const matcher_attr = match => map_attr[match];
+// const map_attr = {
+//     '&': '&amp;',
+//     '"': '&quot;'
+//     //"'": '&#39;'
+// };
+const map_attr = new Map([
+    ['&', "&amp;"],
+    ['"', "&quot;"]
+    //["'", "&#39;"]
+]);
+//const matcher_text = match => map_text[match];
+//const matcher_attr = match => map_attr[match];
+function matcher_text(match){ return map_text.get(match) }
+function matcher_attr(match){ return map_attr.get(match) }
 const includes = Object.create(null);
 
 module.exports = class MikadoSSR{
@@ -144,29 +156,34 @@ module.exports = class MikadoSSR{
 
     text(string) {
 
-        if(typeof string === "string"){
+        const type = typeof string;
+        if(!string || type === "number" || type === "boolean"){
+            return string;
+        }
+        if(type !== "string"){
+            string = "" + string;
+        }
+
+        if(this.#cache_size){
+
+            const cache = this.#cache_text.get(string);
+            if(cache) return cache;
+        }
+
+        if(test_text.test(string)){
+
+            const tmp = string;
+            string = string.replace(match_text, matcher_text);
 
             if(this.#cache_size){
 
-                const cache = this.#cache_text.get(string);
-                if(cache) return cache;
-            }
+                this.#cache_text.set(tmp, string);
 
-            if(test_text.test(string)){
+                if(this.#cache_text.size > this.#cache_size){
 
-                const tmp = string;
-                string = string.replace(match_text, matcher_text);
-
-                if(this.#cache_size){
-
-                    this.#cache_text.set(tmp, string);
-
-                    if(this.#cache_text.size > this.#cache_size){
-
-                        this.#cache_text.delete(
-                            this.#cache_text.keys().next().value
-                        );
-                    }
+                    this.#cache_text.delete(
+                        this.#cache_text.keys().next().value
+                    );
                 }
             }
         }
@@ -176,29 +193,34 @@ module.exports = class MikadoSSR{
 
     attr(string) {
 
-        if(typeof string === "string"){
+        const type = typeof string;
+        if(!string || type === "number" || type === "boolean"){
+            return string;
+        }
+        if(type !== "string"){
+            string = "" + string;
+        }
+
+        if(this.#cache_size){
+
+            const cache = this.#cache_attr.get(string);
+            if(cache) return cache;
+        }
+
+        if(test_attr.test(string)){
+
+            const tmp = string;
+            string = string.replace(match_attr, matcher_attr);
 
             if(this.#cache_size){
 
-                const cache = this.#cache_attr.get(string);
-                if(cache) return cache;
-            }
+                this.#cache_attr.set(tmp, string);
 
-            if(test_attr.test(string)){
+                if(this.#cache_attr.size > this.#cache_size){
 
-                const tmp = string;
-                string = string.replace(match_attr, matcher_attr);
-
-                if(this.#cache_size){
-
-                    this.#cache_attr.set(tmp, string);
-
-                    if(this.#cache_attr.size > this.#cache_size){
-
-                        this.#cache_attr.delete(
-                            this.#cache_attr.keys().next().value
-                        );
-                    }
+                    this.#cache_attr.delete(
+                        this.#cache_attr.keys().next().value
+                    );
                 }
             }
         }
