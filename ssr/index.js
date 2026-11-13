@@ -156,29 +156,34 @@ module.exports = class MikadoSSR{
 
     text(string) {
 
-        if(typeof string === "string"){
+        const type = typeof string;
+        if(!string || type === "number" || type === "boolean"){
+            return string;
+        }
+        if(type !== "string"){
+            string = "" + string;
+        }
+
+        if(this.#cache_size){
+
+            const cache = this.#cache_text.get(string);
+            if(cache) return cache;
+        }
+
+        if(test_text.test(string)){
+
+            const tmp = string;
+            string = string.replace(match_text, matcher_text);
 
             if(this.#cache_size){
 
-                const cache = this.#cache_text.get(string);
-                if(cache) return cache;
-            }
+                this.#cache_text.set(tmp, string);
 
-            if(test_text.test(string)){
+                if(this.#cache_text.size > this.#cache_size){
 
-                const tmp = string;
-                string = string.replace(match_text, matcher_text);
-
-                if(this.#cache_size){
-
-                    this.#cache_text.set(tmp, string);
-
-                    if(this.#cache_text.size > this.#cache_size){
-
-                        this.#cache_text.delete(
-                            this.#cache_text.keys().next().value
-                        );
-                    }
+                    this.#cache_text.delete(
+                        this.#cache_text.keys().next().value
+                    );
                 }
             }
         }
@@ -188,29 +193,34 @@ module.exports = class MikadoSSR{
 
     attr(string) {
 
-        if(typeof string === "string"){
+        const type = typeof string;
+        if(!string || type === "number" || type === "boolean"){
+            return string;
+        }
+        if(type !== "string"){
+            string = "" + string;
+        }
+
+        if(this.#cache_size){
+
+            const cache = this.#cache_attr.get(string);
+            if(cache) return cache;
+        }
+
+        if(test_attr.test(string)){
+
+            const tmp = string;
+            string = string.replace(match_attr, matcher_attr);
 
             if(this.#cache_size){
 
-                const cache = this.#cache_attr.get(string);
-                if(cache) return cache;
-            }
+                this.#cache_attr.set(tmp, string);
 
-            if(test_attr.test(string)){
+                if(this.#cache_attr.size > this.#cache_size){
 
-                const tmp = string;
-                string = string.replace(match_attr, matcher_attr);
-
-                if(this.#cache_size){
-
-                    this.#cache_attr.set(tmp, string);
-
-                    if(this.#cache_attr.size > this.#cache_size){
-
-                        this.#cache_attr.delete(
-                            this.#cache_attr.keys().next().value
-                        );
-                    }
+                    this.#cache_attr.delete(
+                        this.#cache_attr.keys().next().value
+                    );
                 }
             }
         }
